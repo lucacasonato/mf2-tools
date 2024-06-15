@@ -46,6 +46,7 @@ const identifier = re`(?:${name}:)?${name}`;
 const escaped_char = re`\\[\\{|}]`;
 
 export default {
+  "__": "THIS FILE IS AUTO-GENERATED. DO NOT MODIFY MANUALLY. Run `node --run build:grammar` to regenerate it from ../tools/grammar.ts",
   $schema:
     "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
   name: "MessageFormat 2.0",
