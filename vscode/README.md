@@ -1,65 +1,59 @@
-# vscode-mf2 README
+# MessageFormat 2.0 for VS Code
 
-This is the README for your extension "vscode-mf2". After writing up a brief description, we recommend including the following sections.
+This extension adds syntax highlighting support for MessageFormat 2.0 messages
+contained in `.mf2` files.
 
-## Features
+To use this extension, open a file containing a MessageFormat 2.0 message, and
+select the `MessageFormat 2.0` language after running the
+`> Change Language Mode` command from the Command Palette
+(<kbd>Ctrl/Cmd</kbd>+<kbd>Shift</kbd>+<kbd>P</kbd>). Files ending in `.mf2` are
+automatically highlighted as `MessageFormat 2.0`.
 
-Describe specific features of your extension including screenshots of your extension in action. Image paths are relative to this README file.
+In JavaScript files, template strings inside of a `new Intl.MessageFormat()` expression (or `new MessageFormat`) will be highlighted. Template strings prefixed with `/* mf2 */` are also highlighted.
 
-For example if there is an image subfolder under your extension project workspace:
+### Examples
 
-\!\[feature X\]\(images/feature-x.png\)
+<table><tr><td style="width:50%">
 
-> Tip: Many popular extensions utilize animations. This is an excellent way to show off your extension! We recommend short, focused animations that are easy to follow.
+```mf2
+.input {$numShares :integer}
+.local $foo = {|ab|}
+.match {$foo} {1}
+       |ab|   1      {{ { |aa| } }}
+       *      2      {{ hello! }}
+```
 
-## Requirements
+</td><td>
 
-If you have any requirements or dependencies, add a section describing those and how to install and configure them.
+![screenshot](./screenshots/complex-message.png)
 
-## Extension Settings
+</td></tr><tr><td>
 
-Include if your extension adds any VS Code settings through the `contributes.configuration` extension point.
+```ts
+const message = new Intl.MessageFormat(
+  "en",
+  `Hello, { $name :fallback value=|World| }!`
+);
+```
 
-For example:
+</td><td>
 
-This extension contributes the following settings:
+![screenshot](./screenshots/messageformat-constructor.png)
 
-* `myExtension.enable`: Enable/disable this extension.
-* `myExtension.thing`: Set to `blah` to do something.
+</td></tr><tr><td>
 
-## Known Issues
+```ts
+const message = /* mf2 */`
+  .input {$count :number}
+  .match {$count}
+    0   {{No new notifications}}
+    one {{{$count} new notification}}
+    *   {{{$count} new notifications}}
+`;
+```
 
-Calling out known issues can help limit users opening duplicate issues against your extension.
+</td><td>
 
-## Release Notes
+![screenshot](./screenshots/js-template-comment.png)
 
-Users appreciate release notes as you update your extension.
-
-### 1.0.0
-
-Initial release of ...
-
-### 1.0.1
-
-Fixed issue #.
-
-### 1.1.0
-
-Added features X, Y, and Z.
-
----
-
-## Working with Markdown
-
-You can author your README using Visual Studio Code. Here are some useful editor keyboard shortcuts:
-
-* Split the editor (`Cmd+\` on macOS or `Ctrl+\` on Windows and Linux).
-* Toggle preview (`Shift+Cmd+V` on macOS or `Shift+Ctrl+V` on Windows and Linux).
-* Press `Ctrl+Space` (Windows, Linux, macOS) to see a list of Markdown snippets.
-
-## For more information
-
-* [Visual Studio Code's Markdown Support](http://code.visualstudio.com/docs/languages/markdown)
-* [Markdown Syntax Reference](https://help.github.com/articles/markdown-basics/)
-
-**Enjoy!**
+</td></tr></table>
