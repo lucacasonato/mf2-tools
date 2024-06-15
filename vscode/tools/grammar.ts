@@ -15,7 +15,7 @@ const content_char = regenerate()
   .addRange(0xe000, 0x10ffff);
 // const reserved_char = regenerate(content_char, ".");
 const quoted_char = regenerate(content_char, s, ".", "@", "{", "}");
-// const text_char = regenerate(content_char, s, ".", "@", "|");
+const text_char = regenerate(content_char, s, ".", "@", "|");
 const simple_start_char = regenerate(content_char, s, "@", "|");
 
 const alpha = regenerate().addRange("a", "z").addRange("A", "Z");
@@ -63,6 +63,8 @@ export default {
       begin: "^",
       end: "(?=file)end",
       patterns: [
+        { include: "#declaration" },
+        { include: "#complex-body"}
       ],
     },
     "escaped-char": {
@@ -73,6 +75,7 @@ export default {
       patterns: [{ include: "#expression" }, { include: "#markup" }],
     },
     expression: {
+      name: "expression.mf2",
       begin: re`\{(?!${s}?[#/])`,
       patterns: [
         { include: "#variable" },
@@ -120,7 +123,6 @@ export default {
         { include: "#function" },
         { include: "#option" },
         { include: "#private-use-annotation" },
-        { include: "#reserved-annotation" },
       ],
     },
     function: {
@@ -140,10 +142,6 @@ export default {
     "private-use-annotation": {
       match: "[&^]",
       name: "punctuation.definition.private-use-annotation.mf2",
-    },
-    "reserved-annotation": {
-      match: "[!%*+<>?~]",
-      name: "punctuation.definition.reserved-annotation.mf2",
     },
     markup: {
       patterns: [
@@ -183,6 +181,77 @@ export default {
         },
       ],
     },
+    declaration: {
+      patterns: [
+        { include: "#input-declaration" },
+        { include: "#local-declaration" }
+      ]
+    },
+    "input-declaration": {
+      begin: re`(\.input)${s}?({)`,
+      beginCaptures: {
+        1: { name: "keyword.declaration.input.mf2" },
+        2: { name: "punctuation.definition.declaration.open.mf2" },
+      },
+      end: re`\}`,
+      endCaptures: {
+        0: { name: "punctuation.definition.declaration.close.mf2" },
+      },
+      patterns: [
+        { include: "#variable" },
+        { include: "#annotation" },
+        { include: "#attribute" },
+        { include: "#literal" },
+      ]
+    },
+    "local-declaration": {
+      begin: re`(\.local)${s}(\$${name})${s}?=${s}?({)`,
+      beginCaptures: {
+        1: { name: "keyword.declaration.local.mf2" },
+        2: { name: "variable.other.mf2" },
+        3: { name: "punctuation.definition.declaration.open.mf2" },
+      },
+      end: re`\}`,
+      endCaptures: {
+        0: { name: "punctuation.definition.declaration.close.mf2" },
+      },
+      patterns: [
+        { include: "#variable" },
+        { include: "#annotation" },
+        { include: "#attribute" },
+        { include: "#literal" },
+      ]
+    },
+    "complex-body": {
+      patterns: [
+        { include: "#quoted-pattern" },
+        { include: "#match-statement" },
+      ]
+    },
+    "quoted-pattern": {
+      name: "quoted-pattern.mf2",
+      begin: re`\{\{`,
+      patterns: [
+        { match: re`${text_char}` },
+        { include: "#escaped-char" },
+        { include: "#placeholder" },
+      ],
+      end: re`\}\}`,
+    },
+    matcher: {},
+    "match-statement": {
+      begin: re`\.match`,
+      beginCaptures: {
+        0: { name: "keyword.declaration.match.mf2" },
+      },
+      patterns: [
+        { include: "#quoted-pattern" },
+        { match: re`\*`, name: "punctuation.star.mf2" },
+        { include: "#literal" },
+        { include: "#expression" },
+      ],
+      end: re`(?=file)end`,
+    }
   },
   scopeName: "source.mf2",
 };
@@ -203,7 +272,7 @@ function re(
   array: TemplateStringsArray,
   ...values: (ReturnType<typeof regenerate> | string)[]
 ) {
-  let result = array[0];
+  let result = array.raw[0];
   for (let i = 0; i < values.length; i++) {
     const val = values[i];
     if (typeof val === "object") {
