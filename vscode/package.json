@@ -1,0 +1,29 @@
+{
+  "name": "vscode-mf2",
+  "displayName": "MessageFormat 2.0",
+  "description": "",
+  "version": "0.0.1",
+  "scripts": {
+    "build:grammar": "deno run --allow-write ./tools/build.ts",
+    "watch:grammar": "deno run --allow-write --watch ./tools/build.ts"
+  },
+  "engines": {
+    "vscode": "^1.90.0"
+  },
+  "categories": [
+    "Programming Languages"
+  ],
+  "contributes": {
+    "languages": [{
+      "id": "mf2",
+      "aliases": ["MessageFormat 2.0", "mf2"],
+      "extensions": ["mf2"],
+      "configuration": "./language-configuration.json"
+    }],
+    "grammars": [{
+      "language": "mf2",
+      "scopeName": "source.mf2",
+      "path": "./syntaxes/mf2.tmLanguage.json"
+    }]
+  }
+}

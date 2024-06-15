@@ -1,0 +1,15 @@
+{
+  "version": "3",
+  "packages": {
+    "specifiers": {
+      "npm:regenerate": "npm:regenerate@1.4.2"
+    },
+    "npm": {
+      "regenerate@1.4.2": {
+        "integrity": "sha512-zrceR/XhGYU/d/opr2EKO7aRHUeiBI8qjtfHqADTwZd6Szfy16la6kqD0MIUs5z5hx6AaKa+PixpPrR289+I0A==",
+        "dependencies": {}
+      }
+    }
+  },
+  "remote": {}
+}
