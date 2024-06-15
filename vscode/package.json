@@ -14,16 +14,43 @@
     "Programming Languages"
   ],
   "contributes": {
-    "languages": [{
-      "id": "mf2",
-      "aliases": ["MessageFormat 2.0", "mf2"],
-      "extensions": ["mf2"],
-      "configuration": "./language-configuration.json"
-    }],
-    "grammars": [{
-      "language": "mf2",
-      "scopeName": "source.mf2",
-      "path": "./syntaxes/mf2.tmLanguage.json"
-    }]
+    "languages": [
+      {
+        "id": "mf2",
+        "aliases": [
+          "MessageFormat 2.0",
+          "mf2"
+        ],
+        "extensions": [
+          ".mf2"
+        ],
+        "configuration": "./language-configuration.json"
+      }
+    ],
+    "grammars": [
+      {
+        "language": "mf2",
+        "scopeName": "source.mf2",
+        "path": "./syntaxes/mf2.tmLanguage.json"
+      },
+      {
+        "injectTo": [
+          "source.js",
+          "source.ts",
+          "source.js.jsx",
+          "source.tsx",
+          "source.vue",
+          "source.svelte",
+          "source.astro",
+          "text.html.markdown",
+          "text.html.derivative"
+        ],
+        "scopeName": "inline.mf2",
+        "path": "./syntaxes/mf2.js.json",
+        "embeddedLanguages": {
+          "meta.embedded.block.mf2": "mf2"
+        }
+      }
+    ]
   }
 }

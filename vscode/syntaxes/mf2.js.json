@@ -1,0 +1,169 @@
+{
+  "__": "THIS FILE IS AUTO-GENERATED. DO NOT MODIFY MANUALLY. Run `node --run build:grammar` to regenerate it from ../tools/grammar.ts",
+  "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+  "scopeName": "inline.mf2",
+  "injectionSelector": "L:(meta.embedded.block.javascript | meta.embedded.block.typescript | source.js | source.ts | source.tsx | source.vue | source.svelte | source.astro) -source.mf2 -inline.mf2 -string -comment",
+  "patterns": [
+    {
+      "begin": "\\b(?:(Intl)\\??\\.)?(MessageFormat)(\\()",
+      "beginCaptures": {
+        "1": {
+          "name": "entity.name.object.js"
+        },
+        "2": {
+          "name": "entity.name.function.js"
+        },
+        "3": {
+          "name": "punctuation.definition.arguments.begin.js"
+        }
+      },
+      "end": "\\)",
+      "endCaptures": {
+        "0": {
+          "name": "punctuation.definition.arguments.end.js"
+        }
+      },
+      "patterns": [
+        {
+          "contentName": "meta.embedded.block.mf2",
+          "begin": "(`)",
+          "beginCaptures": {
+            "0": {
+              "name": "string.template.js"
+            },
+            "1": {
+              "name": "punctuation.definition.string.template.begin.js"
+            }
+          },
+          "end": "(?<!(?:^|[^\\\\])\\\\(?:\\\\\\\\)*)(`)",
+          "endCaptures": {
+            "0": {
+              "name": "string.template.js"
+            },
+            "1": {
+              "name": "punctuation.definition.string.template.end.js"
+            }
+          },
+          "patterns": [
+            {
+              "name": "simple-message.mf2",
+              "begin": "(?=(?:[\\x{01}-\\x{08}\\x{0B}\\f\\x{0E}-\\x{1F}!-\\x{2D}\\/-\\[\\]-z\\|~-\\x{2FFF}\\x{3001}-\\x{D7FF}\\x{E000}-\\x{10FFFF}]))",
+              "end": "(?<!(?:^|[^\\\\])\\\\(?:\\\\\\\\)*)(?=`)",
+              "patterns": [
+                {
+                  "include": "source.mf2#simple-message-inner"
+                }
+              ]
+            },
+            {
+              "name": "complex-message.mf2",
+              "begin": "(?=.)(?!(?:[\\t\\r \\x{3000}]))",
+              "end": "(?<!(?:^|[^\\\\])\\\\(?:\\\\\\\\)*)(?=`)",
+              "patterns": [
+                {
+                  "include": "source.mf2#complex-message-inner"
+                },
+                {
+                  "begin": "(\\.match)",
+                  "captures": {
+                    "1": {
+                      "name": "keyword.declaration.match.mf2"
+                    }
+                  },
+                  "patterns": [
+                    {
+                      "include": "source.mf2#match-statement-contents"
+                    }
+                  ],
+                  "end": "(?<!(?:^|[^\\\\])\\\\(?:\\\\\\\\)*)(?=`)"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "patterns": [
+            {
+              "include": "source.js"
+            },
+            {
+              "include": "source.ts"
+            },
+            {
+              "include": "source.js.jsx"
+            },
+            {
+              "include": "source.tsx"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "contentName": "meta.embedded.block.mf2",
+      "begin": "(/(\\*)(?:[\\t\\r \\x{3000}])?mf2(?:[\\t\\r \\x{3000}])?(\\*)/)(?:[\\t\\r \\x{3000}])?((`))",
+      "beginCaptures": {
+        "1": {
+          "name": "comment.block.js"
+        },
+        "2": {
+          "name": "punctuation.definition.comment.js"
+        },
+        "3": {
+          "name": "punctuation.definition.comment.js"
+        },
+        "4": {
+          "name": "string.template.js"
+        },
+        "5": {
+          "name": "punctuation.definition.string.template.begin.js"
+        }
+      },
+      "end": "(?<!(?:^|[^\\\\])\\\\(?:\\\\\\\\)*)(`)",
+      "endCaptures": {
+        "0": {
+          "name": "string.template.js"
+        },
+        "1": {
+          "name": "punctuation.definition.string.template.end.js"
+        }
+      },
+      "patterns": [
+        {
+          "name": "simple-message.mf2",
+          "begin": "(?=(?:[\\x{01}-\\x{08}\\x{0B}\\f\\x{0E}-\\x{1F}!-\\x{2D}\\/-\\[\\]-z\\|~-\\x{2FFF}\\x{3001}-\\x{D7FF}\\x{E000}-\\x{10FFFF}]))",
+          "end": "(?<!(?:^|[^\\\\])\\\\(?:\\\\\\\\)*)(?=`)",
+          "patterns": [
+            {
+              "include": "source.mf2#simple-message-inner"
+            }
+          ]
+        },
+        {
+          "name": "complex-message.mf2",
+          "begin": "(?=.)(?!(?:[\\t\\r \\x{3000}]))",
+          "end": "(?<!(?:^|[^\\\\])\\\\(?:\\\\\\\\)*)(?=`)",
+          "patterns": [
+            {
+              "include": "source.mf2#complex-message-inner"
+            },
+            {
+              "begin": "(\\.match)",
+              "captures": {
+                "1": {
+                  "name": "keyword.declaration.match.mf2"
+                }
+              },
+              "patterns": [
+                {
+                  "include": "source.mf2#match-statement-contents"
+                }
+              ],
+              "end": "(?<!(?:^|[^\\\\])\\\\(?:\\\\\\\\)*)(?=`)"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

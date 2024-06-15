@@ -1,7 +1,7 @@
 // @deno-types="npm:@types/regenerate"
 import regenerate from "npm:regenerate";
 
-const s = regenerate(" ", "\t", "\r", "\n", 0x3000);
+const s = regenerate(" ", "\r", "\t", 0x3000); // \n
 const content_char = regenerate()
   .addRange(0x01, 0x08)
   .addRange(0x0b, 0x0c)
@@ -45,28 +45,69 @@ const identifier = re`(?:${name}:)?${name}`;
 
 const escaped_char = re`\\[\\{|}]`;
 
-export default {
-  "__": "THIS FILE IS AUTO-GENERATED. DO NOT MODIFY MANUALLY. Run `node --run build:grammar` to regenerate it from ../tools/grammar.ts",
+function root({
+  contentName,
+  begin,
+  beginCaptures,
+  end,
+  endCaptures,
+  endLookahead = end,
+}: {
+  contentName?: string;
+  begin: string;
+  beginCaptures?: object;
+  end: string;
+  endLookahead?: string;
+  endCaptures?: object;
+}) {
+  return [
+    {
+      contentName,
+      begin,
+      beginCaptures,
+      end,
+      endCaptures,
+      patterns: [
+        {
+          name: "simple-message.mf2",
+          begin: re`(?=${simple_start_char.clone().remove(s)})`,
+          end: endLookahead,
+          patterns: [{ include: `source.mf2#simple-message-inner` }],
+        },
+        {
+          name: "complex-message.mf2",
+          begin: re`(?=.)(?!${s})`,
+          end: endLookahead,
+          patterns: [
+            { include: `source.mf2#complex-message-inner` },
+            {
+              begin: re`(\.match)`,
+              captures: {
+                1: { name: "keyword.declaration.match.mf2" },
+              },
+              patterns: [{ include: `source.mf2#match-statement-contents` }],
+              end: endLookahead,
+            },
+          ],
+        },
+      ],
+    },
+  ];
+}
+
+export const standalone = {
+  __: "THIS FILE IS AUTO-GENERATED. DO NOT MODIFY MANUALLY. Run `node --run build:grammar` to regenerate it from ../tools/grammar.ts",
   $schema:
     "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
   name: "MessageFormat 2.0",
-  patterns: [{ include: "#simple-message" }, { include: "#complex-message" }],
+  patterns: root({ begin: "^", end: "(?=file)end" }),
   fileTypes: ["mf2"],
   repository: {
-    "simple-message": {
-      name: "simple-message.mf2",
-      begin: re`^(?=${simple_start_char})`,
-      end: "(?=file)end",
+    "simple-message-inner": {
       patterns: [{ include: "#escaped-char" }, { include: "#placeholder" }],
     },
-    "complex-message": {
-      name: "complex-message.mf2",
-      begin: "^",
-      end: "(?=file)end",
-      patterns: [
-        { include: "#declaration" },
-        { include: "#complex-body"}
-      ],
+    "complex-message-inner": {
+      patterns: [{ include: "#declaration" }, { include: "#quoted-pattern" }],
     },
     "escaped-char": {
       name: "constant.character.escape.mf2",
@@ -185,8 +226,8 @@ export default {
     declaration: {
       patterns: [
         { include: "#input-declaration" },
-        { include: "#local-declaration" }
-      ]
+        { include: "#local-declaration" },
+      ],
     },
     "input-declaration": {
       begin: re`(\.input)${s}?({)`,
@@ -203,7 +244,7 @@ export default {
         { include: "#annotation" },
         { include: "#attribute" },
         { include: "#literal" },
-      ]
+      ],
     },
     "local-declaration": {
       begin: re`(\.local)${s}(\$${name})${s}?=${s}?({)`,
@@ -221,13 +262,7 @@ export default {
         { include: "#annotation" },
         { include: "#attribute" },
         { include: "#literal" },
-      ]
-    },
-    "complex-body": {
-      patterns: [
-        { include: "#quoted-pattern" },
-        { include: "#match-statement" },
-      ]
+      ],
     },
     "quoted-pattern": {
       name: "quoted-pattern.mf2",
@@ -239,22 +274,110 @@ export default {
       ],
       end: re`\}\}`,
     },
-    matcher: {},
-    "match-statement": {
-      begin: re`\.match`,
-      beginCaptures: {
-        0: { name: "keyword.declaration.match.mf2" },
-      },
+    "match-statement-contents": {
       patterns: [
         { include: "#quoted-pattern" },
         { match: re`\*`, name: "punctuation.star.mf2" },
         { include: "#literal" },
         { include: "#expression" },
       ],
-      end: re`(?=file)end`,
-    }
+    },
   },
   scopeName: "source.mf2",
+};
+
+export const js = {
+  __: "THIS FILE IS AUTO-GENERATED. DO NOT MODIFY MANUALLY. Run `node --run build:grammar` to regenerate it from ../tools/grammar.ts",
+  $schema:
+    "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+  scopeName: "inline.mf2",
+  injectionSelector:
+    "L:(meta.embedded.block.javascript | meta.embedded.block.typescript | source.js | source.ts | source.tsx | source.vue | source.svelte | source.astro) -source.mf2 -inline.mf2 -string -comment",
+  patterns: [
+    {
+      begin: "\\b(?:(Intl)\\??\\.)?(MessageFormat)(\\()",
+      beginCaptures: {
+        "1": {
+          name: "entity.name.object.js",
+        },
+        "2": {
+          name: "entity.name.function.js",
+        },
+        "3": {
+          name: "punctuation.definition.arguments.begin.js",
+        },
+      },
+      end: "\\)",
+      endCaptures: {
+        "0": {
+          name: "punctuation.definition.arguments.end.js",
+        },
+      },
+      patterns: [
+        ...root({
+          contentName: "meta.embedded.block.mf2",
+          begin: "(`)",
+          beginCaptures: {
+            "0": {
+              name: "string.template.js",
+            },
+            "1": {
+              name: "punctuation.definition.string.template.begin.js",
+            },
+          },
+          end: re`(?<!(?:^|[^\\])\\(?:\\\\)*)(${"`"})`,
+          endLookahead: re`(?<!(?:^|[^\\])\\(?:\\\\)*)(?=${"`"})`,
+          endCaptures: {
+            "0": {
+              name: "string.template.js",
+            },
+            "1": {
+              name: "punctuation.definition.string.template.end.js",
+            },
+          },
+        }),
+        {
+          patterns: [
+            { include: "source.js" },
+            { include: "source.ts" },
+            { include: "source.js.jsx" },
+            { include: "source.tsx" },
+          ],
+        },
+      ],
+    },
+    ...root({
+      contentName: "meta.embedded.block.mf2",
+      begin: re`(/(\*)${s}?mf2${s}?(\*)/)${s}?((${"`"}))`,
+      beginCaptures: {
+        "1": {
+          name: "comment.block.js",
+        },
+        "2": {
+          name: "punctuation.definition.comment.js",
+        },
+        "3": {
+          name: "punctuation.definition.comment.js",
+        },
+        "4": {
+          name: "string.template.js",
+        },
+        "5": {
+          name: "punctuation.definition.string.template.begin.js",
+        },
+      },
+      end: re`(?<!(?:^|[^\\])\\(?:\\\\)*)(${"`"})`,
+      endLookahead: re`(?<!(?:^|[^\\])\\(?:\\\\)*)(?=${"`"})`,
+      endCaptures: {
+        "0": {
+          name: "string.template.js",
+        },
+        "1": {
+          name: "punctuation.definition.string.template.end.js",
+        },
+      },
+    }),
+  ],
 };
 
 function stringifyRegenerate(range: ReturnType<typeof regenerate>) {
