@@ -5,6 +5,7 @@ SimpleMessage {
         Markup {
             kind: Close,
             id: Identifier {
+                start: @3,
                 namespace: None,
                 name: "close",
             },

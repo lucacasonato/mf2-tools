@@ -5,6 +5,7 @@ SimpleMessage {
         Markup {
             kind: Open,
             id: Identifier {
+                start: @2,
                 namespace: None,
                 name: "el",
             },
@@ -12,6 +13,7 @@ SimpleMessage {
             attributes: [
                 Attribute {
                     key: Identifier {
+                        start: @6,
                         namespace: None,
                         name: "attr1",
                     },
@@ -19,6 +21,7 @@ SimpleMessage {
                 },
                 Attribute {
                     key: Identifier {
+                        start: @13,
                         namespace: None,
                         name: "attr2",
                     },
@@ -28,6 +31,7 @@ SimpleMessage {
                 },
                 Attribute {
                     key: Identifier {
+                        start: @24,
                         namespace: None,
                         name: "attr3",
                     },

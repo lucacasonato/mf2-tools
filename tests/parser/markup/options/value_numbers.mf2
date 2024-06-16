@@ -6,12 +6,14 @@ SimpleMessage {
         Markup {
             kind: Open,
             id: Identifier {
+                start: @2,
                 namespace: None,
                 name: "el",
             },
             options: [
                 FnOrMarkupOption {
                     key: Identifier {
+                        start: @5,
                         namespace: None,
                         name: "opt",
                     },
@@ -35,12 +37,14 @@ SimpleMessage {
         Markup {
             kind: Open,
             id: Identifier {
+                start: @19,
                 namespace: None,
                 name: "el",
             },
             options: [
                 FnOrMarkupOption {
                     key: Identifier {
+                        start: @22,
                         namespace: None,
                         name: "opt",
                     },

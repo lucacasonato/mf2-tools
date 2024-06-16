@@ -231,17 +231,20 @@ impl<'a> Parser<'a> {
   }
 
   fn parse_identifier(&mut self) -> Identifier<'a> {
+    let start = self.current_location();
     let name_or_namespace = self.parse_name();
 
     if self.eat(':').is_some() {
       let name = self.parse_name();
 
       Identifier {
+        start,
         namespace: Some(name_or_namespace),
         name,
       }
     } else {
       Identifier {
+        start,
         namespace: None,
         name: name_or_namespace,
       }

@@ -115,8 +115,21 @@ impl fmt::Debug for Annotation<'_> {
 
 #[derive(Debug)]
 pub struct Identifier<'a> {
+  pub start: Location,
   pub namespace: Option<&'a str>,
   pub name: &'a str,
+}
+
+impl Spanned for Identifier<'_> {
+  fn span(&self) -> Span {
+    let mut end = self.start;
+    if let Some(namespace) = self.namespace {
+      end = end + namespace + ':';
+    }
+    end = end + self.name;
+
+    Span::new(self.start..end)
+  }
 }
 
 #[derive(Debug)]
