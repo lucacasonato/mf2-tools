@@ -1,15 +1,18 @@
-use std::iter::Peekable;
-use std::str::CharIndices;
-
 use crate::ast::Annotation;
+use crate::ast::AnnotationExpression;
 use crate::ast::Attribute;
 use crate::ast::Escape;
 use crate::ast::Expression;
 use crate::ast::Function;
 use crate::ast::Identifier;
+use crate::ast::Literal;
+use crate::ast::LiteralExpression;
 use crate::ast::LiteralOrVariable;
 use crate::ast::MessagePart;
+use crate::ast::Number;
 use crate::ast::PrivateUseAnnotation;
+use crate::ast::Quoted;
+use crate::ast::QuotedPart;
 use crate::ast::ReservedAnnotation;
 use crate::ast::ReservedBodyPart;
 use crate::ast::SimpleMessage;
@@ -50,7 +53,7 @@ impl<'a> Parser<'a> {
   }
 
   /// The start index of the char that would be returned from `next()`.
-  fn next_byte_index(&mut self) -> usize {
+  fn current_byte_index(&mut self) -> usize {
     self.chars.front_offset
   }
 
@@ -66,12 +69,9 @@ impl<'a> Parser<'a> {
               content: &self.input[start..byte_index],
             }))
           }
-          self.next(); // consume '\\'
-          let Some((_, char)) = self.next() else {
-            panic!("Unexpected end of input")
-          };
-          parts.push(MessagePart::Escape(Escape { escaped_char: char }));
-          start = self.next_byte_index();
+          let escape = self.parse_escape();
+          parts.push(MessagePart::Escape(escape));
+          start = self.current_byte_index();
         }
         '{' => {
           if byte_index != start {
@@ -80,7 +80,7 @@ impl<'a> Parser<'a> {
             }))
           }
           parts.push(self.parse_placeholder());
-          start = self.next_byte_index();
+          start = self.current_byte_index();
         }
         '.' | '@' | '|' => {
           self.next();
@@ -92,7 +92,7 @@ impl<'a> Parser<'a> {
       }
     }
 
-    let end = self.next_byte_index();
+    let end = self.current_byte_index();
     if end != start {
       parts.push(MessagePart::Text(Text {
         content: &self.input[start..end],
@@ -102,61 +102,113 @@ impl<'a> Parser<'a> {
     SimpleMessage { parts }
   }
 
+  fn parse_escape(&mut self) -> Escape {
+    let n = self.next();
+    debug_assert!(matches!(n, Some((_, '\\'))));
+
+    let Some((_, char)) = self.next() else {
+      panic!("Unexpected end of input")
+    };
+
+    Escape { escaped_char: char }
+  }
+
   fn parse_placeholder(&mut self) -> MessagePart<'a> {
     let n = self.next();
     debug_assert!(matches!(n, Some((_, '{'))));
 
     self.skip_spaces();
 
-    let expr = match self.peek() {
-      Some((_, '$')) => {
-        let variable = self.parse_variable(); // eats the $
-        let mut had_space = self.skip_spaces();
-
-        let annotation = if had_space {
-          self.maybe_parse_annotation()
-        } else {
-          None
-        };
-        if annotation.is_some() {
-          had_space = self.skip_spaces();
-        }
-
-        let mut attributes = vec![];
-
-        while had_space {
-          if self.eat('@').is_none() {
-            break;
-          }
-
-          let key = self.parse_identifier();
-          let mut value = None;
-          had_space = self.skip_spaces();
-          if self.eat('=').is_some() {
-            self.skip_spaces();
-            value = Some(LiteralOrVariable::Variable(self.parse_variable()));
-            had_space = self.skip_spaces();
-          }
-
-          attributes.push(Attribute { key, value });
-        }
-
-        MessagePart::Expression(Expression::VariableExpression(
-          VariableExpression {
-            variable,
-            annotation,
-            attributes,
-          },
-        ))
+    let (variable, literal, mut had_space) = match self.peek() {
+      Some((_, '$')) => (Some(self.parse_variable()), None, self.skip_spaces()),
+      Some((_, '|' | '-' | '0'..='9')) => {
+        (None, Some(self.parse_literal()), self.skip_spaces())
       }
-      _ => unimplemented!(),
+      Some((_, c)) if is_name_start(c) => {
+        (None, Some(self.parse_literal()), self.skip_spaces())
+      }
+      _ => (None, None, true),
     };
+
+    let annotation = if had_space {
+      self.maybe_parse_annotation()
+    } else {
+      None
+    };
+    if annotation.is_some() {
+      had_space = self.skip_spaces();
+    }
+
+    let mut attributes = vec![];
+
+    while had_space {
+      if self.eat('@').is_none() {
+        break;
+      }
+
+      let key = self.parse_identifier();
+      let mut value = None;
+      had_space = self.skip_spaces();
+      if self.eat('=').is_some() {
+        self.skip_spaces();
+        value = Some(self.parse_literal_or_variable());
+        had_space = self.skip_spaces();
+      }
+
+      attributes.push(Attribute { key, value });
+    }
 
     if self.eat('}').is_none() {
       panic!()
     }
 
+    let expr = match (variable, literal) {
+      (Some(variable), None) => MessagePart::Expression(
+        Expression::VariableExpression(VariableExpression {
+          variable,
+          annotation,
+          attributes,
+        }),
+      ),
+      (None, Some(literal)) => MessagePart::Expression(
+        Expression::LiteralExpression(LiteralExpression {
+          literal,
+          annotation,
+          attributes,
+        }),
+      ),
+      (None, None) => {
+        if let Some(annotation) = annotation {
+          MessagePart::Expression(Expression::AnnotationExpression(
+            AnnotationExpression {
+              annotation,
+              attributes,
+            },
+          ))
+        } else {
+          panic!()
+        }
+      }
+      _ => unreachable!(),
+    };
+
     expr
+  }
+
+  fn parse_literal_or_variable(&mut self) -> LiteralOrVariable<'a> {
+    match self.peek() {
+      Some((_, '$')) => LiteralOrVariable::Variable(self.parse_variable()),
+      Some((_, '|')) => {
+        LiteralOrVariable::Literal(Literal::Quoted(self.parse_quoted()))
+      }
+      Some((_, c)) if is_name_start(c) => {
+        LiteralOrVariable::Literal(Literal::Name(self.parse_name()))
+      }
+      Some((_, '-' | '0'..='9')) => {
+        LiteralOrVariable::Literal(Literal::Number(self.parse_number()))
+      }
+      _ => panic!(),
+    }
   }
 
   fn parse_variable(&mut self) -> Variable<'a> {
@@ -187,7 +239,7 @@ impl<'a> Parser<'a> {
   }
 
   fn parse_name(&mut self) -> &'a str {
-    let start = self.next_byte_index();
+    let start = self.current_byte_index();
 
     let Some((_, c)) = self.next() else { panic!() };
     if !is_name_start(c) {
@@ -202,7 +254,7 @@ impl<'a> Parser<'a> {
       }
     }
 
-    &self.input[start..self.next_byte_index()]
+    &self.input[start..self.current_byte_index()]
   }
 
   fn next(&mut self) -> Option<(usize, char)> {
@@ -278,7 +330,7 @@ impl<'a> Parser<'a> {
   fn parse_reserved_body(&mut self) -> Vec<ReservedBodyPart<'a>> {
     let mut parts = vec![];
 
-    let mut start = self.next_byte_index();
+    let mut start = self.current_byte_index();
     let mut last_space_start = None;
 
     while let Some((byte_index, c)) = self.peek() {
@@ -299,12 +351,9 @@ impl<'a> Parser<'a> {
               content: &self.input[start..byte_index],
             }))
           }
-          self.next(); // consume '\\'
-          let Some((_, char)) = self.next() else {
-            panic!("Unexpected end of input")
-          };
-          parts.push(ReservedBodyPart::Escape(Escape { escaped_char: char }));
-          start = self.next_byte_index();
+          let escape = self.parse_escape();
+          parts.push(ReservedBodyPart::Escape(escape));
+          start = self.current_byte_index();
           last_space_start = None;
         }
         '|' => {
@@ -313,9 +362,8 @@ impl<'a> Parser<'a> {
               content: &self.input[start..byte_index],
             }))
           }
-          self.next(); // consume '|'
-          unimplemented!("quoted");
-          start = self.next_byte_index();
+          parts.push(ReservedBodyPart::Quoted(self.parse_quoted()));
+          start = self.current_byte_index();
           last_space_start = None;
         }
         _ => break,
@@ -326,7 +374,7 @@ impl<'a> Parser<'a> {
       self.chars.reset_to(start);
     }
 
-    let byte_index = self.next_byte_index();
+    let byte_index = self.current_byte_index();
     if byte_index != start {
       parts.push(ReservedBodyPart::Text(Text {
         content: &self.input[start..byte_index],
@@ -336,10 +384,93 @@ impl<'a> Parser<'a> {
     parts
   }
 
-  fn parse_literal(&mut self) -> () {
+  fn parse_literal(&mut self) -> Literal<'a> {
     match self.peek() {
-      '|' => Literal(self.parse_quoted()),
+      Some((_, '|')) => Literal::Quoted(self.parse_quoted()),
+      Some((_, c)) if is_name_start(c) => Literal::Name(self.parse_name()),
+      Some((_, '-' | '0'..='9')) => Literal::Number(self.parse_number()),
+      _ => panic!(),
     }
+  }
+
+  fn parse_quoted(&mut self) -> Quoted<'a> {
+    let n = self.next(); // consume '|'
+    debug_assert!(matches!(n, Some((_, '|'))));
+    let mut parts = vec![];
+
+    let mut start = self.current_byte_index();
+
+    while let Some((byte_index, ch)) = self.peek() {
+      match ch {
+        '\\' => {
+          if start != byte_index {
+            parts.push(QuotedPart::Text(Text {
+              content: &self.input[start..byte_index],
+            }))
+          }
+          let escape = self.parse_escape();
+          parts.push(QuotedPart::Escape(escape));
+          start = self.current_byte_index();
+        }
+        '|' => {
+          if start != byte_index {
+            parts.push(QuotedPart::Text(Text {
+              content: &self.input[start..byte_index],
+            }))
+          }
+          self.next(); // consume '|'
+          break;
+        }
+        c if is_quoted_char(c) => {
+          self.next();
+        }
+        _ => panic!("Unexpected character: {:?}", ch),
+      }
+    }
+
+    Quoted { parts }
+  }
+
+  fn parse_number(&mut self) -> Number<'a> {
+    let start = self.current_byte_index();
+    let is_negative = self.eat('-').is_some();
+
+    // todo: disallow 01
+    let integral_part = self.parse_digits();
+
+    let fractional_part = if self.eat('.').is_some() {
+      Some(self.parse_digits())
+    } else {
+      None
+    };
+
+    let exponent_part = if let Some((_, 'e' | 'E')) = self.peek() {
+      self.next(); // consume 'e' or 'E'
+      let is_negative = self.eat('-').is_some();
+      if !is_negative {
+        self.eat('+');
+      }
+      Some((is_negative, self.parse_digits()))
+    } else {
+      None
+    };
+
+    Number {
+      raw: &self.input[start..self.current_byte_index()],
+      is_negative,
+      integral_part,
+      fractional_part,
+      exponent_part,
+    }
+  }
+
+  fn parse_digits(&mut self) -> &'a str {
+    // todo: at least 1
+    let start = self.current_byte_index();
+    while let Some((_, '0'..='9')) = self.peek() {
+      self.next();
+    }
+    &self.input[start..self.current_byte_index()]
   }
 }
 
@@ -380,4 +511,8 @@ fn is_name_char(c: char) -> bool {
     || matches!(c,
       '0'..='9' | '-' | '.' | '\u{B7}' | '\u{300}'..='\u{36F}' | '\u{203F}'..='\u{2040}'
     )
+}
+
+fn is_quoted_char(c: char) -> bool {
+  is_content_char(c) || is_space(c) || matches!(c, '.' | '@' | '{' | '}')
 }

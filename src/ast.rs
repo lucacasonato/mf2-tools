@@ -36,9 +36,9 @@ pub struct Escape {
 }
 
 pub enum Expression<'a> {
-  LiteralExpression(()),
+  LiteralExpression(LiteralExpression<'a>),
   VariableExpression(VariableExpression<'a>),
-  AnnotationExpression(()),
+  AnnotationExpression(AnnotationExpression<'a>),
 }
 
 impl fmt::Debug for Expression<'_> {
@@ -58,6 +58,13 @@ impl fmt::Debug for Expression<'_> {
 }
 
 #[derive(Debug)]
+pub struct LiteralExpression<'a> {
+  pub literal: Literal<'a>,
+  pub annotation: Option<Annotation<'a>>,
+  pub attributes: Vec<Attribute<'a>>,
+}
+
+#[derive(Debug)]
 pub struct VariableExpression<'a> {
   pub variable: Variable<'a>,
   pub annotation: Option<Annotation<'a>>,
@@ -67,6 +74,12 @@ pub struct VariableExpression<'a> {
 #[derive(Debug)]
 pub struct Variable<'a> {
   pub name: &'a str,
+}
+
+#[derive(Debug)]
+pub struct AnnotationExpression<'a> {
+  pub annotation: Annotation<'a>,
+  pub attributes: Vec<Attribute<'a>>,
 }
 
 pub enum Annotation<'a> {
@@ -142,7 +155,7 @@ pub struct ReservedAnnotation<'a> {
 pub enum ReservedBodyPart<'a> {
   Text(Text<'a>),
   Escape(Escape),
-  Quoted(&'a ()),
+  Quoted(Quoted<'a>),
 }
 
 impl fmt::Debug for ReservedBodyPart<'_> {
@@ -157,19 +170,23 @@ impl fmt::Debug for ReservedBodyPart<'_> {
 
 pub enum Literal<'a> {
   Quoted(Quoted<'a>),
+  Name(&'a str),
+  Number(Number<'a>),
 }
 
 impl fmt::Debug for Literal<'_> {
   fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
     match self {
       Literal::Quoted(quoted) => Debug::fmt(quoted, f),
+      Literal::Name(name) => Debug::fmt(name, f),
+      Literal::Number(number) => Debug::fmt(number, f),
     }
   }
 }
 
 #[derive(Debug)]
 pub struct Quoted<'a> {
-  parts: Vec<QuotedPart<'a>>,
+  pub parts: Vec<QuotedPart<'a>>,
 }
 
 pub enum QuotedPart<'a> {
@@ -184,4 +201,13 @@ impl fmt::Debug for QuotedPart<'_> {
       QuotedPart::Escape(escape) => Debug::fmt(escape, f),
     }
   }
+}
+
+#[derive(Debug)]
+pub struct Number<'a> {
+  pub raw: &'a str,
+  pub is_negative: bool,
+  pub integral_part: &'a str,
+  pub fractional_part: Option<&'a str>,
+  pub exponent_part: Option<(/* is_negative */ bool, &'a str)>,
 }

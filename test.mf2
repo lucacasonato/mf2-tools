@@ -1,3 +1,8 @@
 Hello, \| { $myVar } hello!
 
-hello { $myVar ^ x = @foo = $myVar2 @bar @baz = $myVar4 }
+hello { $myVar @att = -1.43E-56 }
+{ -4 }
+{ |foobar| }
+{ foobar }
+{ :function }
+{ foobar :foo:function }
