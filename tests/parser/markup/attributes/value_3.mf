@@ -18,7 +18,10 @@ SimpleMessage {
                         name: "attr",
                     },
                     value: Some(
-                        "val",
+                        Text {
+                            start: @12,
+                            content: "val",
+                        },
                     ),
                 },
             ],

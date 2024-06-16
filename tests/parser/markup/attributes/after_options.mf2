@@ -16,7 +16,10 @@ SimpleMessage {
                         namespace: None,
                         name: "opt1",
                     },
-                    value: "val1",
+                    value: Text {
+                        start: @10,
+                        content: "val1",
+                    },
                 },
             ],
             attributes: [

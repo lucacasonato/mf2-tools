@@ -215,7 +215,7 @@ impl<'a> Parser<'a> {
         LiteralOrVariable::Literal(Literal::Quoted(self.parse_quoted()))
       }
       Some((_, c)) if is_name_start(c) => {
-        LiteralOrVariable::Literal(Literal::Name(self.parse_name()))
+        LiteralOrVariable::Literal(Literal::Name(self.parse_literal_name()))
       }
       Some((_, '-' | '0'..='9')) => {
         LiteralOrVariable::Literal(Literal::Number(self.parse_number()))
@@ -256,9 +256,7 @@ impl<'a> Parser<'a> {
     }
   }
 
-  fn parse_name(&mut self) -> &'a str {
-    let start = self.current_location();
-
+  fn skip_name(&mut self) {
     let Some((_, c)) = self.next() else { panic!() };
     if !is_name_start(c) {
       panic!()
@@ -271,9 +269,22 @@ impl<'a> Parser<'a> {
         break;
       }
     }
+  }
 
-    let location = self.current_location();
-    &self.text.slice(start..location)
+  fn parse_name(&mut self) -> &'a str {
+    let start = self.current_location();
+    self.skip_name();
+    let end = self.current_location();
+
+    &self.text.slice(start..end)
+  }
+
+  fn parse_literal_name(&mut self) -> Text<'a> {
+    let start = self.current_location();
+    self.skip_name();
+    let end = self.current_location();
+
+    self.slice_text(start..end)
   }
 
   fn next(&mut self) -> Option<(Location, char)> {
@@ -428,8 +439,10 @@ impl<'a> Parser<'a> {
   fn parse_literal(&mut self) -> Literal<'a> {
     match self.peek() {
       Some((_, '|')) => Literal::Quoted(self.parse_quoted()),
-      Some((_, c)) if is_name_start(c) => Literal::Name(self.parse_name()),
       Some((_, '-' | '0'..='9')) => Literal::Number(self.parse_number()),
+      Some((_, c)) if is_name_start(c) => {
+        Literal::Name(self.parse_literal_name())
+      }
       _ => panic!(),
     }
   }

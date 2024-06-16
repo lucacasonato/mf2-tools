@@ -26,7 +26,10 @@ SimpleMessage {
                         name: "attr2",
                     },
                     value: Some(
-                        "val",
+                        Text {
+                            start: @19,
+                            content: "val",
+                        },
                     ),
                 },
                 Attribute {

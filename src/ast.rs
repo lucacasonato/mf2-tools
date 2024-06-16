@@ -208,7 +208,7 @@ impl fmt::Debug for ReservedBodyPart<'_> {
 
 pub enum Literal<'a> {
   Quoted(Quoted<'a>),
-  Name(&'a str),
+  Name(Text<'a>),
   Number(Number<'a>),
 }
 

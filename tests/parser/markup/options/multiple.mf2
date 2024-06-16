@@ -16,7 +16,10 @@ SimpleMessage {
                         namespace: None,
                         name: "abc",
                     },
-                    value: "val1",
+                    value: Text {
+                        start: @12,
+                        content: "val1",
+                    },
                 },
                 FnOrMarkupOption {
                     key: Identifier {
@@ -24,7 +27,10 @@ SimpleMessage {
                         namespace: None,
                         name: "def",
                     },
-                    value: "val2",
+                    value: Text {
+                        start: @21,
+                        content: "val2",
+                    },
                 },
             ],
             attributes: [],
