@@ -1,0 +1,15 @@
+{ #standalone/}
+=== ast ===
+SimpleMessage {
+    parts: [
+        Markup {
+            kind: Standalone,
+            id: Identifier {
+                namespace: None,
+                name: "standalone",
+            },
+            options: [],
+            attributes: [],
+        },
+    ],
+}

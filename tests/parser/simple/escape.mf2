@@ -1,0 +1,46 @@
+\{\|\}
+Hello,\|World!
+Hello,\| World!
+Hello, \|World!
+a\|\|
+=== ast ===
+SimpleMessage {
+    parts: [
+        Escape {
+            escaped_char: '{',
+        },
+        Escape {
+            escaped_char: '|',
+        },
+        Escape {
+            escaped_char: '}',
+        },
+        Text {
+            content: "\nHello,",
+        },
+        Escape {
+            escaped_char: '|',
+        },
+        Text {
+            content: "World!\nHello,",
+        },
+        Escape {
+            escaped_char: '|',
+        },
+        Text {
+            content: " World!\nHello, ",
+        },
+        Escape {
+            escaped_char: '|',
+        },
+        Text {
+            content: "World!\na",
+        },
+        Escape {
+            escaped_char: '|',
+        },
+        Escape {
+            escaped_char: '|',
+        },
+    ],
+}

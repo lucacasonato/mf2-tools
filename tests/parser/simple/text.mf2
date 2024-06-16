@@ -1,0 +1,9 @@
+Hello, World!
+=== ast ===
+SimpleMessage {
+    parts: [
+        Text {
+            content: "Hello, World!",
+        },
+    ],
+}

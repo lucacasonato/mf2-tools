@@ -1,0 +1,30 @@
+{#foo abc = val1 def=val2 }
+=== ast ===
+SimpleMessage {
+    parts: [
+        Markup {
+            kind: Open,
+            id: Identifier {
+                namespace: None,
+                name: "foo",
+            },
+            options: [
+                FnOrMarkupOption {
+                    key: Identifier {
+                        namespace: None,
+                        name: "abc",
+                    },
+                    value: "val1",
+                },
+                FnOrMarkupOption {
+                    key: Identifier {
+                        namespace: None,
+                        name: "def",
+                    },
+                    value: "val2",
+                },
+            ],
+            attributes: [],
+        },
+    ],
+}

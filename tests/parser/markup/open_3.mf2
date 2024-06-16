@@ -1,0 +1,15 @@
+{#open }
+=== ast ===
+SimpleMessage {
+    parts: [
+        Markup {
+            kind: Open,
+            id: Identifier {
+                namespace: None,
+                name: "open",
+            },
+            options: [],
+            attributes: [],
+        },
+    ],
+}

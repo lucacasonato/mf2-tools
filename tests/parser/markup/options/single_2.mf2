@@ -1,0 +1,29 @@
+{#foo hello =1}
+=== ast ===
+SimpleMessage {
+    parts: [
+        Markup {
+            kind: Open,
+            id: Identifier {
+                namespace: None,
+                name: "foo",
+            },
+            options: [
+                FnOrMarkupOption {
+                    key: Identifier {
+                        namespace: None,
+                        name: "hello",
+                    },
+                    value: Number {
+                        raw: "1",
+                        is_negative: false,
+                        integral_part: "1",
+                        fractional_part: None,
+                        exponent_part: None,
+                    },
+                },
+            ],
+            attributes: [],
+        },
+    ],
+}

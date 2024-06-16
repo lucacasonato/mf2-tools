@@ -1,0 +1,15 @@
+{ /close}
+=== ast ===
+SimpleMessage {
+    parts: [
+        Markup {
+            kind: Close,
+            id: Identifier {
+                namespace: None,
+                name: "close",
+            },
+            options: [],
+            attributes: [],
+        },
+    ],
+}

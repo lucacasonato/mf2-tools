@@ -1,0 +1,17 @@
+{#foo:bar}
+=== ast ===
+SimpleMessage {
+    parts: [
+        Markup {
+            kind: Open,
+            id: Identifier {
+                namespace: Some(
+                    "foo",
+                ),
+                name: "bar",
+            },
+            options: [],
+            attributes: [],
+        },
+    ],
+}
