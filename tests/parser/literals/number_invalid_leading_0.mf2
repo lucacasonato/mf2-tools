@@ -1,0 +1,20 @@
+a{ 01 }
+=== ast ===
+SimpleMessage {
+    parts: [
+        Text {
+            content: "a",
+        },
+        LiteralExpression {
+            literal: Number {
+                raw: "01",
+                is_negative: false,
+                integral_part: "01",
+                fractional_part: None,
+                exponent_part: None,
+            },
+            annotation: None,
+            attributes: [],
+        },
+    ],
+}

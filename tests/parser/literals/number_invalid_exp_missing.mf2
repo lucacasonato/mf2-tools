@@ -1,0 +1,25 @@
+a{ 1e }
+=== ast ===
+SimpleMessage {
+    parts: [
+        Text {
+            content: "a",
+        },
+        LiteralExpression {
+            literal: Number {
+                raw: "1e",
+                is_negative: false,
+                integral_part: "1",
+                fractional_part: None,
+                exponent_part: Some(
+                    (
+                        false,
+                        "",
+                    ),
+                ),
+            },
+            annotation: None,
+            attributes: [],
+        },
+    ],
+}

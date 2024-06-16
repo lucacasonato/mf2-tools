@@ -1,0 +1,27 @@
+a{ 1.34e+56 }
+=== ast ===
+SimpleMessage {
+    parts: [
+        Text {
+            content: "a",
+        },
+        LiteralExpression {
+            literal: Number {
+                raw: "1.34e+56",
+                is_negative: false,
+                integral_part: "1",
+                fractional_part: Some(
+                    "34",
+                ),
+                exponent_part: Some(
+                    (
+                        false,
+                        "56",
+                    ),
+                ),
+            },
+            annotation: None,
+            attributes: [],
+        },
+    ],
+}

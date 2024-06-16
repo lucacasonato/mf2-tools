@@ -1,0 +1,26 @@
+a{|abc\|def|}
+=== ast ===
+SimpleMessage {
+    parts: [
+        Text {
+            content: "a",
+        },
+        LiteralExpression {
+            literal: Quoted {
+                parts: [
+                    Text {
+                        content: "abc",
+                    },
+                    Escape {
+                        escaped_char: '|',
+                    },
+                    Text {
+                        content: "def",
+                    },
+                ],
+            },
+            annotation: None,
+            attributes: [],
+        },
+    ],
+}

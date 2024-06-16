@@ -1,0 +1,41 @@
+a{ 1e+3 }{ 1e-3 }
+=== ast ===
+SimpleMessage {
+    parts: [
+        Text {
+            content: "a",
+        },
+        LiteralExpression {
+            literal: Number {
+                raw: "1e+3",
+                is_negative: false,
+                integral_part: "1",
+                fractional_part: None,
+                exponent_part: Some(
+                    (
+                        false,
+                        "3",
+                    ),
+                ),
+            },
+            annotation: None,
+            attributes: [],
+        },
+        LiteralExpression {
+            literal: Number {
+                raw: "1e-3",
+                is_negative: false,
+                integral_part: "1",
+                fractional_part: None,
+                exponent_part: Some(
+                    (
+                        true,
+                        "3",
+                    ),
+                ),
+            },
+            annotation: None,
+            attributes: [],
+        },
+    ],
+}

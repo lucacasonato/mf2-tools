@@ -1,0 +1,14 @@
+a{abc}
+=== ast ===
+SimpleMessage {
+    parts: [
+        Text {
+            content: "a",
+        },
+        LiteralExpression {
+            literal: "abc",
+            annotation: None,
+            attributes: [],
+        },
+    ],
+}
