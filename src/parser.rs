@@ -222,12 +222,14 @@ impl<'a> Parser<'a> {
   }
 
   fn parse_variable(&mut self) -> Variable<'a> {
+    let start = self.current_location();
+
     let n = self.next();
     debug_assert_eq!(n.unwrap().1, '$');
 
     let name = self.parse_name();
 
-    Variable { name }
+    Variable { start, name }
   }
 
   fn parse_identifier(&mut self) -> Identifier<'a> {

@@ -84,7 +84,14 @@ pub struct VariableExpression<'a> {
 
 #[derive(Debug)]
 pub struct Variable<'a> {
+  pub start: Location,
   pub name: &'a str,
+}
+
+impl Spanned for Variable<'_> {
+  fn span(&self) -> Span {
+    Span::new(self.start..self.start + '$' + self.name)
+  }
 }
 
 #[derive(Debug)]
