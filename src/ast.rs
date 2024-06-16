@@ -43,7 +43,14 @@ impl Spanned for Text<'_> {
 
 #[derive(Debug)]
 pub struct Escape {
+  pub start: Location,
   pub escaped_char: char,
+}
+
+impl Spanned for Escape {
+  fn span(&self) -> Span {
+    Span::new(self.start..self.start + '\\' + self.escaped_char)
+  }
 }
 
 pub enum Expression<'a> {
@@ -217,7 +224,17 @@ impl fmt::Debug for Literal<'_> {
 
 #[derive(Debug)]
 pub struct Quoted<'a> {
+  pub open: Location,
+  pub close: Location,
   pub parts: Vec<QuotedPart<'a>>,
+}
+
+impl Spanned for Quoted<'_> {
+  fn span(&self) -> Span {
+    let start = self.open;
+    let end = self.close + '|';
+    Span::new(start..end)
+  }
 }
 
 pub enum QuotedPart<'a> {

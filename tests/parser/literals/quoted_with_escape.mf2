@@ -8,12 +8,15 @@ SimpleMessage {
         },
         LiteralExpression {
             literal: Quoted {
+                open: @2,
+                close: @11,
                 parts: [
                     Text {
                         start: @3,
                         content: "abc",
                     },
                     Escape {
+                        start: @6,
                         escaped_char: '|',
                     },
                     Text {

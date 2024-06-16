@@ -17,6 +17,8 @@ SimpleMessage {
                         name: "opt",
                     },
                     value: Quoted {
+                        open: @9,
+                        close: @16,
                         parts: [
                             Text {
                                 start: @10,

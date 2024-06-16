@@ -105,14 +105,17 @@ impl<'a> Parser<'a> {
   }
 
   fn parse_escape(&mut self) -> Escape {
-    let n = self.next();
-    debug_assert!(matches!(n, Some((_, '\\'))));
+    let (loc, c) = self.next().unwrap();
+    debug_assert_eq!(c, '\\');
 
     let Some((_, char)) = self.next() else {
       panic!("Unexpected end of input")
     };
 
-    Escape { escaped_char: char }
+    Escape {
+      start: loc,
+      escaped_char: char,
+    }
   }
 
   fn parse_placeholder(&mut self) -> MessagePart<'a> {
@@ -432,8 +435,8 @@ impl<'a> Parser<'a> {
   }
 
   fn parse_quoted(&mut self) -> Quoted<'a> {
-    let n = self.next(); // consume '|'
-    debug_assert!(matches!(n, Some((_, '|'))));
+    let (open, c) = self.next().unwrap(); // consume '|'
+    debug_assert_eq!(c, '|');
     let mut parts = vec![];
 
     let mut start = self.current_location();
@@ -452,7 +455,6 @@ impl<'a> Parser<'a> {
           if start != loc {
             parts.push(QuotedPart::Text(self.slice_text(start..loc)));
           }
-          self.next(); // consume '|'
           break;
         }
         c if is_quoted_char(c) => {
@@ -462,7 +464,12 @@ impl<'a> Parser<'a> {
       }
     }
 
-    Quoted { parts }
+    let Some((close, c)) = self.next() else {
+      panic!()
+    };
+    debug_assert_eq!(c, '|');
+
+    Quoted { open, close, parts }
   }
 
   fn parse_number(&mut self) -> Number<'a> {

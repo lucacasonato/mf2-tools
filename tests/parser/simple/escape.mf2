@@ -7,12 +7,15 @@ a\|\|
 SimpleMessage {
     parts: [
         Escape {
+            start: @0,
             escaped_char: '{',
         },
         Escape {
+            start: @2,
             escaped_char: '|',
         },
         Escape {
+            start: @4,
             escaped_char: '}',
         },
         Text {
@@ -20,6 +23,7 @@ SimpleMessage {
             content: "\nHello,",
         },
         Escape {
+            start: @13,
             escaped_char: '|',
         },
         Text {
@@ -27,6 +31,7 @@ SimpleMessage {
             content: "World!\nHello,",
         },
         Escape {
+            start: @28,
             escaped_char: '|',
         },
         Text {
@@ -34,6 +39,7 @@ SimpleMessage {
             content: " World!\nHello, ",
         },
         Escape {
+            start: @45,
             escaped_char: '|',
         },
         Text {
@@ -41,9 +47,11 @@ SimpleMessage {
             content: "World!\na",
         },
         Escape {
+            start: @55,
             escaped_char: '|',
         },
         Escape {
+            start: @57,
             escaped_char: '|',
         },
     ],
