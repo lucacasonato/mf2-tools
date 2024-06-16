@@ -2,6 +2,10 @@ use std::fmt;
 use std::fmt::Debug;
 use std::fmt::Formatter;
 
+use crate::util::Location;
+use crate::util::Span;
+use crate::util::Spanned;
+
 #[derive(Debug)]
 pub struct SimpleMessage<'a> {
   pub parts: Vec<MessagePart<'a>>,
@@ -27,7 +31,14 @@ impl fmt::Debug for MessagePart<'_> {
 
 #[derive(Debug)]
 pub struct Text<'a> {
+  pub start: Location,
   pub content: &'a str,
+}
+
+impl Spanned for Text<'_> {
+  fn span(&self) -> Span {
+    Span::new(self.start..self.start + self.content)
+  }
 }
 
 #[derive(Debug)]

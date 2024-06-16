@@ -3,18 +3,21 @@ a{|abc\|def|}
 SimpleMessage {
     parts: [
         Text {
+            start: @0,
             content: "a",
         },
         LiteralExpression {
             literal: Quoted {
                 parts: [
                     Text {
+                        start: @3,
                         content: "abc",
                     },
                     Escape {
                         escaped_char: '|',
                     },
                     Text {
+                        start: @8,
                         content: "def",
                     },
                 ],

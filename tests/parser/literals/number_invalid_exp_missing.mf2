@@ -3,6 +3,7 @@ a{ 1e }
 SimpleMessage {
     parts: [
         Text {
+            start: @0,
             content: "a",
         },
         LiteralExpression {

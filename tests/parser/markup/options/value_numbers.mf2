@@ -29,6 +29,7 @@ SimpleMessage {
             attributes: [],
         },
         Text {
+            start: @16,
             content: "\n",
         },
         Markup {

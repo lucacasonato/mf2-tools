@@ -3,6 +3,7 @@ Hello, World!
 SimpleMessage {
     parts: [
         Text {
+            start: @0,
             content: "Hello, World!",
         },
     ],

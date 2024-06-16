@@ -16,24 +16,28 @@ SimpleMessage {
             escaped_char: '}',
         },
         Text {
+            start: @6,
             content: "\nHello,",
         },
         Escape {
             escaped_char: '|',
         },
         Text {
+            start: @15,
             content: "World!\nHello,",
         },
         Escape {
             escaped_char: '|',
         },
         Text {
+            start: @30,
             content: " World!\nHello, ",
         },
         Escape {
             escaped_char: '|',
         },
         Text {
+            start: @47,
             content: "World!\na",
         },
         Escape {

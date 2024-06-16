@@ -1,3 +1,5 @@
+use std::ops::Range;
+
 use crate::ast::Annotation;
 use crate::ast::AnnotationExpression;
 use crate::ast::Attribute;
@@ -22,68 +24,67 @@ use crate::ast::SimpleMessage;
 use crate::ast::Text;
 use crate::ast::Variable;
 use crate::ast::VariableExpression;
-use crate::util::ResettablePeekableCharIndices;
+use crate::util::Location;
+use crate::util::SourceTextIterator;
 
 pub struct Parser<'a> {
-  input: &'a str,
-  chars: ResettablePeekableCharIndices<'a>,
+  text: SourceTextIterator<'a>,
 }
 
 impl<'a> Parser<'a> {
   pub fn new(input: &'a str) -> Self {
     Self {
-      input,
-      chars: ResettablePeekableCharIndices::new(input),
+      text: SourceTextIterator::new(input),
     }
   }
 
   pub fn parse(mut self) -> SimpleMessage<'a> {
     while let Some((_, c)) = self.peek() {
-      if is_space(c) {
-        self.next();
-        continue;
-      } else if is_simple_start(c) {
+      if is_simple_start(c) {
         return self.parse_simple_message();
       } else {
         panic!("Unexpected character: {:?}", c);
       }
     }
+
+    let start = self.text.start_location();
+    let end = self.text.end_location();
+
     SimpleMessage {
-      parts: vec![MessagePart::Text(Text {
-        content: self.input,
-      })],
+      parts: vec![MessagePart::Text(self.slice_text(start..end))],
     }
   }
 
-  /// The start index of the char that would be returned from `next()`.
-  fn current_byte_index(&mut self) -> usize {
-    self.chars.current_byte_index()
+  fn current_location(&self) -> Location {
+    self.text.current_location()
+  }
+
+  fn slice_text(&self, range: Range<Location>) -> Text<'a> {
+    let start = range.start;
+    let content = self.text.slice(range);
+    Text { start, content }
   }
 
   fn parse_simple_message(&mut self) -> SimpleMessage<'a> {
     let mut parts = vec![];
 
-    let mut start = 0;
-    while let Some((byte_index, c)) = self.peek() {
+    let mut start = self.text.start_location();
+    while let Some((loc, c)) = self.peek() {
       match c {
         '\\' => {
-          if byte_index != start {
-            parts.push(MessagePart::Text(Text {
-              content: &self.input[start..byte_index],
-            }))
+          if loc != start {
+            parts.push(MessagePart::Text(self.slice_text(start..loc)));
           }
           let escape = self.parse_escape();
           parts.push(MessagePart::Escape(escape));
-          start = self.current_byte_index();
+          start = self.current_location();
         }
         '{' => {
-          if byte_index != start {
-            parts.push(MessagePart::Text(Text {
-              content: &self.input[start..byte_index],
-            }))
+          if loc != start {
+            parts.push(MessagePart::Text(self.slice_text(start..loc)));
           }
           parts.push(self.parse_placeholder());
-          start = self.current_byte_index();
+          start = self.current_location();
         }
         '.' | '@' | '|' => {
           self.next();
@@ -91,15 +92,13 @@ impl<'a> Parser<'a> {
         c if is_content_char(c) || is_space(c) => {
           self.next();
         }
-        _ => panic!("Unexpected character: {:?} (at {byte_index})", c),
+        _ => panic!("Unexpected character: {:?} (at {loc:?})", c),
       }
     }
 
-    let end = self.current_byte_index();
+    let end = self.current_location();
     if end != start {
-      parts.push(MessagePart::Text(Text {
-        content: &self.input[start..end],
-      }))
+      parts.push(MessagePart::Text(self.slice_text(start..end)));
     }
 
     SimpleMessage { parts }
@@ -250,7 +249,7 @@ impl<'a> Parser<'a> {
   }
 
   fn parse_name(&mut self) -> &'a str {
-    let start = self.current_byte_index();
+    let start = self.current_location();
 
     let Some((_, c)) = self.next() else { panic!() };
     if !is_name_start(c) {
@@ -265,22 +264,23 @@ impl<'a> Parser<'a> {
       }
     }
 
-    &self.input[start..self.current_byte_index()]
+    let location = self.current_location();
+    &self.text.slice(start..location)
   }
 
-  fn next(&mut self) -> Option<(usize, char)> {
-    self.chars.next()
+  fn next(&mut self) -> Option<(Location, char)> {
+    self.text.next()
   }
 
-  fn peek(&mut self) -> Option<(usize, char)> {
-    self.chars.peek()
+  fn peek(&mut self) -> Option<(Location, char)> {
+    self.text.peek()
   }
 
-  fn eat(&mut self, c: char) -> Option<usize> {
-    if let Some((index, ch)) = self.peek() {
+  fn eat(&mut self, c: char) -> Option<Location> {
+    if let Some((loc, ch)) = self.text.peek() {
       if ch == c {
-        self.next();
-        return Some(index);
+        self.text.next();
+        return Some(loc);
       }
     }
     None
@@ -310,7 +310,7 @@ impl<'a> Parser<'a> {
         let mut options = vec![];
 
         loop {
-          let before_space = self.current_byte_index();
+          let before_space = self.current_location();
           let has_space = self.skip_spaces();
           if !has_space {
             break;
@@ -319,7 +319,7 @@ impl<'a> Parser<'a> {
           let has_name_start =
             self.peek().map(|(_, c)| is_name_start(c)).unwrap_or(false);
           if !has_name_start {
-            self.chars.reset_to(before_space);
+            self.text.reset_to(before_space);
             break;
           }
 
@@ -369,10 +369,10 @@ impl<'a> Parser<'a> {
   fn parse_reserved_body(&mut self) -> Vec<ReservedBodyPart<'a>> {
     let mut parts = vec![];
 
-    let mut start = self.current_byte_index();
+    let mut start = self.current_location();
     let mut last_space_start = None;
 
-    while let Some((byte_index, c)) = self.peek() {
+    while let Some((loc, c)) = self.peek() {
       match c {
         c if is_reserved_char(c) => {
           self.next();
@@ -381,28 +381,24 @@ impl<'a> Parser<'a> {
         c if is_space(c) => {
           self.next();
           if last_space_start.is_none() {
-            last_space_start = Some(byte_index);
+            last_space_start = Some(loc);
           }
         }
         '\\' => {
-          if byte_index != start {
-            parts.push(ReservedBodyPart::Text(Text {
-              content: &self.input[start..byte_index],
-            }))
+          if loc != start {
+            parts.push(ReservedBodyPart::Text(self.slice_text(start..loc)));
           }
           let escape = self.parse_escape();
           parts.push(ReservedBodyPart::Escape(escape));
-          start = self.current_byte_index();
+          start = self.current_location();
           last_space_start = None;
         }
         '|' => {
-          if byte_index != start {
-            parts.push(ReservedBodyPart::Text(Text {
-              content: &self.input[start..byte_index],
-            }))
+          if loc != start {
+            parts.push(ReservedBodyPart::Text(self.slice_text(start..loc)));
           }
           parts.push(ReservedBodyPart::Quoted(self.parse_quoted()));
-          start = self.current_byte_index();
+          start = self.current_location();
           last_space_start = None;
         }
         _ => break,
@@ -410,14 +406,12 @@ impl<'a> Parser<'a> {
     }
 
     if let Some(start) = last_space_start {
-      self.chars.reset_to(start);
+      self.text.reset_to(start);
     }
 
-    let byte_index = self.current_byte_index();
-    if byte_index != start {
-      parts.push(ReservedBodyPart::Text(Text {
-        content: &self.input[start..byte_index],
-      }))
+    let end = self.current_location();
+    if end != start {
+      parts.push(ReservedBodyPart::Text(self.slice_text(start..end)));
     }
 
     parts
@@ -437,25 +431,21 @@ impl<'a> Parser<'a> {
     debug_assert!(matches!(n, Some((_, '|'))));
     let mut parts = vec![];
 
-    let mut start = self.current_byte_index();
+    let mut start = self.current_location();
 
-    while let Some((byte_index, ch)) = self.peek() {
+    while let Some((loc, ch)) = self.peek() {
       match ch {
         '\\' => {
-          if start != byte_index {
-            parts.push(QuotedPart::Text(Text {
-              content: &self.input[start..byte_index],
-            }))
+          if start != loc {
+            parts.push(QuotedPart::Text(self.slice_text(start..loc)));
           }
           let escape = self.parse_escape();
           parts.push(QuotedPart::Escape(escape));
-          start = self.current_byte_index();
+          start = self.current_location();
         }
         '|' => {
-          if start != byte_index {
-            parts.push(QuotedPart::Text(Text {
-              content: &self.input[start..byte_index],
-            }))
+          if start != loc {
+            parts.push(QuotedPart::Text(self.slice_text(start..loc)));
           }
           self.next(); // consume '|'
           break;
@@ -471,7 +461,7 @@ impl<'a> Parser<'a> {
   }
 
   fn parse_number(&mut self) -> Number<'a> {
-    let start = self.current_byte_index();
+    let start = self.current_location();
     let is_negative = self.eat('-').is_some();
 
     // todo: disallow 01
@@ -494,8 +484,10 @@ impl<'a> Parser<'a> {
       None
     };
 
+    let end = self.current_location();
+
     Number {
-      raw: &self.input[start..self.current_byte_index()],
+      raw: self.text.slice(start..end),
       is_negative,
       integral_part,
       fractional_part,
@@ -505,11 +497,12 @@ impl<'a> Parser<'a> {
 
   fn parse_digits(&mut self) -> &'a str {
     // todo: at least 1
-    let start = self.current_byte_index();
+    let start = self.current_location();
     while let Some((_, '0'..='9')) = self.peek() {
       self.next();
     }
-    &self.input[start..self.current_byte_index()]
+    let end = self.current_location();
+    self.text.slice(start..end)
   }
 
   fn parse_markup(&mut self, kind: MarkupStartKind) -> Markup<'a> {
@@ -584,7 +577,7 @@ fn is_reserved_char(c: char) -> bool {
 }
 
 fn is_simple_start(c: char) -> bool {
-  is_content_char(c) || c == '@' || c == '|' // simple-start-char
+  is_content_char(c) || is_space(c) || c == '@' || c == '|' // simple-start-char
     || c == '\\' // escaped-char
     || c == '{' // placeholder
 }

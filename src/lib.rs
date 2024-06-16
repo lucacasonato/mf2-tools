@@ -6,6 +6,8 @@ mod parser;
 mod types;
 mod util;
 
+pub use util::{Location, Span, Spanned};
+
 pub fn parse(message: &str) -> SimpleMessage {
   Parser::new(message).parse()
 }

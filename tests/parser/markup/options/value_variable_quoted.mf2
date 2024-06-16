@@ -17,6 +17,7 @@ SimpleMessage {
                     value: Quoted {
                         parts: [
                             Text {
+                                start: @10,
                                 content: "quoted",
                             },
                         ],

@@ -3,12 +3,14 @@ a {|abc def|}
 SimpleMessage {
     parts: [
         Text {
+            start: @0,
             content: "a ",
         },
         LiteralExpression {
             literal: Quoted {
                 parts: [
                     Text {
+                        start: @4,
                         content: "abc def",
                     },
                 ],
