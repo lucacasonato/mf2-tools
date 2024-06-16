@@ -4,6 +4,7 @@ use crate::ast::Attribute;
 use crate::ast::Escape;
 use crate::ast::Expression;
 use crate::ast::Function;
+use crate::ast::FunctionOption;
 use crate::ast::Identifier;
 use crate::ast::Literal;
 use crate::ast::LiteralExpression;
@@ -296,10 +297,34 @@ impl<'a> Parser<'a> {
 
         let id = self.parse_identifier();
 
-        Some(Annotation::Function(Function {
-          id,
-          options: vec![],
-        }))
+        let mut options = vec![];
+
+        loop {
+          let before_space = self.current_byte_index();
+          let has_space = self.skip_spaces();
+          if !has_space {
+            break;
+          }
+
+          let has_name_start =
+            self.peek().map(|(_, c)| is_name_start(c)).unwrap_or(false);
+          if !has_name_start {
+            self.chars.reset_to(before_space);
+            break;
+          }
+
+          let key = self.parse_identifier();
+          self.skip_spaces();
+          if self.eat('=').is_none() {
+            panic!();
+          }
+          self.skip_spaces();
+          let value = self.parse_literal_or_variable();
+
+          options.push(FunctionOption { key, value });
+        }
+
+        Some(Annotation::Function(Function { id, options }))
       }
       Some((_, start @ ('^' | '&'))) => {
         // private-use-annotation

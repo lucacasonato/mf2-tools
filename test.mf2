@@ -5,4 +5,4 @@ hello { $myVar @att = -1.43E-56 }
 { |foobar| }
 { foobar }
 { :function }
-{ foobar :foo:function }
+{ foobar :foo:function hello=|world| }
