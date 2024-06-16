@@ -3,12 +3,14 @@ use crate::ast::AnnotationExpression;
 use crate::ast::Attribute;
 use crate::ast::Escape;
 use crate::ast::Expression;
+use crate::ast::FnOrMarkupOption;
 use crate::ast::Function;
-use crate::ast::FunctionOption;
 use crate::ast::Identifier;
 use crate::ast::Literal;
 use crate::ast::LiteralExpression;
 use crate::ast::LiteralOrVariable;
+use crate::ast::Markup;
+use crate::ast::MarkupKind;
 use crate::ast::MessagePart;
 use crate::ast::Number;
 use crate::ast::PrivateUseAnnotation;
@@ -127,6 +129,14 @@ impl<'a> Parser<'a> {
       }
       Some((_, c)) if is_name_start(c) => {
         (None, Some(self.parse_literal()), self.skip_spaces())
+      }
+      Some((_, '#')) => {
+        return MessagePart::Markup(
+          self.parse_markup(MarkupStartKind::OpenOrStandalone),
+        )
+      }
+      Some((_, '/')) => {
+        return MessagePart::Markup(self.parse_markup(MarkupStartKind::Close))
       }
       _ => (None, None, true),
     };
@@ -313,15 +323,7 @@ impl<'a> Parser<'a> {
             break;
           }
 
-          let key = self.parse_identifier();
-          self.skip_spaces();
-          if self.eat('=').is_none() {
-            panic!();
-          }
-          self.skip_spaces();
-          let value = self.parse_literal_or_variable();
-
-          options.push(FunctionOption { key, value });
+          options.push(self.parse_option());
         }
 
         Some(Annotation::Function(Function { id, options }))
@@ -350,6 +352,18 @@ impl<'a> Parser<'a> {
       }
       _ => None,
     }
+  }
+
+  fn parse_option(&mut self) -> FnOrMarkupOption<'a> {
+    let key = self.parse_identifier();
+    self.skip_spaces();
+    if self.eat('=').is_none() {
+      panic!();
+    }
+    self.skip_spaces();
+    let value = self.parse_literal_or_variable();
+
+    FnOrMarkupOption { key, value }
   }
 
   fn parse_reserved_body(&mut self) -> Vec<ReservedBodyPart<'a>> {
@@ -497,6 +511,62 @@ impl<'a> Parser<'a> {
     }
     &self.input[start..self.current_byte_index()]
   }
+
+  fn parse_markup(&mut self, kind: MarkupStartKind) -> Markup<'a> {
+    let c = self.next();
+    debug_assert!(matches!(c, Some((_, '#' | '/'))));
+
+    let id = self.parse_identifier();
+
+    let mut markup_kind = match kind {
+      MarkupStartKind::OpenOrStandalone => MarkupKind::Open,
+      MarkupStartKind::Close => MarkupKind::Close,
+    };
+    let mut options = vec![];
+    let mut attributes = vec![];
+
+    let mut had_space = self.skip_spaces();
+    while had_space {
+      match self.peek() {
+        Some((_, '@')) => {
+          self.next(); // consume '@'
+
+          let key = self.parse_identifier();
+          let mut value = None;
+          had_space = self.skip_spaces();
+          if self.eat('=').is_some() {
+            self.skip_spaces();
+            value = Some(self.parse_literal_or_variable());
+            had_space = self.skip_spaces();
+          }
+
+          attributes.push(Attribute { key, value });
+        }
+        Some((_, '/')) if matches!(markup_kind, MarkupKind::Open) => {
+          self.next(); // consume '/'
+          markup_kind = MarkupKind::Standalone;
+          let Some(_) = self.eat('}') else { panic!() };
+          break;
+        }
+        Some((_, '}')) => {
+          self.next(); // consume '}'
+          break;
+        }
+        Some((_, c)) if is_name_start(c) && attributes.is_empty() => {
+          options.push(self.parse_option());
+          had_space = self.skip_spaces();
+        }
+        _ => panic!(),
+      }
+    }
+
+    Markup {
+      kind: markup_kind,
+      id,
+      options,
+      attributes,
+    }
+  }
 }
 
 fn is_content_char(c: char) -> bool {
@@ -540,4 +610,9 @@ fn is_name_char(c: char) -> bool {
 
 fn is_quoted_char(c: char) -> bool {
   is_content_char(c) || is_space(c) || matches!(c, '.' | '@' | '{' | '}')
+}
+
+enum MarkupStartKind {
+  OpenOrStandalone,
+  Close,
 }

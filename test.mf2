@@ -1,8 +1,6 @@
 Hello, \| { $myVar } hello!
 
 hello { $myVar @att = -1.43E-56 }
-{ -4 }
-{ |foobar| }
-{ foobar }
-{ :function }
-{ foobar :foo:function hello=|world| }
+{#foo }
+{ #bar opt = 1 @a = |str| /}
+{/baz @attr = 2 }

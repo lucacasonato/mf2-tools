@@ -11,7 +11,7 @@ pub enum MessagePart<'a> {
   Text(Text<'a>),
   Escape(Escape),
   Expression(Expression<'a>),
-  Markup(()),
+  Markup(Markup<'a>),
 }
 
 impl fmt::Debug for MessagePart<'_> {
@@ -111,11 +111,11 @@ pub struct Identifier<'a> {
 #[derive(Debug)]
 pub struct Function<'a> {
   pub id: Identifier<'a>,
-  pub options: Vec<FunctionOption<'a>>,
+  pub options: Vec<FnOrMarkupOption<'a>>,
 }
 
 #[derive(Debug)]
-pub struct FunctionOption<'a> {
+pub struct FnOrMarkupOption<'a> {
   pub key: Identifier<'a>,
   pub value: LiteralOrVariable<'a>,
 }
@@ -210,4 +210,19 @@ pub struct Number<'a> {
   pub integral_part: &'a str,
   pub fractional_part: Option<&'a str>,
   pub exponent_part: Option<(/* is_negative */ bool, &'a str)>,
+}
+
+#[derive(Debug)]
+pub struct Markup<'a> {
+  pub kind: MarkupKind,
+  pub id: Identifier<'a>,
+  pub options: Vec<FnOrMarkupOption<'a>>,
+  pub attributes: Vec<Attribute<'a>>,
+}
+
+#[derive(Debug)]
+pub enum MarkupKind {
+  Open,
+  Standalone,
+  Close,
 }
