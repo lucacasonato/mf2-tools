@@ -1,0 +1,23 @@
+{/el opt=val }
+=== ast ===
+SimpleMessage {
+    parts: [
+        Markup {
+            kind: Close,
+            id: Identifier {
+                namespace: None,
+                name: "el",
+            },
+            options: [
+                FnOrMarkupOption {
+                    key: Identifier {
+                        namespace: None,
+                        name: "opt",
+                    },
+                    value: "val",
+                },
+            ],
+            attributes: [],
+        },
+    ],
+}

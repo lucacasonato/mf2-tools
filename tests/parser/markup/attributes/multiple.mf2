@@ -1,0 +1,39 @@
+{#el @attr1 @attr2=val @attr3 }
+=== ast ===
+SimpleMessage {
+    parts: [
+        Markup {
+            kind: Open,
+            id: Identifier {
+                namespace: None,
+                name: "el",
+            },
+            options: [],
+            attributes: [
+                Attribute {
+                    key: Identifier {
+                        namespace: None,
+                        name: "attr1",
+                    },
+                    value: None,
+                },
+                Attribute {
+                    key: Identifier {
+                        namespace: None,
+                        name: "attr2",
+                    },
+                    value: Some(
+                        "val",
+                    ),
+                },
+                Attribute {
+                    key: Identifier {
+                        namespace: None,
+                        name: "attr3",
+                    },
+                    value: None,
+                },
+            ],
+        },
+    ],
+}

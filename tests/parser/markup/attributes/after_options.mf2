@@ -1,0 +1,31 @@
+{#el opt1=val1 @attr }
+=== ast ===
+SimpleMessage {
+    parts: [
+        Markup {
+            kind: Open,
+            id: Identifier {
+                namespace: None,
+                name: "el",
+            },
+            options: [
+                FnOrMarkupOption {
+                    key: Identifier {
+                        namespace: None,
+                        name: "opt1",
+                    },
+                    value: "val1",
+                },
+            ],
+            attributes: [
+                Attribute {
+                    key: Identifier {
+                        namespace: None,
+                        name: "attr",
+                    },
+                    value: None,
+                },
+            ],
+        },
+    ],
+}

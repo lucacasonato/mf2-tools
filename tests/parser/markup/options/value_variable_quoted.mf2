@@ -1,0 +1,29 @@
+{#el opt=|quoted| }
+=== ast ===
+SimpleMessage {
+    parts: [
+        Markup {
+            kind: Open,
+            id: Identifier {
+                namespace: None,
+                name: "el",
+            },
+            options: [
+                FnOrMarkupOption {
+                    key: Identifier {
+                        namespace: None,
+                        name: "opt",
+                    },
+                    value: Quoted {
+                        parts: [
+                            Text {
+                                content: "quoted",
+                            },
+                        ],
+                    },
+                },
+            ],
+            attributes: [],
+        },
+    ],
+}

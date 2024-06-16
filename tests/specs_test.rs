@@ -36,10 +36,9 @@ fn run_test(test: &CollectedTest) {
   if test
     .path
     .file_name()
-    .unwrap()
-    .to_str()
-    .unwrap()
-    .ends_with(".panic")
+    .and_then(|f| f.to_str())
+    .map(|s| s.ends_with(".panic"))
+    .unwrap_or(false)
   {
     let result = panic::catch_unwind(|| parse(message));
     if !result.is_err() {

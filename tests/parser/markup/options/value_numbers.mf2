@@ -1,0 +1,60 @@
+{#el opt = 1.0 }
+{#el opt = -1.0 }
+=== ast ===
+SimpleMessage {
+    parts: [
+        Markup {
+            kind: Open,
+            id: Identifier {
+                namespace: None,
+                name: "el",
+            },
+            options: [
+                FnOrMarkupOption {
+                    key: Identifier {
+                        namespace: None,
+                        name: "opt",
+                    },
+                    value: Number {
+                        raw: "1.0",
+                        is_negative: false,
+                        integral_part: "1",
+                        fractional_part: Some(
+                            "0",
+                        ),
+                        exponent_part: None,
+                    },
+                },
+            ],
+            attributes: [],
+        },
+        Text {
+            content: "\n",
+        },
+        Markup {
+            kind: Open,
+            id: Identifier {
+                namespace: None,
+                name: "el",
+            },
+            options: [
+                FnOrMarkupOption {
+                    key: Identifier {
+                        namespace: None,
+                        name: "opt",
+                    },
+                    value: Number {
+                        raw: "-1.0",
+                        is_negative: true,
+                        integral_part: "1",
+                        fractional_part: Some(
+                            "0",
+                        ),
+                        exponent_part: None,
+                    },
+                },
+            ],
+            attributes: [],
+        },
+    ],
+}

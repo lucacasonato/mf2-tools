@@ -1,0 +1,25 @@
+{#el opt = $var }
+=== ast ===
+SimpleMessage {
+    parts: [
+        Markup {
+            kind: Open,
+            id: Identifier {
+                namespace: None,
+                name: "el",
+            },
+            options: [
+                FnOrMarkupOption {
+                    key: Identifier {
+                        namespace: None,
+                        name: "opt",
+                    },
+                    value: Variable {
+                        name: "var",
+                    },
+                },
+            ],
+            attributes: [],
+        },
+    ],
+}
