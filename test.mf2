@@ -1,0 +1,3 @@
+Hello, \| { $myVar } hello!
+
+hello { $myVar ^ x = @foo = $myVar2 @bar @baz = $myVar4 }
