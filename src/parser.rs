@@ -57,7 +57,7 @@ impl<'a> Parser<'a> {
 
   /// The start index of the char that would be returned from `next()`.
   fn current_byte_index(&mut self) -> usize {
-    self.chars.front_offset
+    self.chars.current_byte_index()
   }
 
   fn parse_simple_message(&mut self) -> SimpleMessage<'a> {
@@ -91,7 +91,7 @@ impl<'a> Parser<'a> {
         c if is_content_char(c) || is_space(c) => {
           self.next();
         }
-        _ => panic!("Unexpected character: {:?}", c),
+        _ => panic!("Unexpected character: {:?} (at {byte_index})", c),
       }
     }
 
@@ -526,9 +526,9 @@ impl<'a> Parser<'a> {
     let mut attributes = vec![];
 
     let mut had_space = self.skip_spaces();
-    while had_space {
+    loop {
       match self.peek() {
-        Some((_, '@')) => {
+        Some((_, '@')) if had_space => {
           self.next(); // consume '@'
 
           let key = self.parse_identifier();
@@ -552,7 +552,9 @@ impl<'a> Parser<'a> {
           self.next(); // consume '}'
           break;
         }
-        Some((_, c)) if is_name_start(c) && attributes.is_empty() => {
+        Some((_, c))
+          if had_space && is_name_start(c) && attributes.is_empty() =>
+        {
           options.push(self.parse_option());
           had_space = self.skip_spaces();
         }
