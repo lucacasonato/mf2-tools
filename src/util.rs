@@ -93,6 +93,12 @@ impl<'a> SourceTextIterator<'a> {
 #[derive(Clone, Copy, PartialEq, Eq)]
 pub struct Location(u32);
 
+impl Location {
+  pub(crate) fn dummy() -> Location {
+    Location(0)
+  }
+}
+
 impl Debug for Location {
   fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
     write!(f, "@{}", self.0)

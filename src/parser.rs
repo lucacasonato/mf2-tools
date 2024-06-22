@@ -121,8 +121,8 @@ impl<'a> Parser<'a> {
   }
 
   fn parse_placeholder(&mut self) -> MessagePart<'a> {
-    let n = self.next();
-    debug_assert!(matches!(n, Some((_, '{'))));
+    let (open, c) = self.next().unwrap(); // consume '{'
+    debug_assert_eq!(c, '{');
 
     self.skip_spaces();
 
@@ -136,11 +136,13 @@ impl<'a> Parser<'a> {
       }
       Some((_, '#')) => {
         return MessagePart::Markup(
-          self.parse_markup(MarkupStartKind::OpenOrStandalone),
+          self.parse_markup(open, MarkupStartKind::OpenOrStandalone),
         )
       }
       Some((_, '/')) => {
-        return MessagePart::Markup(self.parse_markup(MarkupStartKind::Close))
+        return MessagePart::Markup(
+          self.parse_markup(open, MarkupStartKind::Close),
+        )
       }
       _ => (None, None, true),
     };
@@ -157,9 +159,9 @@ impl<'a> Parser<'a> {
     let mut attributes = vec![];
 
     while had_space {
-      if self.eat('@').is_none() {
+      let Some(start) = self.eat('@') else {
         break;
-      }
+      };
 
       let key = self.parse_identifier();
       let mut value = None;
@@ -170,16 +172,16 @@ impl<'a> Parser<'a> {
         had_space = self.skip_spaces();
       }
 
-      attributes.push(Attribute { key, value });
+      attributes.push(Attribute { start, key, value });
     }
 
-    if self.eat('}').is_none() {
-      panic!()
-    }
+    let Some(close) = self.eat('}') else { panic!() };
 
     let expr = match (variable, literal) {
       (Some(variable), None) => MessagePart::Expression(
         Expression::VariableExpression(VariableExpression {
+          open,
+          close,
           variable,
           annotation,
           attributes,
@@ -187,6 +189,8 @@ impl<'a> Parser<'a> {
       ),
       (None, Some(literal)) => MessagePart::Expression(
         Expression::LiteralExpression(LiteralExpression {
+          open,
+          close,
           literal,
           annotation,
           attributes,
@@ -196,6 +200,8 @@ impl<'a> Parser<'a> {
         if let Some(annotation) = annotation {
           MessagePart::Expression(Expression::AnnotationExpression(
             AnnotationExpression {
+              open,
+              close,
               annotation,
               attributes,
             },
@@ -227,10 +233,8 @@ impl<'a> Parser<'a> {
   }
 
   fn parse_variable(&mut self) -> Variable<'a> {
-    let start = self.current_location();
-
-    let n = self.next();
-    debug_assert_eq!(n.unwrap().1, '$');
+    let (start, n) = self.next().unwrap(); // consume '$'
+    debug_assert_eq!(n, '$');
 
     let name = self.parse_name();
 
@@ -322,7 +326,7 @@ impl<'a> Parser<'a> {
 
   fn maybe_parse_annotation(&mut self) -> Option<Annotation<'a>> {
     match self.peek() {
-      Some((_, ':')) => {
+      Some((start, ':')) => {
         // function
         self.next(); // consume ':'
 
@@ -347,9 +351,9 @@ impl<'a> Parser<'a> {
           options.push(self.parse_option());
         }
 
-        Some(Annotation::Function(Function { id, options }))
+        Some(Annotation::Function(Function { start, id, options }))
       }
-      Some((_, start @ ('^' | '&'))) => {
+      Some((start, sigil @ ('^' | '&'))) => {
         // private-use-annotation
         self.next(); // consume start
 
@@ -357,10 +361,14 @@ impl<'a> Parser<'a> {
 
         Some(Annotation::PrivateUseAnnotation(PrivateUseAnnotation {
           start,
+          sigil,
           body: reserved_body,
         }))
       }
-      Some((_, start @ ('!' | '%' | '*' | '+' | '<' | '>' | '?' | '~'))) => {
+      Some((
+        start,
+        sigil @ ('!' | '%' | '*' | '+' | '<' | '>' | '?' | '~'),
+      )) => {
         // private-use-annotation
         self.next(); // consume start
 
@@ -368,6 +376,7 @@ impl<'a> Parser<'a> {
 
         Some(Annotation::ReservedAnnotation(ReservedAnnotation {
           start,
+          sigil,
           body: reserved_body,
         }))
       }
@@ -479,12 +488,11 @@ impl<'a> Parser<'a> {
       }
     }
 
-    let Some((close, c)) = self.next() else {
+    if self.eat('|').is_none() {
       panic!()
     };
-    debug_assert_eq!(c, '|');
 
-    Quoted { open, close, parts }
+    Quoted { open, parts }
   }
 
   fn parse_number(&mut self) -> Number<'a> {
@@ -539,7 +547,11 @@ impl<'a> Parser<'a> {
     self.text.slice(start..end)
   }
 
-  fn parse_markup(&mut self, kind: MarkupStartKind) -> Markup<'a> {
+  fn parse_markup(
+    &mut self,
+    open: Location,
+    kind: MarkupStartKind,
+  ) -> Markup<'a> {
     let c = self.next();
     debug_assert!(matches!(c, Some((_, '#' | '/'))));
 
@@ -553,9 +565,9 @@ impl<'a> Parser<'a> {
     let mut attributes = vec![];
 
     let mut had_space = self.skip_spaces();
-    loop {
+    let close = loop {
       match self.peek() {
-        Some((_, '@')) if had_space => {
+        Some((start, '@')) if had_space => {
           self.next(); // consume '@'
 
           let key = self.parse_identifier();
@@ -567,17 +579,17 @@ impl<'a> Parser<'a> {
             had_space = self.skip_spaces();
           }
 
-          attributes.push(Attribute { key, value });
+          attributes.push(Attribute { start, key, value });
         }
-        Some((_, '/')) if matches!(markup_kind, MarkupKind::Open) => {
+        Some((close, '/')) if matches!(markup_kind, MarkupKind::Open) => {
           self.next(); // consume '/'
           markup_kind = MarkupKind::Standalone;
           let Some(_) = self.eat('}') else { panic!() };
-          break;
+          break close;
         }
-        Some((_, '}')) => {
+        Some((close, '}')) => {
           self.next(); // consume '}'
-          break;
+          break close;
         }
         Some((_, c))
           if had_space && is_name_start(c) && attributes.is_empty() =>
@@ -587,9 +599,11 @@ impl<'a> Parser<'a> {
         }
         _ => panic!(),
       }
-    }
+    };
 
     Markup {
+      open,
+      close,
       kind: markup_kind,
       id,
       options,
