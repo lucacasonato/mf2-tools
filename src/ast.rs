@@ -7,7 +7,7 @@ use crate::util::Location;
 use crate::util::Span;
 use crate::util::Spanned;
 use crate::visitor::Visit;
-use crate::visitor::VisitWith;
+use crate::visitor::Visitable;
 
 #[derive(Debug)]
 pub struct SimpleMessage<'a> {
@@ -25,14 +25,14 @@ impl Spanned for SimpleMessage<'_> {
   }
 }
 
-impl VisitWith for SimpleMessage<'_> {
-  fn visit_with<V: Visit + ?Sized>(&self, visitor: &V) {
+impl Visitable for SimpleMessage<'_> {
+  fn apply_visitor<V: Visit + ?Sized>(&self, visitor: &V) {
     visitor.visit_simple_message(self);
   }
 
-  fn visit_children_with<V: Visit + ?Sized>(&self, visitor: &V) {
+  fn apply_visitor_to_children<V: Visit + ?Sized>(&self, visitor: &V) {
     for part in &self.parts {
-      visitor.visit_message_part(part);
+      part.apply_visitor(visitor);
     }
   }
 }
@@ -66,17 +66,17 @@ impl Spanned for MessagePart<'_> {
   }
 }
 
-impl VisitWith for MessagePart<'_> {
-  fn visit_with<V: Visit + ?Sized>(&self, visitor: &V) {
+impl Visitable for MessagePart<'_> {
+  fn apply_visitor<V: Visit + ?Sized>(&self, visitor: &V) {
     visitor.visit_message_part(self);
   }
 
-  fn visit_children_with<V: Visit + ?Sized>(&self, visitor: &V) {
+  fn apply_visitor_to_children<V: Visit + ?Sized>(&self, visitor: &V) {
     match self {
-      MessagePart::Text(text) => visitor.visit_text(text),
-      MessagePart::Escape(escape) => visitor.visit_escape(escape),
-      MessagePart::Expression(expr) => visitor.visit_expression(expr),
-      MessagePart::Markup(markup) => visitor.visit_markup(markup),
+      MessagePart::Text(text) => text.apply_visitor(visitor),
+      MessagePart::Escape(escape) => escape.apply_visitor(visitor),
+      MessagePart::Expression(expr) => expr.apply_visitor(visitor),
+      MessagePart::Markup(markup) => markup.apply_visitor(visitor),
     }
   }
 }
@@ -93,14 +93,12 @@ impl Spanned for Text<'_> {
   }
 }
 
-impl VisitWith for Text<'_> {
-  fn visit_with<V: Visit + ?Sized>(&self, visitor: &V) {
+impl Visitable for Text<'_> {
+  fn apply_visitor<V: Visit + ?Sized>(&self, visitor: &V) {
     visitor.visit_text(self);
   }
 
-  fn visit_children_with<V: Visit + ?Sized>(&self, visitor: &V) {
-    let _ = visitor;
-  }
+  fn apply_visitor_to_children<V: Visit + ?Sized>(&self, _visitor: &V) {}
 }
 
 #[derive(Debug)]
@@ -115,14 +113,12 @@ impl Spanned for Escape {
   }
 }
 
-impl VisitWith for Escape {
-  fn visit_with<V: Visit + ?Sized>(&self, visitor: &V) {
+impl Visitable for Escape {
+  fn apply_visitor<V: Visit + ?Sized>(&self, visitor: &V) {
     visitor.visit_escape(self);
   }
 
-  fn visit_children_with<V: Visit + ?Sized>(&self, visitor: &V) {
-    let _ = visitor;
-  }
+  fn apply_visitor_to_children<V: Visit + ?Sized>(&self, _visitor: &V) {}
 }
 
 pub enum Expression<'a> {
@@ -163,21 +159,21 @@ impl Spanned for Expression<'_> {
   }
 }
 
-impl VisitWith for Expression<'_> {
-  fn visit_with<V: Visit + ?Sized>(&self, visitor: &V) {
+impl Visitable for Expression<'_> {
+  fn apply_visitor<V: Visit + ?Sized>(&self, visitor: &V) {
     visitor.visit_expression(self);
   }
 
-  fn visit_children_with<V: Visit + ?Sized>(&self, visitor: &V) {
+  fn apply_visitor_to_children<V: Visit + ?Sized>(&self, visitor: &V) {
     match self {
       Expression::LiteralExpression(literal_expression) => {
-        visitor.visit_literal_expression(literal_expression)
+        literal_expression.apply_visitor(visitor)
       }
       Expression::VariableExpression(variable_expression) => {
-        visitor.visit_variable_expression(variable_expression)
+        variable_expression.apply_visitor(visitor)
       }
       Expression::AnnotationExpression(annotation_expression) => {
-        visitor.visit_annotation_expression(annotation_expression)
+        annotation_expression.apply_visitor(visitor)
       }
     }
   }
@@ -200,18 +196,18 @@ impl Spanned for LiteralExpression<'_> {
   }
 }
 
-impl VisitWith for LiteralExpression<'_> {
-  fn visit_with<V: Visit + ?Sized>(&self, visitor: &V) {
+impl Visitable for LiteralExpression<'_> {
+  fn apply_visitor<V: Visit + ?Sized>(&self, visitor: &V) {
     visitor.visit_literal_expression(self);
   }
 
-  fn visit_children_with<V: Visit + ?Sized>(&self, visitor: &V) {
-    visitor.visit_literal(&self.literal);
+  fn apply_visitor_to_children<V: Visit + ?Sized>(&self, visitor: &V) {
+    self.literal.apply_visitor(visitor);
     if let Some(annotation) = &self.annotation {
-      visitor.visit_annotation(annotation);
+      annotation.apply_visitor(visitor);
     }
     for attribute in &self.attributes {
-      visitor.visit_attribute(attribute);
+      attribute.apply_visitor(visitor);
     }
   }
 }
@@ -233,18 +229,18 @@ impl Spanned for VariableExpression<'_> {
   }
 }
 
-impl VisitWith for VariableExpression<'_> {
-  fn visit_with<V: Visit + ?Sized>(&self, visitor: &V) {
+impl Visitable for VariableExpression<'_> {
+  fn apply_visitor<V: Visit + ?Sized>(&self, visitor: &V) {
     visitor.visit_variable_expression(self);
   }
 
-  fn visit_children_with<V: Visit + ?Sized>(&self, visitor: &V) {
-    visitor.visit_variable(&self.variable);
+  fn apply_visitor_to_children<V: Visit + ?Sized>(&self, visitor: &V) {
+    self.variable.apply_visitor(visitor);
     if let Some(annotation) = &self.annotation {
-      visitor.visit_annotation(annotation);
+      annotation.apply_visitor(visitor);
     }
     for attribute in &self.attributes {
-      visitor.visit_attribute(attribute);
+      attribute.apply_visitor(visitor);
     }
   }
 }
@@ -261,14 +257,12 @@ impl Spanned for Variable<'_> {
   }
 }
 
-impl VisitWith for Variable<'_> {
-  fn visit_with<V: Visit + ?Sized>(&self, visitor: &V) {
+impl Visitable for Variable<'_> {
+  fn apply_visitor<V: Visit + ?Sized>(&self, visitor: &V) {
     visitor.visit_variable(self);
   }
 
-  fn visit_children_with<V: Visit + ?Sized>(&self, visitor: &V) {
-    let _ = visitor;
-  }
+  fn apply_visitor_to_children<V: Visit + ?Sized>(&self, _visitor: &V) {}
 }
 
 #[derive(Debug)]
@@ -287,15 +281,15 @@ impl Spanned for AnnotationExpression<'_> {
   }
 }
 
-impl VisitWith for AnnotationExpression<'_> {
-  fn visit_with<V: Visit + ?Sized>(&self, visitor: &V) {
+impl Visitable for AnnotationExpression<'_> {
+  fn apply_visitor<V: Visit + ?Sized>(&self, visitor: &V) {
     visitor.visit_annotation_expression(self);
   }
 
-  fn visit_children_with<V: Visit + ?Sized>(&self, visitor: &V) {
-    visitor.visit_annotation(&self.annotation);
+  fn apply_visitor_to_children<V: Visit + ?Sized>(&self, visitor: &V) {
+    self.annotation.apply_visitor(visitor);
     for attribute in &self.attributes {
-      visitor.visit_attribute(attribute);
+      attribute.apply_visitor(visitor);
     }
   }
 }
@@ -334,19 +328,19 @@ impl Spanned for Annotation<'_> {
   }
 }
 
-impl VisitWith for Annotation<'_> {
-  fn visit_with<V: Visit + ?Sized>(&self, visitor: &V) {
+impl Visitable for Annotation<'_> {
+  fn apply_visitor<V: Visit + ?Sized>(&self, visitor: &V) {
     visitor.visit_annotation(self);
   }
 
-  fn visit_children_with<V: Visit + ?Sized>(&self, visitor: &V) {
+  fn apply_visitor_to_children<V: Visit + ?Sized>(&self, visitor: &V) {
     match self {
-      Annotation::Function(function) => visitor.visit_function(function),
+      Annotation::Function(function) => function.apply_visitor(visitor),
       Annotation::PrivateUseAnnotation(private_use_annotation) => {
-        visitor.visit_private_use_annotation(private_use_annotation)
+        private_use_annotation.apply_visitor(visitor)
       }
       Annotation::ReservedAnnotation(reserved_annotation) => {
-        visitor.visit_reserved_annotation(reserved_annotation)
+        reserved_annotation.apply_visitor(visitor)
       }
     }
   }
@@ -371,14 +365,12 @@ impl Spanned for Identifier<'_> {
   }
 }
 
-impl VisitWith for Identifier<'_> {
-  fn visit_with<V: Visit + ?Sized>(&self, visitor: &V) {
+impl Visitable for Identifier<'_> {
+  fn apply_visitor<V: Visit + ?Sized>(&self, visitor: &V) {
     visitor.visit_identifier(self);
   }
 
-  fn visit_children_with<V: Visit + ?Sized>(&self, visitor: &V) {
-    let _ = visitor;
-  }
+  fn apply_visitor_to_children<V: Visit + ?Sized>(&self, _visitor: &V) {}
 }
 
 #[derive(Debug)]
@@ -399,15 +391,15 @@ impl Spanned for Function<'_> {
   }
 }
 
-impl VisitWith for Function<'_> {
-  fn visit_with<V: Visit + ?Sized>(&self, visitor: &V) {
+impl Visitable for Function<'_> {
+  fn apply_visitor<V: Visit + ?Sized>(&self, visitor: &V) {
     visitor.visit_function(self);
   }
 
-  fn visit_children_with<V: Visit + ?Sized>(&self, visitor: &V) {
-    visitor.visit_identifier(&self.id);
+  fn apply_visitor_to_children<V: Visit + ?Sized>(&self, visitor: &V) {
+    self.id.apply_visitor(visitor);
     for option in &self.options {
-      visitor.visit_fn_or_markup_option(option);
+      option.apply_visitor(visitor);
     }
   }
 }
@@ -426,14 +418,14 @@ impl Spanned for FnOrMarkupOption<'_> {
   }
 }
 
-impl VisitWith for FnOrMarkupOption<'_> {
-  fn visit_with<V: Visit + ?Sized>(&self, visitor: &V) {
+impl Visitable for FnOrMarkupOption<'_> {
+  fn apply_visitor<V: Visit + ?Sized>(&self, visitor: &V) {
     visitor.visit_fn_or_markup_option(self);
   }
 
-  fn visit_children_with<V: Visit + ?Sized>(&self, visitor: &V) {
-    visitor.visit_identifier(&self.key);
-    visitor.visit_literal_or_variable(&self.value);
+  fn apply_visitor_to_children<V: Visit + ?Sized>(&self, visitor: &V) {
+    self.key.apply_visitor(visitor);
+    self.value.apply_visitor(visitor);
   }
 }
 
@@ -455,15 +447,15 @@ impl Spanned for Attribute<'_> {
   }
 }
 
-impl VisitWith for Attribute<'_> {
-  fn visit_with<V: Visit + ?Sized>(&self, visitor: &V) {
+impl Visitable for Attribute<'_> {
+  fn apply_visitor<V: Visit + ?Sized>(&self, visitor: &V) {
     visitor.visit_attribute(self);
   }
 
-  fn visit_children_with<V: Visit + ?Sized>(&self, visitor: &V) {
-    visitor.visit_identifier(&self.key);
+  fn apply_visitor_to_children<V: Visit + ?Sized>(&self, visitor: &V) {
+    self.key.apply_visitor(visitor);
     if let Some(value) = &self.value {
-      visitor.visit_literal_or_variable(value);
+      value.apply_visitor(visitor);
     }
   }
 }
@@ -491,15 +483,15 @@ impl Spanned for LiteralOrVariable<'_> {
   }
 }
 
-impl VisitWith for LiteralOrVariable<'_> {
-  fn visit_with<V: Visit + ?Sized>(&self, visitor: &V) {
+impl Visitable for LiteralOrVariable<'_> {
+  fn apply_visitor<V: Visit + ?Sized>(&self, visitor: &V) {
     visitor.visit_literal_or_variable(self);
   }
 
-  fn visit_children_with<V: Visit + ?Sized>(&self, visitor: &V) {
+  fn apply_visitor_to_children<V: Visit + ?Sized>(&self, visitor: &V) {
     match self {
-      LiteralOrVariable::Literal(literal) => visitor.visit_literal(literal),
-      LiteralOrVariable::Variable(variable) => visitor.visit_variable(variable),
+      LiteralOrVariable::Literal(literal) => literal.apply_visitor(visitor),
+      LiteralOrVariable::Variable(variable) => variable.apply_visitor(visitor),
     }
   }
 }
@@ -522,14 +514,14 @@ impl Spanned for PrivateUseAnnotation<'_> {
   }
 }
 
-impl VisitWith for PrivateUseAnnotation<'_> {
-  fn visit_with<V: Visit + ?Sized>(&self, visitor: &V) {
+impl Visitable for PrivateUseAnnotation<'_> {
+  fn apply_visitor<V: Visit + ?Sized>(&self, visitor: &V) {
     visitor.visit_private_use_annotation(self);
   }
 
-  fn visit_children_with<V: Visit + ?Sized>(&self, visitor: &V) {
+  fn apply_visitor_to_children<V: Visit + ?Sized>(&self, visitor: &V) {
     for part in &self.body {
-      visitor.visit_reserved_body_part(part);
+      part.apply_visitor(visitor);
     }
   }
 }
@@ -552,14 +544,14 @@ impl Spanned for ReservedAnnotation<'_> {
   }
 }
 
-impl VisitWith for ReservedAnnotation<'_> {
-  fn visit_with<V: Visit + ?Sized>(&self, visitor: &V) {
+impl Visitable for ReservedAnnotation<'_> {
+  fn apply_visitor<V: Visit + ?Sized>(&self, visitor: &V) {
     visitor.visit_reserved_annotation(self);
   }
 
-  fn visit_children_with<V: Visit + ?Sized>(&self, visitor: &V) {
+  fn apply_visitor_to_children<V: Visit + ?Sized>(&self, visitor: &V) {
     for part in &self.body {
-      visitor.visit_reserved_body_part(part);
+      part.apply_visitor(visitor);
     }
   }
 }
@@ -590,16 +582,16 @@ impl Spanned for ReservedBodyPart<'_> {
   }
 }
 
-impl VisitWith for ReservedBodyPart<'_> {
-  fn visit_with<V: Visit + ?Sized>(&self, visitor: &V) {
+impl Visitable for ReservedBodyPart<'_> {
+  fn apply_visitor<V: Visit + ?Sized>(&self, visitor: &V) {
     visitor.visit_reserved_body_part(self);
   }
 
-  fn visit_children_with<V: Visit + ?Sized>(&self, visitor: &V) {
+  fn apply_visitor_to_children<V: Visit + ?Sized>(&self, visitor: &V) {
     match self {
-      ReservedBodyPart::Text(text) => visitor.visit_text(text),
-      ReservedBodyPart::Escape(escape) => visitor.visit_escape(escape),
-      ReservedBodyPart::Quoted(quoted) => visitor.visit_quoted(quoted),
+      ReservedBodyPart::Text(text) => text.apply_visitor(visitor),
+      ReservedBodyPart::Escape(escape) => escape.apply_visitor(visitor),
+      ReservedBodyPart::Quoted(quoted) => quoted.apply_visitor(visitor),
     }
   }
 }
@@ -630,16 +622,16 @@ impl Spanned for Literal<'_> {
   }
 }
 
-impl VisitWith for Literal<'_> {
-  fn visit_with<V: Visit + ?Sized>(&self, visitor: &V) {
+impl Visitable for Literal<'_> {
+  fn apply_visitor<V: Visit + ?Sized>(&self, visitor: &V) {
     visitor.visit_literal(self);
   }
 
-  fn visit_children_with<V: Visit + ?Sized>(&self, visitor: &V) {
+  fn apply_visitor_to_children<V: Visit + ?Sized>(&self, visitor: &V) {
     match self {
-      Literal::Quoted(quoted) => visitor.visit_quoted(quoted),
-      Literal::Name(name) => visitor.visit_text(name),
-      Literal::Number(number) => visitor.visit_number(number),
+      Literal::Quoted(quoted) => quoted.apply_visitor(visitor),
+      Literal::Name(name) => name.apply_visitor(visitor),
+      Literal::Number(number) => number.apply_visitor(visitor),
     }
   }
 }
@@ -662,14 +654,14 @@ impl Spanned for Quoted<'_> {
   }
 }
 
-impl VisitWith for Quoted<'_> {
-  fn visit_with<V: Visit + ?Sized>(&self, visitor: &V) {
+impl Visitable for Quoted<'_> {
+  fn apply_visitor<V: Visit + ?Sized>(&self, visitor: &V) {
     visitor.visit_quoted(self);
   }
 
-  fn visit_children_with<V: Visit + ?Sized>(&self, visitor: &V) {
+  fn apply_visitor_to_children<V: Visit + ?Sized>(&self, visitor: &V) {
     for part in &self.parts {
-      visitor.visit_quoted_part(part);
+      part.apply_visitor(visitor);
     }
   }
 }
@@ -697,15 +689,15 @@ impl Spanned for QuotedPart<'_> {
   }
 }
 
-impl VisitWith for QuotedPart<'_> {
-  fn visit_with<V: Visit + ?Sized>(&self, visitor: &V) {
+impl Visitable for QuotedPart<'_> {
+  fn apply_visitor<V: Visit + ?Sized>(&self, visitor: &V) {
     visitor.visit_quoted_part(self);
   }
 
-  fn visit_children_with<V: Visit + ?Sized>(&self, visitor: &V) {
+  fn apply_visitor_to_children<V: Visit + ?Sized>(&self, visitor: &V) {
     match self {
-      QuotedPart::Text(text) => visitor.visit_text(text),
-      QuotedPart::Escape(escape) => visitor.visit_escape(escape),
+      QuotedPart::Text(text) => text.apply_visitor(visitor),
+      QuotedPart::Escape(escape) => escape.apply_visitor(visitor),
     }
   }
 }
@@ -733,14 +725,12 @@ impl Spanned for Number<'_> {
   }
 }
 
-impl VisitWith for Number<'_> {
-  fn visit_with<V: Visit + ?Sized>(&self, visitor: &V) {
+impl Visitable for Number<'_> {
+  fn apply_visitor<V: Visit + ?Sized>(&self, visitor: &V) {
     visitor.visit_number(self);
   }
 
-  fn visit_children_with<V: Visit + ?Sized>(&self, visitor: &V) {
-    let _ = visitor;
-  }
+  fn apply_visitor_to_children<V: Visit + ?Sized>(&self, _visitor: &V) {}
 }
 
 impl<'a> Number<'a> {
@@ -816,18 +806,18 @@ impl Spanned for Markup<'_> {
   }
 }
 
-impl VisitWith for Markup<'_> {
-  fn visit_with<V: Visit + ?Sized>(&self, visitor: &V) {
+impl Visitable for Markup<'_> {
+  fn apply_visitor<V: Visit + ?Sized>(&self, visitor: &V) {
     visitor.visit_markup(self);
   }
 
-  fn visit_children_with<V: Visit + ?Sized>(&self, visitor: &V) {
-    visitor.visit_identifier(&self.id);
+  fn apply_visitor_to_children<V: Visit + ?Sized>(&self, visitor: &V) {
+    self.id.apply_visitor(visitor);
     for option in &self.options {
-      visitor.visit_fn_or_markup_option(option);
+      option.apply_visitor(visitor);
     }
     for attribute in &self.attributes {
-      visitor.visit_attribute(attribute);
+      attribute.apply_visitor(visitor);
     }
   }
 }

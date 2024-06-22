@@ -7,7 +7,7 @@ mod util;
 mod visitor;
 
 pub use util::{Location, Span, Spanned};
-pub use visitor::{Visit, VisitWith};
+pub use visitor::{Visit, Visitable};
 
 pub fn parse(message: &str) -> SimpleMessage {
   Parser::new(message).parse()
