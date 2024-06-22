@@ -1,6 +1,4 @@
-use std::fmt;
 use std::fmt::Debug;
-use std::fmt::Formatter;
 
 use crate::util::LengthShort;
 use crate::util::Location;
@@ -8,6 +6,47 @@ use crate::util::Span;
 use crate::util::Spanned;
 use crate::visitor::Visit;
 use crate::visitor::Visitable;
+
+macro_rules! ast_enum {
+  {
+    #[visit($visit_method:ident)]
+    pub enum $name:ident<$lifetime:lifetime> {
+      $( $item:ident $(<$item_lifetime:lifetime>)? ),* $(,)?
+    }
+  } => {
+    pub enum $name<$lifetime> {
+      $( $item ( $item$(<$item_lifetime>)? ), )*
+    }
+
+    impl ::std::fmt::Debug for $name<'_> {
+      fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        match self {
+          $( $name::$item(item) => ::std::fmt::Debug::fmt(item, f), )*
+        }
+      }
+    }
+
+    impl crate::util::Spanned for $name<'_> {
+      fn span(&self) -> Span {
+        match self {
+          $( $name::$item(item) => item.span(), )*
+        }
+      }
+    }
+
+    impl crate::visitor::Visitable for $name<'_> {
+      fn apply_visitor<V: crate::visitor::Visit + ?Sized>(&self, visitor: &V) {
+        visitor.$visit_method(self);
+      }
+
+      fn apply_visitor_to_children<V: crate::visitor::Visit + ?Sized>(&self, visitor: &V) {
+        match self {
+          $( $name::$item(item) => item.apply_visitor(visitor), )*
+        }
+      }
+    }
+  };
+}
 
 #[derive(Debug)]
 pub struct SimpleMessage<'a> {
@@ -37,47 +76,13 @@ impl Visitable for SimpleMessage<'_> {
   }
 }
 
-pub enum MessagePart<'a> {
-  Text(Text<'a>),
-  Escape(Escape),
-  Expression(Expression<'a>),
-  Markup(Markup<'a>),
-}
-
-impl fmt::Debug for MessagePart<'_> {
-  fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
-    match self {
-      MessagePart::Text(text) => Debug::fmt(text, f),
-      MessagePart::Escape(escape) => Debug::fmt(escape, f),
-      MessagePart::Expression(expression) => Debug::fmt(expression, f),
-      MessagePart::Markup(markup) => Debug::fmt(markup, f),
-    }
-  }
-}
-
-impl Spanned for MessagePart<'_> {
-  fn span(&self) -> Span {
-    match self {
-      MessagePart::Text(text) => text.span(),
-      MessagePart::Escape(escape) => escape.span(),
-      MessagePart::Expression(expression) => expression.span(),
-      MessagePart::Markup(markup) => markup.span(),
-    }
-  }
-}
-
-impl Visitable for MessagePart<'_> {
-  fn apply_visitor<V: Visit + ?Sized>(&self, visitor: &V) {
-    visitor.visit_message_part(self);
-  }
-
-  fn apply_visitor_to_children<V: Visit + ?Sized>(&self, visitor: &V) {
-    match self {
-      MessagePart::Text(text) => text.apply_visitor(visitor),
-      MessagePart::Escape(escape) => escape.apply_visitor(visitor),
-      MessagePart::Expression(expr) => expr.apply_visitor(visitor),
-      MessagePart::Markup(markup) => markup.apply_visitor(visitor),
-    }
+ast_enum! {
+  #[visit(visit_message_part)]
+  pub enum MessagePart<'a> {
+    Text<'a>,
+    Escape,
+    Expression<'a>,
+    Markup<'a>,
   }
 }
 
@@ -121,61 +126,12 @@ impl Visitable for Escape {
   fn apply_visitor_to_children<V: Visit + ?Sized>(&self, _visitor: &V) {}
 }
 
-pub enum Expression<'a> {
-  LiteralExpression(LiteralExpression<'a>),
-  VariableExpression(VariableExpression<'a>),
-  AnnotationExpression(AnnotationExpression<'a>),
-}
-
-impl fmt::Debug for Expression<'_> {
-  fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
-    match self {
-      Expression::LiteralExpression(literal_expression) => {
-        Debug::fmt(literal_expression, f)
-      }
-      Expression::VariableExpression(variable_expression) => {
-        Debug::fmt(variable_expression, f)
-      }
-      Expression::AnnotationExpression(annotation_expression) => {
-        Debug::fmt(annotation_expression, f)
-      }
-    }
-  }
-}
-
-impl Spanned for Expression<'_> {
-  fn span(&self) -> Span {
-    match self {
-      Expression::LiteralExpression(literal_expression) => {
-        literal_expression.span()
-      }
-      Expression::VariableExpression(variable_expression) => {
-        variable_expression.span()
-      }
-      Expression::AnnotationExpression(annotation_expression) => {
-        annotation_expression.span()
-      }
-    }
-  }
-}
-
-impl Visitable for Expression<'_> {
-  fn apply_visitor<V: Visit + ?Sized>(&self, visitor: &V) {
-    visitor.visit_expression(self);
-  }
-
-  fn apply_visitor_to_children<V: Visit + ?Sized>(&self, visitor: &V) {
-    match self {
-      Expression::LiteralExpression(literal_expression) => {
-        literal_expression.apply_visitor(visitor)
-      }
-      Expression::VariableExpression(variable_expression) => {
-        variable_expression.apply_visitor(visitor)
-      }
-      Expression::AnnotationExpression(annotation_expression) => {
-        annotation_expression.apply_visitor(visitor)
-      }
-    }
+ast_enum! {
+  #[visit(visit_expression)]
+  pub enum Expression<'a> {
+    LiteralExpression<'a>,
+    VariableExpression<'a>,
+    AnnotationExpression<'a>,
   }
 }
 
@@ -294,55 +250,12 @@ impl Visitable for AnnotationExpression<'_> {
   }
 }
 
-pub enum Annotation<'a> {
-  Function(Function<'a>),
-  PrivateUseAnnotation(PrivateUseAnnotation<'a>),
-  ReservedAnnotation(ReservedAnnotation<'a>),
-}
-
-impl fmt::Debug for Annotation<'_> {
-  fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
-    match self {
-      Annotation::Function(function) => Debug::fmt(function, f),
-      Annotation::PrivateUseAnnotation(private_use_annotation) => {
-        Debug::fmt(private_use_annotation, f)
-      }
-      Annotation::ReservedAnnotation(reserved_annotation) => {
-        Debug::fmt(reserved_annotation, f)
-      }
-    }
-  }
-}
-
-impl Spanned for Annotation<'_> {
-  fn span(&self) -> Span {
-    match self {
-      Annotation::Function(function) => function.span(),
-      Annotation::PrivateUseAnnotation(private_use_annotation) => {
-        private_use_annotation.span()
-      }
-      Annotation::ReservedAnnotation(reserved_annotation) => {
-        reserved_annotation.span()
-      }
-    }
-  }
-}
-
-impl Visitable for Annotation<'_> {
-  fn apply_visitor<V: Visit + ?Sized>(&self, visitor: &V) {
-    visitor.visit_annotation(self);
-  }
-
-  fn apply_visitor_to_children<V: Visit + ?Sized>(&self, visitor: &V) {
-    match self {
-      Annotation::Function(function) => function.apply_visitor(visitor),
-      Annotation::PrivateUseAnnotation(private_use_annotation) => {
-        private_use_annotation.apply_visitor(visitor)
-      }
-      Annotation::ReservedAnnotation(reserved_annotation) => {
-        reserved_annotation.apply_visitor(visitor)
-      }
-    }
+ast_enum! {
+  #[visit(visit_annotation)]
+  pub enum Annotation<'a> {
+    Function<'a>,
+    PrivateUseAnnotation<'a>,
+    ReservedAnnotation<'a>,
   }
 }
 
@@ -460,39 +373,11 @@ impl Visitable for Attribute<'_> {
   }
 }
 
-pub enum LiteralOrVariable<'a> {
-  Literal(Literal<'a>),
-  Variable(Variable<'a>),
-}
-
-impl fmt::Debug for LiteralOrVariable<'_> {
-  fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
-    match self {
-      LiteralOrVariable::Literal(literal) => Debug::fmt(literal, f),
-      LiteralOrVariable::Variable(variable) => Debug::fmt(variable, f),
-    }
-  }
-}
-
-impl Spanned for LiteralOrVariable<'_> {
-  fn span(&self) -> Span {
-    match self {
-      LiteralOrVariable::Literal(literal) => literal.span(),
-      LiteralOrVariable::Variable(variable) => variable.span(),
-    }
-  }
-}
-
-impl Visitable for LiteralOrVariable<'_> {
-  fn apply_visitor<V: Visit + ?Sized>(&self, visitor: &V) {
-    visitor.visit_literal_or_variable(self);
-  }
-
-  fn apply_visitor_to_children<V: Visit + ?Sized>(&self, visitor: &V) {
-    match self {
-      LiteralOrVariable::Literal(literal) => literal.apply_visitor(visitor),
-      LiteralOrVariable::Variable(variable) => variable.apply_visitor(visitor),
-    }
+ast_enum! {
+  #[visit(visit_literal_or_variable)]
+  pub enum LiteralOrVariable<'a> {
+    Literal<'a>,
+    Variable<'a>,
   }
 }
 
@@ -556,83 +441,21 @@ impl Visitable for ReservedAnnotation<'_> {
   }
 }
 
-pub enum ReservedBodyPart<'a> {
-  Text(Text<'a>),
-  Escape(Escape),
-  Quoted(Quoted<'a>),
-}
-
-impl fmt::Debug for ReservedBodyPart<'_> {
-  fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
-    match self {
-      ReservedBodyPart::Text(text) => Debug::fmt(text, f),
-      ReservedBodyPart::Escape(escape) => Debug::fmt(escape, f),
-      ReservedBodyPart::Quoted(quoted) => Debug::fmt(quoted, f),
-    }
+ast_enum! {
+  #[visit(visit_reserved_body_part)]
+  pub enum ReservedBodyPart<'a> {
+    Text<'a>,
+    Escape,
+    Quoted<'a>,
   }
 }
 
-impl Spanned for ReservedBodyPart<'_> {
-  fn span(&self) -> Span {
-    match self {
-      ReservedBodyPart::Text(text) => text.span(),
-      ReservedBodyPart::Escape(escape) => escape.span(),
-      ReservedBodyPart::Quoted(quoted) => quoted.span(),
-    }
-  }
-}
-
-impl Visitable for ReservedBodyPart<'_> {
-  fn apply_visitor<V: Visit + ?Sized>(&self, visitor: &V) {
-    visitor.visit_reserved_body_part(self);
-  }
-
-  fn apply_visitor_to_children<V: Visit + ?Sized>(&self, visitor: &V) {
-    match self {
-      ReservedBodyPart::Text(text) => text.apply_visitor(visitor),
-      ReservedBodyPart::Escape(escape) => escape.apply_visitor(visitor),
-      ReservedBodyPart::Quoted(quoted) => quoted.apply_visitor(visitor),
-    }
-  }
-}
-
-pub enum Literal<'a> {
-  Quoted(Quoted<'a>),
-  Name(Text<'a>),
-  Number(Number<'a>),
-}
-
-impl fmt::Debug for Literal<'_> {
-  fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
-    match self {
-      Literal::Quoted(quoted) => Debug::fmt(quoted, f),
-      Literal::Name(name) => Debug::fmt(name, f),
-      Literal::Number(number) => Debug::fmt(number, f),
-    }
-  }
-}
-
-impl Spanned for Literal<'_> {
-  fn span(&self) -> Span {
-    match self {
-      Literal::Quoted(quoted) => quoted.span(),
-      Literal::Name(name) => name.span(),
-      Literal::Number(number) => number.span(),
-    }
-  }
-}
-
-impl Visitable for Literal<'_> {
-  fn apply_visitor<V: Visit + ?Sized>(&self, visitor: &V) {
-    visitor.visit_literal(self);
-  }
-
-  fn apply_visitor_to_children<V: Visit + ?Sized>(&self, visitor: &V) {
-    match self {
-      Literal::Quoted(quoted) => quoted.apply_visitor(visitor),
-      Literal::Name(name) => name.apply_visitor(visitor),
-      Literal::Number(number) => number.apply_visitor(visitor),
-    }
+ast_enum! {
+  #[visit(visit_literal)]
+  pub enum Literal<'a> {
+    Quoted<'a>,
+    Text<'a>,
+    Number<'a>,
   }
 }
 
@@ -666,39 +489,11 @@ impl Visitable for Quoted<'_> {
   }
 }
 
-pub enum QuotedPart<'a> {
-  Text(Text<'a>),
-  Escape(Escape),
-}
-
-impl fmt::Debug for QuotedPart<'_> {
-  fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
-    match self {
-      QuotedPart::Text(text) => Debug::fmt(text, f),
-      QuotedPart::Escape(escape) => Debug::fmt(escape, f),
-    }
-  }
-}
-
-impl Spanned for QuotedPart<'_> {
-  fn span(&self) -> Span {
-    match self {
-      QuotedPart::Text(text) => text.span(),
-      QuotedPart::Escape(escape) => escape.span(),
-    }
-  }
-}
-
-impl Visitable for QuotedPart<'_> {
-  fn apply_visitor<V: Visit + ?Sized>(&self, visitor: &V) {
-    visitor.visit_quoted_part(self);
-  }
-
-  fn apply_visitor_to_children<V: Visit + ?Sized>(&self, visitor: &V) {
-    match self {
-      QuotedPart::Text(text) => text.apply_visitor(visitor),
-      QuotedPart::Escape(escape) => escape.apply_visitor(visitor),
-    }
+ast_enum! {
+  #[visit(visit_quoted_part)]
+  pub enum QuotedPart<'a> {
+    Text<'a>,
+    Escape,
   }
 }
 
