@@ -56,3 +56,5 @@ SimpleMessage {
         },
     ],
 }
+=== spans ===
+\{\|\}↵Hello,\|World!↵Hello,\| World!↵Hello, \|World!↵a\|\|

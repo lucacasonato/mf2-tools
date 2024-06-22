@@ -35,3 +35,5 @@ SimpleMessage {
         },
     ],
 }
+=== spans ===
+{#el opt1=val1 @attr }

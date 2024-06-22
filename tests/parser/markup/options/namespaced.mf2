@@ -32,3 +32,5 @@ SimpleMessage {
         },
     ],
 }
+=== spans ===
+{#foo name:spaced=1}

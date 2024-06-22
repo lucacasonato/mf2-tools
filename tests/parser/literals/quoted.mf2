@@ -22,3 +22,5 @@ SimpleMessage {
         },
     ],
 }
+=== spans ===
+a {|abc def|}

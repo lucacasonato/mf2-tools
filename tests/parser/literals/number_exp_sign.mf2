@@ -42,3 +42,5 @@ SimpleMessage {
         },
     ],
 }
+=== spans ===
+a{ 1e+3 }{ 1e-3 }

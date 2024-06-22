@@ -27,3 +27,5 @@ SimpleMessage {
         },
     ],
 }
+=== spans ===
+a{ 1.34e+56 }

@@ -26,3 +26,5 @@ SimpleMessage {
         },
     ],
 }
+=== spans ===
+{#el opt = $var }

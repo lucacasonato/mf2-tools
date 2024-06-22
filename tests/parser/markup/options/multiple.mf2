@@ -37,3 +37,5 @@ SimpleMessage {
         },
     ],
 }
+=== spans ===
+{#foo abc = val1 def=val2 }

@@ -1,15 +1,20 @@
-a{ 1 }
+hello
+hi
+{
+  0
+}
+
 === ast ===
 SimpleMessage {
     parts: [
         Text {
             start: @0,
-            content: "a",
+            content: "hello\nhi\n",
         },
         LiteralExpression {
             literal: Number {
-                start: @3,
-                raw: "1",
+                start: @13,
+                raw: "0",
                 is_negative: false,
                 integral_len: 1,
                 fractional_len: None,
@@ -18,7 +23,11 @@ SimpleMessage {
             annotation: None,
             attributes: [],
         },
+        Text {
+            start: @16,
+            content: "\n",
+        },
     ],
 }
 === spans ===
-a{ 1 }
+hello↵hi↵{↵  0↵}↵
