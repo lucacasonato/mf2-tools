@@ -1,14 +1,30 @@
 a{ 1e }
+{ 1e+ }
+{ 1e- }
 === spans ===
-                    a{ 1e }
-SimpleMessage       ^^^^^^^
+                    a{ 1e }↵{ 1e+ }↵{ 1e- }
+SimpleMessage       ^^^^^^^^^^^^^^^^^^^^^^^
 Text                ^
 LiteralExpression    ^^^^^^
 Number                 ^^
 Number.integral        ^
 Number.exponent          
+Text                       ^
+LiteralExpression           ^^^^^^^
+Number                        ^^^
+Number.integral               ^
+Number.exponent                  
+Text                               ^
+LiteralExpression                   ^^^^^^^
+Number                                ^^^
+Number.integral                       ^
+Number.exponent                          
 === diagnostics ===
-[]
+[
+    Number is missing an exponent part (at @3..5),
+    Number is missing an exponent part (at @10..13),
+    Number is missing an exponent part (at @18..21),
+]
 === ast ===
 SimpleMessage {
     parts: [
@@ -28,6 +44,52 @@ SimpleMessage {
                 exponent_len: Some(
                     (
                         None,
+                        0,
+                    ),
+                ),
+            },
+            annotation: None,
+            attributes: [],
+        },
+        Text {
+            start: @7,
+            content: "\n",
+        },
+        LiteralExpression {
+            open: @8,
+            close: @14,
+            literal: Number {
+                start: @10,
+                raw: "1e+",
+                is_negative: false,
+                integral_len: 1,
+                fractional_len: None,
+                exponent_len: Some(
+                    (
+                        Plus,
+                        0,
+                    ),
+                ),
+            },
+            annotation: None,
+            attributes: [],
+        },
+        Text {
+            start: @15,
+            content: "\n",
+        },
+        LiteralExpression {
+            open: @16,
+            close: @22,
+            literal: Number {
+                start: @18,
+                raw: "1e-",
+                is_negative: false,
+                integral_len: 1,
+                fractional_len: None,
+                exponent_len: Some(
+                    (
+                        Minus,
                         0,
                     ),
                 ),

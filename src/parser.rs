@@ -32,7 +32,7 @@ use crate::util::SourceTextIterator;
 
 pub struct Parser<'a> {
   text: SourceTextIterator<'a>,
-  diagnostics: Vec<Diagnostic>,
+  diagnostics: Vec<Diagnostic<'a>>,
 }
 
 impl<'a> Parser<'a> {
@@ -43,7 +43,7 @@ impl<'a> Parser<'a> {
     }
   }
 
-  pub fn parse(mut self) -> (SimpleMessage<'a>, Vec<Diagnostic>) {
+  pub fn parse(mut self) -> (SimpleMessage<'a>, Vec<Diagnostic<'a>>) {
     while let Some((_, c)) = self.peek() {
       if is_simple_start(c) {
         return (self.parse_simple_message(), self.diagnostics);
@@ -71,6 +71,10 @@ impl<'a> Parser<'a> {
     let start = range.start;
     let content = self.text.slice(range);
     Text { start, content }
+  }
+
+  fn report(&mut self, diagnostic: Diagnostic<'a>) {
+    self.diagnostics.push(diagnostic);
   }
 
   fn parse_simple_message(&mut self) -> SimpleMessage<'a> {
@@ -505,7 +509,6 @@ impl<'a> Parser<'a> {
     let start = self.current_location();
     let is_negative = self.eat('-').is_some();
 
-    // todo: disallow 01
     let integral_part = self.parse_digits();
 
     let fractional_part = if self.eat('.').is_some() {
@@ -532,7 +535,7 @@ impl<'a> Parser<'a> {
 
     let end = self.current_location();
 
-    Number {
+    let num = Number {
       start,
       raw: self.text.slice(start..end),
       is_negative,
@@ -540,7 +543,30 @@ impl<'a> Parser<'a> {
       fractional_len: fractional_part.map(LengthShort::new_from_str),
       exponent_len: exponent_part
         .map(|c| (c.0, LengthShort::new_from_str(c.1))),
+    };
+
+    if integral_part.len() > 1 && integral_part.starts_with('0') {
+      self.report(Diagnostic::NumberLeadingZeroIntegralPart {
+        number: num.clone(),
+      });
     }
+    if integral_part.is_empty() {
+      self.report(Diagnostic::NumberMissingIntegralPart {
+        number: num.clone(),
+      });
+    }
+    if matches!(fractional_part, Some(s) if s.is_empty()) {
+      self.report(Diagnostic::NumberMissingFractionalPart {
+        number: num.clone(),
+      });
+    }
+    if matches!(exponent_part, Some((_, s)) if s.is_empty()) {
+      self.report(Diagnostic::NumberMissingExponentPart {
+        number: num.clone(),
+      });
+    }
+
+    num
   }
 
   fn parse_digits(&mut self) -> &'a str {

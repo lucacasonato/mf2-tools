@@ -504,7 +504,7 @@ pub enum ExponentSign {
   None,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Number<'a> {
   pub start: Location,
   pub raw: &'a str,
