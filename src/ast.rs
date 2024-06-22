@@ -305,7 +305,7 @@ impl Spanned for LiteralOrVariable<'_> {
 #[derive(Debug)]
 pub struct PrivateUseAnnotation<'a> {
   pub start: Location,
-  pub start_char: char,
+  pub sigil: char,
   pub body: Vec<ReservedBodyPart<'a>>,
 }
 
@@ -315,7 +315,7 @@ impl Spanned for PrivateUseAnnotation<'_> {
     let end = self
       .body
       .last()
-      .map_or(start, |last| last.span().end + self.start_char);
+      .map_or(start + self.sigil, |last| last.span().end);
     Span::new(start..end)
   }
 }
@@ -323,7 +323,7 @@ impl Spanned for PrivateUseAnnotation<'_> {
 #[derive(Debug)]
 pub struct ReservedAnnotation<'a> {
   pub start: Location,
-  pub start_char: char,
+  pub sigil: char,
   pub body: Vec<ReservedBodyPart<'a>>,
 }
 
@@ -333,7 +333,7 @@ impl Spanned for ReservedAnnotation<'_> {
     let end = self
       .body
       .last()
-      .map_or(start, |last| last.span().end + self.start_char);
+      .map_or(start + self.sigil, |last| last.span().end);
     Span::new(start..end)
   }
 }
@@ -519,8 +519,8 @@ impl Spanned for Markup<'_> {
   fn span(&self) -> Span {
     let start = self.open;
     let close_token = match self.kind {
-      MarkupKind::Open => "}",
-      MarkupKind::Standalone | MarkupKind::Close => "/}",
+      MarkupKind::Open | MarkupKind::Close => "}",
+      MarkupKind::Standalone => "/}",
     };
     let end = self.close + close_token;
     Span::new(start..end)

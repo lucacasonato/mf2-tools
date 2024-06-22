@@ -353,7 +353,7 @@ impl<'a> Parser<'a> {
 
         Some(Annotation::Function(Function { start, id, options }))
       }
-      Some((start, start_char @ ('^' | '&'))) => {
+      Some((start, sigil @ ('^' | '&'))) => {
         // private-use-annotation
         self.next(); // consume start
 
@@ -361,13 +361,13 @@ impl<'a> Parser<'a> {
 
         Some(Annotation::PrivateUseAnnotation(PrivateUseAnnotation {
           start,
-          start_char,
+          sigil,
           body: reserved_body,
         }))
       }
       Some((
         start,
-        start_char @ ('!' | '%' | '*' | '+' | '<' | '>' | '?' | '~'),
+        sigil @ ('!' | '%' | '*' | '+' | '<' | '>' | '?' | '~'),
       )) => {
         // private-use-annotation
         self.next(); // consume start
@@ -376,7 +376,7 @@ impl<'a> Parser<'a> {
 
         Some(Annotation::ReservedAnnotation(ReservedAnnotation {
           start,
-          start_char,
+          sigil,
           body: reserved_body,
         }))
       }
