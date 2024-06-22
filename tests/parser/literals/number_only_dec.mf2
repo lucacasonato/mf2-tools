@@ -1,0 +1,38 @@
+a{ .03 }
+=== spans ===
+                    a{ .03 }
+SimpleMessage       ^^^^^^^^
+Text                ^
+LiteralExpression    ^^^^^^^
+Number                 ^^^
+Number.integral        
+Number.fractional       ^^
+=== diagnostics ===
+[
+    Number is missing an integral part (at @3..6),
+]
+=== ast ===
+SimpleMessage {
+    parts: [
+        Text {
+            start: @0,
+            content: "a",
+        },
+        LiteralExpression {
+            open: @1,
+            close: @7,
+            literal: Number {
+                start: @3,
+                raw: ".03",
+                is_negative: false,
+                integral_len: 0,
+                fractional_len: Some(
+                    2,
+                ),
+                exponent_len: None,
+            },
+            annotation: None,
+            attributes: [],
+        },
+    ],
+}

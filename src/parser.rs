@@ -138,7 +138,8 @@ impl<'a> Parser<'a> {
 
     let (variable, literal, mut had_space) = match self.peek() {
       Some((_, '$')) => (Some(self.parse_variable()), None, self.skip_spaces()),
-      Some((_, '|' | '-' | '0'..='9')) => {
+      // '.' is for error recovery of a fractional number literal that is missing the integral part
+      Some((_, '|' | '.' | '-' | '0'..='9')) => {
         (None, Some(self.parse_literal()), self.skip_spaces())
       }
       Some((_, c)) if is_name_start(c) => {
@@ -235,7 +236,8 @@ impl<'a> Parser<'a> {
       Some((_, c)) if is_name_start(c) => {
         LiteralOrVariable::Literal(Literal::Text(self.parse_literal_name()))
       }
-      Some((_, '-' | '0'..='9')) => {
+      // '.' is for error recovery of a fractional number literal that is missing the integral part
+      Some((_, '-' | '.' | '0'..='9')) => {
         LiteralOrVariable::Literal(Literal::Number(self.parse_number()))
       }
       _ => panic!(),
@@ -460,7 +462,8 @@ impl<'a> Parser<'a> {
   fn parse_literal(&mut self) -> Literal<'a> {
     match self.peek() {
       Some((_, '|')) => Literal::Quoted(self.parse_quoted()),
-      Some((_, '-' | '0'..='9')) => Literal::Number(self.parse_number()),
+      // '.' is for error recovery of a fractional number literal that is missing the integral part
+      Some((_, '-' | '.' | '0'..='9')) => Literal::Number(self.parse_number()),
       Some((_, c)) if is_name_start(c) => {
         Literal::Text(self.parse_literal_name())
       }
