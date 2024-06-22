@@ -1,4 +1,15 @@
 {#foo abc = val1 def=val2 }
+=== spans ===
+                    {#foo abc = val1 def=val2 }
+SimpleMessage       ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Markup              ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Identifier            ^^^
+FnOrMarkupOption          ^^^^^^^^^^
+Identifier                ^^^
+Text                            ^^^^
+FnOrMarkupOption                     ^^^^^^^^
+Identifier                           ^^^
+Text                                     ^^^^
 === ast ===
 SimpleMessage {
     parts: [
@@ -39,6 +50,3 @@ SimpleMessage {
         },
     ],
 }
-=== spans ===
-                    {#foo abc = val1 def=val2 }
-TheSpanName         ^^^^^^^^^^^^^^^^^^^^^^^^^^^

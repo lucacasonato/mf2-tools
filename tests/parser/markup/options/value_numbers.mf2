@@ -1,5 +1,23 @@
 {#el opt = 1.0 }
 {#el opt = -1.0 }
+=== spans ===
+                    {#el opt = 1.0 }↵{#el opt = -1.0 }
+SimpleMessage       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Markup              ^^^^^^^^^^^^^^^^
+Identifier            ^^
+FnOrMarkupOption         ^^^^^^^^^
+Identifier               ^^^
+Number                         ^^^
+Number.integral                ^
+Number.fractional                ^
+Text                                ^
+Markup                               ^^^^^^^^^^^^^^^^^
+Identifier                             ^^
+FnOrMarkupOption                          ^^^^^^^^^^
+Identifier                                ^^^
+Number                                          ^^^^
+Number.integral                                  ^
+Number.fractional                                  ^
 === ast ===
 SimpleMessage {
     parts: [
@@ -69,6 +87,3 @@ SimpleMessage {
         },
     ],
 }
-=== spans ===
-                    {#el opt = 1.0 }↵{#el opt = -1.0 }
-TheSpanName         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^

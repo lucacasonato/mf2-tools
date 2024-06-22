@@ -1,4 +1,9 @@
 {#standalone/}
+=== spans ===
+                    {#standalone/}
+SimpleMessage       ^^^^^^^^^^^^^^
+Markup              ^^^^^^^^^^^^^^
+Identifier            ^^^^^^^^^^
 === ast ===
 SimpleMessage {
     parts: [
@@ -16,6 +21,3 @@ SimpleMessage {
         },
     ],
 }
-=== spans ===
-                    {#standalone/}
-TheSpanName         ^^^^^^^^^^^^^^

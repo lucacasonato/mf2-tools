@@ -4,6 +4,14 @@ hi
 	0
 }
 
+=== spans ===
+                    hello↵hi↵{↵⇥0↵}↵
+SimpleMessage       ^^^^^^^^^^^^^^^^
+Text                ^^^^^^^^^
+LiteralExpression            ^^^^^^
+Number                          ^
+Number.integral                 ^
+Text                               ^
 === ast ===
 SimpleMessage {
     parts: [
@@ -31,6 +39,3 @@ SimpleMessage {
         },
     ],
 }
-=== spans ===
-                    hello↵hi↵{↵⇥0↵}↵
-TheSpanName         ^^^^^^^^^^^^^^^^

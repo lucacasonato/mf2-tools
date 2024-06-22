@@ -1,4 +1,11 @@
 {#el @attr}
+=== spans ===
+                    {#el @attr}
+SimpleMessage       ^^^^^^^^^^^
+Markup              ^^^^^^^^^^^
+Identifier            ^^
+Attribute                ^^^^^
+Identifier                ^^^^
 === ast ===
 SimpleMessage {
     parts: [
@@ -26,6 +33,3 @@ SimpleMessage {
         },
     ],
 }
-=== spans ===
-                    {#el @attr}
-TheSpanName         ^^^^^^^^^^^

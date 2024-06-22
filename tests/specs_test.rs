@@ -9,9 +9,12 @@ use file_test_runner::collection::CollectOptions;
 use file_test_runner::collection::CollectedTest;
 use file_test_runner::RunOptions;
 use file_test_runner::TestResult;
+use mf2_parser::ast;
 use mf2_parser::parse;
 use mf2_parser::Span;
 use mf2_parser::Spanned;
+use mf2_parser::Visit;
+use mf2_parser::Visitable;
 use unicode_width::UnicodeWidthStr;
 
 fn main() {
@@ -33,17 +36,16 @@ fn main() {
 fn run_test(test: &CollectedTest) {
   let file_text = test.read_to_string().unwrap();
 
-  let ast_marker = "\n=== ast ===\n";
   let spans_marker = "\n=== spans ===\n";
+  let ast_marker = "\n=== ast ===\n";
 
   let (message, rest_str) = file_text
-    .split_once(ast_marker)
+    .split_once(spans_marker)
     .unwrap_or((&*file_text, ""));
   assert!(!message.is_empty());
-  let (expected_ast_dbg, rest_str) = rest_str
-    .split_once(spans_marker)
-    .unwrap_or((&*rest_str, ""));
-  let expected_spans = rest_str;
+  let (expected_spans, rest_str) =
+    rest_str.split_once(ast_marker).unwrap_or((&*rest_str, ""));
+  let expected_ast_dbg = rest_str;
 
   if test
     .path
@@ -62,23 +64,92 @@ fn run_test(test: &CollectedTest) {
   let actual_ast = parse(message);
   let actual_ast_dbg = format!("{actual_ast:#?}");
 
+  const SPAN_LABEL_WIDTH: usize = 20;
+  struct SpanDebuggerVisitor<'a> {
+    input_message: &'a str,
+    output: &'a mut String,
+  }
+
+  impl SpanDebuggerVisitor<'_> {
+    fn print(&mut self, name: &str, span: Span) -> () {
+      assert!(name.len() <= SPAN_LABEL_WIDTH);
+
+      let span_start = span.start.inner_byte_index_for_test() as usize;
+      let span_end = span.end.inner_byte_index_for_test() as usize;
+
+      let prefix = &self.input_message[0..span_start];
+      let contents = &self.input_message[span_start..span_end];
+
+      write!(
+        self.output,
+        "\n{:<SPAN_LABEL_WIDTH$}{}{}",
+        name,
+        " ".repeat(prefix.width_cjk()),
+        "^".repeat(contents.width_cjk())
+      )
+      .unwrap();
+    }
+  }
+
+  macro_rules! impl_visit_mut_for_span_debugger {
+      {
+        $( $ast:ident : $visit:ident, )*
+      } => {
+          $( fn $visit(&mut self, ast: &ast::$ast) {
+            self.print(stringify!($ast), ast.span());
+            ast.apply_visitor_to_children(self);
+          } )*
+        }
+  }
+
+  impl Visit for SpanDebuggerVisitor<'_> {
+    impl_visit_mut_for_span_debugger! {
+      SimpleMessage: visit_simple_message,
+      Text: visit_text,
+      Escape: visit_escape,
+      LiteralExpression: visit_literal_expression,
+      Quoted: visit_quoted,
+      Function: visit_function,
+      Identifier: visit_identifier,
+      FnOrMarkupOption: visit_fn_or_markup_option,
+      Variable: visit_variable,
+      Attribute: visit_attribute,
+      PrivateUseAnnotation: visit_private_use_annotation,
+      ReservedAnnotation: visit_reserved_annotation,
+      VariableExpression: visit_variable_expression,
+      AnnotationExpression: visit_annotation_expression,
+      Markup: visit_markup,
+    }
+
+    fn visit_number(&mut self, num: &ast::Number) {
+      self.print("Number", num.span());
+      self.print("Number.integral", num.integral_span());
+      if let Some(frac) = num.fractional_span() {
+        self.print("Number.fractional", frac);
+      }
+      if let Some(exp) = num.exponent_span() {
+        self.print("Number.exponent", exp);
+      }
+
+      num.apply_visitor_to_children(self);
+    }
+  }
+
   let actual_spans = {
     let mut normalized_message = iter::repeat(' ')
-      .take(20)
+      .take(SPAN_LABEL_WIDTH)
       .chain(message.chars().map(|c| match c {
         '\n' => '↵',
         '\t' => '⇥',
         c => c,
       }))
       .collect::<String>();
-    {
-      print_span(
-        &mut normalized_message,
-        "TheSpanName",
-        &message,
-        actual_ast.span(),
-      );
-    }
+
+    actual_ast.apply_visitor(&mut SpanDebuggerVisitor {
+      input_message: message,
+      output: &mut normalized_message,
+    });
+
     normalized_message
   };
 
@@ -100,26 +171,9 @@ fn run_test(test: &CollectedTest) {
     std::fs::write(
       &test.path,
       format!(
-        "{message}{ast_marker}{actual_ast_dbg}{spans_marker}{actual_spans}"
+        "{message}{spans_marker}{actual_spans}{ast_marker}{actual_ast_dbg}"
       ),
     )
     .unwrap();
   }
-}
-
-fn print_span(output: &mut String, name: &str, text: &str, span: Span) -> () {
-  let span_start = span.start.inner_byte_index_for_test() as usize;
-  let span_end = span.end.inner_byte_index_for_test() as usize;
-
-  let prefix = &text[0..span_start];
-  let contents = &text[span_start..span_end];
-
-  write!(
-    output,
-    "\n{:<20}{}{}",
-    name,
-    " ".repeat(prefix.width_cjk()),
-    "^".repeat(contents.width_cjk())
-  )
-  .unwrap();
 }

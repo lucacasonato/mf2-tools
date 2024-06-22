@@ -3,6 +3,21 @@ Hello,\|World!
 Hello,\| World!
 Hello, \|World!
 a\|\|
+=== spans ===
+                    \{\|\}↵Hello,\|World!↵Hello,\| World!↵Hello, \|World!↵a\|\|
+SimpleMessage       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Escape              ^^
+Escape                ^^
+Escape                  ^^
+Text                      ^^^^^^^
+Escape                           ^^
+Text                               ^^^^^^^^^^^^^
+Escape                                          ^^
+Text                                              ^^^^^^^^^^^^^^^
+Escape                                                           ^^
+Text                                                               ^^^^^^^^
+Escape                                                                     ^^
+Escape                                                                       ^^
 === ast ===
 SimpleMessage {
     parts: [
@@ -56,6 +71,3 @@ SimpleMessage {
         },
     ],
 }
-=== spans ===
-                    \{\|\}↵Hello,\|World!↵Hello,\| World!↵Hello, \|World!↵a\|\|
-TheSpanName         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^

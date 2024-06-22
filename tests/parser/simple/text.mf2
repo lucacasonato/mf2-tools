@@ -1,4 +1,8 @@
 Hello, World!
+=== spans ===
+                    Hello, World!
+SimpleMessage       ^^^^^^^^^^^^^
+Text                ^^^^^^^^^^^^^
 === ast ===
 SimpleMessage {
     parts: [
@@ -8,6 +12,3 @@ SimpleMessage {
         },
     ],
 }
-=== spans ===
-                    Hello, World!
-TheSpanName         ^^^^^^^^^^^^^

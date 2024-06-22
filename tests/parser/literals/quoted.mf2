@@ -1,4 +1,11 @@
 a {|abc def|}
+=== spans ===
+                    a {|abc def|}
+SimpleMessage       ^^^^^^^^^^^^^
+Text                ^^
+LiteralExpression     ^^^^^^^^^^^
+Quoted                 ^^^^^^^^^
+Text                    ^^^^^^^
 === ast ===
 SimpleMessage {
     parts: [
@@ -23,6 +30,3 @@ SimpleMessage {
         },
     ],
 }
-=== spans ===
-                    a {|abc def|}
-TheSpanName         ^^^^^^^^^^^^^

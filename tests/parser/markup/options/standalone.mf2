@@ -1,5 +1,14 @@
 {#el opt=val /}
 
+=== spans ===
+                    {#el opt=val /}↵
+SimpleMessage       ^^^^^^^^^^^^^^^^
+Markup              ^^^^^^^^^^^^^^^
+Identifier            ^^
+FnOrMarkupOption         ^^^^^^^
+Identifier               ^^^
+Text                         ^^^
+Text                               ^
 === ast ===
 SimpleMessage {
     parts: [
@@ -33,6 +42,3 @@ SimpleMessage {
         },
     ],
 }
-=== spans ===
-                    {#el opt=val /}↵
-TheSpanName         ^^^^^^^^^^^^^^^^

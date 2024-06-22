@@ -1,4 +1,12 @@
 a{ 1.03 }
+=== spans ===
+                    a{ 1.03 }
+SimpleMessage       ^^^^^^^^^
+Text                ^
+LiteralExpression    ^^^^^^^^
+Number                 ^^^^
+Number.integral        ^
+Number.fractional        ^^
 === ast ===
 SimpleMessage {
     parts: [
@@ -24,6 +32,3 @@ SimpleMessage {
         },
     ],
 }
-=== spans ===
-                    a{ 1.03 }
-TheSpanName         ^^^^^^^^^

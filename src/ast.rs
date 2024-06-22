@@ -35,11 +35,11 @@ macro_rules! ast_enum {
     }
 
     impl crate::visitor::Visitable for $name<'_> {
-      fn apply_visitor<V: crate::visitor::Visit + ?Sized>(&self, visitor: &V) {
+      fn apply_visitor<V: crate::visitor::Visit + ?Sized>(&self, visitor: &mut V) {
         visitor.$visit_method(self);
       }
 
-      fn apply_visitor_to_children<V: crate::visitor::Visit + ?Sized>(&self, visitor: &V) {
+      fn apply_visitor_to_children<V: crate::visitor::Visit + ?Sized>(&self, visitor: &mut V) {
         match self {
           $( $name::$item(item) => item.apply_visitor(visitor), )*
         }
@@ -65,11 +65,11 @@ impl Spanned for SimpleMessage<'_> {
 }
 
 impl Visitable for SimpleMessage<'_> {
-  fn apply_visitor<V: Visit + ?Sized>(&self, visitor: &V) {
+  fn apply_visitor<V: Visit + ?Sized>(&self, visitor: &mut V) {
     visitor.visit_simple_message(self);
   }
 
-  fn apply_visitor_to_children<V: Visit + ?Sized>(&self, visitor: &V) {
+  fn apply_visitor_to_children<V: Visit + ?Sized>(&self, visitor: &mut V) {
     for part in &self.parts {
       part.apply_visitor(visitor);
     }
@@ -99,11 +99,11 @@ impl Spanned for Text<'_> {
 }
 
 impl Visitable for Text<'_> {
-  fn apply_visitor<V: Visit + ?Sized>(&self, visitor: &V) {
+  fn apply_visitor<V: Visit + ?Sized>(&self, visitor: &mut V) {
     visitor.visit_text(self);
   }
 
-  fn apply_visitor_to_children<V: Visit + ?Sized>(&self, _visitor: &V) {}
+  fn apply_visitor_to_children<V: Visit + ?Sized>(&self, _visitor: &mut V) {}
 }
 
 #[derive(Debug)]
@@ -119,11 +119,11 @@ impl Spanned for Escape {
 }
 
 impl Visitable for Escape {
-  fn apply_visitor<V: Visit + ?Sized>(&self, visitor: &V) {
+  fn apply_visitor<V: Visit + ?Sized>(&self, visitor: &mut V) {
     visitor.visit_escape(self);
   }
 
-  fn apply_visitor_to_children<V: Visit + ?Sized>(&self, _visitor: &V) {}
+  fn apply_visitor_to_children<V: Visit + ?Sized>(&self, _visitor: &mut V) {}
 }
 
 ast_enum! {
@@ -153,11 +153,11 @@ impl Spanned for LiteralExpression<'_> {
 }
 
 impl Visitable for LiteralExpression<'_> {
-  fn apply_visitor<V: Visit + ?Sized>(&self, visitor: &V) {
+  fn apply_visitor<V: Visit + ?Sized>(&self, visitor: &mut V) {
     visitor.visit_literal_expression(self);
   }
 
-  fn apply_visitor_to_children<V: Visit + ?Sized>(&self, visitor: &V) {
+  fn apply_visitor_to_children<V: Visit + ?Sized>(&self, visitor: &mut V) {
     self.literal.apply_visitor(visitor);
     if let Some(annotation) = &self.annotation {
       annotation.apply_visitor(visitor);
@@ -186,11 +186,11 @@ impl Spanned for VariableExpression<'_> {
 }
 
 impl Visitable for VariableExpression<'_> {
-  fn apply_visitor<V: Visit + ?Sized>(&self, visitor: &V) {
+  fn apply_visitor<V: Visit + ?Sized>(&self, visitor: &mut V) {
     visitor.visit_variable_expression(self);
   }
 
-  fn apply_visitor_to_children<V: Visit + ?Sized>(&self, visitor: &V) {
+  fn apply_visitor_to_children<V: Visit + ?Sized>(&self, visitor: &mut V) {
     self.variable.apply_visitor(visitor);
     if let Some(annotation) = &self.annotation {
       annotation.apply_visitor(visitor);
@@ -214,11 +214,11 @@ impl Spanned for Variable<'_> {
 }
 
 impl Visitable for Variable<'_> {
-  fn apply_visitor<V: Visit + ?Sized>(&self, visitor: &V) {
+  fn apply_visitor<V: Visit + ?Sized>(&self, visitor: &mut V) {
     visitor.visit_variable(self);
   }
 
-  fn apply_visitor_to_children<V: Visit + ?Sized>(&self, _visitor: &V) {}
+  fn apply_visitor_to_children<V: Visit + ?Sized>(&self, _visitor: &mut V) {}
 }
 
 #[derive(Debug)]
@@ -238,11 +238,11 @@ impl Spanned for AnnotationExpression<'_> {
 }
 
 impl Visitable for AnnotationExpression<'_> {
-  fn apply_visitor<V: Visit + ?Sized>(&self, visitor: &V) {
+  fn apply_visitor<V: Visit + ?Sized>(&self, visitor: &mut V) {
     visitor.visit_annotation_expression(self);
   }
 
-  fn apply_visitor_to_children<V: Visit + ?Sized>(&self, visitor: &V) {
+  fn apply_visitor_to_children<V: Visit + ?Sized>(&self, visitor: &mut V) {
     self.annotation.apply_visitor(visitor);
     for attribute in &self.attributes {
       attribute.apply_visitor(visitor);
@@ -279,11 +279,11 @@ impl Spanned for Identifier<'_> {
 }
 
 impl Visitable for Identifier<'_> {
-  fn apply_visitor<V: Visit + ?Sized>(&self, visitor: &V) {
+  fn apply_visitor<V: Visit + ?Sized>(&self, visitor: &mut V) {
     visitor.visit_identifier(self);
   }
 
-  fn apply_visitor_to_children<V: Visit + ?Sized>(&self, _visitor: &V) {}
+  fn apply_visitor_to_children<V: Visit + ?Sized>(&self, _visitor: &mut V) {}
 }
 
 #[derive(Debug)]
@@ -305,11 +305,11 @@ impl Spanned for Function<'_> {
 }
 
 impl Visitable for Function<'_> {
-  fn apply_visitor<V: Visit + ?Sized>(&self, visitor: &V) {
+  fn apply_visitor<V: Visit + ?Sized>(&self, visitor: &mut V) {
     visitor.visit_function(self);
   }
 
-  fn apply_visitor_to_children<V: Visit + ?Sized>(&self, visitor: &V) {
+  fn apply_visitor_to_children<V: Visit + ?Sized>(&self, visitor: &mut V) {
     self.id.apply_visitor(visitor);
     for option in &self.options {
       option.apply_visitor(visitor);
@@ -332,11 +332,11 @@ impl Spanned for FnOrMarkupOption<'_> {
 }
 
 impl Visitable for FnOrMarkupOption<'_> {
-  fn apply_visitor<V: Visit + ?Sized>(&self, visitor: &V) {
+  fn apply_visitor<V: Visit + ?Sized>(&self, visitor: &mut V) {
     visitor.visit_fn_or_markup_option(self);
   }
 
-  fn apply_visitor_to_children<V: Visit + ?Sized>(&self, visitor: &V) {
+  fn apply_visitor_to_children<V: Visit + ?Sized>(&self, visitor: &mut V) {
     self.key.apply_visitor(visitor);
     self.value.apply_visitor(visitor);
   }
@@ -361,11 +361,11 @@ impl Spanned for Attribute<'_> {
 }
 
 impl Visitable for Attribute<'_> {
-  fn apply_visitor<V: Visit + ?Sized>(&self, visitor: &V) {
+  fn apply_visitor<V: Visit + ?Sized>(&self, visitor: &mut V) {
     visitor.visit_attribute(self);
   }
 
-  fn apply_visitor_to_children<V: Visit + ?Sized>(&self, visitor: &V) {
+  fn apply_visitor_to_children<V: Visit + ?Sized>(&self, visitor: &mut V) {
     self.key.apply_visitor(visitor);
     if let Some(value) = &self.value {
       value.apply_visitor(visitor);
@@ -400,11 +400,11 @@ impl Spanned for PrivateUseAnnotation<'_> {
 }
 
 impl Visitable for PrivateUseAnnotation<'_> {
-  fn apply_visitor<V: Visit + ?Sized>(&self, visitor: &V) {
+  fn apply_visitor<V: Visit + ?Sized>(&self, visitor: &mut V) {
     visitor.visit_private_use_annotation(self);
   }
 
-  fn apply_visitor_to_children<V: Visit + ?Sized>(&self, visitor: &V) {
+  fn apply_visitor_to_children<V: Visit + ?Sized>(&self, visitor: &mut V) {
     for part in &self.body {
       part.apply_visitor(visitor);
     }
@@ -430,11 +430,11 @@ impl Spanned for ReservedAnnotation<'_> {
 }
 
 impl Visitable for ReservedAnnotation<'_> {
-  fn apply_visitor<V: Visit + ?Sized>(&self, visitor: &V) {
+  fn apply_visitor<V: Visit + ?Sized>(&self, visitor: &mut V) {
     visitor.visit_reserved_annotation(self);
   }
 
-  fn apply_visitor_to_children<V: Visit + ?Sized>(&self, visitor: &V) {
+  fn apply_visitor_to_children<V: Visit + ?Sized>(&self, visitor: &mut V) {
     for part in &self.body {
       part.apply_visitor(visitor);
     }
@@ -478,11 +478,11 @@ impl Spanned for Quoted<'_> {
 }
 
 impl Visitable for Quoted<'_> {
-  fn apply_visitor<V: Visit + ?Sized>(&self, visitor: &V) {
+  fn apply_visitor<V: Visit + ?Sized>(&self, visitor: &mut V) {
     visitor.visit_quoted(self);
   }
 
-  fn apply_visitor_to_children<V: Visit + ?Sized>(&self, visitor: &V) {
+  fn apply_visitor_to_children<V: Visit + ?Sized>(&self, visitor: &mut V) {
     for part in &self.parts {
       part.apply_visitor(visitor);
     }
@@ -521,54 +521,74 @@ impl Spanned for Number<'_> {
 }
 
 impl Visitable for Number<'_> {
-  fn apply_visitor<V: Visit + ?Sized>(&self, visitor: &V) {
+  fn apply_visitor<V: Visit + ?Sized>(&self, visitor: &mut V) {
     visitor.visit_number(self);
   }
 
-  fn apply_visitor_to_children<V: Visit + ?Sized>(&self, _visitor: &V) {}
+  fn apply_visitor_to_children<V: Visit + ?Sized>(&self, _visitor: &mut V) {}
 }
 
 impl<'a> Number<'a> {
-  fn integral_start(&self) -> usize {
+  fn slice(&self, span: Span) -> &'a str {
+    &self.raw[span.start.inner() as usize..span.end.inner() as usize]
+  }
+
+  fn integral_start(&self) -> Location {
     if self.is_negative {
-      '-'.len_utf8()
+      self.start + '-'
     } else {
-      0
+      self.start
     }
   }
 
-  fn integral_end(&self) -> usize {
-    self.integral_start() + self.integral_len.inner() as usize
+  fn integral_end(&self) -> Location {
+    self.integral_start() + self.integral_len
+  }
+
+  pub fn integral_span(&self) -> Span {
+    Span::new(self.integral_start()..self.integral_end())
   }
 
   pub fn integral_part(&self) -> &'a str {
-    &self.raw[self.integral_start()..self.integral_end()]
+    self.slice(self.integral_span())
+  }
+
+  pub fn fractional_span(&self) -> Option<Span> {
+    self.fractional_len.map(|fractional_len| {
+      let start = self.integral_end() + '.';
+      let end = start + fractional_len;
+      Span::new(start..end)
+    })
   }
 
   pub fn fractional_part(&self) -> Option<&'a str> {
-    self.fractional_len.as_ref().map(|fractional_len| {
-      let start = self.integral_end() + '.'.len_utf8();
-      let end = start + fractional_len.inner() as usize;
-      &self.raw[start..end]
+    self.fractional_span().map(|span| self.slice(span))
+  }
+
+  pub fn exponent_span(&self) -> Option<Span> {
+    self.exponent_len.map(|(sign, exponent_len)| {
+      let mut start = self.integral_end();
+      if let Some(fractional_len) = &self.fractional_len {
+        start = start + '.';
+        start = start + *fractional_len;
+      }
+
+      start = start + 'e';
+
+      if !matches!(sign, ExponentSign::None) {
+        start = start + '-';
+      };
+
+      let end = start + exponent_len;
+
+      Span::new(start..end)
     })
   }
 
   pub fn exponent_part(&self) -> Option<(ExponentSign, &'a str)> {
-    self.exponent_len.as_ref().map(|(sign, exponent_len)| {
-      let mut start = self.integral_end();
-      if let Some(fractional_len) = &self.fractional_len {
-        start += '.'.len_utf8() + fractional_len.inner() as usize;
-      }
-      start += 'e'.len_utf8();
-
-      if !matches!(sign, ExponentSign::None) {
-        start += '-'.len_utf8();
-      };
-
-      let end = start + exponent_len.inner() as usize;
-
-      (*sign, &self.raw[start..end])
-    })
+    self
+      .exponent_span()
+      .map(|span| (self.exponent_len.as_ref().unwrap().0, self.slice(span)))
   }
 }
 
@@ -602,11 +622,11 @@ impl Spanned for Markup<'_> {
 }
 
 impl Visitable for Markup<'_> {
-  fn apply_visitor<V: Visit + ?Sized>(&self, visitor: &V) {
+  fn apply_visitor<V: Visit + ?Sized>(&self, visitor: &mut V) {
     visitor.visit_markup(self);
   }
 
-  fn apply_visitor_to_children<V: Visit + ?Sized>(&self, visitor: &V) {
+  fn apply_visitor_to_children<V: Visit + ?Sized>(&self, visitor: &mut V) {
     self.id.apply_visitor(visitor);
     for option in &self.options {
       option.apply_visitor(visitor);

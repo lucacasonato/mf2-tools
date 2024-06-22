@@ -1,4 +1,13 @@
 {#el opt=|quoted| }
+=== spans ===
+                    {#el opt=|quoted| }
+SimpleMessage       ^^^^^^^^^^^^^^^^^^^
+Markup              ^^^^^^^^^^^^^^^^^^^
+Identifier            ^^
+FnOrMarkupOption         ^^^^^^^^^^^^
+Identifier               ^^^
+Quoted                       ^^^^^^^^
+Text                          ^^^^^^
 === ast ===
 SimpleMessage {
     parts: [
@@ -33,6 +42,3 @@ SimpleMessage {
         },
     ],
 }
-=== spans ===
-                    {#el opt=|quoted| }
-TheSpanName         ^^^^^^^^^^^^^^^^^^^

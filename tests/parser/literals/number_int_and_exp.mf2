@@ -1,4 +1,16 @@
 a{ 1e3 }{ 1E3 }
+=== spans ===
+                    a{ 1e3 }{ 1E3 }
+SimpleMessage       ^^^^^^^^^^^^^^^
+Text                ^
+LiteralExpression    ^^^^^^^
+Number                 ^^^
+Number.integral        ^
+Number.exponent          ^
+LiteralExpression           ^^^^^^^
+Number                        ^^^
+Number.integral               ^
+Number.exponent                 ^
 === ast ===
 SimpleMessage {
     parts: [
@@ -46,6 +58,3 @@ SimpleMessage {
         },
     ],
 }
-=== spans ===
-                    a{ 1e3 }{ 1E3 }
-TheSpanName         ^^^^^^^^^^^^^^^

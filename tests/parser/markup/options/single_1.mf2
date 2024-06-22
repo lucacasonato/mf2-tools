@@ -1,4 +1,13 @@
 {#foo hello=1}
+=== spans ===
+                    {#foo hello=1}
+SimpleMessage       ^^^^^^^^^^^^^^
+Markup              ^^^^^^^^^^^^^^
+Identifier            ^^^
+FnOrMarkupOption          ^^^^^^^
+Identifier                ^^^^^
+Number                          ^
+Number.integral                 ^
 === ast ===
 SimpleMessage {
     parts: [
@@ -32,6 +41,3 @@ SimpleMessage {
         },
     ],
 }
-=== spans ===
-                    {#foo hello=1}
-TheSpanName         ^^^^^^^^^^^^^^

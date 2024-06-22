@@ -101,6 +101,10 @@ impl Location {
   pub fn inner_byte_index_for_test(&self) -> u32 {
     self.0
   }
+
+  pub(crate) fn inner(&self) -> u32 {
+    self.0
+  }
 }
 
 impl Debug for Location {
@@ -159,6 +163,7 @@ pub trait Spanned {
 }
 
 /// A short length (maximum u16)
+#[derive(Clone, Copy)]
 pub struct LengthShort(u16);
 
 impl Debug for LengthShort {

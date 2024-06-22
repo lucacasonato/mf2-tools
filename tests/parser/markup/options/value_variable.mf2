@@ -1,4 +1,12 @@
 {#el opt = $var }
+=== spans ===
+                    {#el opt = $var }
+SimpleMessage       ^^^^^^^^^^^^^^^^^
+Markup              ^^^^^^^^^^^^^^^^^
+Identifier            ^^
+FnOrMarkupOption         ^^^^^^^^^^
+Identifier               ^^^
+Variable                       ^^^^
 === ast ===
 SimpleMessage {
     parts: [
@@ -28,6 +36,3 @@ SimpleMessage {
         },
     ],
 }
-=== spans ===
-                    {#el opt = $var }
-TheSpanName         ^^^^^^^^^^^^^^^^^

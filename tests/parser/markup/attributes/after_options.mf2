@@ -1,4 +1,14 @@
 {#el opt1=val1 @attr }
+=== spans ===
+                    {#el opt1=val1 @attr }
+SimpleMessage       ^^^^^^^^^^^^^^^^^^^^^^
+Markup              ^^^^^^^^^^^^^^^^^^^^^^
+Identifier            ^^
+FnOrMarkupOption         ^^^^^^^^^
+Identifier               ^^^^
+Text                          ^^^^
+Attribute                          ^^^^^
+Identifier                          ^^^^
 === ast ===
 SimpleMessage {
     parts: [
@@ -38,6 +48,3 @@ SimpleMessage {
         },
     ],
 }
-=== spans ===
-                    {#el opt1=val1 @attr }
-TheSpanName         ^^^^^^^^^^^^^^^^^^^^^^
