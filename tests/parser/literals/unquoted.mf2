@@ -7,6 +7,8 @@ SimpleMessage {
             content: "a",
         },
         LiteralExpression {
+            open: @1,
+            close: @5,
             literal: Text {
                 start: @2,
                 content: "abc",

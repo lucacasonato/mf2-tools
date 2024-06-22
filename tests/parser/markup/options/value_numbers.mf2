@@ -4,6 +4,8 @@
 SimpleMessage {
     parts: [
         Markup {
+            open: @0,
+            close: @15,
             kind: Open,
             id: Identifier {
                 start: @2,
@@ -36,6 +38,8 @@ SimpleMessage {
             content: "\n",
         },
         Markup {
+            open: @17,
+            close: @33,
             kind: Open,
             id: Identifier {
                 start: @19,

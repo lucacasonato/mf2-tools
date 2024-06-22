@@ -3,6 +3,8 @@
 SimpleMessage {
     parts: [
         Markup {
+            open: @0,
+            close: @21,
             kind: Open,
             id: Identifier {
                 start: @2,
@@ -24,6 +26,7 @@ SimpleMessage {
             ],
             attributes: [
                 Attribute {
+                    start: @15,
                     key: Identifier {
                         start: @16,
                         namespace: None,

@@ -7,9 +7,10 @@ SimpleMessage {
             content: "a ",
         },
         LiteralExpression {
+            open: @2,
+            close: @12,
             literal: Quoted {
                 open: @3,
-                close: @11,
                 parts: [
                     Text {
                         start: @4,

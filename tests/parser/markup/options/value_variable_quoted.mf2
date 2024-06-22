@@ -3,6 +3,8 @@
 SimpleMessage {
     parts: [
         Markup {
+            open: @0,
+            close: @18,
             kind: Open,
             id: Identifier {
                 start: @2,
@@ -18,7 +20,6 @@ SimpleMessage {
                     },
                     value: Quoted {
                         open: @9,
-                        close: @16,
                         parts: [
                             Text {
                                 start: @10,

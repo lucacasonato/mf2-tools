@@ -12,6 +12,17 @@ pub struct SimpleMessage<'a> {
   pub parts: Vec<MessagePart<'a>>,
 }
 
+impl Spanned for SimpleMessage<'_> {
+  fn span(&self) -> Span {
+    match (self.parts.first(), self.parts.last()) {
+      (Some(first), Some(last)) => {
+        Span::new(first.span().start..last.span().end)
+      }
+      _ => Span::new(Location::dummy()..Location::dummy()),
+    }
+  }
+}
+
 pub enum MessagePart<'a> {
   Text(Text<'a>),
   Escape(Escape),
@@ -26,6 +37,17 @@ impl fmt::Debug for MessagePart<'_> {
       MessagePart::Escape(escape) => Debug::fmt(escape, f),
       MessagePart::Expression(expression) => Debug::fmt(expression, f),
       MessagePart::Markup(markup) => Debug::fmt(markup, f),
+    }
+  }
+}
+
+impl Spanned for MessagePart<'_> {
+  fn span(&self) -> Span {
+    match self {
+      MessagePart::Text(text) => text.span(),
+      MessagePart::Escape(escape) => escape.span(),
+      MessagePart::Expression(expression) => expression.span(),
+      MessagePart::Markup(markup) => markup.span(),
     }
   }
 }
@@ -76,18 +98,54 @@ impl fmt::Debug for Expression<'_> {
   }
 }
 
+impl Spanned for Expression<'_> {
+  fn span(&self) -> Span {
+    match self {
+      Expression::LiteralExpression(literal_expression) => {
+        literal_expression.span()
+      }
+      Expression::VariableExpression(variable_expression) => {
+        variable_expression.span()
+      }
+      Expression::AnnotationExpression(annotation_expression) => {
+        annotation_expression.span()
+      }
+    }
+  }
+}
+
 #[derive(Debug)]
 pub struct LiteralExpression<'a> {
+  pub open: Location,
+  pub close: Location,
   pub literal: Literal<'a>,
   pub annotation: Option<Annotation<'a>>,
   pub attributes: Vec<Attribute<'a>>,
 }
 
+impl Spanned for LiteralExpression<'_> {
+  fn span(&self) -> Span {
+    let start = self.open;
+    let end = self.close + '}';
+    Span::new(start..end)
+  }
+}
+
 #[derive(Debug)]
 pub struct VariableExpression<'a> {
+  pub open: Location,
+  pub close: Location,
   pub variable: Variable<'a>,
   pub annotation: Option<Annotation<'a>>,
   pub attributes: Vec<Attribute<'a>>,
+}
+
+impl Spanned for VariableExpression<'_> {
+  fn span(&self) -> Span {
+    let start = self.open;
+    let end = self.close + '}';
+    Span::new(start..end)
+  }
 }
 
 #[derive(Debug)]
@@ -104,8 +162,18 @@ impl Spanned for Variable<'_> {
 
 #[derive(Debug)]
 pub struct AnnotationExpression<'a> {
+  pub open: Location,
+  pub close: Location,
   pub annotation: Annotation<'a>,
   pub attributes: Vec<Attribute<'a>>,
+}
+
+impl Spanned for AnnotationExpression<'_> {
+  fn span(&self) -> Span {
+    let start = self.open;
+    let end = self.close + '}';
+    Span::new(start..end)
+  }
 }
 
 pub enum Annotation<'a> {
@@ -123,6 +191,20 @@ impl fmt::Debug for Annotation<'_> {
       }
       Annotation::ReservedAnnotation(reserved_annotation) => {
         Debug::fmt(reserved_annotation, f)
+      }
+    }
+  }
+}
+
+impl Spanned for Annotation<'_> {
+  fn span(&self) -> Span {
+    match self {
+      Annotation::Function(function) => function.span(),
+      Annotation::PrivateUseAnnotation(private_use_annotation) => {
+        private_use_annotation.span()
+      }
+      Annotation::ReservedAnnotation(reserved_annotation) => {
+        reserved_annotation.span()
       }
     }
   }
@@ -149,8 +231,20 @@ impl Spanned for Identifier<'_> {
 
 #[derive(Debug)]
 pub struct Function<'a> {
+  pub start: Location,
   pub id: Identifier<'a>,
   pub options: Vec<FnOrMarkupOption<'a>>,
+}
+
+impl Spanned for Function<'_> {
+  fn span(&self) -> Span {
+    let start = self.start;
+    let end = self
+      .options
+      .last()
+      .map_or(self.id.span().end, |last| last.span().end);
+    Span::new(start..end)
+  }
 }
 
 #[derive(Debug)]
@@ -159,10 +253,30 @@ pub struct FnOrMarkupOption<'a> {
   pub value: LiteralOrVariable<'a>,
 }
 
+impl Spanned for FnOrMarkupOption<'_> {
+  fn span(&self) -> Span {
+    let start = self.key.span().start;
+    let end = self.value.span().end;
+    Span::new(start..end)
+  }
+}
+
 #[derive(Debug)]
 pub struct Attribute<'a> {
+  pub start: Location,
   pub key: Identifier<'a>,
   pub value: Option<LiteralOrVariable<'a>>,
+}
+
+impl Spanned for Attribute<'_> {
+  fn span(&self) -> Span {
+    let start = self.start;
+    let end = self
+      .value
+      .as_ref()
+      .map_or(self.key.span().end, |value| value.span().end);
+    Span::new(start..end)
+  }
 }
 
 pub enum LiteralOrVariable<'a> {
@@ -179,16 +293,49 @@ impl fmt::Debug for LiteralOrVariable<'_> {
   }
 }
 
+impl Spanned for LiteralOrVariable<'_> {
+  fn span(&self) -> Span {
+    match self {
+      LiteralOrVariable::Literal(literal) => literal.span(),
+      LiteralOrVariable::Variable(variable) => variable.span(),
+    }
+  }
+}
+
 #[derive(Debug)]
 pub struct PrivateUseAnnotation<'a> {
-  pub start: char,
+  pub start: Location,
+  pub start_char: char,
   pub body: Vec<ReservedBodyPart<'a>>,
+}
+
+impl Spanned for PrivateUseAnnotation<'_> {
+  fn span(&self) -> Span {
+    let start = self.start;
+    let end = self
+      .body
+      .last()
+      .map_or(start, |last| last.span().end + self.start_char);
+    Span::new(start..end)
+  }
 }
 
 #[derive(Debug)]
 pub struct ReservedAnnotation<'a> {
-  pub start: char,
+  pub start: Location,
+  pub start_char: char,
   pub body: Vec<ReservedBodyPart<'a>>,
+}
+
+impl Spanned for ReservedAnnotation<'_> {
+  fn span(&self) -> Span {
+    let start = self.start;
+    let end = self
+      .body
+      .last()
+      .map_or(start, |last| last.span().end + self.start_char);
+    Span::new(start..end)
+  }
 }
 
 pub enum ReservedBodyPart<'a> {
@@ -203,6 +350,16 @@ impl fmt::Debug for ReservedBodyPart<'_> {
       ReservedBodyPart::Text(text) => Debug::fmt(text, f),
       ReservedBodyPart::Escape(escape) => Debug::fmt(escape, f),
       ReservedBodyPart::Quoted(quoted) => Debug::fmt(quoted, f),
+    }
+  }
+}
+
+impl Spanned for ReservedBodyPart<'_> {
+  fn span(&self) -> Span {
+    match self {
+      ReservedBodyPart::Text(text) => text.span(),
+      ReservedBodyPart::Escape(escape) => escape.span(),
+      ReservedBodyPart::Quoted(quoted) => quoted.span(),
     }
   }
 }
@@ -223,17 +380,30 @@ impl fmt::Debug for Literal<'_> {
   }
 }
 
+impl Spanned for Literal<'_> {
+  fn span(&self) -> Span {
+    match self {
+      Literal::Quoted(quoted) => quoted.span(),
+      Literal::Name(name) => name.span(),
+      Literal::Number(number) => number.span(),
+    }
+  }
+}
+
 #[derive(Debug)]
 pub struct Quoted<'a> {
   pub open: Location,
-  pub close: Location,
   pub parts: Vec<QuotedPart<'a>>,
 }
 
 impl Spanned for Quoted<'_> {
   fn span(&self) -> Span {
     let start = self.open;
-    let end = self.close + '|';
+    let end = self
+      .parts
+      .last()
+      .map_or(start + '|', |last| last.span().end)
+      + '|';
     Span::new(start..end)
   }
 }
@@ -248,6 +418,15 @@ impl fmt::Debug for QuotedPart<'_> {
     match self {
       QuotedPart::Text(text) => Debug::fmt(text, f),
       QuotedPart::Escape(escape) => Debug::fmt(escape, f),
+    }
+  }
+}
+
+impl Spanned for QuotedPart<'_> {
+  fn span(&self) -> Span {
+    match self {
+      QuotedPart::Text(text) => text.span(),
+      QuotedPart::Escape(escape) => escape.span(),
     }
   }
 }
@@ -321,6 +500,8 @@ impl<'a> Number<'a> {
 
 #[derive(Debug)]
 pub struct Markup<'a> {
+  pub open: Location,
+  pub close: Location,
   pub kind: MarkupKind,
   pub id: Identifier<'a>,
   pub options: Vec<FnOrMarkupOption<'a>>,
@@ -332,4 +513,16 @@ pub enum MarkupKind {
   Open,
   Standalone,
   Close,
+}
+
+impl Spanned for Markup<'_> {
+  fn span(&self) -> Span {
+    let start = self.open;
+    let close_token = match self.kind {
+      MarkupKind::Open => "}",
+      MarkupKind::Standalone | MarkupKind::Close => "/}",
+    };
+    let end = self.close + close_token;
+    Span::new(start..end)
+  }
 }
