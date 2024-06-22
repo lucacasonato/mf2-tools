@@ -18,6 +18,8 @@ Identifier                                ^^^
 Number                                          ^^^^
 Number.integral                                  ^
 Number.fractional                                  ^
+=== diagnostics ===
+[]
 === ast ===
 SimpleMessage {
     parts: [

@@ -9,6 +9,8 @@ Identifier               ^^^^
 Text                          ^^^^
 Attribute                          ^^^^^
 Identifier                          ^^^^
+=== diagnostics ===
+[]
 === ast ===
 SimpleMessage {
     parts: [

@@ -7,6 +7,8 @@ LiteralExpression    ^^^^^^
 Number                 ^^
 Number.integral        ^
 Number.exponent          
+=== diagnostics ===
+[]
 === ast ===
 SimpleMessage {
     parts: [

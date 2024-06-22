@@ -37,12 +37,16 @@ fn run_test(test: &CollectedTest) {
   let file_text = test.read_to_string().unwrap();
 
   let spans_marker = "\n=== spans ===\n";
+  let diagnostics_marker = "\n=== diagnostics ===\n";
   let ast_marker = "\n=== ast ===\n";
 
   let (message, rest_str) = file_text
     .split_once(spans_marker)
     .unwrap_or((&*file_text, ""));
   assert!(!message.is_empty());
+  let (expected_diagnostics, rest_str) = rest_str
+    .split_once(diagnostics_marker)
+    .unwrap_or((&*rest_str, ""));
   let (expected_spans, rest_str) =
     rest_str.split_once(ast_marker).unwrap_or((&*rest_str, ""));
   let expected_ast_dbg = rest_str;
@@ -61,8 +65,9 @@ fn run_test(test: &CollectedTest) {
     return;
   }
 
-  let actual_ast = parse(message);
+  let (actual_ast, diagnostics) = parse(message);
   let actual_ast_dbg = format!("{actual_ast:#?}");
+  let actual_diags_dbg = format!("{diagnostics:#?}");
 
   const SPAN_LABEL_WIDTH: usize = 20;
   struct SpanDebuggerVisitor<'a> {
@@ -155,6 +160,11 @@ fn run_test(test: &CollectedTest) {
 
   let mut need_update = std::env::var("UPDATE").is_ok();
   if !need_update {
+    if expected_diagnostics.is_empty() {
+      need_update = true;
+    } else {
+      pretty_assertions::assert_eq!(actual_diags_dbg, expected_diagnostics);
+    }
     if expected_ast_dbg.is_empty() {
       need_update = true;
     } else {
@@ -171,7 +181,7 @@ fn run_test(test: &CollectedTest) {
     std::fs::write(
       &test.path,
       format!(
-        "{message}{spans_marker}{actual_spans}{ast_marker}{actual_ast_dbg}"
+        "{message}{spans_marker}{actual_spans}{diagnostics_marker}{actual_diags_dbg}{ast_marker}{actual_ast_dbg}"
       ),
     )
     .unwrap();

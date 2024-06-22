@@ -6,6 +6,8 @@ Markup              ^^^^^^^^^^^^
 Identifier            ^^
 Attribute                ^^^^^
 Identifier                ^^^^
+=== diagnostics ===
+[]
 === ast ===
 SimpleMessage {
     parts: [

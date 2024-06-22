@@ -8,6 +8,8 @@ Number                 ^^^^^^^^
 Number.integral        ^
 Number.fractional        ^^
 Number.exponent              ^^
+=== diagnostics ===
+[]
 === ast ===
 SimpleMessage {
     parts: [

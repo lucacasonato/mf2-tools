@@ -25,25 +25,28 @@ use crate::ast::SimpleMessage;
 use crate::ast::Text;
 use crate::ast::Variable;
 use crate::ast::VariableExpression;
+use crate::diagnostic::Diagnostic;
 use crate::util::LengthShort;
 use crate::util::Location;
 use crate::util::SourceTextIterator;
 
 pub struct Parser<'a> {
   text: SourceTextIterator<'a>,
+  diagnostics: Vec<Diagnostic>,
 }
 
 impl<'a> Parser<'a> {
   pub fn new(input: &'a str) -> Self {
     Self {
       text: SourceTextIterator::new(input),
+      diagnostics: vec![],
     }
   }
 
-  pub fn parse(mut self) -> SimpleMessage<'a> {
+  pub fn parse(mut self) -> (SimpleMessage<'a>, Vec<Diagnostic>) {
     while let Some((_, c)) = self.peek() {
       if is_simple_start(c) {
-        return self.parse_simple_message();
+        return (self.parse_simple_message(), self.diagnostics);
       } else {
         panic!("Unexpected character: {:?}", c);
       }
@@ -52,9 +55,12 @@ impl<'a> Parser<'a> {
     let start = self.text.start_location();
     let end = self.text.end_location();
 
-    SimpleMessage {
-      parts: vec![MessagePart::Text(self.slice_text(start..end))],
-    }
+    (
+      SimpleMessage {
+        parts: vec![MessagePart::Text(self.slice_text(start..end))],
+      },
+      self.diagnostics,
+    )
   }
 
   fn current_location(&self) -> Location {

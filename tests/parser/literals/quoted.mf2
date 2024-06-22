@@ -6,6 +6,8 @@ Text                ^^
 LiteralExpression     ^^^^^^^^^^^
 Quoted                 ^^^^^^^^^
 Text                    ^^^^^^^
+=== diagnostics ===
+[]
 === ast ===
 SimpleMessage {
     parts: [

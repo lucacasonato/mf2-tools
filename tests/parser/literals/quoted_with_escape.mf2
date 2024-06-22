@@ -8,6 +8,8 @@ Quoted                ^^^^^^^^^^
 Text                   ^^^
 Escape                    ^^
 Text                        ^^^
+=== diagnostics ===
+[]
 === ast ===
 SimpleMessage {
     parts: [

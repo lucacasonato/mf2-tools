@@ -18,6 +18,8 @@ Escape                                                           ^^
 Text                                                               ^^^^^^^^
 Escape                                                                     ^^
 Escape                                                                       ^^
+=== diagnostics ===
+[]
 === ast ===
 SimpleMessage {
     parts: [
