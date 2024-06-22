@@ -6,6 +6,8 @@ use crate::util::LengthShort;
 use crate::util::Location;
 use crate::util::Span;
 use crate::util::Spanned;
+use crate::visitor::Visit;
+use crate::visitor::VisitWith;
 
 #[derive(Debug)]
 pub struct SimpleMessage<'a> {
@@ -19,6 +21,18 @@ impl Spanned for SimpleMessage<'_> {
         Span::new(first.span().start..last.span().end)
       }
       _ => Span::new(Location::dummy()..Location::dummy()),
+    }
+  }
+}
+
+impl VisitWith for SimpleMessage<'_> {
+  fn visit_with<V: Visit + ?Sized>(&self, visitor: &V) {
+    visitor.visit_simple_message(self);
+  }
+
+  fn visit_children_with<V: Visit + ?Sized>(&self, visitor: &V) {
+    for part in &self.parts {
+      visitor.visit_message_part(part);
     }
   }
 }
@@ -52,6 +66,21 @@ impl Spanned for MessagePart<'_> {
   }
 }
 
+impl VisitWith for MessagePart<'_> {
+  fn visit_with<V: Visit + ?Sized>(&self, visitor: &V) {
+    visitor.visit_message_part(self);
+  }
+
+  fn visit_children_with<V: Visit + ?Sized>(&self, visitor: &V) {
+    match self {
+      MessagePart::Text(text) => visitor.visit_text(text),
+      MessagePart::Escape(escape) => visitor.visit_escape(escape),
+      MessagePart::Expression(expr) => visitor.visit_expression(expr),
+      MessagePart::Markup(markup) => visitor.visit_markup(markup),
+    }
+  }
+}
+
 #[derive(Debug)]
 pub struct Text<'a> {
   pub start: Location,
@@ -64,6 +93,16 @@ impl Spanned for Text<'_> {
   }
 }
 
+impl VisitWith for Text<'_> {
+  fn visit_with<V: Visit + ?Sized>(&self, visitor: &V) {
+    visitor.visit_text(self);
+  }
+
+  fn visit_children_with<V: Visit + ?Sized>(&self, visitor: &V) {
+    let _ = visitor;
+  }
+}
+
 #[derive(Debug)]
 pub struct Escape {
   pub start: Location,
@@ -73,6 +112,16 @@ pub struct Escape {
 impl Spanned for Escape {
   fn span(&self) -> Span {
     Span::new(self.start..self.start + '\\' + self.escaped_char)
+  }
+}
+
+impl VisitWith for Escape {
+  fn visit_with<V: Visit + ?Sized>(&self, visitor: &V) {
+    visitor.visit_escape(self);
+  }
+
+  fn visit_children_with<V: Visit + ?Sized>(&self, visitor: &V) {
+    let _ = visitor;
   }
 }
 
@@ -114,6 +163,26 @@ impl Spanned for Expression<'_> {
   }
 }
 
+impl VisitWith for Expression<'_> {
+  fn visit_with<V: Visit + ?Sized>(&self, visitor: &V) {
+    visitor.visit_expression(self);
+  }
+
+  fn visit_children_with<V: Visit + ?Sized>(&self, visitor: &V) {
+    match self {
+      Expression::LiteralExpression(literal_expression) => {
+        visitor.visit_literal_expression(literal_expression)
+      }
+      Expression::VariableExpression(variable_expression) => {
+        visitor.visit_variable_expression(variable_expression)
+      }
+      Expression::AnnotationExpression(annotation_expression) => {
+        visitor.visit_annotation_expression(annotation_expression)
+      }
+    }
+  }
+}
+
 #[derive(Debug)]
 pub struct LiteralExpression<'a> {
   pub open: Location,
@@ -128,6 +197,22 @@ impl Spanned for LiteralExpression<'_> {
     let start = self.open;
     let end = self.close + '}';
     Span::new(start..end)
+  }
+}
+
+impl VisitWith for LiteralExpression<'_> {
+  fn visit_with<V: Visit + ?Sized>(&self, visitor: &V) {
+    visitor.visit_literal_expression(self);
+  }
+
+  fn visit_children_with<V: Visit + ?Sized>(&self, visitor: &V) {
+    visitor.visit_literal(&self.literal);
+    if let Some(annotation) = &self.annotation {
+      visitor.visit_annotation(annotation);
+    }
+    for attribute in &self.attributes {
+      visitor.visit_attribute(attribute);
+    }
   }
 }
 
@@ -148,6 +233,22 @@ impl Spanned for VariableExpression<'_> {
   }
 }
 
+impl VisitWith for VariableExpression<'_> {
+  fn visit_with<V: Visit + ?Sized>(&self, visitor: &V) {
+    visitor.visit_variable_expression(self);
+  }
+
+  fn visit_children_with<V: Visit + ?Sized>(&self, visitor: &V) {
+    visitor.visit_variable(&self.variable);
+    if let Some(annotation) = &self.annotation {
+      visitor.visit_annotation(annotation);
+    }
+    for attribute in &self.attributes {
+      visitor.visit_attribute(attribute);
+    }
+  }
+}
+
 #[derive(Debug)]
 pub struct Variable<'a> {
   pub start: Location,
@@ -157,6 +258,16 @@ pub struct Variable<'a> {
 impl Spanned for Variable<'_> {
   fn span(&self) -> Span {
     Span::new(self.start..self.start + '$' + self.name)
+  }
+}
+
+impl VisitWith for Variable<'_> {
+  fn visit_with<V: Visit + ?Sized>(&self, visitor: &V) {
+    visitor.visit_variable(self);
+  }
+
+  fn visit_children_with<V: Visit + ?Sized>(&self, visitor: &V) {
+    let _ = visitor;
   }
 }
 
@@ -173,6 +284,19 @@ impl Spanned for AnnotationExpression<'_> {
     let start = self.open;
     let end = self.close + '}';
     Span::new(start..end)
+  }
+}
+
+impl VisitWith for AnnotationExpression<'_> {
+  fn visit_with<V: Visit + ?Sized>(&self, visitor: &V) {
+    visitor.visit_annotation_expression(self);
+  }
+
+  fn visit_children_with<V: Visit + ?Sized>(&self, visitor: &V) {
+    visitor.visit_annotation(&self.annotation);
+    for attribute in &self.attributes {
+      visitor.visit_attribute(attribute);
+    }
   }
 }
 
@@ -210,6 +334,24 @@ impl Spanned for Annotation<'_> {
   }
 }
 
+impl VisitWith for Annotation<'_> {
+  fn visit_with<V: Visit + ?Sized>(&self, visitor: &V) {
+    visitor.visit_annotation(self);
+  }
+
+  fn visit_children_with<V: Visit + ?Sized>(&self, visitor: &V) {
+    match self {
+      Annotation::Function(function) => visitor.visit_function(function),
+      Annotation::PrivateUseAnnotation(private_use_annotation) => {
+        visitor.visit_private_use_annotation(private_use_annotation)
+      }
+      Annotation::ReservedAnnotation(reserved_annotation) => {
+        visitor.visit_reserved_annotation(reserved_annotation)
+      }
+    }
+  }
+}
+
 #[derive(Debug)]
 pub struct Identifier<'a> {
   pub start: Location,
@@ -226,6 +368,16 @@ impl Spanned for Identifier<'_> {
     end = end + self.name;
 
     Span::new(self.start..end)
+  }
+}
+
+impl VisitWith for Identifier<'_> {
+  fn visit_with<V: Visit + ?Sized>(&self, visitor: &V) {
+    visitor.visit_identifier(self);
+  }
+
+  fn visit_children_with<V: Visit + ?Sized>(&self, visitor: &V) {
+    let _ = visitor;
   }
 }
 
@@ -247,6 +399,19 @@ impl Spanned for Function<'_> {
   }
 }
 
+impl VisitWith for Function<'_> {
+  fn visit_with<V: Visit + ?Sized>(&self, visitor: &V) {
+    visitor.visit_function(self);
+  }
+
+  fn visit_children_with<V: Visit + ?Sized>(&self, visitor: &V) {
+    visitor.visit_identifier(&self.id);
+    for option in &self.options {
+      visitor.visit_fn_or_markup_option(option);
+    }
+  }
+}
+
 #[derive(Debug)]
 pub struct FnOrMarkupOption<'a> {
   pub key: Identifier<'a>,
@@ -258,6 +423,17 @@ impl Spanned for FnOrMarkupOption<'_> {
     let start = self.key.span().start;
     let end = self.value.span().end;
     Span::new(start..end)
+  }
+}
+
+impl VisitWith for FnOrMarkupOption<'_> {
+  fn visit_with<V: Visit + ?Sized>(&self, visitor: &V) {
+    visitor.visit_fn_or_markup_option(self);
+  }
+
+  fn visit_children_with<V: Visit + ?Sized>(&self, visitor: &V) {
+    visitor.visit_identifier(&self.key);
+    visitor.visit_literal_or_variable(&self.value);
   }
 }
 
@@ -276,6 +452,19 @@ impl Spanned for Attribute<'_> {
       .as_ref()
       .map_or(self.key.span().end, |value| value.span().end);
     Span::new(start..end)
+  }
+}
+
+impl VisitWith for Attribute<'_> {
+  fn visit_with<V: Visit + ?Sized>(&self, visitor: &V) {
+    visitor.visit_attribute(self);
+  }
+
+  fn visit_children_with<V: Visit + ?Sized>(&self, visitor: &V) {
+    visitor.visit_identifier(&self.key);
+    if let Some(value) = &self.value {
+      visitor.visit_literal_or_variable(value);
+    }
   }
 }
 
@@ -302,6 +491,19 @@ impl Spanned for LiteralOrVariable<'_> {
   }
 }
 
+impl VisitWith for LiteralOrVariable<'_> {
+  fn visit_with<V: Visit + ?Sized>(&self, visitor: &V) {
+    visitor.visit_literal_or_variable(self);
+  }
+
+  fn visit_children_with<V: Visit + ?Sized>(&self, visitor: &V) {
+    match self {
+      LiteralOrVariable::Literal(literal) => visitor.visit_literal(literal),
+      LiteralOrVariable::Variable(variable) => visitor.visit_variable(variable),
+    }
+  }
+}
+
 #[derive(Debug)]
 pub struct PrivateUseAnnotation<'a> {
   pub start: Location,
@@ -320,6 +522,18 @@ impl Spanned for PrivateUseAnnotation<'_> {
   }
 }
 
+impl VisitWith for PrivateUseAnnotation<'_> {
+  fn visit_with<V: Visit + ?Sized>(&self, visitor: &V) {
+    visitor.visit_private_use_annotation(self);
+  }
+
+  fn visit_children_with<V: Visit + ?Sized>(&self, visitor: &V) {
+    for part in &self.body {
+      visitor.visit_reserved_body_part(part);
+    }
+  }
+}
+
 #[derive(Debug)]
 pub struct ReservedAnnotation<'a> {
   pub start: Location,
@@ -335,6 +549,18 @@ impl Spanned for ReservedAnnotation<'_> {
       .last()
       .map_or(start + self.sigil, |last| last.span().end);
     Span::new(start..end)
+  }
+}
+
+impl VisitWith for ReservedAnnotation<'_> {
+  fn visit_with<V: Visit + ?Sized>(&self, visitor: &V) {
+    visitor.visit_reserved_annotation(self);
+  }
+
+  fn visit_children_with<V: Visit + ?Sized>(&self, visitor: &V) {
+    for part in &self.body {
+      visitor.visit_reserved_body_part(part);
+    }
   }
 }
 
@@ -360,6 +586,20 @@ impl Spanned for ReservedBodyPart<'_> {
       ReservedBodyPart::Text(text) => text.span(),
       ReservedBodyPart::Escape(escape) => escape.span(),
       ReservedBodyPart::Quoted(quoted) => quoted.span(),
+    }
+  }
+}
+
+impl VisitWith for ReservedBodyPart<'_> {
+  fn visit_with<V: Visit + ?Sized>(&self, visitor: &V) {
+    visitor.visit_reserved_body_part(self);
+  }
+
+  fn visit_children_with<V: Visit + ?Sized>(&self, visitor: &V) {
+    match self {
+      ReservedBodyPart::Text(text) => visitor.visit_text(text),
+      ReservedBodyPart::Escape(escape) => visitor.visit_escape(escape),
+      ReservedBodyPart::Quoted(quoted) => visitor.visit_quoted(quoted),
     }
   }
 }
@@ -390,6 +630,20 @@ impl Spanned for Literal<'_> {
   }
 }
 
+impl VisitWith for Literal<'_> {
+  fn visit_with<V: Visit + ?Sized>(&self, visitor: &V) {
+    visitor.visit_literal(self);
+  }
+
+  fn visit_children_with<V: Visit + ?Sized>(&self, visitor: &V) {
+    match self {
+      Literal::Quoted(quoted) => visitor.visit_quoted(quoted),
+      Literal::Name(name) => visitor.visit_text(name),
+      Literal::Number(number) => visitor.visit_number(number),
+    }
+  }
+}
+
 #[derive(Debug)]
 pub struct Quoted<'a> {
   pub open: Location,
@@ -405,6 +659,18 @@ impl Spanned for Quoted<'_> {
       .map_or(start + '|', |last| last.span().end)
       + '|';
     Span::new(start..end)
+  }
+}
+
+impl VisitWith for Quoted<'_> {
+  fn visit_with<V: Visit + ?Sized>(&self, visitor: &V) {
+    visitor.visit_quoted(self);
+  }
+
+  fn visit_children_with<V: Visit + ?Sized>(&self, visitor: &V) {
+    for part in &self.parts {
+      visitor.visit_quoted_part(part);
+    }
   }
 }
 
@@ -431,6 +697,19 @@ impl Spanned for QuotedPart<'_> {
   }
 }
 
+impl VisitWith for QuotedPart<'_> {
+  fn visit_with<V: Visit + ?Sized>(&self, visitor: &V) {
+    visitor.visit_quoted_part(self);
+  }
+
+  fn visit_children_with<V: Visit + ?Sized>(&self, visitor: &V) {
+    match self {
+      QuotedPart::Text(text) => visitor.visit_text(text),
+      QuotedPart::Escape(escape) => visitor.visit_escape(escape),
+    }
+  }
+}
+
 #[derive(Debug, Clone, Copy)]
 pub enum ExponentSign {
   Plus,
@@ -451,6 +730,16 @@ pub struct Number<'a> {
 impl Spanned for Number<'_> {
   fn span(&self) -> Span {
     Span::new(self.start..self.start + self.raw)
+  }
+}
+
+impl VisitWith for Number<'_> {
+  fn visit_with<V: Visit + ?Sized>(&self, visitor: &V) {
+    visitor.visit_number(self);
+  }
+
+  fn visit_children_with<V: Visit + ?Sized>(&self, visitor: &V) {
+    let _ = visitor;
   }
 }
 
@@ -524,5 +813,21 @@ impl Spanned for Markup<'_> {
     };
     let end = self.close + close_token;
     Span::new(start..end)
+  }
+}
+
+impl VisitWith for Markup<'_> {
+  fn visit_with<V: Visit + ?Sized>(&self, visitor: &V) {
+    visitor.visit_markup(self);
+  }
+
+  fn visit_children_with<V: Visit + ?Sized>(&self, visitor: &V) {
+    visitor.visit_identifier(&self.id);
+    for option in &self.options {
+      visitor.visit_fn_or_markup_option(option);
+    }
+    for attribute in &self.attributes {
+      visitor.visit_attribute(attribute);
+    }
   }
 }
