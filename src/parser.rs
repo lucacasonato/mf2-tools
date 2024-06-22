@@ -223,7 +223,7 @@ impl<'a> Parser<'a> {
         LiteralOrVariable::Literal(Literal::Quoted(self.parse_quoted()))
       }
       Some((_, c)) if is_name_start(c) => {
-        LiteralOrVariable::Literal(Literal::Name(self.parse_literal_name()))
+        LiteralOrVariable::Literal(Literal::Text(self.parse_literal_name()))
       }
       Some((_, '-' | '0'..='9')) => {
         LiteralOrVariable::Literal(Literal::Number(self.parse_number()))
@@ -452,7 +452,7 @@ impl<'a> Parser<'a> {
       Some((_, '|')) => Literal::Quoted(self.parse_quoted()),
       Some((_, '-' | '0'..='9')) => Literal::Number(self.parse_number()),
       Some((_, c)) if is_name_start(c) => {
-        Literal::Name(self.parse_literal_name())
+        Literal::Text(self.parse_literal_name())
       }
       _ => panic!(),
     }
