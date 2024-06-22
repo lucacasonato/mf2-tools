@@ -29,4 +29,5 @@ SimpleMessage {
     ],
 }
 === spans ===
-{/el opt=val }
+                    {/el opt=val }
+TheSpanName         ^^^^^^^^^^^^^^

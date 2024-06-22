@@ -30,4 +30,5 @@ SimpleMessage {
     ],
 }
 === spans ===
-a{ 1.34e+56 }
+                    a{ 1.34e+56 }
+TheSpanName         ^^^^^^^^^^^^^

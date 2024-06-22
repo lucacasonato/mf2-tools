@@ -27,4 +27,5 @@ SimpleMessage {
     ],
 }
 === spans ===
-{#el @attr}
+                    {#el @attr}
+TheSpanName         ^^^^^^^^^^^

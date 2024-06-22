@@ -70,4 +70,5 @@ SimpleMessage {
     ],
 }
 === spans ===
-{#el opt = 1.0 }↵{#el opt = -1.0 }
+                    {#el opt = 1.0 }↵{#el opt = -1.0 }
+TheSpanName         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^

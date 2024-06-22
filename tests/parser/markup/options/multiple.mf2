@@ -40,4 +40,5 @@ SimpleMessage {
     ],
 }
 === spans ===
-{#foo abc = val1 def=val2 }
+                    {#foo abc = val1 def=val2 }
+TheSpanName         ^^^^^^^^^^^^^^^^^^^^^^^^^^^

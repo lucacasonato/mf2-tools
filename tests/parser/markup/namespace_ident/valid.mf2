@@ -19,4 +19,5 @@ SimpleMessage {
     ],
 }
 === spans ===
-{#foo:bar}
+                    {#foo:bar}
+TheSpanName         ^^^^^^^^^^

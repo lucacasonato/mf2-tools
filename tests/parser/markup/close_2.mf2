@@ -17,4 +17,5 @@ SimpleMessage {
     ],
 }
 === spans ===
-{ /close}
+                    { /close}
+TheSpanName         ^^^^^^^^^

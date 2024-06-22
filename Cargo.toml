@@ -13,3 +13,4 @@ file_test_runner = "0.7.2"
 
 [dependencies]
 pretty_assertions = "1.4.0"
+unicode-width = "0.1.13"

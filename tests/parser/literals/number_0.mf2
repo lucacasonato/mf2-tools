@@ -23,4 +23,5 @@ SimpleMessage {
     ],
 }
 === spans ===
-a{ 0 }
+                    a{ 0 }
+TheSpanName         ^^^^^^

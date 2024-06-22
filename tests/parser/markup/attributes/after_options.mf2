@@ -39,4 +39,5 @@ SimpleMessage {
     ],
 }
 === spans ===
-{#el opt1=val1 @attr }
+                    {#el opt1=val1 @attr }
+TheSpanName         ^^^^^^^^^^^^^^^^^^^^^^

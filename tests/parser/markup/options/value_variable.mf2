@@ -29,4 +29,5 @@ SimpleMessage {
     ],
 }
 === spans ===
-{#el opt = $var }
+                    {#el opt = $var }
+TheSpanName         ^^^^^^^^^^^^^^^^^

@@ -34,4 +34,5 @@ SimpleMessage {
     ],
 }
 === spans ===
-{#el opt=|quoted| }
+                    {#el opt=|quoted| }
+TheSpanName         ^^^^^^^^^^^^^^^^^^^

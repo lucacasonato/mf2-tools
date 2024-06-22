@@ -1,7 +1,7 @@
 hello
 hi
 {
-  0
+	0
 }
 
 === ast ===
@@ -12,8 +12,10 @@ SimpleMessage {
             content: "hello\nhi\n",
         },
         LiteralExpression {
+            open: @9,
+            close: @14,
             literal: Number {
-                start: @13,
+                start: @12,
                 raw: "0",
                 is_negative: false,
                 integral_len: 1,
@@ -24,10 +26,11 @@ SimpleMessage {
             attributes: [],
         },
         Text {
-            start: @16,
+            start: @15,
             content: "\n",
         },
     ],
 }
 === spans ===
-hello↵hi↵{↵  0↵}↵
+                    hello↵hi↵{↵⇥0↵}↵
+TheSpanName         ^^^^^^^^^^^^^^^^

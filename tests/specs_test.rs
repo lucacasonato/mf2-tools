@@ -1,3 +1,5 @@
+use std::fmt::Write;
+use std::iter;
 use std::panic;
 use std::panic::AssertUnwindSafe;
 
@@ -8,6 +10,9 @@ use file_test_runner::collection::CollectedTest;
 use file_test_runner::RunOptions;
 use file_test_runner::TestResult;
 use mf2_parser::parse;
+use mf2_parser::Span;
+use mf2_parser::Spanned;
+use unicode_width::UnicodeWidthStr;
 
 fn main() {
   collect_and_run_tests(
@@ -57,15 +62,25 @@ fn run_test(test: &CollectedTest) {
   let actual_ast = parse(message);
   let actual_ast_dbg = format!("{actual_ast:#?}");
 
-  let spaced_message = message
-    .chars()
-    .map(|c| match c {
-      '\n' => '↵',
-      '\t' => '⇥',
-      c => c,
-    })
-    .collect::<String>();
-  let actual_spans = spaced_message + "\n";
+  let actual_spans = {
+    let mut normalized_message = iter::repeat(' ')
+      .take(20)
+      .chain(message.chars().map(|c| match c {
+        '\n' => '↵',
+        '\t' => '⇥',
+        c => c,
+      }))
+      .collect::<String>();
+    {
+      print_span(
+        &mut normalized_message,
+        "TheSpanName",
+        &message,
+        actual_ast.span(),
+      );
+    }
+    normalized_message
+  };
 
   let mut need_update = std::env::var("UPDATE").is_ok();
   if !need_update {
@@ -90,4 +105,21 @@ fn run_test(test: &CollectedTest) {
     )
     .unwrap();
   }
+}
+
+fn print_span(output: &mut String, name: &str, text: &str, span: Span) -> () {
+  let span_start = span.start.inner_byte_index_for_test() as usize;
+  let span_end = span.end.inner_byte_index_for_test() as usize;
+
+  let prefix = &text[0..span_start];
+  let contents = &text[span_start..span_end];
+
+  write!(
+    output,
+    "\n{:<20}{}{}",
+    name,
+    " ".repeat(prefix.width_cjk()),
+    "^".repeat(contents.width_cjk())
+  )
+  .unwrap();
 }

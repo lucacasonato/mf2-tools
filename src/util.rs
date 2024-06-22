@@ -97,6 +97,10 @@ impl Location {
   pub(crate) fn dummy() -> Location {
     Location(0)
   }
+
+  pub fn inner_byte_index_for_test(&self) -> u32 {
+    self.0
+  }
 }
 
 impl Debug for Location {

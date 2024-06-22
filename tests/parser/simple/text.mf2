@@ -9,4 +9,5 @@ SimpleMessage {
     ],
 }
 === spans ===
-Hello, World!
+                    Hello, World!
+TheSpanName         ^^^^^^^^^^^^^

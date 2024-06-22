@@ -35,4 +35,5 @@ SimpleMessage {
     ],
 }
 === spans ===
-{#foo name:spaced=1}
+                    {#foo name:spaced=1}
+TheSpanName         ^^^^^^^^^^^^^^^^^^^^
