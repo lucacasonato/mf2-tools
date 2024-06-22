@@ -3,7 +3,6 @@ use parser::Parser;
 
 pub mod ast;
 mod parser;
-mod types;
 mod util;
 
 pub use util::{Location, Span, Spanned};
