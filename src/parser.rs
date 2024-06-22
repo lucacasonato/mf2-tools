@@ -4,6 +4,7 @@ use crate::ast::Annotation;
 use crate::ast::AnnotationExpression;
 use crate::ast::Attribute;
 use crate::ast::Escape;
+use crate::ast::ExponentSign;
 use crate::ast::Expression;
 use crate::ast::FnOrMarkupOption;
 use crate::ast::Function;
@@ -24,6 +25,7 @@ use crate::ast::SimpleMessage;
 use crate::ast::Text;
 use crate::ast::Variable;
 use crate::ast::VariableExpression;
+use crate::util::LengthShort;
 use crate::util::Location;
 use crate::util::SourceTextIterator;
 
@@ -500,11 +502,16 @@ impl<'a> Parser<'a> {
 
     let exponent_part = if let Some((_, 'e' | 'E')) = self.peek() {
       self.next(); // consume 'e' or 'E'
-      let is_negative = self.eat('-').is_some();
-      if !is_negative {
-        self.eat('+');
-      }
-      Some((is_negative, self.parse_digits()))
+      let sign = if self.eat('-').is_some() {
+        ExponentSign::Minus
+      } else {
+        if self.eat('+').is_some() {
+          ExponentSign::Plus
+        } else {
+          ExponentSign::None
+        }
+      };
+      Some((sign, self.parse_digits()))
     } else {
       None
     };
@@ -512,11 +519,13 @@ impl<'a> Parser<'a> {
     let end = self.current_location();
 
     Number {
+      start,
       raw: self.text.slice(start..end),
       is_negative,
-      integral_part,
-      fractional_part,
-      exponent_part,
+      integral_len: LengthShort::new_from_str(integral_part),
+      fractional_len: fractional_part.map(LengthShort::new_from_str),
+      exponent_len: exponent_part
+        .map(|c| (c.0, LengthShort::new_from_str(c.1))),
     }
   }
 

@@ -2,6 +2,7 @@ use std::fmt;
 use std::fmt::Debug;
 use std::fmt::Formatter;
 
+use crate::util::LengthShort;
 use crate::util::Location;
 use crate::util::Span;
 use crate::util::Spanned;
@@ -251,13 +252,71 @@ impl fmt::Debug for QuotedPart<'_> {
   }
 }
 
+#[derive(Debug, Clone, Copy)]
+pub enum ExponentSign {
+  Plus,
+  Minus,
+  None,
+}
+
 #[derive(Debug)]
 pub struct Number<'a> {
+  pub start: Location,
   pub raw: &'a str,
   pub is_negative: bool,
-  pub integral_part: &'a str,
-  pub fractional_part: Option<&'a str>,
-  pub exponent_part: Option<(/* is_negative */ bool, &'a str)>,
+  pub integral_len: LengthShort,
+  pub fractional_len: Option<LengthShort>,
+  pub exponent_len: Option<(ExponentSign, LengthShort)>,
+}
+
+impl Spanned for Number<'_> {
+  fn span(&self) -> Span {
+    Span::new(self.start..self.start + self.raw)
+  }
+}
+
+impl<'a> Number<'a> {
+  fn integral_start(&self) -> usize {
+    if self.is_negative {
+      '-'.len_utf8()
+    } else {
+      0
+    }
+  }
+
+  fn integral_end(&self) -> usize {
+    self.integral_start() + self.integral_len.inner() as usize
+  }
+
+  pub fn integral_part(&self) -> &'a str {
+    &self.raw[self.integral_start()..self.integral_end()]
+  }
+
+  pub fn fractional_part(&self) -> Option<&'a str> {
+    self.fractional_len.as_ref().map(|fractional_len| {
+      let start = self.integral_end() + '.'.len_utf8();
+      let end = start + fractional_len.inner() as usize;
+      &self.raw[start..end]
+    })
+  }
+
+  pub fn exponent_part(&self) -> Option<(ExponentSign, &'a str)> {
+    self.exponent_len.as_ref().map(|(sign, exponent_len)| {
+      let mut start = self.integral_end();
+      if let Some(fractional_len) = &self.fractional_len {
+        start += '.'.len_utf8() + fractional_len.inner() as usize;
+      }
+      start += 'e'.len_utf8();
+
+      if !matches!(sign, ExponentSign::None) {
+        start += '-'.len_utf8();
+      };
+
+      let end = start + exponent_len.inner() as usize;
+
+      (*sign, &self.raw[start..end])
+    })
+  }
 }
 
 #[derive(Debug)]

@@ -8,16 +8,17 @@ SimpleMessage {
         },
         LiteralExpression {
             literal: Number {
+                start: @3,
                 raw: "1.34e+56",
                 is_negative: false,
-                integral_part: "1",
-                fractional_part: Some(
-                    "34",
+                integral_len: 1,
+                fractional_len: Some(
+                    2,
                 ),
-                exponent_part: Some(
+                exponent_len: Some(
                     (
-                        false,
-                        "56",
+                        Plus,
+                        2,
                     ),
                 ),
             },

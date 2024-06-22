@@ -115,6 +115,14 @@ impl Add<char> for Location {
   }
 }
 
+impl Add<LengthShort> for Location {
+  type Output = Location;
+
+  fn add(self, rhs: LengthShort) -> Self::Output {
+    Location(self.0 + rhs.0 as u32)
+  }
+}
+
 #[derive(Clone, Copy)]
 pub struct Span {
   pub start: Location,
@@ -138,4 +146,27 @@ impl Debug for Span {
 
 pub trait Spanned {
   fn span(&self) -> Span;
+}
+
+/// A short length (maximum u16)
+pub struct LengthShort(u16);
+
+impl Debug for LengthShort {
+  fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
+    write!(f, "{}", self.0)
+  }
+}
+
+impl LengthShort {
+  pub fn new(range: Range<Location>) -> LengthShort {
+    LengthShort((range.end.0 - range.start.0) as u16)
+  }
+
+  pub fn new_from_str(str: &str) -> LengthShort {
+    LengthShort(str.len() as u16)
+  }
+
+  pub fn inner(&self) -> u16 {
+    self.0
+  }
 }

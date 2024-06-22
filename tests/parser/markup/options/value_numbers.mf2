@@ -18,13 +18,14 @@ SimpleMessage {
                         name: "opt",
                     },
                     value: Number {
+                        start: @11,
                         raw: "1.0",
                         is_negative: false,
-                        integral_part: "1",
-                        fractional_part: Some(
-                            "0",
+                        integral_len: 1,
+                        fractional_len: Some(
+                            1,
                         ),
-                        exponent_part: None,
+                        exponent_len: None,
                     },
                 },
             ],
@@ -49,13 +50,14 @@ SimpleMessage {
                         name: "opt",
                     },
                     value: Number {
+                        start: @28,
                         raw: "-1.0",
                         is_negative: true,
-                        integral_part: "1",
-                        fractional_part: Some(
-                            "0",
+                        integral_len: 1,
+                        fractional_len: Some(
+                            1,
                         ),
-                        exponent_part: None,
+                        exponent_len: None,
                     },
                 },
             ],

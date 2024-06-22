@@ -8,11 +8,12 @@ SimpleMessage {
         },
         LiteralExpression {
             literal: Number {
+                start: @3,
                 raw: "-1",
                 is_negative: true,
-                integral_part: "1",
-                fractional_part: None,
-                exponent_part: None,
+                integral_len: 1,
+                fractional_len: None,
+                exponent_len: None,
             },
             annotation: None,
             attributes: [],

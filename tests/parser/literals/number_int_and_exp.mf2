@@ -8,14 +8,15 @@ SimpleMessage {
         },
         LiteralExpression {
             literal: Number {
+                start: @3,
                 raw: "1e3",
                 is_negative: false,
-                integral_part: "1",
-                fractional_part: None,
-                exponent_part: Some(
+                integral_len: 1,
+                fractional_len: None,
+                exponent_len: Some(
                     (
-                        false,
-                        "3",
+                        None,
+                        1,
                     ),
                 ),
             },
@@ -24,14 +25,15 @@ SimpleMessage {
         },
         LiteralExpression {
             literal: Number {
+                start: @10,
                 raw: "1E3",
                 is_negative: false,
-                integral_part: "1",
-                fractional_part: None,
-                exponent_part: Some(
+                integral_len: 1,
+                fractional_len: None,
+                exponent_len: Some(
                     (
-                        false,
-                        "3",
+                        None,
+                        1,
                     ),
                 ),
             },
