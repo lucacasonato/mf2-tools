@@ -2,25 +2,24 @@ name: ci
 
 on:
   push:
-    branches: [ "main" ]
+    branches: ["main"]
   pull_request:
-    branches: [ "main" ]
+    branches: ["main"]
 
 env:
   CARGO_TERM_COLOR: always
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-    - uses: Swatinem/rust-cache@v2
+      - uses: Swatinem/rust-cache@v2
 
-    - name: Build
-      run: cargo build --verbose
+      - name: Build
+        run: cargo build --verbose --all-targets --tests --examples
 
-    - name: Run tests
-      run: cargo test --verbose
+      - name: Run tests
+        run: cargo test
