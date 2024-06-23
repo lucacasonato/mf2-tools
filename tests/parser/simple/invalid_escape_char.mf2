@@ -7,7 +7,7 @@ Escape                   ^^
 Text                       ^^^
 === diagnostics ===
 [
-    Escape sequence can only escape '}', '{', and '|' (found 't' at @6),
+    Escape sequence can only escape '}', '{', '|', and '\' (found 't' at @6),
 ]
 === ast ===
 SimpleMessage {
@@ -18,9 +18,7 @@ SimpleMessage {
         },
         Escape {
             start: @5,
-            escaped_char: Some(
-                't',
-            ),
+            escaped_char: 't',
         },
         Text {
             start: @7,

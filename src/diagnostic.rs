@@ -61,13 +61,13 @@ diagnostics! {
       identifier.span()
     ),
     EscapeInvalidCharacter { char_loc: Location, char: char } => (
-      "Escape sequence can only escape '}}', '{{', and '|' (found {:?} at {:?})",
+      "Escape sequence can only escape '}}', '{{', '|', and '\\' (found {:?} at {:?})",
       char,
       char_loc
     ),
-    EscapeMissingCharacter { slash: Location } => (
+    EscapeMissingCharacter { slash_loc: Location } => (
       "Escape sequence is missing a character to escape (at {:?})",
-      slash
+      slash_loc
     ),
   }
 }

@@ -28,9 +28,7 @@ SimpleMessage {
                     },
                     Escape {
                         start: @6,
-                        escaped_char: Some(
-                            '|',
-                        ),
+                        escaped_char: '|',
                     },
                     Text {
                         start: @8,
