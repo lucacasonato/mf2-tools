@@ -250,7 +250,7 @@ ast_enum! {
   }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone, Copy)]
 pub struct Identifier<'a> {
   pub start: Location,
   pub namespace: Option<&'a str>,

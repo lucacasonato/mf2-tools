@@ -261,7 +261,7 @@ impl<'a> Parser<'a> {
     let start = self.current_location();
     let name_or_namespace = self.parse_name();
 
-    if self.eat(':').is_some() {
+    let id = if self.eat(':').is_some() {
       let name = self.parse_name();
 
       Identifier {
@@ -275,14 +275,28 @@ impl<'a> Parser<'a> {
         namespace: None,
         name: name_or_namespace,
       }
+    };
+
+    if id.name.is_empty() {
+      self.report(Diagnostic::MissingIdentifierName {
+        identifier: id.clone(),
+      });
     }
+    if matches!(id.namespace, Some(s) if s.is_empty()) {
+      self.report(Diagnostic::MissingIdentifierNamespace {
+        identifier: id.clone(),
+      });
+    }
+
+    id
   }
 
   fn skip_name(&mut self) {
-    let Some((_, c)) = self.next() else { panic!() };
+    let Some((_, c)) = self.peek() else { return };
     if !is_name_start(c) {
-      panic!()
+      return;
     }
+    self.next();
 
     while let Some((_, c)) = self.peek() {
       if is_name_char(c) {

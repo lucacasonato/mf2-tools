@@ -1,5 +1,6 @@
 use std::fmt;
 
+use crate::ast::Identifier;
 use crate::ast::Number;
 use crate::Span;
 use crate::Spanned as _;
@@ -49,6 +50,14 @@ diagnostics! {
     PlaceholderMissingClosingBrace { span: Span } => (
       "Placeholder is missing a closing brace (at {:?})",
       span
+    ),
+    MissingIdentifierName { identifier: Identifier<'a> } => (
+      "Identifier is missing a name (at {:?})",
+      identifier.span()
+    ),
+    MissingIdentifierNamespace { identifier: Identifier<'a> } => (
+      "Identifier is missing a namespace (at {:?})",
+      identifier.span()
     ),
   }
 }
