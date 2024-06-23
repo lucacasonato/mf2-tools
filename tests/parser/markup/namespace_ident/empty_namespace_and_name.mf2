@@ -5,10 +5,12 @@ SimpleMessage       ^^^^^
 Markup              ^^^^^
 Identifier            ^
 === diagnostics ===
-[
-    Identifier is missing a name (at @2..3),
-    Identifier is missing a namespace (at @2..3),
-]
+Identifier is missing a name (at @2..3)
+  {#: }
+    ^
+Identifier is missing a namespace (at @2..3)
+  {#: }
+    ^
 === ast ===
 SimpleMessage {
     parts: [

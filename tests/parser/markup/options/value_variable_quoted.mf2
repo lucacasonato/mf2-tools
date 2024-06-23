@@ -9,7 +9,7 @@ Identifier               ^^^
 Quoted                       ^^^^^^^^
 Text                          ^^^^^^
 === diagnostics ===
-[]
+
 === ast ===
 SimpleMessage {
     parts: [

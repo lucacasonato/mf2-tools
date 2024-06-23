@@ -6,7 +6,7 @@ Text                ^
 LiteralExpression    ^^^^^
 Text                  ^^^
 === diagnostics ===
-[]
+
 === ast ===
 SimpleMessage {
     parts: [

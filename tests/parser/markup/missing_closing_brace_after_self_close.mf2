@@ -1,21 +1,23 @@
-{#standalone/}
+{#foo /
 === spans ===
-                    {#standalone/}
-SimpleMessage       ^^^^^^^^^^^^^^
-Markup              ^^^^^^^^^^^^^^
-Identifier            ^^^^^^^^^^
+                    {#foo /
+SimpleMessage       ^^^^^^^
+Markup              ^^^^^^^
+Identifier            ^^^
 === diagnostics ===
-
+Markup is missing a closing brace (at @0..7)
+  {#foo /
+  ^^^^^^^
 === ast ===
 SimpleMessage {
     parts: [
         Markup {
-            span: @0..14,
+            span: @0..7,
             kind: Standalone,
             id: Identifier {
                 start: @2,
                 namespace: None,
-                name: "standalone",
+                name: "foo",
             },
             options: [],
             attributes: [],

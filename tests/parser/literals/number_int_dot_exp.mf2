@@ -9,9 +9,9 @@ Number.integral        ^
 Number.fractional        
 Number.exponent           ^
 === diagnostics ===
-[
-    Number is missing a fractional part (at @3..7),
-]
+Number is missing a fractional part (at @3..7)
+  a{ 1.e3 }
+     ^^^^
 === ast ===
 SimpleMessage {
     parts: [
