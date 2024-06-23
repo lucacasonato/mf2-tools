@@ -261,6 +261,10 @@ impl<'a> Parser<'a> {
     let start = self.current_location();
     let name_or_namespace = self.parse_name();
 
+    if name_or_namespace.is_empty() && !matches!(self.peek(), Some((_, ':'))) {
+      todo!("Handle the missing identifier name case")
+    }
+
     let id = if self.eat(':').is_some() {
       let name = self.parse_name();
 
