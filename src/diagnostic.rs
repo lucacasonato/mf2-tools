@@ -1,5 +1,7 @@
 use std::fmt;
 
+use crate::ast::Attribute;
+use crate::ast::FnOrMarkupOption;
 use crate::ast::Identifier;
 use crate::ast::Number;
 use crate::Location;
@@ -19,6 +21,7 @@ macro_rules! diagnostics {
       $($variant { $($field: $ty),* }),*
     }
 
+    #[allow(unused_variables)]
     impl<$life> $name<$life> {
       pub fn span(&self) -> Span {
         match self {
@@ -67,6 +70,10 @@ diagnostics! {
     MarkupInvalidSpaceBetweenSelfCloseAndBrace { space: Span } => {
       message: ("Markup has invalid spaces between self-closing tag and closing brace (at {:?})", space),
       span: *space,
+    },
+    MarkupOptionAfterAttribute { previous_attribute: Attribute<'a>, option: FnOrMarkupOption<'a> } => {
+      message: ("Markup has option after attribute (at {:?})", option.span()),
+      span: option.span(),
     },
     UnterminatedQuoted { span: Span } => {
       message: ("Quoted string is missing a closing quote (at {:?})", span),

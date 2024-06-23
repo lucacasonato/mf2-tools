@@ -1,0 +1,59 @@
+{#el @attr=val opt=val}
+=== spans ===
+                    {#el @attr=val opt=val}
+SimpleMessage       ^^^^^^^^^^^^^^^^^^^^^^^
+Markup              ^^^^^^^^^^^^^^^^^^^^^^^
+Identifier            ^^
+FnOrMarkupOption                   ^^^^^^^
+Identifier                         ^^^
+Text                                   ^^^
+Attribute                ^^^^^^^^^
+Identifier                ^^^^
+Text                           ^^^
+=== diagnostics ===
+Markup has option after attribute (at @15..22)
+  {#el @attr=val opt=val}
+                 ^^^^^^^
+=== ast ===
+SimpleMessage {
+    parts: [
+        Markup {
+            span: @0..23,
+            kind: Open,
+            id: Identifier {
+                start: @2,
+                namespace: None,
+                name: "el",
+            },
+            options: [
+                FnOrMarkupOption {
+                    key: Identifier {
+                        start: @15,
+                        namespace: None,
+                        name: "opt",
+                    },
+                    value: Text {
+                        start: @19,
+                        content: "val",
+                    },
+                },
+            ],
+            attributes: [
+                Attribute {
+                    start: @5,
+                    key: Identifier {
+                        start: @6,
+                        namespace: None,
+                        name: "attr",
+                    },
+                    value: Some(
+                        Text {
+                            start: @11,
+                            content: "val",
+                        },
+                    ),
+                },
+            ],
+        },
+    ],
+}
