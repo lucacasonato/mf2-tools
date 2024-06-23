@@ -1,0 +1,27 @@
+{/foo /
+=== spans ===
+                    {/foo /
+SimpleMessage       ^^^^^^^
+Markup              ^^^^^^^
+Identifier            ^^^
+=== diagnostics ===
+[
+    Markup has an invalid self-closing tag on a markup close (at @6),
+    Markup is missing a closing brace (at @0..7),
+]
+=== ast ===
+SimpleMessage {
+    parts: [
+        Markup {
+            span: @0..7,
+            kind: Standalone,
+            id: Identifier {
+                start: @2,
+                namespace: None,
+                name: "foo",
+            },
+            options: [],
+            attributes: [],
+        },
+    ],
+}

@@ -14,6 +14,7 @@ macro_rules! ast_enum {
       $( $item:ident $(<$item_lifetime:lifetime>)? ),* $(,)?
     }
   } => {
+    #[derive(Clone)]
     pub enum $name<$lifetime> {
       $( $item ( $item$(<$item_lifetime>)? ), )*
     }
@@ -48,7 +49,7 @@ macro_rules! ast_enum {
   };
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct SimpleMessage<'a> {
   pub parts: Vec<MessagePart<'a>>,
 }
@@ -86,7 +87,7 @@ ast_enum! {
   }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Text<'a> {
   pub start: Location,
   pub content: &'a str,
@@ -106,7 +107,7 @@ impl Visitable for Text<'_> {
   fn apply_visitor_to_children<V: Visit + ?Sized>(&self, _visitor: &mut V) {}
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Escape {
   pub start: Location,
   pub escaped_char: char,
@@ -135,7 +136,7 @@ ast_enum! {
   }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct LiteralExpression<'a> {
   pub span: Span,
   pub literal: Literal<'a>,
@@ -165,7 +166,7 @@ impl Visitable for LiteralExpression<'_> {
   }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct VariableExpression<'a> {
   pub span: Span,
   pub variable: Variable<'a>,
@@ -195,7 +196,7 @@ impl Visitable for VariableExpression<'_> {
   }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Variable<'a> {
   pub start: Location,
   pub name: &'a str,
@@ -215,7 +216,7 @@ impl Visitable for Variable<'_> {
   fn apply_visitor_to_children<V: Visit + ?Sized>(&self, _visitor: &mut V) {}
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct AnnotationExpression<'a> {
   pub span: Span,
   pub annotation: Annotation<'a>,
@@ -250,7 +251,7 @@ ast_enum! {
   }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Identifier<'a> {
   pub start: Location,
   pub namespace: Option<&'a str>,
@@ -277,7 +278,7 @@ impl Visitable for Identifier<'_> {
   fn apply_visitor_to_children<V: Visit + ?Sized>(&self, _visitor: &mut V) {}
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Function<'a> {
   pub start: Location,
   pub id: Identifier<'a>,
@@ -308,7 +309,7 @@ impl Visitable for Function<'_> {
   }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct FnOrMarkupOption<'a> {
   pub key: Identifier<'a>,
   pub value: LiteralOrVariable<'a>,
@@ -333,7 +334,7 @@ impl Visitable for FnOrMarkupOption<'_> {
   }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Attribute<'a> {
   pub start: Location,
   pub key: Identifier<'a>,
@@ -372,7 +373,7 @@ ast_enum! {
   }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct PrivateUseAnnotation<'a> {
   pub start: Location,
   pub sigil: char,
@@ -402,7 +403,7 @@ impl Visitable for PrivateUseAnnotation<'_> {
   }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct ReservedAnnotation<'a> {
   pub start: Location,
   pub sigil: char,
@@ -450,7 +451,7 @@ ast_enum! {
   }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Quoted<'a> {
   pub span: Span,
   pub parts: Vec<QuotedPart<'a>>,
@@ -577,7 +578,7 @@ impl<'a> Number<'a> {
   }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Markup<'a> {
   pub span: Span,
   pub kind: MarkupKind,
@@ -586,7 +587,7 @@ pub struct Markup<'a> {
   pub attributes: Vec<Attribute<'a>>,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub enum MarkupKind {
   Open,
   Standalone,

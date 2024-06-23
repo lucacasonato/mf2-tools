@@ -263,7 +263,6 @@ impl<'a> Parser<'a> {
 
     if self.eat(':').is_some() {
       let name = self.parse_name();
-
       Identifier {
         start,
         namespace: Some(name_or_namespace),
@@ -610,7 +609,7 @@ impl<'a> Parser<'a> {
     let mut attributes = vec![];
 
     let mut had_space = self.skip_spaces();
-    loop {
+    let report_missing_close = loop {
       match self.peek() {
         Some((start, '@')) if had_space => {
           self.next(); // consume '@'
@@ -626,15 +625,51 @@ impl<'a> Parser<'a> {
 
           attributes.push(Attribute { start, key, value });
         }
-        Some((_, '/')) if matches!(markup_kind, MarkupKind::Open) => {
+        Some((self_close, '/')) => {
+          if matches!(markup_kind, MarkupKind::Close) {
+            self.report(Diagnostic::MarkupCloseInvalidSelfClose {
+              self_close_loc: self_close,
+            });
+          }
           self.next(); // consume '/'
           markup_kind = MarkupKind::Standalone;
-          let Some(_) = self.eat('}') else { panic!() };
-          break;
+          match self.peek() {
+            Some((_, '}')) => {
+              self.next(); // consume '}'
+              break false;
+            }
+            Some((before_first_space, c)) if is_space(c) => {
+              self.skip_spaces();
+              match self.peek() {
+                Some((close_brace, '}')) => {
+                  self.next(); // consume '}'
+                  self.report(
+                    Diagnostic::MarkupInvalidSpaceBetweenSelfCloseAndBrace {
+                      space: Span::new(before_first_space..close_brace),
+                    },
+                  );
+                  break false;
+                }
+                None => {
+                  break true;
+                }
+                _ => {
+                  self.text.reset_to(before_first_space);
+                  todo!("report expected }} after /")
+                }
+              }
+            }
+            None => {
+              break true;
+            }
+            _ => {
+              todo!("report invalid char in markup")
+            }
+          }
         }
         Some((_, '}')) => {
           self.next(); // consume '}'
-          break;
+          break false;
         }
         Some((_, c))
           if had_space && is_name_start(c) && attributes.is_empty() =>
@@ -642,19 +677,28 @@ impl<'a> Parser<'a> {
           options.push(self.parse_option());
           had_space = self.skip_spaces();
         }
-        _ => panic!(),
+        None => {
+          break true;
+        }
+        _ => todo!("report invalid char in markup"),
       }
-    }
+    };
 
     let end = self.current_location();
 
-    Markup {
+    let markup = Markup {
       span: Span::new(open..end),
       kind: markup_kind,
       id,
       options,
       attributes,
+    };
+
+    if report_missing_close {
+      self.report(Diagnostic::MarkupMissingClosingBrace { span: markup.span });
     }
+
+    markup
   }
 }
 
