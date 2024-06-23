@@ -118,16 +118,27 @@ impl<'a> Parser<'a> {
   }
 
   fn parse_escape(&mut self) -> Escape {
-    let (loc, c) = self.next().unwrap();
+    let (start, c) = self.next().unwrap();
     debug_assert_eq!(c, '\\');
 
-    let Some((_, char)) = self.next() else {
-      panic!("Unexpected end of input")
+    let escaped_char = match self.next() {
+      Some((_, c @ ('}' | '{' | '|'))) => Some(c),
+      Some((loc, c)) => {
+        self.report(Diagnostic::EscapeInvalidCharacter {
+          char: c,
+          char_loc: loc,
+        });
+        Some(c)
+      }
+      None => {
+        self.report(Diagnostic::EscapeMissingCharacter { slash: start });
+        None
+      }
     };
 
     Escape {
-      start: loc,
-      escaped_char: char,
+      start,
+      escaped_char,
     }
   }
 

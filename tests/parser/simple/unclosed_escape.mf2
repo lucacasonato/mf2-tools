@@ -1,0 +1,23 @@
+hello\
+=== spans ===
+                    hello\
+SimpleMessage       ^^^^^^
+Text                ^^^^^
+Escape                   ^
+=== diagnostics ===
+[
+    Escape sequence is missing a character to escape (at @5),
+]
+=== ast ===
+SimpleMessage {
+    parts: [
+        Text {
+            start: @0,
+            content: "hello",
+        },
+        Escape {
+            start: @5,
+            escaped_char: None,
+        },
+    ],
+}

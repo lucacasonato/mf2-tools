@@ -25,15 +25,21 @@ SimpleMessage {
     parts: [
         Escape {
             start: @0,
-            escaped_char: '{',
+            escaped_char: Some(
+                '{',
+            ),
         },
         Escape {
             start: @2,
-            escaped_char: '|',
+            escaped_char: Some(
+                '|',
+            ),
         },
         Escape {
             start: @4,
-            escaped_char: '}',
+            escaped_char: Some(
+                '}',
+            ),
         },
         Text {
             start: @6,
@@ -41,7 +47,9 @@ SimpleMessage {
         },
         Escape {
             start: @13,
-            escaped_char: '|',
+            escaped_char: Some(
+                '|',
+            ),
         },
         Text {
             start: @15,
@@ -49,7 +57,9 @@ SimpleMessage {
         },
         Escape {
             start: @28,
-            escaped_char: '|',
+            escaped_char: Some(
+                '|',
+            ),
         },
         Text {
             start: @30,
@@ -57,7 +67,9 @@ SimpleMessage {
         },
         Escape {
             start: @45,
-            escaped_char: '|',
+            escaped_char: Some(
+                '|',
+            ),
         },
         Text {
             start: @47,
@@ -65,11 +77,15 @@ SimpleMessage {
         },
         Escape {
             start: @55,
-            escaped_char: '|',
+            escaped_char: Some(
+                '|',
+            ),
         },
         Escape {
             start: @57,
-            escaped_char: '|',
+            escaped_char: Some(
+                '|',
+            ),
         },
     ],
 }

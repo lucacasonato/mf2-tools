@@ -109,12 +109,15 @@ impl Visitable for Text<'_> {
 #[derive(Debug)]
 pub struct Escape {
   pub start: Location,
-  pub escaped_char: char,
+  pub escaped_char: Option<char>,
 }
 
 impl Spanned for Escape {
   fn span(&self) -> Span {
-    Span::new(self.start..self.start + '\\' + self.escaped_char)
+    let end = self
+      .escaped_char
+      .map_or(self.start + '\\', |c| self.start + '\\' + c);
+    Span::new(self.start..end)
   }
 }
 
