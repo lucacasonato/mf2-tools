@@ -6,9 +6,9 @@ Text                ^^^^^
 Escape                   ^^
 Text                       ^^^
 === diagnostics ===
-[
-    Escape sequence can only escape '}', '{', '|', and '\' (found 't' at @6),
-]
+Escape sequence can only escape '}', '{', '|', and '\' (found 't' at @6)
+  hello\tbar
+        ^
 === ast ===
 SimpleMessage {
     parts: [
