@@ -7,9 +7,9 @@ LiteralExpression    ^^^^^^
 Number                 ^^
 Number.integral        ^^
 === diagnostics ===
-[
-    Number has a leading zero in the integral part (at @3..5),
-]
+Number has a leading zero in the integral part (at @3..5)
+  a{ 01 }
+     ^^
 === ast ===
 SimpleMessage {
     parts: [
