@@ -1,0 +1,26 @@
+{#foo/ }
+=== spans ===
+                    {#foo/ }
+SimpleMessage       ^^^^^^^^
+Markup              ^^^^^^^^
+Identifier            ^^^
+=== diagnostics ===
+[
+    Markup has invalid spaces between self-closing tag and closing brace (at @6..7),
+]
+=== ast ===
+SimpleMessage {
+    parts: [
+        Markup {
+            span: @0..8,
+            kind: Standalone,
+            id: Identifier {
+                start: @2,
+                namespace: None,
+                name: "foo",
+            },
+            options: [],
+            attributes: [],
+        },
+    ],
+}

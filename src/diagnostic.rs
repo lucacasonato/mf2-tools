@@ -2,6 +2,7 @@ use std::fmt;
 
 use crate::ast::Identifier;
 use crate::ast::Number;
+use crate::Location;
 use crate::Span;
 use crate::Spanned as _;
 
@@ -15,6 +16,7 @@ macro_rules! diagnostics {
       $($variant { $($field: $ty),* }),*
     }
 
+    #[allow(unused_variables)]
     impl<$life> fmt::Display for $name<$life> {
       fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
@@ -42,6 +44,18 @@ diagnostics! {
     NumberMissingExponentPart { number: Number<'a> } => (
       "Number is missing an exponent part (at {:?})",
       number.span()
+    ),
+    MarkupMissingClosingBrace { span: Span } => (
+      "Markup is missing a closing brace (at {:?})",
+      span
+    ),
+    MarkupCloseInvalidSelfClose { self_close_loc: Location } => (
+      "Markup has an invalid self-closing tag on a markup close (at {:?})",
+      self_close_loc
+    ),
+    MarkupInvalidSpaceBetweenSelfCloseAndBrace { space: Span } => (
+      "Markup has invalid spaces between self-closing tag and closing brace (at {:?})",
+      space
     ),
     UnterminatedQuoted { span: Span } => (
       "Quoted string is missing a closing quote (at {:?})",
