@@ -8,7 +8,7 @@ FnOrMarkupOption         ^^^^^^^^^^
 Identifier               ^^^
 Variable                       ^^^^
 === diagnostics ===
-[]
+
 === ast ===
 SimpleMessage {
     parts: [

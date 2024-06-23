@@ -13,7 +13,7 @@ Number                          ^
 Number.integral                 ^
 Text                               ^
 === diagnostics ===
-[]
+
 === ast ===
 SimpleMessage {
     parts: [

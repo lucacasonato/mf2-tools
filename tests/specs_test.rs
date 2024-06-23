@@ -10,7 +10,9 @@ use file_test_runner::collection::CollectedTest;
 use file_test_runner::RunOptions;
 use file_test_runner::TestResult;
 use mf2_parser::ast;
+use mf2_parser::ast::SimpleMessage;
 use mf2_parser::parse;
+use mf2_parser::Diagnostic;
 use mf2_parser::Span;
 use mf2_parser::Spanned;
 use mf2_parser::Visit;
@@ -65,10 +67,92 @@ fn run_test(test: &CollectedTest) {
     return;
   }
 
-  let (actual_ast, diagnostics) = parse(message);
-  let actual_ast_dbg = format!("{actual_ast:#?}");
-  let actual_diags_dbg = format!("{diagnostics:#?}");
+  let normalized_message = message
+    .chars()
+    .map(|c| match c {
+      '\n' => '↵',
+      '\t' => '⇥',
+      c => c,
+    })
+    .collect::<String>();
 
+  let (actual_ast, diagnostics) = parse(message);
+
+  let actual_ast_dbg = generated_actual_ast_dbg(&actual_ast);
+  let actual_spans =
+    generate_actual_spans(&actual_ast, &message, &normalized_message);
+  let actual_diags =
+    generate_actual_diagnostics(&diagnostics, &message, &normalized_message);
+
+  let mut need_update = std::env::var("UPDATE").is_ok();
+  if !need_update {
+    if expected_diagnostics.is_empty() {
+      need_update = true;
+    } else {
+      pretty_assertions::assert_eq!(actual_diags, expected_diagnostics);
+    }
+    if expected_ast_dbg.is_empty() {
+      need_update = true;
+    } else {
+      pretty_assertions::assert_eq!(actual_ast_dbg, expected_ast_dbg);
+    }
+    if expected_spans.is_empty() {
+      need_update = true;
+    } else {
+      pretty_assertions::assert_eq!(actual_spans, expected_spans);
+    }
+  }
+
+  if need_update {
+    std::fs::write(
+      &test.path,
+      format!(
+        "{message}{spans_marker}{actual_spans}{diagnostics_marker}{actual_diags}{ast_marker}{actual_ast_dbg}"
+      ),
+    )
+    .unwrap();
+  }
+}
+
+fn generated_actual_ast_dbg(actual_ast: &SimpleMessage) -> String {
+  format!("{actual_ast:#?}")
+}
+
+fn generate_actual_diagnostics(
+  diagnostics: &Vec<Diagnostic>,
+  input_message: &str,
+  normalized_message: &str,
+) -> String {
+  let mut formatted_diagnostics = "".to_string();
+  for (i, diag) in diagnostics.iter().enumerate() {
+    let span = diag.span();
+    let span_start = span.start.inner_byte_index_for_test() as usize;
+    let span_end = span.end.inner_byte_index_for_test() as usize;
+
+    let prefix = &input_message[0..span_start];
+    let contents = &input_message[span_start..span_end];
+
+    if i != 0 {
+      formatted_diagnostics.push('\n');
+    }
+    write!(formatted_diagnostics, "{}\n", diag).unwrap();
+    formatted_diagnostics.push(' ');
+    formatted_diagnostics.push(' ');
+    formatted_diagnostics.push_str(normalized_message);
+    formatted_diagnostics.push('\n');
+    iter::repeat(' ')
+      .take(prefix.width_cjk() + 2)
+      .chain(iter::repeat('^').take(contents.width_cjk()))
+      .for_each(|c| formatted_diagnostics.push(c));
+  }
+  formatted_diagnostics
+}
+
+fn generate_actual_spans(
+  actual_ast: &SimpleMessage,
+  input_message: &str,
+  normalized_message: &str,
+) -> String {
   const SPAN_LABEL_WIDTH: usize = 20;
   struct SpanDebuggerVisitor<'a> {
     input_message: &'a str,
@@ -140,50 +224,13 @@ fn run_test(test: &CollectedTest) {
     }
   }
 
-  let actual_spans = {
-    let mut normalized_message = iter::repeat(' ')
-      .take(SPAN_LABEL_WIDTH)
-      .chain(message.chars().map(|c| match c {
-        '\n' => '↵',
-        '\t' => '⇥',
-        c => c,
-      }))
-      .collect::<String>();
+  let mut output = " ".repeat(SPAN_LABEL_WIDTH);
+  output.push_str(normalized_message);
 
-    actual_ast.apply_visitor(&mut SpanDebuggerVisitor {
-      input_message: message,
-      output: &mut normalized_message,
-    });
+  actual_ast.apply_visitor(&mut SpanDebuggerVisitor {
+    input_message,
+    output: &mut output,
+  });
 
-    normalized_message
-  };
-
-  let mut need_update = std::env::var("UPDATE").is_ok();
-  if !need_update {
-    if expected_diagnostics.is_empty() {
-      need_update = true;
-    } else {
-      pretty_assertions::assert_eq!(actual_diags_dbg, expected_diagnostics);
-    }
-    if expected_ast_dbg.is_empty() {
-      need_update = true;
-    } else {
-      pretty_assertions::assert_eq!(actual_ast_dbg, expected_ast_dbg);
-    }
-    if expected_spans.is_empty() {
-      need_update = true;
-    } else {
-      pretty_assertions::assert_eq!(actual_spans, expected_spans);
-    }
-  }
-
-  if need_update {
-    std::fs::write(
-      &test.path,
-      format!(
-        "{message}{spans_marker}{actual_spans}{diagnostics_marker}{actual_diags_dbg}{ast_marker}{actual_ast_dbg}"
-      ),
-    )
-    .unwrap();
-  }
+  output
 }

@@ -1,5 +1,4 @@
 use ast::SimpleMessage;
-use diagnostic::Diagnostic;
 use parser::Parser;
 
 pub mod ast;
@@ -8,6 +7,7 @@ mod parser;
 mod util;
 mod visitor;
 
+pub use diagnostic::Diagnostic;
 pub use util::{Location, Span, Spanned};
 pub use visitor::{Visit, Visitable};
 

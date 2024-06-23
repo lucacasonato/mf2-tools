@@ -5,9 +5,9 @@ SimpleMessage       ^^^^^^^^
 Markup              ^^^^^^^^
 Identifier            ^^^
 === diagnostics ===
-[
-    Markup has invalid spaces between self-closing tag and closing brace (at @6..7),
-]
+Markup has invalid spaces between self-closing tag and closing brace (at @6..7)
+  {#foo/ }
+        ^
 === ast ===
 SimpleMessage {
     parts: [

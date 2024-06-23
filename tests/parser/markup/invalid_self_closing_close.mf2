@@ -5,9 +5,9 @@ SimpleMessage       ^^^^^^^^
 Markup              ^^^^^^^^
 Identifier            ^^^
 === diagnostics ===
-[
-    Markup has an invalid self-closing tag on a markup close (at @6),
-]
+Markup has an invalid self-closing tag on a markup close (at @6)
+  {/foo /}
+        ^
 === ast ===
 SimpleMessage {
     parts: [

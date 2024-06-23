@@ -20,11 +20,15 @@ Number                                ^^^
 Number.integral                       ^
 Number.exponent                          
 === diagnostics ===
-[
-    Number is missing an exponent part (at @3..5),
-    Number is missing an exponent part (at @10..13),
-    Number is missing an exponent part (at @18..21),
-]
+Number is missing an exponent part (at @3..5)
+  a{ 1e }↵{ 1e+ }↵{ 1e- }
+     ^^
+Number is missing an exponent part (at @10..13)
+  a{ 1e }↵{ 1e+ }↵{ 1e- }
+            ^^^
+Number is missing an exponent part (at @18..21)
+  a{ 1e }↵{ 1e+ }↵{ 1e- }
+                    ^^^
 === ast ===
 SimpleMessage {
     parts: [

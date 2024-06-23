@@ -5,9 +5,9 @@ SimpleMessage       ^^^^^^^^
 Markup              ^^^^^^^^
 Identifier            ^^^^
 === diagnostics ===
-[
-    Identifier is missing a name (at @2..6),
-]
+Identifier is missing a name (at @2..6)
+  {#foo: }
+    ^^^^
 === ast ===
 SimpleMessage {
     parts: [

@@ -5,9 +5,9 @@ SimpleMessage       ^^^^^^^
 Markup              ^^^^^^^
 Identifier            ^^^
 === diagnostics ===
-[
-    Markup is missing a closing brace (at @0..7),
-]
+Markup is missing a closing brace (at @0..7)
+  {#foo /
+  ^^^^^^^
 === ast ===
 SimpleMessage {
     parts: [
