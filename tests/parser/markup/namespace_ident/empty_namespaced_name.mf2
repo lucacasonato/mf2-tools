@@ -1,0 +1,28 @@
+{#:foo }
+=== spans ===
+                    {#:foo }
+SimpleMessage       ^^^^^^^^
+Markup              ^^^^^^^^
+Identifier            ^^^^
+=== diagnostics ===
+[
+    Identifier is missing a namespace (at @2..6),
+]
+=== ast ===
+SimpleMessage {
+    parts: [
+        Markup {
+            span: @0..8,
+            kind: Open,
+            id: Identifier {
+                start: @2,
+                namespace: Some(
+                    "",
+                ),
+                name: "foo",
+            },
+            options: [],
+            attributes: [],
+        },
+    ],
+}
