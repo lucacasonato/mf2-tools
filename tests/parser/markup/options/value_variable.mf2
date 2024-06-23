@@ -13,8 +13,7 @@ Variable                       ^^^^
 SimpleMessage {
     parts: [
         Markup {
-            open: @0,
-            close: @16,
+            span: @0..17,
             kind: Open,
             id: Identifier {
                 start: @2,

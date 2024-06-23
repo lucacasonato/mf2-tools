@@ -13,8 +13,7 @@ Text                         ^^^
 SimpleMessage {
     parts: [
         Markup {
-            open: @0,
-            close: @13,
+            span: @0..14,
             kind: Close,
             id: Identifier {
                 start: @2,

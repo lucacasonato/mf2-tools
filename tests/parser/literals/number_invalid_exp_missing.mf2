@@ -33,8 +33,7 @@ SimpleMessage {
             content: "a",
         },
         LiteralExpression {
-            open: @1,
-            close: @6,
+            span: @1..7,
             literal: Number {
                 start: @3,
                 raw: "1e",
@@ -56,8 +55,7 @@ SimpleMessage {
             content: "\n",
         },
         LiteralExpression {
-            open: @8,
-            close: @14,
+            span: @8..15,
             literal: Number {
                 start: @10,
                 raw: "1e+",
@@ -79,8 +77,7 @@ SimpleMessage {
             content: "\n",
         },
         LiteralExpression {
-            open: @16,
-            close: @22,
+            span: @16..23,
             literal: Number {
                 start: @18,
                 raw: "1e-",

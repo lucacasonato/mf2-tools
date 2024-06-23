@@ -14,8 +14,7 @@ Text                          ^^^^^^
 SimpleMessage {
     parts: [
         Markup {
-            open: @0,
-            close: @18,
+            span: @0..19,
             kind: Open,
             id: Identifier {
                 start: @2,
@@ -30,7 +29,7 @@ SimpleMessage {
                         name: "opt",
                     },
                     value: Quoted {
-                        open: @9,
+                        span: @9..17,
                         parts: [
                             Text {
                                 start: @10,

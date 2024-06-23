@@ -29,6 +29,7 @@ use crate::diagnostic::Diagnostic;
 use crate::util::LengthShort;
 use crate::util::Location;
 use crate::util::SourceTextIterator;
+use crate::Span;
 
 pub struct Parser<'a> {
   text: SourceTextIterator<'a>,
@@ -131,7 +132,7 @@ impl<'a> Parser<'a> {
   }
 
   fn parse_placeholder(&mut self) -> MessagePart<'a> {
-    let (open, c) = self.next().unwrap(); // consume '{'
+    let (start, c) = self.next().unwrap(); // consume '{'
     debug_assert_eq!(c, '{');
 
     self.skip_spaces();
@@ -147,12 +148,12 @@ impl<'a> Parser<'a> {
       }
       Some((_, '#')) => {
         return MessagePart::Markup(
-          self.parse_markup(open, MarkupStartKind::OpenOrStandalone),
+          self.parse_markup(start, MarkupStartKind::OpenOrStandalone),
         )
       }
       Some((_, '/')) => {
         return MessagePart::Markup(
-          self.parse_markup(open, MarkupStartKind::Close),
+          self.parse_markup(start, MarkupStartKind::Close),
         )
       }
       _ => (None, None, true),
@@ -186,13 +187,13 @@ impl<'a> Parser<'a> {
       attributes.push(Attribute { start, key, value });
     }
 
-    let Some(close) = self.eat('}') else { panic!() };
+    let Some(_) = self.eat('}') else { panic!() };
+    let end = self.current_location();
 
     let expr = match (variable, literal) {
       (Some(variable), None) => MessagePart::Expression(
         Expression::VariableExpression(VariableExpression {
-          open,
-          close,
+          span: Span::new(start..end),
           variable,
           annotation,
           attributes,
@@ -200,8 +201,7 @@ impl<'a> Parser<'a> {
       ),
       (None, Some(literal)) => MessagePart::Expression(
         Expression::LiteralExpression(LiteralExpression {
-          open,
-          close,
+          span: Span::new(start..end),
           literal,
           annotation,
           attributes,
@@ -211,8 +211,7 @@ impl<'a> Parser<'a> {
         if let Some(annotation) = annotation {
           MessagePart::Expression(Expression::AnnotationExpression(
             AnnotationExpression {
-              open,
-              close,
+              span: Span::new(start..end),
               annotation,
               attributes,
             },
@@ -504,8 +503,12 @@ impl<'a> Parser<'a> {
     if self.eat('|').is_none() {
       panic!()
     };
+    let end = self.current_location();
 
-    Quoted { open, parts }
+    Quoted {
+      span: Span::new(open..end),
+      parts,
+    }
   }
 
   fn parse_number(&mut self) -> Number<'a> {
@@ -600,7 +603,7 @@ impl<'a> Parser<'a> {
     let mut attributes = vec![];
 
     let mut had_space = self.skip_spaces();
-    let close = loop {
+    loop {
       match self.peek() {
         Some((start, '@')) if had_space => {
           self.next(); // consume '@'
@@ -616,15 +619,15 @@ impl<'a> Parser<'a> {
 
           attributes.push(Attribute { start, key, value });
         }
-        Some((close, '/')) if matches!(markup_kind, MarkupKind::Open) => {
+        Some((_, '/')) if matches!(markup_kind, MarkupKind::Open) => {
           self.next(); // consume '/'
           markup_kind = MarkupKind::Standalone;
           let Some(_) = self.eat('}') else { panic!() };
-          break close;
+          break;
         }
-        Some((close, '}')) => {
+        Some((_, '}')) => {
           self.next(); // consume '}'
-          break close;
+          break;
         }
         Some((_, c))
           if had_space && is_name_start(c) && attributes.is_empty() =>
@@ -634,11 +637,12 @@ impl<'a> Parser<'a> {
         }
         _ => panic!(),
       }
-    };
+    }
+
+    let end = self.current_location();
 
     Markup {
-      open,
-      close,
+      span: Span::new(open..end),
       kind: markup_kind,
       id,
       options,

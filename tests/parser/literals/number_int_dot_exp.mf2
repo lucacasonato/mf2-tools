@@ -20,8 +20,7 @@ SimpleMessage {
             content: "a",
         },
         LiteralExpression {
-            open: @1,
-            close: @8,
+            span: @1..9,
             literal: Number {
                 start: @3,
                 raw: "1.e3",

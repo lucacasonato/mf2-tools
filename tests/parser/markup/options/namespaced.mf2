@@ -14,8 +14,7 @@ Number.integral                       ^
 SimpleMessage {
     parts: [
         Markup {
-            open: @0,
-            close: @19,
+            span: @0..20,
             kind: Open,
             id: Identifier {
                 start: @2,

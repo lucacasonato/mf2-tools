@@ -137,8 +137,7 @@ ast_enum! {
 
 #[derive(Debug)]
 pub struct LiteralExpression<'a> {
-  pub open: Location,
-  pub close: Location,
+  pub span: Span,
   pub literal: Literal<'a>,
   pub annotation: Option<Annotation<'a>>,
   pub attributes: Vec<Attribute<'a>>,
@@ -146,9 +145,7 @@ pub struct LiteralExpression<'a> {
 
 impl Spanned for LiteralExpression<'_> {
   fn span(&self) -> Span {
-    let start = self.open;
-    let end = self.close + '}';
-    Span::new(start..end)
+    self.span
   }
 }
 
@@ -170,8 +167,7 @@ impl Visitable for LiteralExpression<'_> {
 
 #[derive(Debug)]
 pub struct VariableExpression<'a> {
-  pub open: Location,
-  pub close: Location,
+  pub span: Span,
   pub variable: Variable<'a>,
   pub annotation: Option<Annotation<'a>>,
   pub attributes: Vec<Attribute<'a>>,
@@ -179,9 +175,7 @@ pub struct VariableExpression<'a> {
 
 impl Spanned for VariableExpression<'_> {
   fn span(&self) -> Span {
-    let start = self.open;
-    let end = self.close + '}';
-    Span::new(start..end)
+    self.span
   }
 }
 
@@ -223,17 +217,14 @@ impl Visitable for Variable<'_> {
 
 #[derive(Debug)]
 pub struct AnnotationExpression<'a> {
-  pub open: Location,
-  pub close: Location,
+  pub span: Span,
   pub annotation: Annotation<'a>,
   pub attributes: Vec<Attribute<'a>>,
 }
 
 impl Spanned for AnnotationExpression<'_> {
   fn span(&self) -> Span {
-    let start = self.open;
-    let end = self.close + '}';
-    Span::new(start..end)
+    self.span
   }
 }
 
@@ -461,19 +452,13 @@ ast_enum! {
 
 #[derive(Debug)]
 pub struct Quoted<'a> {
-  pub open: Location,
+  pub span: Span,
   pub parts: Vec<QuotedPart<'a>>,
 }
 
 impl Spanned for Quoted<'_> {
   fn span(&self) -> Span {
-    let start = self.open;
-    let end = self
-      .parts
-      .last()
-      .map_or(start + '|', |last| last.span().end)
-      + '|';
-    Span::new(start..end)
+    self.span
   }
 }
 
@@ -594,8 +579,7 @@ impl<'a> Number<'a> {
 
 #[derive(Debug)]
 pub struct Markup<'a> {
-  pub open: Location,
-  pub close: Location,
+  pub span: Span,
   pub kind: MarkupKind,
   pub id: Identifier<'a>,
   pub options: Vec<FnOrMarkupOption<'a>>,
@@ -611,13 +595,7 @@ pub enum MarkupKind {
 
 impl Spanned for Markup<'_> {
   fn span(&self) -> Span {
-    let start = self.open;
-    let close_token = match self.kind {
-      MarkupKind::Open | MarkupKind::Close => "}",
-      MarkupKind::Standalone => "/}",
-    };
-    let end = self.close + close_token;
-    Span::new(start..end)
+    self.span
   }
 }
 

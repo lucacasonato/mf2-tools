@@ -17,8 +17,7 @@ Identifier                                  ^^^^^
 SimpleMessage {
     parts: [
         Markup {
-            open: @0,
-            close: @30,
+            span: @0..31,
             kind: Open,
             id: Identifier {
                 start: @2,

@@ -16,10 +16,9 @@ SimpleMessage {
             content: "a ",
         },
         LiteralExpression {
-            open: @2,
-            close: @12,
+            span: @2..13,
             literal: Quoted {
-                open: @3,
+                span: @3..12,
                 parts: [
                     Text {
                         start: @4,

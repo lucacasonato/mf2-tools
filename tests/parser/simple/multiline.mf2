@@ -22,8 +22,7 @@ SimpleMessage {
             content: "hello\nhi\n",
         },
         LiteralExpression {
-            open: @9,
-            close: @14,
+            span: @9..15,
             literal: Number {
                 start: @12,
                 raw: "0",

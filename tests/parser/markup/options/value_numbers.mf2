@@ -24,8 +24,7 @@ Number.fractional                                  ^
 SimpleMessage {
     parts: [
         Markup {
-            open: @0,
-            close: @15,
+            span: @0..16,
             kind: Open,
             id: Identifier {
                 start: @2,
@@ -58,8 +57,7 @@ SimpleMessage {
             content: "\n",
         },
         Markup {
-            open: @17,
-            close: @33,
+            span: @17..34,
             kind: Open,
             id: Identifier {
                 start: @19,
