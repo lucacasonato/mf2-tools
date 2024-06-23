@@ -89,7 +89,9 @@ impl<'a> Parser<'a> {
             parts.push(MessagePart::Text(self.slice_text(start..loc)));
           }
           let escape = self.parse_escape();
-          parts.push(MessagePart::Escape(escape));
+          if let Some(escape) = escape {
+            parts.push(MessagePart::Escape(escape));
+          }
           start = self.current_location();
         }
         '{' => {
@@ -117,18 +119,29 @@ impl<'a> Parser<'a> {
     SimpleMessage { parts }
   }
 
-  fn parse_escape(&mut self) -> Escape {
-    let (loc, c) = self.next().unwrap();
+  fn parse_escape(&mut self) -> Option<Escape> {
+    let (start, c) = self.next().unwrap();
     debug_assert_eq!(c, '\\');
 
-    let Some((_, char)) = self.next() else {
-      panic!("Unexpected end of input")
+    let escaped_char = match self.next() {
+      Some((_, c @ ('}' | '{' | '|' | '\\'))) => c,
+      Some((loc, c)) => {
+        self.report(Diagnostic::EscapeInvalidCharacter {
+          char: c,
+          char_loc: loc,
+        });
+        c
+      }
+      None => {
+        self.report(Diagnostic::EscapeMissingCharacter { slash_loc: start });
+        return None;
+      }
     };
 
-    Escape {
-      start: loc,
-      escaped_char: char,
-    }
+    Some(Escape {
+      start,
+      escaped_char,
+    })
   }
 
   fn parse_placeholder(&mut self) -> MessagePart<'a> {
@@ -452,7 +465,9 @@ impl<'a> Parser<'a> {
             parts.push(ReservedBodyPart::Text(self.slice_text(start..loc)));
           }
           let escape = self.parse_escape();
-          parts.push(ReservedBodyPart::Escape(escape));
+          if let Some(escape) = escape {
+            parts.push(ReservedBodyPart::Escape(escape));
+          }
           start = self.current_location();
           last_space_start = None;
         }
@@ -506,7 +521,9 @@ impl<'a> Parser<'a> {
             parts.push(QuotedPart::Text(self.slice_text(start..loc)));
           }
           let escape = self.parse_escape();
-          parts.push(QuotedPart::Escape(escape));
+          if let Some(escape) = escape {
+            parts.push(QuotedPart::Escape(escape));
+          }
           start = self.current_location();
         }
         '|' => {

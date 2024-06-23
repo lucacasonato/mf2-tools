@@ -84,6 +84,14 @@ diagnostics! {
       message: ("Identifier is missing a namespace (at {:?})", identifier.span()),
       span: identifier.span(),
     },
+    EscapeInvalidCharacter { char_loc: Location, char: char } => {
+      message: ( "Escape sequence can only escape '}}', '{{', '|', and '\\' (found {char:?} at {char_loc:?})"),
+      span: Span::new(*char_loc..(*char_loc + *char)),
+    },
+    EscapeMissingCharacter { slash_loc: Location } => {
+      message: ("Escape sequence is missing a character to escape (at {:?})", slash_loc),
+      span: Span::new(*slash_loc..(*slash_loc + '\\')),
+    },
   }
 }
 

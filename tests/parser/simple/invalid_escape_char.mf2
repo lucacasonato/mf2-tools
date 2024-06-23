@@ -1,0 +1,28 @@
+hello\tbar
+=== spans ===
+                    hello\tbar
+SimpleMessage       ^^^^^^^^^^
+Text                ^^^^^
+Escape                   ^^
+Text                       ^^^
+=== diagnostics ===
+Escape sequence can only escape '}', '{', '|', and '\' (found 't' at @6)
+  hello\tbar
+        ^
+=== ast ===
+SimpleMessage {
+    parts: [
+        Text {
+            start: @0,
+            content: "hello",
+        },
+        Escape {
+            start: @5,
+            escaped_char: 't',
+        },
+        Text {
+            start: @7,
+            content: "bar",
+        },
+    ],
+}
