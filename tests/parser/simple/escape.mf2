@@ -1,23 +1,24 @@
-\{\|\}
+\{\|\}\\
 Hello,\|World!
 Hello,\| World!
 Hello, \|World!
 a\|\|
 === spans ===
-                    \{\|\}↵Hello,\|World!↵Hello,\| World!↵Hello, \|World!↵a\|\|
-SimpleMessage       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                    \{\|\}\\↵Hello,\|World!↵Hello,\| World!↵Hello, \|World!↵a\|\|
+SimpleMessage       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 Escape              ^^
 Escape                ^^
 Escape                  ^^
-Text                      ^^^^^^^
-Escape                           ^^
-Text                               ^^^^^^^^^^^^^
-Escape                                          ^^
-Text                                              ^^^^^^^^^^^^^^^
-Escape                                                           ^^
-Text                                                               ^^^^^^^^
-Escape                                                                     ^^
+Escape                    ^^
+Text                        ^^^^^^^
+Escape                             ^^
+Text                                 ^^^^^^^^^^^^^
+Escape                                            ^^
+Text                                                ^^^^^^^^^^^^^^^
+Escape                                                             ^^
+Text                                                                 ^^^^^^^^
 Escape                                                                       ^^
+Escape                                                                         ^^
 === diagnostics ===
 
 === ast ===
@@ -35,40 +36,44 @@ SimpleMessage {
             start: @4,
             escaped_char: '}',
         },
-        Text {
+        Escape {
             start: @6,
+            escaped_char: '\\',
+        },
+        Text {
+            start: @8,
             content: "\nHello,",
         },
         Escape {
-            start: @13,
+            start: @15,
             escaped_char: '|',
         },
         Text {
-            start: @15,
+            start: @17,
             content: "World!\nHello,",
         },
         Escape {
-            start: @28,
+            start: @30,
             escaped_char: '|',
         },
         Text {
-            start: @30,
+            start: @32,
             content: " World!\nHello, ",
         },
         Escape {
-            start: @45,
+            start: @47,
             escaped_char: '|',
         },
         Text {
-            start: @47,
+            start: @49,
             content: "World!\na",
         },
         Escape {
-            start: @55,
+            start: @57,
             escaped_char: '|',
         },
         Escape {
-            start: @57,
+            start: @59,
             escaped_char: '|',
         },
     ],
