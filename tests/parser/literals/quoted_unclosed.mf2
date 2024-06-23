@@ -1,0 +1,25 @@
+{|abc def
+=== spans ===
+                    {|abc def
+SimpleMessage       ^^^^^^^^^
+LiteralExpression   ^^^^^^^^^
+Quoted               ^^^^^^^^
+=== diagnostics ===
+[
+    Quoted string is missing a closing quote (at @1..9),
+    Placeholder is missing a closing brace (at @0..9),
+]
+=== ast ===
+SimpleMessage {
+    parts: [
+        LiteralExpression {
+            span: @0..9,
+            literal: Quoted {
+                span: @1..9,
+                parts: [],
+            },
+            annotation: None,
+            attributes: [],
+        },
+    ],
+}

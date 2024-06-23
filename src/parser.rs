@@ -187,13 +187,18 @@ impl<'a> Parser<'a> {
       attributes.push(Attribute { start, key, value });
     }
 
-    let Some(_) = self.eat('}') else { panic!() };
+    let maybe_close = self.eat('}');
     let end = self.current_location();
+    let span = Span::new(start..end);
+
+    if maybe_close.is_none() {
+      self.report(Diagnostic::PlaceholderMissingClosingBrace { span });
+    }
 
     let expr = match (variable, literal) {
       (Some(variable), None) => MessagePart::Expression(
         Expression::VariableExpression(VariableExpression {
-          span: Span::new(start..end),
+          span,
           variable,
           annotation,
           attributes,
@@ -201,7 +206,7 @@ impl<'a> Parser<'a> {
       ),
       (None, Some(literal)) => MessagePart::Expression(
         Expression::LiteralExpression(LiteralExpression {
-          span: Span::new(start..end),
+          span,
           literal,
           annotation,
           attributes,
@@ -211,7 +216,7 @@ impl<'a> Parser<'a> {
         if let Some(annotation) = annotation {
           MessagePart::Expression(Expression::AnnotationExpression(
             AnnotationExpression {
-              span: Span::new(start..end),
+              span,
               annotation,
               attributes,
             },
@@ -493,22 +498,24 @@ impl<'a> Parser<'a> {
           }
           break;
         }
-        c if is_quoted_char(c) => {
+        '\0' => {
+          todo!()
+        }
+        c => {
+          assert!(is_quoted_char(c));
           self.next();
         }
-        _ => panic!("Unexpected character: {:?}", ch),
       }
     }
 
-    if self.eat('|').is_none() {
-      panic!()
-    };
-    let end = self.current_location();
+    let maybe_close = self.eat('|');
+    let span = Span::new(open..self.current_location());
 
-    Quoted {
-      span: Span::new(open..end),
-      parts,
+    if maybe_close.is_none() {
+      self.report(Diagnostic::UnterminatedQuoted { span });
     }
+
+    Quoted { span, parts }
   }
 
   fn parse_number(&mut self) -> Number<'a> {
