@@ -646,7 +646,9 @@ impl<'a> Parser<'a> {
     let mut had_space = self.skip_spaces();
     let report_missing_close = loop {
       match self.peek() {
-        Some((start, '@')) if had_space => {
+        Some((start, '@')) => {
+          let report_missing_space_before_attribute = !had_space;
+
           self.next(); // consume '@'
 
           let key = self.parse_identifier();
@@ -658,7 +660,15 @@ impl<'a> Parser<'a> {
             had_space = self.skip_spaces();
           }
 
-          attributes.push(Attribute { start, key, value });
+          let attribute = Attribute { start, key, value };
+
+          if report_missing_space_before_attribute {
+            self.report(Diagnostic::MarkupMissingSpaceBeforeAttribute {
+              attribute: attribute.clone(),
+            });
+          }
+
+          attributes.push(attribute);
         }
         Some((self_close, '/')) => {
           if matches!(markup_kind, MarkupKind::Close) {

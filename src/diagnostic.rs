@@ -75,6 +75,10 @@ diagnostics! {
       message: ("Markup has option after attribute (at {:?})", option.span()),
       span: option.span(),
     },
+    MarkupMissingSpaceBeforeAttribute { attribute: Attribute<'a> } => {
+      message: ("Markup has attribute with missing leading space (at {:?})", attribute.span()),
+      span: attribute.span(),
+    },
     UnterminatedQuoted { span: Span } => {
       message: ("Quoted string is missing a closing quote (at {:?})", span),
       span: *span,
