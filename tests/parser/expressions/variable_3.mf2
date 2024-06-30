@@ -1,0 +1,22 @@
+{$var }
+=== spans ===
+                    {$var }
+SimpleMessage       ^^^^^^^
+VariableExpression  ^^^^^^^
+Variable             ^^^^
+=== diagnostics ===
+
+=== ast ===
+SimpleMessage {
+    parts: [
+        VariableExpression {
+            span: @0..7,
+            variable: Variable {
+                start: @1,
+                name: "var",
+            },
+            annotation: None,
+            attributes: [],
+        },
+    ],
+}
