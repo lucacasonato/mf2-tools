@@ -1,0 +1,39 @@
+Count: { $var :number}
+=== spans ===
+                    Count: { $var :number}
+SimpleMessage       ^^^^^^^^^^^^^^^^^^^^^^
+Text                ^^^^^^^
+VariableExpression         ^^^^^^^^^^^^^^^
+Variable                     ^^^^
+Function                          ^^^^^^^
+Identifier                         ^^^^^^
+=== diagnostics ===
+
+=== ast ===
+SimpleMessage {
+    parts: [
+        Text {
+            start: @0,
+            content: "Count: ",
+        },
+        VariableExpression {
+            span: @7..22,
+            variable: Variable {
+                start: @9,
+                name: "var",
+            },
+            annotation: Some(
+                Function {
+                    start: @14,
+                    id: Identifier {
+                        start: @15,
+                        namespace: None,
+                        name: "number",
+                    },
+                    options: [],
+                },
+            ),
+            attributes: [],
+        },
+    ],
+}

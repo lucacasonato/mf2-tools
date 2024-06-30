@@ -1,0 +1,49 @@
+{$var :number a=b}
+=== spans ===
+                    {$var :number a=b}
+SimpleMessage       ^^^^^^^^^^^^^^^^^^
+VariableExpression  ^^^^^^^^^^^^^^^^^^
+Variable             ^^^^
+Function                  ^^^^^^^^^^^
+Identifier                 ^^^^^^
+FnOrMarkupOption                  ^^^
+Identifier                        ^
+Text                                ^
+=== diagnostics ===
+
+=== ast ===
+SimpleMessage {
+    parts: [
+        VariableExpression {
+            span: @0..18,
+            variable: Variable {
+                start: @1,
+                name: "var",
+            },
+            annotation: Some(
+                Function {
+                    start: @6,
+                    id: Identifier {
+                        start: @7,
+                        namespace: None,
+                        name: "number",
+                    },
+                    options: [
+                        FnOrMarkupOption {
+                            key: Identifier {
+                                start: @14,
+                                namespace: None,
+                                name: "a",
+                            },
+                            value: Text {
+                                start: @16,
+                                content: "b",
+                            },
+                        },
+                    ],
+                },
+            ),
+            attributes: [],
+        },
+    ],
+}

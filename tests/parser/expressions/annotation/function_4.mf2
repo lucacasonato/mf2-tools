@@ -1,0 +1,27 @@
+{ :hello }
+=== spans ===
+                    { :hello }
+SimpleMessage       ^^^^^^^^^^
+AnnotationExpression^^^^^^^^^^
+Function              ^^^^^^
+Identifier             ^^^^^
+=== diagnostics ===
+
+=== ast ===
+SimpleMessage {
+    parts: [
+        AnnotationExpression {
+            span: @0..10,
+            annotation: Function {
+                start: @2,
+                id: Identifier {
+                    start: @3,
+                    namespace: None,
+                    name: "hello",
+                },
+                options: [],
+            },
+            attributes: [],
+        },
+    ],
+}
