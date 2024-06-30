@@ -1,6 +1,0 @@
-Hello, \| { $myVar } hello!
-
-hello { $myVar @att = -1.43E-56 }
-{#foo }
-{ #bar opt = 1 @a = |str| /}
-{/baz @attr = 2 }
