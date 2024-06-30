@@ -46,3 +46,10 @@ To regenerate expected test output after modifying the parser / ast, run:
 ```sh
 UPDATE=1 cargo test
 ```
+
+You can also run a fuzzer on the parser by running the below command. You will
+need to install `cargo-fuzz` by running `cargo install cargo-fuzz` first.
+
+```sh
+cargo fuzz run fuzz_parser
+```
