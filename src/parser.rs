@@ -706,10 +706,15 @@ impl<'a> Parser<'a> {
           self.next(); // consume '}'
           break false;
         }
-        Some((_, c))
-          if had_space && is_name_start(c) && attributes.is_empty() =>
-        {
-          options.push(self.parse_option());
+        Some((_, c)) if had_space && is_name_start(c) => {
+          let option = self.parse_option();
+          if let Some(previous_attribute) = attributes.last() {
+            self.report(Diagnostic::MarkupOptionAfterAttribute {
+              previous_attribute: previous_attribute.clone(),
+              option: option.clone(),
+            })
+          }
+          options.push(option);
           had_space = self.skip_spaces();
         }
         None => {
