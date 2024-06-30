@@ -437,7 +437,7 @@ impl<'a> Parser<'a> {
         start,
         sigil @ ('!' | '%' | '*' | '+' | '<' | '>' | '?' | '~'),
       )) => {
-        // private-use-annotation
+        // reserved annotation
         self.next(); // consume start
 
         let reserved_body = self.parse_reserved_body();
