@@ -1,20 +1,20 @@
-{:a :b}
+{:a: b}
 === spans ===
-                    {:a :b}
+                    {:a: b}
 SimpleMessage       ^^^^^^^
 AnnotationExpression^^^^^^^
 Function             ^^^^^
-Identifier            ^
-FnOrMarkupOption        ^^
-Identifier              ^^
+Identifier            ^^
+FnOrMarkupOption         ^
+Identifier               ^
 Text                      
 === diagnostics ===
-Identifier is missing a namespace (at @4..6)
-  {:a :b}
-      ^^
-Option is missing a value, which is required (at @4..6)
-  {:a :b}
-      ^^
+Identifier is missing a name (at @2..4)
+  {:a: b}
+    ^^
+Option is missing a value, which is required (at @5..6)
+  {:a: b}
+       ^
 === ast ===
 SimpleMessage {
     parts: [
@@ -24,16 +24,16 @@ SimpleMessage {
                 start: @1,
                 id: Identifier {
                     start: @2,
-                    namespace: None,
-                    name: "a",
+                    namespace: Some(
+                        "a",
+                    ),
+                    name: "",
                 },
                 options: [
                     FnOrMarkupOption {
                         key: Identifier {
-                            start: @4,
-                            namespace: Some(
-                                "",
-                            ),
+                            start: @5,
+                            namespace: None,
                             name: "b",
                         },
                         value: Text {

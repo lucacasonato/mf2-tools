@@ -59,6 +59,10 @@ diagnostics! {
       message: ("Number is missing an exponent part (at {:?})", number.span()),
       span: number.span(),
     },
+    OptionMissingValue { span: Span } => {
+      message: ("Option is missing a value, which is required (at {:?})", span),
+      span: *span,
+    },
     MarkupMissingClosingBrace { span: Span } => {
       message: ("Markup is missing a closing brace (at {:?})", span),
       span: *span,

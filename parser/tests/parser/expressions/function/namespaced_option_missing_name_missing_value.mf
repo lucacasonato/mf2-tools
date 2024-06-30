@@ -1,0 +1,70 @@
+{$var :number a: b=c}
+=== spans ===
+                    {$var :number a: b=c}
+SimpleMessage       ^^^^^^^^^^^^^^^^^^^^^
+VariableExpression  ^^^^^^^^^^^^^^^^^^^^^
+Variable             ^^^^
+Function                  ^^^^^^^^^^^^^^
+Identifier                 ^^^^^^
+FnOrMarkupOption                  ^^
+Identifier                        ^^
+Text                                
+FnOrMarkupOption                     ^^^
+Identifier                           ^
+Text                                   ^
+=== diagnostics ===
+Identifier is missing a name (at @14..16)
+  {$var :number a: b=c}
+                ^^
+Option is missing a value, which is required (at @14..16)
+  {$var :number a: b=c}
+                ^^
+=== ast ===
+SimpleMessage {
+    parts: [
+        VariableExpression {
+            span: @0..21,
+            variable: Variable {
+                start: @1,
+                name: "var",
+            },
+            annotation: Some(
+                Function {
+                    start: @6,
+                    id: Identifier {
+                        start: @7,
+                        namespace: None,
+                        name: "number",
+                    },
+                    options: [
+                        FnOrMarkupOption {
+                            key: Identifier {
+                                start: @14,
+                                namespace: Some(
+                                    "a",
+                                ),
+                                name: "",
+                            },
+                            value: Text {
+                                start: @16,
+                                content: "",
+                            },
+                        },
+                        FnOrMarkupOption {
+                            key: Identifier {
+                                start: @17,
+                                namespace: None,
+                                name: "b",
+                            },
+                            value: Text {
+                                start: @19,
+                                content: "c",
+                            },
+                        },
+                    ],
+                },
+            ),
+            attributes: [],
+        },
+    ],
+}

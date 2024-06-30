@@ -31,6 +31,7 @@ use crate::util::Location;
 use crate::util::SourceTextInfo;
 use crate::util::SourceTextIterator;
 use crate::Span;
+use crate::Spanned as _;
 
 macro_rules! content_char_pattern {
   () => {
@@ -259,7 +260,11 @@ impl<'a> Parser<'a> {
       had_space = self.skip_spaces();
       if self.eat('=').is_some() {
         self.skip_spaces();
-        value = Some(self.parse_literal_or_variable());
+        value = Some(
+          self
+            .parse_literal_or_variable()
+            .expect("todo, handle missing attribute value"),
+        );
         had_space = self.skip_spaces();
       }
 
@@ -324,8 +329,8 @@ impl<'a> Parser<'a> {
     expr
   }
 
-  fn parse_literal_or_variable(&mut self) -> LiteralOrVariable<'a> {
-    match self.peek() {
+  fn parse_literal_or_variable(&mut self) -> Option<LiteralOrVariable<'a>> {
+    let value = match self.peek() {
       Some((_, '$')) => LiteralOrVariable::Variable(self.parse_variable()),
       Some((_, '|')) => {
         LiteralOrVariable::Literal(Literal::Quoted(self.parse_quoted()))
@@ -337,8 +342,9 @@ impl<'a> Parser<'a> {
       Some((_, '-' | '.' | '0'..='9')) => {
         LiteralOrVariable::Literal(Literal::Number(self.parse_number()))
       }
-      _ => panic!(),
-    }
+      _ => return None,
+    };
+    Some(value)
   }
 
   fn parse_variable(&mut self) -> Variable<'a> {
@@ -463,7 +469,8 @@ impl<'a> Parser<'a> {
 
           let has_name_start = self
             .peek()
-            .map(|(_, c)| matches!(c, name_start_pattern!()))
+            // also allow : as error recovery for `{ :fn a:b=c :d=e }` (missing namespace on option)
+            .map(|(_, c)| matches!(c, name_start_pattern!() | ':'))
             .unwrap_or(false);
           if !has_name_start {
             self.text.reset_to(before_space);
@@ -509,11 +516,28 @@ impl<'a> Parser<'a> {
   fn parse_option(&mut self) -> FnOrMarkupOption<'a> {
     let key = self.parse_identifier();
     self.skip_spaces();
-    if self.eat('=').is_none() {
-      panic!();
-    }
-    self.skip_spaces();
-    let value = self.parse_literal_or_variable();
+    let value = if let Some(equals_loc) = self.eat('=') {
+      self.skip_spaces();
+      self.parse_literal_or_variable().unwrap_or_else(|| {
+        self.text.reset_to(equals_loc + '='); // un-eat the spaces after the equals
+        self.report(Diagnostic::OptionMissingValue {
+          span: Span::new(key.start..self.current_location()),
+        });
+        LiteralOrVariable::Literal(Literal::Text(Text {
+          start: self.current_location(),
+          content: "",
+        }))
+      })
+    } else {
+      self.text.reset_to(key.span().end); // un-eat the spaces after the identifier
+      self.report(Diagnostic::OptionMissingValue {
+        span: Span::new(key.start..self.current_location()),
+      });
+      LiteralOrVariable::Literal(Literal::Text(Text {
+        start: self.current_location(),
+        content: "",
+      }))
+    };
 
     FnOrMarkupOption { key, value }
   }
@@ -732,7 +756,11 @@ impl<'a> Parser<'a> {
           had_space = self.skip_spaces();
           if self.eat('=').is_some() {
             self.skip_spaces();
-            value = Some(self.parse_literal_or_variable());
+            value = Some(
+              self
+                .parse_literal_or_variable()
+                .expect("todo, handle missing option value"),
+            );
             had_space = self.skip_spaces();
           }
 
@@ -826,10 +854,6 @@ impl<'a> Parser<'a> {
 
     markup
   }
-}
-
-const fn is_content_char(c: char) -> bool {
-  matches!(c, content_char_pattern!())
 }
 
 fn is_space(c: char) -> bool {

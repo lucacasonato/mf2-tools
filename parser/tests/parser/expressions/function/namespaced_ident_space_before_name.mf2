@@ -1,21 +1,21 @@
-{$var :a :b}
+{$var :a: b}
 === spans ===
-                    {$var :a :b}
+                    {$var :a: b}
 SimpleMessage       ^^^^^^^^^^^^
 VariableExpression  ^^^^^^^^^^^^
 Variable             ^^^^
 Function                  ^^^^^
-Identifier                 ^
-FnOrMarkupOption             ^^
-Identifier                   ^^
+Identifier                 ^^
+FnOrMarkupOption              ^
+Identifier                    ^
 Text                           
 === diagnostics ===
-Identifier is missing a namespace (at @9..11)
-  {$var :a :b}
-           ^^
-Option is missing a value, which is required (at @9..11)
-  {$var :a :b}
-           ^^
+Identifier is missing a name (at @7..9)
+  {$var :a: b}
+         ^^
+Option is missing a value, which is required (at @10..11)
+  {$var :a: b}
+            ^
 === ast ===
 SimpleMessage {
     parts: [
@@ -30,16 +30,16 @@ SimpleMessage {
                     start: @6,
                     id: Identifier {
                         start: @7,
-                        namespace: None,
-                        name: "a",
+                        namespace: Some(
+                            "a",
+                        ),
+                        name: "",
                     },
                     options: [
                         FnOrMarkupOption {
                             key: Identifier {
-                                start: @9,
-                                namespace: Some(
-                                    "",
-                                ),
+                                start: @10,
+                                namespace: None,
                                 name: "b",
                             },
                             value: Text {
