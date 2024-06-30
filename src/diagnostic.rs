@@ -87,6 +87,10 @@ diagnostics! {
       message: ("Placeholder is missing a closing brace (at {:?})", span),
       span: *span,
     },
+    PlaceholderMissingBody { span: Span } => {
+      message: ("Placeholder is missing a variable reference, literal, or annotation (at {:?})", span),
+      span: *span,
+    },
     MissingIdentifierName { identifier: Identifier<'a> } => {
       message: ("Identifier is missing a name (at {:?})", identifier.span()),
       span: identifier.span(),

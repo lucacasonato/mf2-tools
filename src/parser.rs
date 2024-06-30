@@ -235,7 +235,21 @@ impl<'a> Parser<'a> {
             },
           ))
         } else {
-          panic!()
+          self.report(Diagnostic::PlaceholderMissingBody { span });
+
+          // We recover from this by injecting a literal expression with an
+          // empty text as it's literal.
+          MessagePart::Expression(Expression::LiteralExpression(
+            LiteralExpression {
+              span,
+              literal: Literal::Text(Text {
+                start: span.start,
+                content: "",
+              }),
+              annotation: None,
+              attributes,
+            },
+          ))
         }
       }
       _ => unreachable!(),
