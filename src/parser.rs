@@ -238,7 +238,7 @@ impl<'a> Parser<'a> {
           self.report(Diagnostic::PlaceholderMissingBody { span });
 
           // We recover from this by injecting a literal expression with an
-          // empty text as it's literal.
+          // empty text as its literal.
           MessagePart::Expression(Expression::LiteralExpression(
             LiteralExpression {
               span,
