@@ -1,0 +1,36 @@
+{@foo}
+=== spans ===
+                    {@foo}
+SimpleMessage       ^^^^^^
+LiteralExpression   ^^^^^^
+Text                
+Attribute            ^^^^
+Identifier            ^^^
+=== diagnostics ===
+Placeholder is missing a variable reference, literal, or annotation (at @0..6)
+  {@foo}
+  ^^^^^^
+=== ast ===
+SimpleMessage {
+    parts: [
+        LiteralExpression {
+            span: @0..6,
+            literal: Text {
+                start: @0,
+                content: "",
+            },
+            annotation: None,
+            attributes: [
+                Attribute {
+                    start: @1,
+                    key: Identifier {
+                        start: @2,
+                        namespace: None,
+                        name: "foo",
+                    },
+                    value: None,
+                },
+            ],
+        },
+    ],
+}

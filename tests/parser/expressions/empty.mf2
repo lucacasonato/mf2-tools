@@ -1,0 +1,24 @@
+{}
+=== spans ===
+                    {}
+SimpleMessage       ^^
+LiteralExpression   ^^
+Text                
+=== diagnostics ===
+Placeholder is missing a variable reference, literal, or annotation (at @0..2)
+  {}
+  ^^
+=== ast ===
+SimpleMessage {
+    parts: [
+        LiteralExpression {
+            span: @0..2,
+            literal: Text {
+                start: @0,
+                content: "",
+            },
+            annotation: None,
+            attributes: [],
+        },
+    ],
+}
