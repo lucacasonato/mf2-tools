@@ -15,6 +15,7 @@ pub struct SourceTextIterator<'a> {
   front_offset: u32,
   iter: Chars<'a>,
   peeked: Option<Option<(Location, char)>>,
+  utf8_line_starts: Vec<u32>,
 }
 
 impl<'a> SourceTextIterator<'a> {
@@ -28,6 +29,7 @@ impl<'a> SourceTextIterator<'a> {
       front_offset: 0,
       iter: s.chars(),
       peeked: None,
+      utf8_line_starts: vec![0],
     }
   }
 
@@ -56,6 +58,11 @@ impl<'a> SourceTextIterator<'a> {
       Some(ch) => {
         let loc = Location(self.front_offset);
         self.front_offset += ch.len_utf8() as u32;
+        if ch == '\n' {
+          if *self.utf8_line_starts.last().unwrap() < loc.0 {
+            self.utf8_line_starts.push(self.front_offset);
+          }
+        }
         Some((loc, ch))
       }
     }
@@ -65,8 +72,15 @@ impl<'a> SourceTextIterator<'a> {
     match &self.peeked {
       Some(peeked) => peeked.clone(),
       None => {
-        let peeked =
-          self.iter.next().map(|ch| (Location(self.front_offset), ch));
+        let peeked = self.iter.next().map(|ch| {
+          if ch == '\n' {
+            let after_offset = self.front_offset + '\n'.len_utf8() as u32;
+            if *self.utf8_line_starts.last().unwrap() < after_offset {
+              self.utf8_line_starts.push(after_offset);
+            }
+          }
+          (Location(self.front_offset), ch)
+        });
         self.peeked = Some(peeked.clone());
         peeked
       }
@@ -87,6 +101,48 @@ impl<'a> SourceTextIterator<'a> {
 
   pub fn slice(&self, range: Range<Location>) -> &'a str {
     &self.original[range.start.0 as usize..range.end.0 as usize]
+  }
+
+  pub fn into_info(self) -> SourceTextInfo<'a> {
+    SourceTextInfo {
+      text: self.original,
+      utf8_line_starts: self.utf8_line_starts,
+    }
+  }
+}
+
+pub struct SourceTextInfo<'a> {
+  text: &'a str,
+  utf8_line_starts: Vec<u32>,
+}
+
+impl SourceTextInfo<'_> {
+  pub fn utf8_line_col(&self, loc: Location) -> (u32, u32) {
+    let result = self.utf8_line_starts.binary_search_by(|&x| x.cmp(&loc.0));
+    match result {
+      Ok(line) => (line as u32, 0),
+      Err(line) => {
+        let line = line - 1;
+        let col = loc.0 - self.utf8_line_starts[line];
+        (line as u32, col)
+      }
+    }
+  }
+
+  pub fn utf16_line_col(&self, loc: Location) -> (u32, u32) {
+    let result = self.utf8_line_starts.binary_search_by(|&x| x.cmp(&loc.0));
+    match result {
+      Ok(line) => (line as u32, 0),
+      Err(line) => {
+        let line = line - 1;
+        let line_text =
+          &self.text[self.utf8_line_starts[line] as usize..loc.0 as usize];
+        let col = line_text
+          .chars()
+          .fold(0, |acc, c| acc + c.len_utf16() as u32);
+        (line as u32, col)
+      }
+    }
   }
 }
 

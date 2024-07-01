@@ -76,7 +76,7 @@ fn run_test(test: &CollectedTest) {
     })
     .collect::<String>();
 
-  let (actual_ast, diagnostics) = parse(message);
+  let (actual_ast, diagnostics, _info) = parse(message);
 
   let actual_ast_dbg = generated_actual_ast_dbg(&actual_ast);
   let actual_spans =

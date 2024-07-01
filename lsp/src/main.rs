@@ -15,6 +15,7 @@ use lsp_types::TextDocumentSyncKind;
 use lsp_types::Uri;
 use mf2_parser::parse;
 use mf2_parser::Location;
+use mf2_parser::SourceTextInfo;
 
 fn main() -> Result<(), anyhow::Error> {
   let (connection, _threads) = Connection::stdio();
@@ -96,28 +97,22 @@ fn validate_message(
   version: i32,
   connection: &Connection,
 ) -> Result<(), anyhow::Error> {
-  let (_ast, diagnostics) = parse(&text);
+  let (_ast, diagnostics, text_info) = parse(&text);
 
   let diagnostics = diagnostics
     .into_iter()
     .map(|diag| {
       let span = diag.span();
 
-      fn loc_to_pos(text: &str, loc: Location) -> Position {
-        let start = loc.inner_byte_index_for_test() as usize;
-        let lines = text[0..start].lines().collect::<Vec<_>>();
-        let line = lines.len() - 1;
-        let column = lines.last().unwrap().len();
-        Position {
-          line: line as u32,
-          character: column as u32,
-        }
+      fn loc_to_pos(info: &SourceTextInfo, loc: Location) -> Position {
+        let (line, character) = info.utf16_line_col(loc);
+        Position { line, character }
       }
 
       Diagnostic {
         range: Range {
-          start: loc_to_pos(&text, span.start),
-          end: loc_to_pos(&text, span.end),
+          start: loc_to_pos(&text_info, span.start),
+          end: loc_to_pos(&text_info, span.end),
         },
         severity: Some(lsp_types::DiagnosticSeverity::ERROR),
         message: diag.to_string(),

@@ -28,6 +28,7 @@ use crate::ast::VariableExpression;
 use crate::diagnostic::Diagnostic;
 use crate::util::LengthShort;
 use crate::util::Location;
+use crate::util::SourceTextInfo;
 use crate::util::SourceTextIterator;
 use crate::Span;
 
@@ -44,10 +45,16 @@ impl<'a> Parser<'a> {
     }
   }
 
-  pub fn parse(mut self) -> (SimpleMessage<'a>, Vec<Diagnostic<'a>>) {
+  pub fn parse(
+    mut self,
+  ) -> (SimpleMessage<'a>, Vec<Diagnostic<'a>>, SourceTextInfo<'a>) {
     while let Some((_, c)) = self.peek() {
       if is_simple_start(c) {
-        return (self.parse_simple_message(), self.diagnostics);
+        return (
+          self.parse_simple_message(),
+          self.diagnostics,
+          self.text.into_info(),
+        );
       } else {
         panic!("Unexpected character: {:?}", c);
       }
@@ -61,6 +68,7 @@ impl<'a> Parser<'a> {
         parts: vec![MessagePart::Text(self.slice_text(start..end))],
       },
       self.diagnostics,
+      self.text.into_info(),
     )
   }
 
