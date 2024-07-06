@@ -1,0 +1,44 @@
+{$var :a :b}
+=== spans ===
+                    {$var :a :b}
+SimpleMessage       ^^^^^^^^^^^^
+VariableExpression  ^^^^^^^^^
+Variable             ^^^^
+Function                  ^^
+Identifier                 ^
+Text                         ^^^
+=== diagnostics ===
+Placeholder is missing a closing brace (at @0..9)
+  {$var :a :b}
+  ^^^^^^^^^
+'}' in simple messages must be escaped (at @11)
+  {$var :a :b}
+             ^
+=== ast ===
+SimpleMessage {
+    parts: [
+        VariableExpression {
+            span: @0..9,
+            variable: Variable {
+                start: @1,
+                name: "var",
+            },
+            annotation: Some(
+                Function {
+                    start: @6,
+                    id: Identifier {
+                        start: @7,
+                        namespace: None,
+                        name: "a",
+                    },
+                    options: [],
+                },
+            ),
+            attributes: [],
+        },
+        Text {
+            start: @9,
+            content: ":b}",
+        },
+    ],
+}

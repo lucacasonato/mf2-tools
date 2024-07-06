@@ -32,6 +32,57 @@ use crate::util::SourceTextInfo;
 use crate::util::SourceTextIterator;
 use crate::Span;
 
+macro_rules! content_char_pattern {
+  () => {
+    '\x01'..='\x08' | '\x0B'..='\x0C' | '\x0E'..='\x1F' | '\x21'..='\x2D' |
+    '\x2F'..='\x3F' | '\x41'..='\x5B' | '\x5D'..='\x7A' | '\x7E'..='\u{2FFF}' |
+    '\u{3001}'..='\u{D7FF}' | '\u{E000}'..='\u{10FFFF}'
+  };
+}
+
+macro_rules! space_pattern {
+  () => {
+    ' ' | '\t' | '\r' | '\n' | '\u{3000}'
+  };
+}
+
+macro_rules! simple_start_pattern {
+  () => {
+    content_char_pattern!() | space_pattern!() | '@' | '|' | // simple-start-char
+    '\\' | // escaped-char
+    '{' // placeholder
+  };
+}
+
+macro_rules! reserved_char_pattern {
+  () => {
+    content_char_pattern!() | '.'
+  };
+}
+
+macro_rules! name_start_pattern {
+  () => {
+    'a'..='z' | 'A'..='Z' | '_' |
+    '\u{C0}'..='\u{D6}' | '\u{D8}'..='\u{F6}' | '\u{F8}'..='\u{2FF}' |
+    '\u{370}'..='\u{37D}' | '\u{37F}'..='\u{1FFF}' | '\u{200C}'..='\u{200D}' |
+    '\u{2070}'..='\u{218F}' | '\u{2C00}'..='\u{2FEF}' | '\u{3001}'..='\u{D7FF}' |
+    '\u{F900}'..='\u{FDCF}' | '\u{FDF0}'..='\u{FFFC}' | '\u{10000}'..='\u{EFFFF}'
+  };
+}
+
+macro_rules! name_char_pattern {
+  () => {
+    name_start_pattern!() |
+    '0'..='9' | '-' | '.' | '\u{B7}' | '\u{300}'..='\u{36F}' | '\u{203F}'..='\u{2040}'
+  };
+}
+
+macro_rules! quoted_char_pattern {
+  () => {
+    content_char_pattern!() | space_pattern!() | '.' | '@' | '{' | '}'
+  };
+}
+
 pub struct Parser<'a> {
   text: SourceTextIterator<'a>,
   diagnostics: Vec<Diagnostic<'a>>,
@@ -49,14 +100,17 @@ impl<'a> Parser<'a> {
     mut self,
   ) -> (SimpleMessage<'a>, Vec<Diagnostic<'a>>, SourceTextInfo<'a>) {
     while let Some((_, c)) = self.peek() {
-      if is_simple_start(c) {
-        return (
-          self.parse_simple_message(),
-          self.diagnostics,
-          self.text.into_info(),
-        );
-      } else {
-        panic!("Unexpected character: {:?}", c);
+      match c {
+        simple_start_pattern!() => {
+          return (
+            self.parse_simple_message(),
+            self.diagnostics,
+            self.text.into_info(),
+          )
+        }
+        _ => {
+          panic!("Unexpected character: {:?}", c);
+        }
       }
     }
 
@@ -109,13 +163,17 @@ impl<'a> Parser<'a> {
           parts.push(self.parse_placeholder());
           start = self.current_location();
         }
-        '.' | '@' | '|' => {
+        '.' | '@' | '|' | content_char_pattern!() | space_pattern!() => {
           self.next();
         }
-        c if is_content_char(c) || is_space(c) => {
+        '\0' => {
+          self.report(Diagnostic::InvalidNullCharacter { char_loc: loc });
           self.next();
         }
-        _ => panic!("Unexpected character: {:?} (at {loc:?})", c),
+        '}' => {
+          self.report(Diagnostic::InvalidClosingBrace { brace_loc: loc });
+          self.next();
+        }
       }
     }
 
@@ -164,7 +222,7 @@ impl<'a> Parser<'a> {
       Some((_, '|' | '.' | '-' | '0'..='9')) => {
         (None, Some(self.parse_literal()), self.skip_spaces())
       }
-      Some((_, c)) if is_name_start(c) => {
+      Some((_, name_start_pattern!())) => {
         (None, Some(self.parse_literal()), self.skip_spaces())
       }
       Some((_, '#')) => {
@@ -272,7 +330,7 @@ impl<'a> Parser<'a> {
       Some((_, '|')) => {
         LiteralOrVariable::Literal(Literal::Quoted(self.parse_quoted()))
       }
-      Some((_, c)) if is_name_start(c) => {
+      Some((_, name_start_pattern!())) => {
         LiteralOrVariable::Literal(Literal::Text(self.parse_literal_name()))
       }
       // '.' is for error recovery of a fractional number literal that is missing the integral part
@@ -330,17 +388,11 @@ impl<'a> Parser<'a> {
   }
 
   fn skip_name(&mut self) {
-    let Some((_, c)) = self.peek() else { return };
-    if !is_name_start(c) {
-      return;
-    }
-    self.next();
+    if let Some((_, name_start_pattern!())) = self.peek() {
+      self.next();
 
-    while let Some((_, c)) = self.peek() {
-      if is_name_char(c) {
+      while let Some((_, name_char_pattern!())) = self.peek() {
         self.next();
-      } else {
-        break;
       }
     }
   }
@@ -409,8 +461,10 @@ impl<'a> Parser<'a> {
             break;
           }
 
-          let has_name_start =
-            self.peek().map(|(_, c)| is_name_start(c)).unwrap_or(false);
+          let has_name_start = self
+            .peek()
+            .map(|(_, c)| matches!(c, name_start_pattern!()))
+            .unwrap_or(false);
           if !has_name_start {
             self.text.reset_to(before_space);
             break;
@@ -472,11 +526,11 @@ impl<'a> Parser<'a> {
 
     while let Some((loc, c)) = self.peek() {
       match c {
-        c if is_reserved_char(c) => {
+        reserved_char_pattern!() => {
           self.next();
           last_space_start = None;
         }
-        c if is_space(c) => {
+        space_pattern!() => {
           self.next();
           if last_space_start.is_none() {
             last_space_start = Some(loc);
@@ -522,7 +576,7 @@ impl<'a> Parser<'a> {
       Some((_, '|')) => Literal::Quoted(self.parse_quoted()),
       // '.' is for error recovery of a fractional number literal that is missing the integral part
       Some((_, '-' | '.' | '0'..='9')) => Literal::Number(self.parse_number()),
-      Some((_, c)) if is_name_start(c) => {
+      Some((_, name_start_pattern!())) => {
         Literal::Text(self.parse_literal_name())
       }
       _ => panic!(),
@@ -554,11 +608,11 @@ impl<'a> Parser<'a> {
           }
           break;
         }
-        '\0' => {
-          todo!()
+        quoted_char_pattern!() => {
+          self.next();
         }
-        c => {
-          assert!(is_quoted_char(c));
+        '\0' => {
+          self.report(Diagnostic::InvalidNullCharacter { char_loc: loc });
           self.next();
         }
       }
@@ -705,7 +759,7 @@ impl<'a> Parser<'a> {
               self.next(); // consume '}'
               break false;
             }
-            Some((before_first_space, c)) if is_space(c) => {
+            Some((before_first_space, space_pattern!())) => {
               self.skip_spaces();
               match self.peek() {
                 Some((close_brace, '}')) => {
@@ -738,7 +792,7 @@ impl<'a> Parser<'a> {
           self.next(); // consume '}'
           break false;
         }
-        Some((_, c)) if had_space && is_name_start(c) => {
+        Some((_, name_start_pattern!())) if had_space => {
           let option = self.parse_option();
           if let Some(previous_attribute) = attributes.last() {
             self.report(Diagnostic::MarkupOptionAfterAttribute {
@@ -774,47 +828,12 @@ impl<'a> Parser<'a> {
   }
 }
 
-fn is_content_char(c: char) -> bool {
-  matches!(c,
-    '\x01'..='\x08' | '\x0B'..='\x0C' | '\x0E'..='\x1F' | '\x21'..='\x2D' |
-    '\x2F'..='\x3F' | '\x41'..='\x5B' | '\x5D'..='\x7A' | '\x7E'..='\u{2FFF}' |
-    '\u{3001}'..='\u{D7FF}' | '\u{E000}'..='\u{10FFFF}'
-  )
-}
-
-fn is_reserved_char(c: char) -> bool {
-  is_content_char(c) || c == '.'
-}
-
-fn is_simple_start(c: char) -> bool {
-  is_content_char(c) || is_space(c) || c == '@' || c == '|' // simple-start-char
-    || c == '\\' // escaped-char
-    || c == '{' // placeholder
+const fn is_content_char(c: char) -> bool {
+  matches!(c, content_char_pattern!())
 }
 
 fn is_space(c: char) -> bool {
-  matches!(c, ' ' | '\t' | '\r' | '\n' | '\u{3000}')
-}
-
-fn is_name_start(c: char) -> bool {
-  matches!(c,
-    'a'..='z' | 'A'..='Z' | '_' |
-    '\u{C0}'..='\u{D6}' | '\u{D8}'..='\u{F6}' | '\u{F8}'..='\u{2FF}' |
-    '\u{370}'..='\u{37D}' | '\u{37F}'..='\u{1FFF}' | '\u{200C}'..='\u{200D}' |
-    '\u{2070}'..='\u{218F}' | '\u{2C00}'..='\u{2FEF}' | '\u{3001}'..='\u{D7FF}' |
-    '\u{F900}'..='\u{FDCF}' | '\u{FDF0}'..='\u{FFFC}' | '\u{10000}'..='\u{EFFFF}'
-  )
-}
-
-fn is_name_char(c: char) -> bool {
-  is_name_start(c)
-    || matches!(c,
-      '0'..='9' | '-' | '.' | '\u{B7}' | '\u{300}'..='\u{36F}' | '\u{203F}'..='\u{2040}'
-    )
-}
-
-fn is_quoted_char(c: char) -> bool {
-  is_content_char(c) || is_space(c) || matches!(c, '.' | '@' | '{' | '}')
+  matches!(c, space_pattern!())
 }
 
 enum MarkupStartKind {

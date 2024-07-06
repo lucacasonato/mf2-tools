@@ -1,0 +1,61 @@
+{1 :hello @world a=b}
+=== spans ===
+                    {1 :hello @world a=b}
+SimpleMessage       ^^^^^^^^^^^^^^^^^^^^^
+LiteralExpression   ^^^^^^^^^^^^^^^^^
+Number               ^
+Number.integral      ^
+Function               ^^^^^^
+Identifier              ^^^^^
+Attribute                     ^^^^^^
+Identifier                     ^^^^^
+Text                                 ^^^^
+=== diagnostics ===
+Placeholder is missing a closing brace (at @0..17)
+  {1 :hello @world a=b}
+  ^^^^^^^^^^^^^^^^^
+'}' in simple messages must be escaped (at @20)
+  {1 :hello @world a=b}
+                      ^
+=== ast ===
+SimpleMessage {
+    parts: [
+        LiteralExpression {
+            span: @0..17,
+            literal: Number {
+                start: @1,
+                raw: "1",
+                is_negative: false,
+                integral_len: 1,
+                fractional_len: None,
+                exponent_len: None,
+            },
+            annotation: Some(
+                Function {
+                    start: @3,
+                    id: Identifier {
+                        start: @4,
+                        namespace: None,
+                        name: "hello",
+                    },
+                    options: [],
+                },
+            ),
+            attributes: [
+                Attribute {
+                    start: @10,
+                    key: Identifier {
+                        start: @11,
+                        namespace: None,
+                        name: "world",
+                    },
+                    value: None,
+                },
+            ],
+        },
+        Text {
+            start: @17,
+            content: "a=b}",
+        },
+    ],
+}

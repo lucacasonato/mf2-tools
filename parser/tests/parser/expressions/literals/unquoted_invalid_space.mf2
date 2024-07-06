@@ -1,0 +1,37 @@
+a{abc def}
+=== spans ===
+                    a{abc def}
+SimpleMessage       ^^^^^^^^^^
+Text                ^
+LiteralExpression    ^^^^^
+Text                  ^^^
+Text                      ^^^^
+=== diagnostics ===
+Placeholder is missing a closing brace (at @1..6)
+  a{abc def}
+   ^^^^^
+'}' in simple messages must be escaped (at @9)
+  a{abc def}
+           ^
+=== ast ===
+SimpleMessage {
+    parts: [
+        Text {
+            start: @0,
+            content: "a",
+        },
+        LiteralExpression {
+            span: @1..6,
+            literal: Text {
+                start: @2,
+                content: "abc",
+            },
+            annotation: None,
+            attributes: [],
+        },
+        Text {
+            start: @6,
+            content: "def}",
+        },
+    ],
+}
