@@ -2,23 +2,19 @@
 === spans ===
                     {$var :number 1a=2}
 SimpleMessage       ^^^^^^^^^^^^^^^^^^^
-VariableExpression  ^^^^^^^^^^^^^^
+VariableExpression  ^^^^^^^^^^^^^^^^^^^
 Variable             ^^^^
 Function                  ^^^^^^^
 Identifier                 ^^^^^^
-Text                              ^^^^^
 === diagnostics ===
-Placeholder is missing a closing brace (at @0..14)
+Unrecognized placeholder contents (at @14..18)
   {$var :number 1a=2}
-  ^^^^^^^^^^^^^^
-'}' in simple messages must be escaped (at @18)
-  {$var :number 1a=2}
-                    ^
+                ^^^^
 === ast ===
 SimpleMessage {
     parts: [
         VariableExpression {
-            span: @0..14,
+            span: @0..19,
             variable: Variable {
                 start: @1,
                 name: "var",
@@ -35,10 +31,6 @@ SimpleMessage {
                 },
             ),
             attributes: [],
-        },
-        Text {
-            start: @14,
-            content: "1a=2}",
         },
     ],
 }

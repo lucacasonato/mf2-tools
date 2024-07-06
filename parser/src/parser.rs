@@ -202,13 +202,42 @@ impl<'a> Parser<'a> {
       attributes.push(self.parse_attribute(start, &mut had_space));
     }
 
-    let maybe_close = self.eat('}');
+    let contents_end = self.current_location();
+    let mut after_invalid = None;
+
+    loop {
+      match self.peek() {
+        Some((_, '}')) => {
+          self.next();
+          if let Some(invalid_end) = after_invalid {
+            self.report(Diagnostic::PlaceholderInvalidContents {
+              span: Span::new(contents_end..invalid_end),
+            });
+          }
+          break;
+        }
+        Some((_, chars::space!())) => {
+          self.next();
+        }
+        Some((_, '\\')) => {
+          self.parse_escape();
+          after_invalid = Some(self.current_location());
+        }
+        Some(_) => {
+          self.next();
+          after_invalid = Some(self.current_location());
+        }
+        None => {
+          self.report(Diagnostic::PlaceholderMissingClosingBrace {
+            span: Span::new(start..self.current_location()),
+          });
+          break;
+        }
+      }
+    }
+
     let end = self.current_location();
     let span = Span::new(start..end);
-
-    if maybe_close.is_none() {
-      self.report(Diagnostic::PlaceholderMissingClosingBrace { span });
-    }
 
     let expr = match lit_or_var {
       Some(LiteralOrVariable::Variable(variable)) => {

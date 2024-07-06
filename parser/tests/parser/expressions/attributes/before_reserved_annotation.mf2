@@ -2,24 +2,20 @@
 === spans ===
                     {1 @foo ^bar}
 SimpleMessage       ^^^^^^^^^^^^^
-LiteralExpression   ^^^^^^^^
+LiteralExpression   ^^^^^^^^^^^^^
 Number               ^
 Number.integral      ^
 Attribute              ^^^^
 Identifier              ^^^
-Text                        ^^^^^
 === diagnostics ===
-Placeholder is missing a closing brace (at @0..8)
+Unrecognized placeholder contents (at @8..12)
   {1 @foo ^bar}
-  ^^^^^^^^
-'}' in simple messages must be escaped (at @12)
-  {1 @foo ^bar}
-              ^
+          ^^^^
 === ast ===
 SimpleMessage {
     parts: [
         LiteralExpression {
-            span: @0..8,
+            span: @0..13,
             literal: Number {
                 start: @1,
                 raw: "1",
@@ -40,10 +36,6 @@ SimpleMessage {
                     value: None,
                 },
             ],
-        },
-        Text {
-            start: @8,
-            content: "^bar}",
         },
     ],
 }
