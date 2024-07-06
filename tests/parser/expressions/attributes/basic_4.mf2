@@ -1,0 +1,50 @@
+{1 @hello= 2}
+=== spans ===
+                    {1 @hello= 2}
+SimpleMessage       ^^^^^^^^^^^^^
+LiteralExpression   ^^^^^^^^^^^^^
+Number               ^
+Number.integral      ^
+Attribute              ^^^^^^^^^
+Identifier              ^^^^^
+Number                         ^
+Number.integral                ^
+=== diagnostics ===
+
+=== ast ===
+SimpleMessage {
+    parts: [
+        LiteralExpression {
+            span: @0..13,
+            literal: Number {
+                start: @1,
+                raw: "1",
+                is_negative: false,
+                integral_len: 1,
+                fractional_len: None,
+                exponent_len: None,
+            },
+            annotation: None,
+            attributes: [
+                Attribute {
+                    start: @3,
+                    key: Identifier {
+                        start: @4,
+                        namespace: None,
+                        name: "hello",
+                    },
+                    value: Some(
+                        Number {
+                            start: @11,
+                            raw: "2",
+                            is_negative: false,
+                            integral_len: 1,
+                            fractional_len: None,
+                            exponent_len: None,
+                        },
+                    ),
+                },
+            ],
+        },
+    ],
+}
