@@ -1,0 +1,49 @@
+{#el @   attr=1}
+=== spans ===
+                    {#el @   attr=1}
+SimpleMessage       ^^^^^^^^^^^^^^^^
+Markup              ^^^^^^^^^^^^^^^^
+Identifier            ^^
+Attribute                ^^^^^^^^^^
+Identifier                   ^^^^
+Number                            ^
+Number.integral                   ^
+=== diagnostics ===
+'@' must be immediately followed by an identifier, without spaces (at @6..9)
+  {#el @   attr=1}
+        ^^^
+=== ast ===
+SimpleMessage {
+    parts: [
+        Markup {
+            span: @0..16,
+            kind: Open,
+            id: Identifier {
+                start: @2,
+                namespace: None,
+                name: "el",
+            },
+            options: [],
+            attributes: [
+                Attribute {
+                    span: @5..15,
+                    key: Identifier {
+                        start: @9,
+                        namespace: None,
+                        name: "attr",
+                    },
+                    value: Some(
+                        Number {
+                            start: @14,
+                            raw: "1",
+                            is_negative: false,
+                            integral_len: 1,
+                            fractional_len: None,
+                            exponent_len: None,
+                        },
+                    ),
+                },
+            ],
+        },
+    ],
+}

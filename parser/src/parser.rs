@@ -189,7 +189,7 @@ impl<'a> Parser<'a> {
     let annotation = self.maybe_parse_annotation();
     if let Some(ref annotation) = annotation {
       if !had_space {
-        self.report(Diagnostic::MissingSpaceBeforeAnnotation {
+        self.report(Diagnostic::AnnotationMissingSpaceBefore {
           span: annotation.span(),
         });
       }
@@ -291,6 +291,11 @@ impl<'a> Parser<'a> {
     debug_assert!(matches!(c, Some((_, '@'))));
 
     let report_missing_space_before_attribute = !*had_space;
+    if self.skip_spaces() {
+      self.report(Diagnostic::AttributeInvalidSpacesAfterAt {
+        span: Span::new((start + '@')..self.current_location()),
+      });
+    }
 
     let key = self.parse_identifier();
 
@@ -319,7 +324,7 @@ impl<'a> Parser<'a> {
     let span = Span::new(start..end);
 
     if report_missing_space_before_attribute {
-      self.report(Diagnostic::MissingSpaceBeforeAttribute { span });
+      self.report(Diagnostic::AttributeMissingSpaceBefore { span });
     }
 
     Attribute { span, key, value }
