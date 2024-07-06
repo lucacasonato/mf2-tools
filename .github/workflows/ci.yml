@@ -18,8 +18,15 @@ jobs:
 
       - uses: Swatinem/rust-cache@v2
 
+      - name: Check formatting
+        run: cargo fmt --all -- --check
+
       - name: Build
         run: cargo build --verbose --all-targets --tests --examples
 
+      - name: Lint
+        run: cargo clippy --all-targets --all-features -- -D warnings
+
       - name: Run tests
         run: cargo test
+
