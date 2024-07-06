@@ -336,19 +336,14 @@ impl Visitable for FnOrMarkupOption<'_> {
 
 #[derive(Debug, Clone)]
 pub struct Attribute<'a> {
-  pub start: Location,
+  pub span: Span,
   pub key: Identifier<'a>,
   pub value: Option<LiteralOrVariable<'a>>,
 }
 
 impl Spanned for Attribute<'_> {
   fn span(&self) -> Span {
-    let start = self.start;
-    let end = self
-      .value
-      .as_ref()
-      .map_or(self.key.span().end, |value| value.span().end);
-    Span::new(start..end)
+    self.span
   }
 }
 

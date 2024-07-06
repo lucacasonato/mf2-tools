@@ -37,7 +37,7 @@ SimpleMessage {
             ],
             attributes: [
                 Attribute {
-                    start: @15,
+                    span: @15..20,
                     key: Identifier {
                         start: @16,
                         namespace: None,

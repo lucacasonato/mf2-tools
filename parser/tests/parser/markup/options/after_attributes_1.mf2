@@ -40,7 +40,7 @@ SimpleMessage {
             ],
             attributes: [
                 Attribute {
-                    start: @5,
+                    span: @5..14,
                     key: Identifier {
                         start: @6,
                         namespace: None,

@@ -288,26 +288,31 @@ impl<'a> Parser<'a> {
     let report_missing_space_before_attribute = !*had_space;
 
     let key = self.parse_identifier();
-    let mut value = None;
+
+    let mut end = self.current_location();
     *had_space = self.skip_spaces();
+
+    let mut value = None;
     if self.eat('=').is_some() {
-      self.skip_spaces();
+      *had_space = self.skip_spaces();
+
       value = Some(
         self
           .parse_literal_or_variable()
           .expect("todo, handle missing attribute value"),
       );
+
+      end = self.current_location();
       *had_space = self.skip_spaces();
     }
 
-    let attribute = Attribute { start, key, value };
+    let span = Span::new(start..end);
+
     if report_missing_space_before_attribute {
-      self.report(Diagnostic::MissingSpaceBeforeAttribute {
-        span: attribute.span(),
-      });
+      self.report(Diagnostic::MissingSpaceBeforeAttribute { span });
     }
 
-    attribute
+    Attribute { span, key, value }
   }
 
   fn parse_identifier(&mut self) -> Identifier<'a> {
