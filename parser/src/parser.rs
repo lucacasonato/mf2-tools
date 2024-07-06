@@ -185,21 +185,20 @@ impl<'a> Parser<'a> {
 
     let mut had_space = lit_or_var.is_none() || self.skip_spaces();
 
-    let annotation = if had_space {
-      self.maybe_parse_annotation()
-    } else {
-      None
-    };
-    if annotation.is_some() {
+    let annotation = self.maybe_parse_annotation();
+    if let Some(ref annotation) = annotation {
+      if !had_space {
+        self.report(Diagnostic::MissingSpaceBeforeAnnotation {
+          span: annotation.span(),
+        });
+      }
       had_space = self.skip_spaces();
     }
 
     let mut attributes = vec![];
 
-    while had_space {
-      let Some(start) = self.eat('@') else {
-        break;
-      };
+    while let Some(start) = self.eat('@') {
+      let report_missing_space_before_attribute = !had_space;
 
       let key = self.parse_identifier();
       let mut value = None;
@@ -214,7 +213,13 @@ impl<'a> Parser<'a> {
         had_space = self.skip_spaces();
       }
 
-      attributes.push(Attribute { start, key, value });
+      let attribute = Attribute { start, key, value };
+      if report_missing_space_before_attribute {
+        self.report(Diagnostic::MissingSpaceBeforeAttribute {
+          span: attribute.span(),
+        });
+      }
+      attributes.push(attribute);
     }
 
     let maybe_close = self.eat('}');
@@ -692,8 +697,8 @@ impl<'a> Parser<'a> {
           let attribute = Attribute { start, key, value };
 
           if report_missing_space_before_attribute {
-            self.report(Diagnostic::MarkupMissingSpaceBeforeAttribute {
-              attribute: attribute.clone(),
+            self.report(Diagnostic::MissingSpaceBeforeAttribute {
+              span: attribute.span(),
             });
           }
 

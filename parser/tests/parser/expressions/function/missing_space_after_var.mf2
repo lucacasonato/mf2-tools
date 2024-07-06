@@ -2,31 +2,35 @@
 === spans ===
                     {$a:b}
 SimpleMessage       ^^^^^^
-VariableExpression  ^^^
+VariableExpression  ^^^^^^
 Variable             ^^
-Text                   ^^^
+Function               ^^
+Identifier              ^
 === diagnostics ===
-Placeholder is missing a closing brace (at @0..3)
+Annotations must be preceeded by a leading space (at @3..5)
   {$a:b}
-  ^^^
-'}' in simple messages must be escaped (at @5)
-  {$a:b}
-       ^
+     ^^
 === ast ===
 SimpleMessage {
     parts: [
         VariableExpression {
-            span: @0..3,
+            span: @0..6,
             variable: Variable {
                 start: @1,
                 name: "a",
             },
-            annotation: None,
+            annotation: Some(
+                Function {
+                    start: @3,
+                    id: Identifier {
+                        start: @4,
+                        namespace: None,
+                        name: "b",
+                    },
+                    options: [],
+                },
+            ),
             attributes: [],
-        },
-        Text {
-            start: @3,
-            content: ":b}",
         },
     ],
 }

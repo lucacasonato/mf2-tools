@@ -79,10 +79,6 @@ diagnostics! {
       message: ("Markup has option after attribute (at {:?})", option.span()),
       span: option.span(),
     },
-    MarkupMissingSpaceBeforeAttribute { attribute: Attribute<'a> } => {
-      message: ("Markup has attribute with missing leading space (at {:?})", attribute.span()),
-      span: attribute.span(),
-    },
     UnterminatedQuoted { span: Span } => {
       message: ("Quoted string is missing a closing quote (at {:?})", span),
       span: *span,
@@ -118,6 +114,14 @@ diagnostics! {
     InvalidClosingBrace { brace_loc: Location } => {
       message: ("'}}' in simple messages must be escaped (at {:?})", brace_loc),
       span: Span::new(*brace_loc..(*brace_loc + '}')),
+    },
+    MissingSpaceBeforeAnnotation { span: Span } => {
+      message: ("Annotations must be preceeded by a leading space (at {:?})", *span),
+      span: *span,
+    },
+    MissingSpaceBeforeAttribute { span: Span } => {
+      message: ("Attributes must be preceeded by a leading space (at {:?})", *span),
+      span: *span,
     },
   }
 }
