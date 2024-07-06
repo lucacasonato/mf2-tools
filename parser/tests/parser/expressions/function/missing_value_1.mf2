@@ -1,26 +1,23 @@
-{$var :a :b}
+{$var :number a}
 === spans ===
-                    {$var :a :b}
-SimpleMessage       ^^^^^^^^^^^^
-VariableExpression  ^^^^^^^^^^^^
+                    {$var :number a}
+SimpleMessage       ^^^^^^^^^^^^^^^^
+VariableExpression  ^^^^^^^^^^^^^^^^
 Variable             ^^^^
-Function                  ^^^^^
-Identifier                 ^
-FnOrMarkupOption             ^^
-Identifier                   ^^
-Text                           
+Function                  ^^^^^^^^^
+Identifier                 ^^^^^^
+FnOrMarkupOption                  ^
+Identifier                        ^
+Text                               
 === diagnostics ===
-Identifier is missing a namespace (at @9..11)
-  {$var :a :b}
-           ^^
-Option is missing a value, which is required (at @9..11)
-  {$var :a :b}
-           ^^
+Option is missing a value, which is required (at @14..15)
+  {$var :number a}
+                ^
 === ast ===
 SimpleMessage {
     parts: [
         VariableExpression {
-            span: @0..12,
+            span: @0..16,
             variable: Variable {
                 start: @1,
                 name: "var",
@@ -31,19 +28,17 @@ SimpleMessage {
                     id: Identifier {
                         start: @7,
                         namespace: None,
-                        name: "a",
+                        name: "number",
                     },
                     options: [
                         FnOrMarkupOption {
                             key: Identifier {
-                                start: @9,
-                                namespace: Some(
-                                    "",
-                                ),
-                                name: "b",
+                                start: @14,
+                                namespace: None,
+                                name: "a",
                             },
                             value: Text {
-                                start: @11,
+                                start: @15,
                                 content: "",
                             },
                         },

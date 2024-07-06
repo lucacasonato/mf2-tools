@@ -1,0 +1,68 @@
+{$var :number a b}
+=== spans ===
+                    {$var :number a b}
+SimpleMessage       ^^^^^^^^^^^^^^^^^^
+VariableExpression  ^^^^^^^^^^^^^^^^^^
+Variable             ^^^^
+Function                  ^^^^^^^^^^^
+Identifier                 ^^^^^^
+FnOrMarkupOption                  ^
+Identifier                        ^
+Text                               
+FnOrMarkupOption                    ^
+Identifier                          ^
+Text                                 
+=== diagnostics ===
+Option is missing a value, which is required (at @14..15)
+  {$var :number a b}
+                ^
+Option is missing a value, which is required (at @16..17)
+  {$var :number a b}
+                  ^
+=== ast ===
+SimpleMessage {
+    parts: [
+        VariableExpression {
+            span: @0..18,
+            variable: Variable {
+                start: @1,
+                name: "var",
+            },
+            annotation: Some(
+                Function {
+                    start: @6,
+                    id: Identifier {
+                        start: @7,
+                        namespace: None,
+                        name: "number",
+                    },
+                    options: [
+                        FnOrMarkupOption {
+                            key: Identifier {
+                                start: @14,
+                                namespace: None,
+                                name: "a",
+                            },
+                            value: Text {
+                                start: @15,
+                                content: "",
+                            },
+                        },
+                        FnOrMarkupOption {
+                            key: Identifier {
+                                start: @16,
+                                namespace: None,
+                                name: "b",
+                            },
+                            value: Text {
+                                start: @17,
+                                content: "",
+                            },
+                        },
+                    ],
+                },
+            ),
+            attributes: [],
+        },
+    ],
+}

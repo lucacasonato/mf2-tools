@@ -1,0 +1,41 @@
+{#el option= }
+=== spans ===
+                    {#el option= }
+SimpleMessage       ^^^^^^^^^^^^^^
+Markup              ^^^^^^^^^^^^^^
+Identifier            ^^
+FnOrMarkupOption         ^^^^^^^
+Identifier               ^^^^^^
+Text                            
+=== diagnostics ===
+Option is missing a value, which is required (at @5..12)
+  {#el option= }
+       ^^^^^^^
+=== ast ===
+SimpleMessage {
+    parts: [
+        Markup {
+            span: @0..14,
+            kind: Open,
+            id: Identifier {
+                start: @2,
+                namespace: None,
+                name: "el",
+            },
+            options: [
+                FnOrMarkupOption {
+                    key: Identifier {
+                        start: @5,
+                        namespace: None,
+                        name: "option",
+                    },
+                    value: Text {
+                        start: @12,
+                        content: "",
+                    },
+                },
+            ],
+            attributes: [],
+        },
+    ],
+}
