@@ -1,0 +1,37 @@
+{1@foo}
+=== spans ===
+                    {1@foo}
+SimpleMessage       ^^^^^^^
+LiteralExpression   ^^
+Number               ^
+Number.integral      ^
+Text                  ^^^^^
+=== diagnostics ===
+Placeholder is missing a closing brace (at @0..2)
+  {1@foo}
+  ^^
+'}' in simple messages must be escaped (at @6)
+  {1@foo}
+        ^
+=== ast ===
+SimpleMessage {
+    parts: [
+        LiteralExpression {
+            span: @0..2,
+            literal: Number {
+                start: @1,
+                raw: "1",
+                is_negative: false,
+                integral_len: 1,
+                fractional_len: None,
+                exponent_len: None,
+            },
+            annotation: None,
+            attributes: [],
+        },
+        Text {
+            start: @2,
+            content: "@foo}",
+        },
+    ],
+}
