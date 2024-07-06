@@ -50,6 +50,7 @@ impl<'a> Parser<'a> {
   pub fn parse(
     mut self,
   ) -> (SimpleMessage<'a>, Vec<Diagnostic<'a>>, SourceTextInfo<'a>) {
+    #[allow(clippy::never_loop)]
     while let Some((_, c)) = self.peek() {
       match c {
         chars::simple_start!() => {
@@ -376,7 +377,7 @@ impl<'a> Parser<'a> {
     self.skip_name();
     let end = self.current_location();
 
-    &self.text.slice(start..end)
+    self.text.slice(start..end)
   }
 
   fn parse_literal_name(&mut self) -> Text<'a> {
@@ -620,12 +621,10 @@ impl<'a> Parser<'a> {
       self.next(); // consume 'e' or 'E'
       let sign = if self.eat('-').is_some() {
         ExponentSign::Minus
+      } else if self.eat('+').is_some() {
+        ExponentSign::Plus
       } else {
-        if self.eat('+').is_some() {
-          ExponentSign::Plus
-        } else {
-          ExponentSign::None
-        }
+        ExponentSign::None
       };
       Some((sign, self.parse_digits()))
     } else {

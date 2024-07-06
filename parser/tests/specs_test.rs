@@ -47,9 +47,9 @@ fn run_test(test: &CollectedTest) {
     .unwrap_or((&*file_text, ""));
   let (expected_spans, rest_str) = rest_str
     .split_once(diagnostics_marker)
-    .unwrap_or((&*rest_str, ""));
+    .unwrap_or((rest_str, ""));
   let (expected_diagnostics, rest_str) =
-    rest_str.split_once(ast_marker).unwrap_or((&*rest_str, ""));
+    rest_str.split_once(ast_marker).unwrap_or((rest_str, ""));
   let expected_ast_dbg = rest_str;
 
   if test
@@ -60,7 +60,7 @@ fn run_test(test: &CollectedTest) {
     .unwrap_or(false)
   {
     let result = panic::catch_unwind(|| parse(message));
-    if !result.is_err() {
+    if result.is_ok() {
       panic!("expected panic, but parsing didn't");
     }
     return;
@@ -79,9 +79,9 @@ fn run_test(test: &CollectedTest) {
 
   let actual_ast_dbg = generated_actual_ast_dbg(&actual_ast);
   let actual_spans =
-    generate_actual_spans(&actual_ast, &message, &normalized_message);
+    generate_actual_spans(&actual_ast, message, &normalized_message);
   let actual_diags =
-    generate_actual_diagnostics(&diagnostics, &message, &normalized_message);
+    generate_actual_diagnostics(&diagnostics, message, &normalized_message);
 
   let mut need_update = std::env::var("UPDATE").is_ok();
   if !need_update {
@@ -118,7 +118,7 @@ fn generated_actual_ast_dbg(actual_ast: &SimpleMessage) -> String {
 }
 
 fn generate_actual_diagnostics(
-  diagnostics: &Vec<Diagnostic>,
+  diagnostics: &[Diagnostic],
   input_message: &str,
   normalized_message: &str,
 ) -> String {
@@ -134,7 +134,7 @@ fn generate_actual_diagnostics(
     if i != 0 {
       formatted_diagnostics.push('\n');
     }
-    write!(formatted_diagnostics, "{}\n", diag).unwrap();
+    writeln!(formatted_diagnostics, "{}", diag).unwrap();
     formatted_diagnostics.push(' ');
     formatted_diagnostics.push(' ');
     formatted_diagnostics.push_str(normalized_message);
@@ -159,7 +159,7 @@ fn generate_actual_spans(
   }
 
   impl SpanDebuggerVisitor<'_> {
-    fn print(&mut self, name: &str, span: Span) -> () {
+    fn print(&mut self, name: &str, span: Span) {
       assert!(name.len() <= SPAN_LABEL_WIDTH);
 
       let span_start = span.start.inner_byte_index_for_test() as usize;

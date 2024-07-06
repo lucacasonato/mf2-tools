@@ -27,7 +27,7 @@ fn main() -> Result<(), anyhow::Error> {
     ..ServerCapabilities::default()
   };
 
-  let server_capabilities = serde_json::to_value(&capabilities).unwrap();
+  let server_capabilities = serde_json::to_value(capabilities).unwrap();
   let initialization_params = connection.initialize(server_capabilities)?;
 
   let _initialization_params =
@@ -97,7 +97,7 @@ fn validate_message(
   version: i32,
   connection: &Connection,
 ) -> Result<(), anyhow::Error> {
-  let (_ast, diagnostics, text_info) = parse(&text);
+  let (_ast, diagnostics, text_info) = parse(text);
 
   let diagnostics = diagnostics
     .into_iter()

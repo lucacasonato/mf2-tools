@@ -58,10 +58,8 @@ impl<'a> SourceTextIterator<'a> {
       Some(ch) => {
         let loc = Location(self.front_offset);
         self.front_offset += ch.len_utf8() as u32;
-        if ch == '\n' {
-          if *self.utf8_line_starts.last().unwrap() < loc.0 {
-            self.utf8_line_starts.push(self.front_offset);
-          }
+        if ch == '\n' && *self.utf8_line_starts.last().unwrap() < loc.0 {
+          self.utf8_line_starts.push(self.front_offset);
         }
         Some((loc, ch))
       }
@@ -70,7 +68,7 @@ impl<'a> SourceTextIterator<'a> {
 
   pub fn peek(&mut self) -> Option<(Location, char)> {
     match &self.peeked {
-      Some(peeked) => peeked.clone(),
+      Some(peeked) => *peeked,
       None => {
         let peeked = self.iter.next().map(|ch| {
           if ch == '\n' {
@@ -81,7 +79,7 @@ impl<'a> SourceTextIterator<'a> {
           }
           (Location(self.front_offset), ch)
         });
-        self.peeked = Some(peeked.clone());
+        self.peeked = Some(peeked);
         peeked
       }
     }
