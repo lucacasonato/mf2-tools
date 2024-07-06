@@ -4,7 +4,7 @@ Hello}
 SimpleMessage       ^^^^^^
 Text                ^^^^^^
 === diagnostics ===
-Invalid character 0x7d (at @5)
+'}' in simple messages must be escaped (at @5)
   Hello}
        ^
 === ast ===

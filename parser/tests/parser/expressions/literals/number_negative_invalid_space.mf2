@@ -14,7 +14,7 @@ Number is missing an integral part (at @3..4)
 Placeholder is missing a closing brace (at @1..5)
   a{ - 1 }
    ^^^^
-Invalid character 0x7d (at @7)
+'}' in simple messages must be escaped (at @7)
   a{ - 1 }
          ^
 === ast ===

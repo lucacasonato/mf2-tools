@@ -107,9 +107,13 @@ diagnostics! {
       message: ("Escape sequence is missing a character to escape (at {:?})", slash_loc),
       span: Span::new(*slash_loc..(*slash_loc + '\\')),
     },
-    InvalidCharacter { char_loc: Location, char: char } => {
-      message: ("Invalid character {:#x} (at {:?})", *char as u32, char_loc),
-      span: Span::new(*char_loc..(*char_loc + *char)),
+    InvalidNullCharacter { char_loc: Location } => {
+      message: ("Invalid NULL (0x00) character (at {:?})", char_loc),
+      span: Span::new(*char_loc..(*char_loc + '\0')),
+    },
+    InvalidClosingBrace { brace_loc: Location } => {
+      message: ("'}}' in simple messages must be escaped (at {:?})", brace_loc),
+      span: Span::new(*brace_loc..(*brace_loc + '}')),
     },
   }
 }

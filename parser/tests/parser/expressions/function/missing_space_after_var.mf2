@@ -9,7 +9,7 @@ Text                   ^^^
 Placeholder is missing a closing brace (at @0..3)
   {$a:b}
   ^^^
-Invalid character 0x7d (at @5)
+'}' in simple messages must be escaped (at @5)
   {$a:b}
        ^
 === ast ===

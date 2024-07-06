@@ -14,7 +14,7 @@ Text                                 ^^^^
 Placeholder is missing a closing brace (at @0..17)
   {1 :hello @world a=b}
   ^^^^^^^^^^^^^^^^^
-Invalid character 0x7d (at @20)
+'}' in simple messages must be escaped (at @20)
   {1 :hello @world a=b}
                       ^
 === ast ===

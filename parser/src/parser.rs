@@ -166,11 +166,12 @@ impl<'a> Parser<'a> {
         '.' | '@' | '|' | content_char_pattern!() | space_pattern!() => {
           self.next();
         }
-        '\x00' | '}' => {
-          self.report(Diagnostic::InvalidCharacter {
-            char_loc: loc,
-            char: c,
-          });
+        '\0' => {
+          self.report(Diagnostic::InvalidNullCharacter { char_loc: loc });
+          self.next();
+        }
+        '}' => {
+          self.report(Diagnostic::InvalidClosingBrace { brace_loc: loc });
           self.next();
         }
       }
@@ -611,10 +612,7 @@ impl<'a> Parser<'a> {
           self.next();
         }
         '\0' => {
-          self.report(Diagnostic::InvalidCharacter {
-            char_loc: loc,
-            char: ch,
-          });
+          self.report(Diagnostic::InvalidNullCharacter { char_loc: loc });
           self.next();
         }
       }

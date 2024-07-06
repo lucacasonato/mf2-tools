@@ -11,7 +11,7 @@ Text                              ^^^^^
 Placeholder is missing a closing brace (at @0..14)
   {$var :number 1a=2}
   ^^^^^^^^^^^^^^
-Invalid character 0x7d (at @18)
+'}' in simple messages must be escaped (at @18)
   {$var :number 1a=2}
                     ^
 === ast ===

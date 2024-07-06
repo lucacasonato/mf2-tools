@@ -10,7 +10,7 @@ Text                      ^^^^
 Placeholder is missing a closing brace (at @1..6)
   a{abc def}
    ^^^^^
-Invalid character 0x7d (at @9)
+'}' in simple messages must be escaped (at @9)
   a{abc def}
            ^
 === ast ===
