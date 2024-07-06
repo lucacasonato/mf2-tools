@@ -6,6 +6,7 @@ mod diagnostic;
 mod parser;
 mod util;
 mod visitor;
+mod chars;
 
 pub use diagnostic::Diagnostic;
 pub use util::{Location, SourceTextInfo, Span, Spanned};
