@@ -4,9 +4,9 @@
 SimpleMessage       ^^^^^^^^^^^^^^^^^^^^^^^^^
 Text                ^^^^^^^^^^^^^^^^^^^^^^^^^
 === diagnostics ===
-Complex messages are not yet supported (at @0..25)
+Complex messages are not yet supported (at @1..25)
    .input { $hello :space }
-  ^^^^^^^^^^^^^^^^^^^^^^^^^
+   ^^^^^^^^^^^^^^^^^^^^^^^^
 === ast ===
 SimpleMessage {
     parts: [

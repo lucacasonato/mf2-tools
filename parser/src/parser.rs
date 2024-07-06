@@ -50,8 +50,7 @@ impl<'a> Parser<'a> {
   pub fn parse(
     mut self,
   ) -> (SimpleMessage<'a>, Vec<Diagnostic<'a>>, SourceTextInfo<'a>) {
-    let mut report_complex_message_error = false;
-    while let Some((_, c)) = self.peek() {
+    while let Some((loc, c)) = self.peek() {
       match c {
         chars::space!() => {
           self.next();
@@ -67,7 +66,9 @@ impl<'a> Parser<'a> {
           )
         }
         '.' => {
-          report_complex_message_error = true;
+          self.report(Diagnostic::ComplexMessageNotYetSupported {
+            span: Span::new(loc..self.text.end_location()),
+          });
           break;
         }
       }
@@ -75,12 +76,6 @@ impl<'a> Parser<'a> {
 
     let start = self.text.start_location();
     let end = self.text.end_location();
-
-    if report_complex_message_error {
-      self.report(Diagnostic::ComplexMessageNotYetSupported {
-        span: Span::new(start..end),
-      });
-    }
 
     (
       SimpleMessage {
