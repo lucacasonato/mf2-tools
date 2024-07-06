@@ -167,15 +167,7 @@ impl<'a> Parser<'a> {
 
     self.skip_spaces();
 
-    let (variable, literal, mut had_space) = match self.peek() {
-      Some((_, '$')) => (Some(self.parse_variable()), None, self.skip_spaces()),
-      // '.' is for error recovery of a fractional number literal that is missing the integral part
-      Some((_, '|' | '.' | '-' | '0'..='9')) => {
-        (None, Some(self.parse_literal()), self.skip_spaces())
-      }
-      Some((_, chars::name_start!())) => {
-        (None, Some(self.parse_literal()), self.skip_spaces())
-      }
+    match self.peek() {
       Some((_, '#')) => {
         return MessagePart::Markup(
           self.parse_markup(start, MarkupStartKind::OpenOrStandalone),
@@ -186,8 +178,12 @@ impl<'a> Parser<'a> {
           self.parse_markup(start, MarkupStartKind::Close),
         )
       }
-      _ => (None, None, true),
-    };
+      _ => {}
+    }
+
+    let lit_or_var = self.parse_literal_or_variable();
+
+    let mut had_space = lit_or_var.is_none() || self.skip_spaces();
 
     let annotation = if had_space {
       self.maybe_parse_annotation()
@@ -229,54 +225,49 @@ impl<'a> Parser<'a> {
       self.report(Diagnostic::PlaceholderMissingClosingBrace { span });
     }
 
-    let expr = match (variable, literal) {
-      (Some(variable), None) => MessagePart::Expression(
+    let expr = match lit_or_var {
+      Some(LiteralOrVariable::Variable(variable)) => {
         Expression::VariableExpression(VariableExpression {
           span,
           variable,
           annotation,
           attributes,
-        }),
-      ),
-      (None, Some(literal)) => MessagePart::Expression(
+        })
+      }
+      Some(LiteralOrVariable::Literal(literal)) => {
         Expression::LiteralExpression(LiteralExpression {
           span,
           literal,
           annotation,
           attributes,
-        }),
-      ),
-      (None, None) => {
+        })
+      }
+      None => {
         if let Some(annotation) = annotation {
-          MessagePart::Expression(Expression::AnnotationExpression(
-            AnnotationExpression {
-              span,
-              annotation,
-              attributes,
-            },
-          ))
+          Expression::AnnotationExpression(AnnotationExpression {
+            span,
+            annotation,
+            attributes,
+          })
         } else {
           self.report(Diagnostic::PlaceholderMissingBody { span });
 
           // We recover from this by injecting a literal expression with an
           // empty text as its literal.
-          MessagePart::Expression(Expression::LiteralExpression(
-            LiteralExpression {
-              span,
-              literal: Literal::Text(Text {
-                start: span.start,
-                content: "",
-              }),
-              annotation: None,
-              attributes,
-            },
-          ))
+          Expression::LiteralExpression(LiteralExpression {
+            span,
+            literal: Literal::Text(Text {
+              start: span.start,
+              content: "",
+            }),
+            annotation: None,
+            attributes,
+          })
         }
       }
-      _ => unreachable!(),
     };
 
-    expr
+    MessagePart::Expression(expr)
   }
 
   fn parse_literal_or_variable(&mut self) -> Option<LiteralOrVariable<'a>> {
@@ -539,18 +530,6 @@ impl<'a> Parser<'a> {
     }
 
     parts
-  }
-
-  fn parse_literal(&mut self) -> Literal<'a> {
-    match self.peek() {
-      Some((_, '|')) => Literal::Quoted(self.parse_quoted()),
-      // '.' is for error recovery of a fractional number literal that is missing the integral part
-      Some((_, '-' | '.' | '0'..='9')) => Literal::Number(self.parse_number()),
-      Some((_, chars::name_start!())) => {
-        Literal::Text(self.parse_literal_name())
-      }
-      _ => panic!(),
-    }
   }
 
   fn parse_quoted(&mut self) -> Quoted<'a> {
