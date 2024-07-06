@@ -1,25 +1,21 @@
-{1 @foo ^bar}
+{1 @foo=}
 === spans ===
-                    {1 @foo ^bar}
-SimpleMessage       ^^^^^^^^^^^^^
-LiteralExpression   ^^^^^^^^
+                    {1 @foo=}
+SimpleMessage       ^^^^^^^^^
+LiteralExpression   ^^^^^^^^^
 Number               ^
 Number.integral      ^
-Attribute              ^^^^
+Attribute              ^^^^^
 Identifier              ^^^
-Text                        ^^^^^
 === diagnostics ===
-Placeholder is missing a closing brace (at @0..8)
-  {1 @foo ^bar}
-  ^^^^^^^^
-'}' in simple messages must be escaped (at @12)
-  {1 @foo ^bar}
-              ^
+Attribute is missing a value (at @3..8)
+  {1 @foo=}
+     ^^^^^
 === ast ===
 SimpleMessage {
     parts: [
         LiteralExpression {
-            span: @0..8,
+            span: @0..9,
             literal: Number {
                 start: @1,
                 raw: "1",
@@ -31,7 +27,7 @@ SimpleMessage {
             annotation: None,
             attributes: [
                 Attribute {
-                    span: @3..7,
+                    span: @3..8,
                     key: Identifier {
                         start: @4,
                         namespace: None,
@@ -40,10 +36,6 @@ SimpleMessage {
                     value: None,
                 },
             ],
-        },
-        Text {
-            start: @8,
-            content: "^bar}",
         },
     ],
 }

@@ -123,6 +123,10 @@ diagnostics! {
       message: ("Attributes must be preceeded by a leading space (at {:?})", *span),
       span: *span,
     },
+    AttributeMissingValue { span: Span } => {
+      message: ("Attribute is missing a value (at {:?})", *span),
+      span: *span,
+    },
   }
 }
 

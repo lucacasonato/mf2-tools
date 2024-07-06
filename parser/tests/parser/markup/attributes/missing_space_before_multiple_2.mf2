@@ -27,7 +27,7 @@ SimpleMessage {
             options: [],
             attributes: [
                 Attribute {
-                    start: @5,
+                    span: @5..17,
                     key: Identifier {
                         start: @6,
                         namespace: None,
@@ -41,7 +41,7 @@ SimpleMessage {
                     ),
                 },
                 Attribute {
-                    start: @17,
+                    span: @17..23,
                     key: Identifier {
                         start: @18,
                         namespace: None,

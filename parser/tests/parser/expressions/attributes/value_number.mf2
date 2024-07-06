@@ -27,7 +27,7 @@ SimpleMessage {
             annotation: None,
             attributes: [
                 Attribute {
-                    start: @3,
+                    span: @3..11,
                     key: Identifier {
                         start: @4,
                         namespace: None,
