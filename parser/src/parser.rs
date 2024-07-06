@@ -50,24 +50,37 @@ impl<'a> Parser<'a> {
   pub fn parse(
     mut self,
   ) -> (SimpleMessage<'a>, Vec<Diagnostic<'a>>, SourceTextInfo<'a>) {
-    #[allow(clippy::never_loop)]
+    let mut report_complex_message_error = false;
     while let Some((_, c)) = self.peek() {
       match c {
-        chars::simple_start!() => {
+        chars::space!() => {
+          self.next();
+        }
+        // Allow unreachable patterns because space is already handled above.
+        #[allow(unreachable_patterns)]
+        // Also include `\0` and `}` for error recovery.
+        chars::simple_start!() | '\0' | '}' => {
           return (
             self.parse_simple_message(),
             self.diagnostics,
             self.text.into_info(),
           )
         }
-        _ => {
-          panic!("Unexpected character: {:?}", c);
+        '.' => {
+          report_complex_message_error = true;
+          break;
         }
       }
     }
 
     let start = self.text.start_location();
     let end = self.text.end_location();
+
+    if report_complex_message_error {
+      self.report(Diagnostic::ComplexMessageNotYetSupported {
+        span: Span::new(start..end),
+      });
+    }
 
     (
       SimpleMessage {

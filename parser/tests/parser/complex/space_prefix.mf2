@@ -1,0 +1,18 @@
+ .input { $hello :space }
+=== spans ===
+                     .input { $hello :space }
+SimpleMessage       ^^^^^^^^^^^^^^^^^^^^^^^^^
+Text                ^^^^^^^^^^^^^^^^^^^^^^^^^
+=== diagnostics ===
+Complex messages are not yet supported (at @0..25)
+   .input { $hello :space }
+  ^^^^^^^^^^^^^^^^^^^^^^^^^
+=== ast ===
+SimpleMessage {
+    parts: [
+        Text {
+            start: @0,
+            content: " .input { $hello :space }",
+        },
+    ],
+}

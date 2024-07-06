@@ -131,6 +131,10 @@ diagnostics! {
       message: ("Attribute is missing a value (at {:?})", span),
       span: *span,
     },
+    ComplexMessageNotYetSupported { span: Span } => {
+      message: ("Complex messages are not yet supported (at {:?})", *span),
+      span: *span,
+    }
   }
 }
 
