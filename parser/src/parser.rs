@@ -185,36 +185,20 @@ impl<'a> Parser<'a> {
 
     let mut had_space = lit_or_var.is_none() || self.skip_spaces();
 
-    let annotation = if had_space {
-      self.maybe_parse_annotation()
-    } else {
-      None
-    };
-    if annotation.is_some() {
+    let annotation = self.maybe_parse_annotation();
+    if let Some(ref annotation) = annotation {
+      if !had_space {
+        self.report(Diagnostic::MissingSpaceBeforeAnnotation {
+          span: annotation.span(),
+        });
+      }
       had_space = self.skip_spaces();
     }
 
     let mut attributes = vec![];
 
-    while had_space {
-      let Some(start) = self.eat('@') else {
-        break;
-      };
-
-      let key = self.parse_identifier();
-      let mut value = None;
-      had_space = self.skip_spaces();
-      if self.eat('=').is_some() {
-        self.skip_spaces();
-        value = Some(
-          self
-            .parse_literal_or_variable()
-            .expect("todo, handle missing attribute value"),
-        );
-        had_space = self.skip_spaces();
-      }
-
-      attributes.push(Attribute { start, key, value });
+    while let Some((start, '@')) = self.peek() {
+      attributes.push(self.parse_attribute(start, &mut had_space));
     }
 
     let maybe_close = self.eat('}');
@@ -295,6 +279,35 @@ impl<'a> Parser<'a> {
     let name = self.parse_name();
 
     Variable { start, name }
+  }
+
+  fn parse_attribute(&mut self, start: Location, had_space: &mut bool) -> Attribute<'a> {
+    let c = self.next();
+    debug_assert!(matches!(c, Some((_, '@'))));
+
+    let report_missing_space_before_attribute = !*had_space;
+
+    let key = self.parse_identifier();
+    let mut value = None;
+    *had_space = self.skip_spaces();
+    if self.eat('=').is_some() {
+      self.skip_spaces();
+      value = Some(
+        self
+          .parse_literal_or_variable()
+          .expect("todo, handle missing attribute value"),
+      );
+      *had_space = self.skip_spaces();
+    }
+
+    let attribute = Attribute { start, key, value };
+    if report_missing_space_before_attribute {
+      self.report(Diagnostic::MissingSpaceBeforeAttribute {
+        span: attribute.span(),
+      });
+    }
+
+    attribute
   }
 
   fn parse_identifier(&mut self) -> Identifier<'a> {
@@ -672,32 +685,7 @@ impl<'a> Parser<'a> {
     let report_missing_close = loop {
       match self.peek() {
         Some((start, '@')) => {
-          let report_missing_space_before_attribute = !had_space;
-
-          self.next(); // consume '@'
-
-          let key = self.parse_identifier();
-          let mut value = None;
-          had_space = self.skip_spaces();
-          if self.eat('=').is_some() {
-            self.skip_spaces();
-            value = Some(
-              self
-                .parse_literal_or_variable()
-                .expect("todo, handle missing option value"),
-            );
-            had_space = self.skip_spaces();
-          }
-
-          let attribute = Attribute { start, key, value };
-
-          if report_missing_space_before_attribute {
-            self.report(Diagnostic::MarkupMissingSpaceBeforeAttribute {
-              attribute: attribute.clone(),
-            });
-          }
-
-          attributes.push(attribute);
+          attributes.push(self.parse_attribute(start, &mut had_space));
         }
         Some((self_close, '/')) => {
           if matches!(markup_kind, MarkupKind::Close) {

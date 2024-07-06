@@ -9,7 +9,7 @@ Identifier                ^^^^^
 Attribute                      ^^^^^^
 Identifier                      ^^^^^
 === diagnostics ===
-Markup has attribute with missing leading space (at @11..17)
+Attributes must be preceeded by a leading space (at @11..17)
   {#el @attr1@attr2 }
              ^^^^^^
 === ast ===

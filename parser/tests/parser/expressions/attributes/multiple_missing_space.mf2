@@ -2,24 +2,23 @@
 === spans ===
                     {1 @foo@hello=world}
 SimpleMessage       ^^^^^^^^^^^^^^^^^^^^
-LiteralExpression   ^^^^^^^
+LiteralExpression   ^^^^^^^^^^^^^^^^^^^^
 Number               ^
 Number.integral      ^
 Attribute              ^^^^
 Identifier              ^^^
-Text                       ^^^^^^^^^^^^^
+Attribute                  ^^^^^^^^^^^^
+Identifier                  ^^^^^
+Text                              ^^^^^
 === diagnostics ===
-Placeholder is missing a closing brace (at @0..7)
+Attributes must be preceeded by a leading space (at @7..19)
   {1 @foo@hello=world}
-  ^^^^^^^
-'}' in simple messages must be escaped (at @19)
-  {1 @foo@hello=world}
-                     ^
+         ^^^^^^^^^^^^
 === ast ===
 SimpleMessage {
     parts: [
         LiteralExpression {
-            span: @0..7,
+            span: @0..20,
             literal: Number {
                 start: @1,
                 raw: "1",
@@ -39,11 +38,21 @@ SimpleMessage {
                     },
                     value: None,
                 },
+                Attribute {
+                    start: @7,
+                    key: Identifier {
+                        start: @8,
+                        namespace: None,
+                        name: "hello",
+                    },
+                    value: Some(
+                        Text {
+                            start: @14,
+                            content: "world",
+                        },
+                    ),
+                },
             ],
-        },
-        Text {
-            start: @7,
-            content: "@hello=world}",
         },
     ],
 }
