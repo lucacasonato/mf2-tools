@@ -281,7 +281,11 @@ impl<'a> Parser<'a> {
     Variable { start, name }
   }
 
-  fn parse_attribute(&mut self, start: Location, had_space: &mut bool) -> Attribute<'a> {
+  fn parse_attribute(
+    &mut self,
+    start: Location,
+    had_space: &mut bool,
+  ) -> Attribute<'a> {
     let c = self.next();
     debug_assert!(matches!(c, Some((_, '@'))));
 
@@ -292,19 +296,24 @@ impl<'a> Parser<'a> {
     let mut end = self.current_location();
     *had_space = self.skip_spaces();
 
-    let mut value = None;
-    if self.eat('=').is_some() {
-      *had_space = self.skip_spaces();
-
-      value = Some(
-        self
-          .parse_literal_or_variable()
-          .expect("todo, handle missing attribute value"),
-      );
-
+    let value = self.eat('=').and_then(|_| {
       end = self.current_location();
       *had_space = self.skip_spaces();
-    }
+
+      match self.parse_literal_or_variable() {
+        Some(v) => {
+          end = self.current_location();
+          *had_space = self.skip_spaces();
+          Some(v)
+        }
+        None => {
+          self.report(Diagnostic::AttributeMissingValue {
+            span: Span::new(start..end),
+          });
+          None
+        }
+      }
+    });
 
     let span = Span::new(start..end);
 
