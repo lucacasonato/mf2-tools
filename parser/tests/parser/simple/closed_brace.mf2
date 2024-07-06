@@ -1,0 +1,18 @@
+Hello}
+=== spans ===
+                    Hello}
+SimpleMessage       ^^^^^^
+Text                ^^^^^^
+=== diagnostics ===
+Invalid character 0x7d (at @5)
+  Hello}
+       ^
+=== ast ===
+SimpleMessage {
+    parts: [
+        Text {
+            start: @0,
+            content: "Hello}",
+        },
+    ],
+}

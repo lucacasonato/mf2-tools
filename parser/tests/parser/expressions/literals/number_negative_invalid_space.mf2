@@ -1,0 +1,45 @@
+a{ - 1 }
+=== spans ===
+                    a{ - 1 }
+SimpleMessage       ^^^^^^^^
+Text                ^
+LiteralExpression    ^^^^
+Number                 ^
+Number.integral         
+Text                     ^^^
+=== diagnostics ===
+Number is missing an integral part (at @3..4)
+  a{ - 1 }
+     ^
+Placeholder is missing a closing brace (at @1..5)
+  a{ - 1 }
+   ^^^^
+Invalid character 0x7d (at @7)
+  a{ - 1 }
+         ^
+=== ast ===
+SimpleMessage {
+    parts: [
+        Text {
+            start: @0,
+            content: "a",
+        },
+        LiteralExpression {
+            span: @1..5,
+            literal: Number {
+                start: @3,
+                raw: "-",
+                is_negative: true,
+                integral_len: 0,
+                fractional_len: None,
+                exponent_len: None,
+            },
+            annotation: None,
+            attributes: [],
+        },
+        Text {
+            start: @5,
+            content: "1 }",
+        },
+    ],
+}

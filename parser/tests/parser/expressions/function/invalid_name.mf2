@@ -1,0 +1,44 @@
+{$var :number 1a=2}
+=== spans ===
+                    {$var :number 1a=2}
+SimpleMessage       ^^^^^^^^^^^^^^^^^^^
+VariableExpression  ^^^^^^^^^^^^^^
+Variable             ^^^^
+Function                  ^^^^^^^
+Identifier                 ^^^^^^
+Text                              ^^^^^
+=== diagnostics ===
+Placeholder is missing a closing brace (at @0..14)
+  {$var :number 1a=2}
+  ^^^^^^^^^^^^^^
+Invalid character 0x7d (at @18)
+  {$var :number 1a=2}
+                    ^
+=== ast ===
+SimpleMessage {
+    parts: [
+        VariableExpression {
+            span: @0..14,
+            variable: Variable {
+                start: @1,
+                name: "var",
+            },
+            annotation: Some(
+                Function {
+                    start: @6,
+                    id: Identifier {
+                        start: @7,
+                        namespace: None,
+                        name: "number",
+                    },
+                    options: [],
+                },
+            ),
+            attributes: [],
+        },
+        Text {
+            start: @14,
+            content: "1a=2}",
+        },
+    ],
+}
