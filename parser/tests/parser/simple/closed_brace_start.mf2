@@ -1,0 +1,18 @@
+}Hello
+=== spans ===
+                    }Hello
+SimpleMessage       ^^^^^^
+Text                ^^^^^^
+=== diagnostics ===
+'}' in simple messages must be escaped (at @0)
+  }Hello
+  ^
+=== ast ===
+SimpleMessage {
+    parts: [
+        Text {
+            start: @0,
+            content: "}Hello",
+        },
+    ],
+}
