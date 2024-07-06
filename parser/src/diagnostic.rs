@@ -115,16 +115,20 @@ diagnostics! {
       message: ("'}}' in simple messages must be escaped (at {:?})", brace_loc),
       span: Span::new(*brace_loc..(*brace_loc + '}')),
     },
-    MissingSpaceBeforeAnnotation { span: Span } => {
-      message: ("Annotations must be preceeded by a leading space (at {:?})", *span),
+    AnnotationMissingSpaceBefore { span: Span } => {
+      message: ("Annotations must be preceeded by a leading space (at {:?})", span),
       span: *span,
     },
-    MissingSpaceBeforeAttribute { span: Span } => {
-      message: ("Attributes must be preceeded by a leading space (at {:?})", *span),
+    AttributeMissingSpaceBefore { span: Span } => {
+      message: ("Attributes must be preceeded by a leading space (at {:?})", span),
+      span: *span,
+    },
+    AttributeInvalidSpacesAfterAt { span: Span } => {
+      message: ("'@' must be immediately followed by an identifier, without spaces (at {:?})", span),
       span: *span,
     },
     AttributeMissingValue { span: Span } => {
-      message: ("Attribute is missing a value (at {:?})", *span),
+      message: ("Attribute is missing a value (at {:?})", span),
       span: *span,
     },
   }
