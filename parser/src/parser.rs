@@ -197,29 +197,8 @@ impl<'a> Parser<'a> {
 
     let mut attributes = vec![];
 
-    while let Some(start) = self.eat('@') {
-      let report_missing_space_before_attribute = !had_space;
-
-      let key = self.parse_identifier();
-      let mut value = None;
-      had_space = self.skip_spaces();
-      if self.eat('=').is_some() {
-        self.skip_spaces();
-        value = Some(
-          self
-            .parse_literal_or_variable()
-            .expect("todo, handle missing attribute value"),
-        );
-        had_space = self.skip_spaces();
-      }
-
-      let attribute = Attribute { start, key, value };
-      if report_missing_space_before_attribute {
-        self.report(Diagnostic::MissingSpaceBeforeAttribute {
-          span: attribute.span(),
-        });
-      }
-      attributes.push(attribute);
+    while let Some((start, '@')) = self.peek() {
+      attributes.push(self.parse_attribute(start, &mut had_space));
     }
 
     let maybe_close = self.eat('}');
@@ -300,6 +279,35 @@ impl<'a> Parser<'a> {
     let name = self.parse_name();
 
     Variable { start, name }
+  }
+
+  fn parse_attribute(&mut self, start: Location, had_space: &mut bool) -> Attribute<'a> {
+    let c = self.next();
+    debug_assert!(matches!(c, Some((_, '@'))));
+
+    let report_missing_space_before_attribute = !*had_space;
+
+    let key = self.parse_identifier();
+    let mut value = None;
+    *had_space = self.skip_spaces();
+    if self.eat('=').is_some() {
+      self.skip_spaces();
+      value = Some(
+        self
+          .parse_literal_or_variable()
+          .expect("todo, handle missing attribute value"),
+      );
+      *had_space = self.skip_spaces();
+    }
+
+    let attribute = Attribute { start, key, value };
+    if report_missing_space_before_attribute {
+      self.report(Diagnostic::MissingSpaceBeforeAttribute {
+        span: attribute.span(),
+      });
+    }
+
+    attribute
   }
 
   fn parse_identifier(&mut self) -> Identifier<'a> {
@@ -677,32 +685,7 @@ impl<'a> Parser<'a> {
     let report_missing_close = loop {
       match self.peek() {
         Some((start, '@')) => {
-          let report_missing_space_before_attribute = !had_space;
-
-          self.next(); // consume '@'
-
-          let key = self.parse_identifier();
-          let mut value = None;
-          had_space = self.skip_spaces();
-          if self.eat('=').is_some() {
-            self.skip_spaces();
-            value = Some(
-              self
-                .parse_literal_or_variable()
-                .expect("todo, handle missing option value"),
-            );
-            had_space = self.skip_spaces();
-          }
-
-          let attribute = Attribute { start, key, value };
-
-          if report_missing_space_before_attribute {
-            self.report(Diagnostic::MissingSpaceBeforeAttribute {
-              span: attribute.span(),
-            });
-          }
-
-          attributes.push(attribute);
+          attributes.push(self.parse_attribute(start, &mut had_space));
         }
         Some((self_close, '/')) => {
           if matches!(markup_kind, MarkupKind::Close) {
