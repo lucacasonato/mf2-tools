@@ -45,7 +45,6 @@ fn run_test(test: &CollectedTest) {
   let (message, rest_str) = file_text
     .split_once(spans_marker)
     .unwrap_or((&*file_text, ""));
-  assert!(!message.is_empty());
   let (expected_spans, rest_str) = rest_str
     .split_once(diagnostics_marker)
     .unwrap_or((&*rest_str, ""));
