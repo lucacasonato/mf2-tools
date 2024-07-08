@@ -12,7 +12,11 @@ env:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    name: "ci-${{ matrix.os }}"
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
 
     steps:
       - uses: actions/checkout@v4
@@ -30,9 +34,13 @@ jobs:
       - name: Run tests
         run: cargo test --release
 
-      - name: Zip up the release build
-        # if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')
+      - name: Zip up the release build (unix)
+        if: runner.os != 'Windows' # && github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')
         run: "zip -r mf2lsp-$( rustc -vV | sed -n 's|host: ||p' ).zip target/release/mf2lsp"
+
+      - name: Zip up the release build (windows)
+        if: runner.os == 'Windows' # && github.event_name == 'push' && startsWith
+        run: "Compress-Archive -Path target/release/mf2lsp -DestinationPath mf2lsp-$( rustc -vV | Select-String -Pattern 'host: ' ).zip"
 
       - name: Upload artifacts
         # if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')
