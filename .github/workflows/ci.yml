@@ -37,14 +37,14 @@ jobs:
 
       - name: Upload artifacts
         # if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')
-        use: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v4
         with:
           name: mf2lsp
           path: mf2lsp-*.zip
 
       - name: GitHub release
         if: startsWith(github.ref, 'refs/tags/')
-        use: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v2
         with:
           draft: true
           files: mf2lsp-*.zip
