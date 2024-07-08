@@ -6,7 +6,8 @@
   "scripts": {
     "build:grammar": "deno run --allow-write ./tools/build.ts",
     "watch:grammar": "deno run --allow-write --watch ./tools/build.ts",
-    "publish": "npx @vscode/vsce publish"
+    "publish": "npx @vscode/vsce publish",
+    "check": "tsc"
   },
   "engines": {
     "vscode": "^1.90.0"
@@ -23,6 +24,10 @@
   "main": "./src/main.cjs",
   "dependencies": {
     "vscode-languageclient": "^9.0.1"
+  },
+  "devDependencies": {
+    "@types/vscode": "1.90.0",
+    "@types/node": "^20.14.9"
   },
   "contributes": {
     "languages": [
@@ -61,6 +66,13 @@
         "embeddedLanguages": {
           "meta.embedded.block.mf2": "mf2"
         }
+      }
+    ],
+    "commands": [
+      {
+        "command": "mf2.restart",
+        "title": "Restart Language Server",
+        "category": "MessageFormat 2.0"
       }
     ]
   }
