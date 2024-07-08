@@ -50,10 +50,10 @@ jobs:
       - name: Zip up the release build (windows)
         if: runner.os == 'Windows' # && github.event_name == 'push' && startsWith
         run: |
-          export TARGET_TUPLE=$( rustc -vV | Select-String -Pattern 'host: ' )
-          echo "TARGET_TUPLE=$TARGET_TUPLE" >> $GITHUB_ENV
+          $env:TARGET_TUPLE = $( rustc -vV | Select-String -Pattern 'host: ' ).ToString().Replace('host: ', '')
+          echo "TARGET_TUPLE=$TARGET_TUPLE" >> $env:GITHUB_ENV
           cd target\release
-          Compress-Archive -Path mf2lsp.exe -DestinationPath ../../mf2lsp-$TARGET_TUPLE.zip
+          Compress-Archive -Path mf2lsp.exe -DestinationPath ..\..\mf2lsp-$env:TARGET_TUPLE.zip
 
       - name: Upload artifacts
         # if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')
