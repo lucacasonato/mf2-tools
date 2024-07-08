@@ -46,7 +46,7 @@ jobs:
         # if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')
         uses: actions/upload-artifact@v4
         with:
-          name: mf2lsp
+          name: mf2lsp-${{ runner.os }}
           path: mf2lsp-*.zip
 
       - name: GitHub release
