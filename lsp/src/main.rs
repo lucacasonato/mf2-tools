@@ -1,9 +1,11 @@
 use lsp_server::Connection;
 use lsp_server::Message;
 use lsp_server::Notification;
+use lsp_server::Response;
 use lsp_types::notification::DidChangeTextDocument;
 use lsp_types::notification::DidCloseTextDocument;
 use lsp_types::notification::DidOpenTextDocument;
+use lsp_types::request::HoverRequest;
 use lsp_types::Diagnostic;
 use lsp_types::InitializeParams;
 use lsp_types::Position;
@@ -37,7 +39,41 @@ fn main() -> Result<(), anyhow::Error> {
 
   loop {
     match connection.receiver.recv()? {
-      Message::Request(_) => todo!(),
+      Message::Request(req) => {
+        if connection.handle_shutdown(&req).unwrap_or(true) {
+          break;
+        }
+
+        macro_rules! match_request {
+          (
+            $($name:ident$( ($params:ident) )? => $body:tt)*
+          ) => {
+            match req.method.as_str() {
+              $(
+                <$name as lsp_types::request::Request>::METHOD => {
+                  $(
+                    let $params = serde_json::from_value::<
+                      <$name as lsp_types::request::Request>::Params,
+                    >(req.params)?;
+                  )?
+                  let result: <$name as lsp_types::request::Request>::Result = $body;
+                  connection.sender.send(Message::Response(Response::new_ok(req.id, result)))?;
+                }
+              )*
+              _ => {
+                eprintln!("Unrecognized request: {}", req.method);
+              }
+            }
+          };
+        }
+
+        match_request! {
+          HoverRequest(params) => {
+            eprintln!("Hover request: {:#?}", params);
+            None
+          }
+        }
+      }
       Message::Response(_) => todo!(),
 
       Message::Notification(notification) => {
@@ -89,6 +125,9 @@ fn main() -> Result<(), anyhow::Error> {
       }
     }
   }
+
+  eprintln!("Shutting down.");
+  Ok(())
 }
 
 fn validate_message(
