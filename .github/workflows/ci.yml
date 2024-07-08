@@ -43,14 +43,14 @@ jobs:
         if: runner.os != 'Windows' # && github.event_name == 'push' && startsWith(github.ref, 'refs/tags/')
         run: |
           export TARGET_TUPLE=$( rustc -vV | sed -n 's|host: ||p' )
-          echo "export TARGET_TUPLE: $TARGET_TUPLE" >> $GITHUB_ENV
+          echo "export TARGET_TUPLE=$TARGET_TUPLE" >> $GITHUB_ENV
           zip -r mf2lsp-$TARGET_TUPLE.zip target/release/mf2lsp
 
       - name: Zip up the release build (windows)
         if: runner.os == 'Windows' # && github.event_name == 'push' && startsWith
         run: |
           export TARGET_TUPLE=$( rustc -vV | Select-String -Pattern 'host: ' )
-          echo "export TARGET_TUPLE: $TARGET_TUPLE" >> $GITHUB_ENV
+          echo "export TARGET_TUPLE=$TARGET_TUPLE" >> $GITHUB_ENV
           Compress-Archive -Path target/release/mf2lsp -DestinationPath mf2lsp-$TARGET_TUPLE.zip
 
       - name: Upload artifacts
