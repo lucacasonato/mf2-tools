@@ -1,9 +1,23 @@
 const vscode = require("vscode");
 const { LanguageClient } = require("vscode-languageclient/node");
 
+/**
+ * @typedef Configuration
+ * @property {ServerConfiguration} server
+ */
+
+/**
+ * @typedef ServerConfiguration
+ * @property {string} path
+ * @property {{ enabled: boolean, version: string }} update
+ */
+
 exports.Mf2Extension = class Mf2Extension {
   /** @type {vscode.ExtensionContext} */
   #context;
+
+  /** @type {Configuration} */
+  #configuration;
 
   /** @type {LanguageClient | null} */
   #ls = null;
@@ -13,6 +27,23 @@ exports.Mf2Extension = class Mf2Extension {
   /** @param {vscode.ExtensionContext} context */
   async activate(context) {
     this.#context = context;
+    this.#configuration = /** @type {any} */ (
+      vscode.workspace.getConfiguration("mf2")
+    );
+
+    vscode.workspace.onDidChangeConfiguration(
+      async (e) => {
+        if (e.affectsConfiguration("mf2")) {
+          this.#configuration = /** @type {any} */ (
+            vscode.workspace.getConfiguration("mf2")
+          );
+          await this.#stopLanguageServer();
+          await this.#startLanguageServer();
+        }
+      },
+      this,
+      context.subscriptions
+    );
 
     context.subscriptions.push(
       vscode.commands.registerCommand("mf2.restart", async () => {
@@ -37,14 +68,21 @@ exports.Mf2Extension = class Mf2Extension {
   async #startLanguageServer() {
     if (this.#ls) return;
 
+    if (!this.#configuration.server.path) {
+      vscode.window.showErrorMessage(
+        "MessageFormat 2.0 Language Server could not start up because no path to the language server binary was set, and automatic downloading is disabled."
+      );
+      return;
+    }
+
     /** @type {import("vscode-languageclient/node").ServerOptions} */
     const serverOptions = {
       run: {
-        command: "<path>",
+        command: this.#configuration.server.path,
         args: [],
       },
       debug: {
-        command: "<path>",
+        command: this.#configuration.server.path,
         args: [],
       },
     };

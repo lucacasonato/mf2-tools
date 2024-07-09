@@ -74,6 +74,31 @@
         "title": "Restart Language Server",
         "category": "MessageFormat 2.0"
       }
-    ]
+    ],
+    "configuration": {
+      "title": "MessageFormat 2.0",
+      "properties": {
+        "mf2.server.path": {
+          "title": "Path",
+          "type": "string",
+          "description": "The path to the MessageFormat 2.0 language server",
+          "scope": "machine-overridable"
+        },
+        "mf2.server.download.enabled": {
+          "title": "Enable download",
+          "type": "boolean",
+          "description": "Whether to download the MessageFormat 2.0 language server from GitHub. Defaults to true.",
+          "default": true,
+          "scope": "machine-overridable"
+        },
+        "mf2.server.download.version": {
+          "title": "Version to download",
+          "type": "string",
+          "description": "The version of the MessageFormat 2.0 language server to download from GitHub. Defaults to the latest version.",
+          "default": "latest",
+          "scope": "machine-overridable"
+        }
+      }
+    }
   }
 }
