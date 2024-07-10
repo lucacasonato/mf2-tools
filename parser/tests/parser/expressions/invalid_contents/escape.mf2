@@ -1,0 +1,32 @@
+{1 abc\a}
+=== spans ===
+                    {1 abc\a}
+SimpleMessage       ^^^^^^^^^
+LiteralExpression   ^^^^^^^^^
+Number               ^
+Number.integral      ^
+=== diagnostics ===
+Escape sequence can only escape '}', '{', '|', and '\' (found 'a' at @7)
+  {1 abc\a}
+         ^
+Unrecognized placeholder contents (at @3..8)
+  {1 abc\a}
+     ^^^^^
+=== ast ===
+SimpleMessage {
+    parts: [
+        LiteralExpression {
+            span: @0..9,
+            literal: Number {
+                start: @1,
+                raw: "1",
+                is_negative: false,
+                integral_len: 1,
+                fractional_len: None,
+                exponent_len: None,
+            },
+            annotation: None,
+            attributes: [],
+        },
+    ],
+}

@@ -1,0 +1,35 @@
+{1 a |}
+=== spans ===
+                    {1 a |}
+SimpleMessage       ^^^^^^^
+LiteralExpression   ^^^^^^^
+Number               ^
+Number.integral      ^
+=== diagnostics ===
+Placeholder is missing a closing brace (at @0..7)
+  {1 a |}
+  ^^^^^^^
+Quoted string is missing a closing quote (at @5..7)
+  {1 a |}
+       ^^
+Unrecognized placeholder contents (at @3..7)
+  {1 a |}
+     ^^^^
+=== ast ===
+SimpleMessage {
+    parts: [
+        LiteralExpression {
+            span: @0..7,
+            literal: Number {
+                start: @1,
+                raw: "1",
+                is_negative: false,
+                integral_len: 1,
+                fractional_len: None,
+                exponent_len: None,
+            },
+            annotation: None,
+            attributes: [],
+        },
+    ],
+}

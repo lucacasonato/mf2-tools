@@ -1,0 +1,29 @@
+{1 a |\|| thing}
+=== spans ===
+                    {1 a |\|| thing}
+SimpleMessage       ^^^^^^^^^^^^^^^^
+LiteralExpression   ^^^^^^^^^^^^^^^^
+Number               ^
+Number.integral      ^
+=== diagnostics ===
+Unrecognized placeholder contents (at @3..15)
+  {1 a |\|| thing}
+     ^^^^^^^^^^^^
+=== ast ===
+SimpleMessage {
+    parts: [
+        LiteralExpression {
+            span: @0..16,
+            literal: Number {
+                start: @1,
+                raw: "1",
+                is_negative: false,
+                integral_len: 1,
+                fractional_len: None,
+                exponent_len: None,
+            },
+            annotation: None,
+            attributes: [],
+        },
+    ],
+}

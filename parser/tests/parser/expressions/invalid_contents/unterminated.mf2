@@ -1,0 +1,32 @@
+{1 abc
+=== spans ===
+                    {1 abc
+SimpleMessage       ^^^^^^
+LiteralExpression   ^^^^^^
+Number               ^
+Number.integral      ^
+=== diagnostics ===
+Placeholder is missing a closing brace (at @0..6)
+  {1 abc
+  ^^^^^^
+Unrecognized placeholder contents (at @3..6)
+  {1 abc
+     ^^^
+=== ast ===
+SimpleMessage {
+    parts: [
+        LiteralExpression {
+            span: @0..6,
+            literal: Number {
+                start: @1,
+                raw: "1",
+                is_negative: false,
+                integral_len: 1,
+                fractional_len: None,
+                exponent_len: None,
+            },
+            annotation: None,
+            attributes: [],
+        },
+    ],
+}
