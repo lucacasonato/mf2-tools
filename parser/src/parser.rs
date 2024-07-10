@@ -403,7 +403,7 @@ impl<'a> Parser<'a> {
 
     // Report an error if id.name is empty, but id.namespace is not. If they are
     // both empty, the caller will deal with it.
-    if id.name.is_empty() && !id.namespace.is_none() {
+    if id.name.is_empty() && id.namespace.is_some() {
       self.report(Diagnostic::MissingIdentifierName {
         identifier: id.clone(),
       });
