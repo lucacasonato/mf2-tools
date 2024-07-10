@@ -2,6 +2,7 @@ use std::fmt::Write;
 use std::iter;
 use std::panic;
 use std::panic::AssertUnwindSafe;
+use std::path::Path;
 
 use file_test_runner::collect_and_run_tests;
 use file_test_runner::collection::strategies::TestPerFileCollectionStrategy;
@@ -22,7 +23,7 @@ use unicode_width::UnicodeWidthStr;
 fn main() {
   collect_and_run_tests(
     CollectOptions {
-      base: "tests/parser".into(),
+      base: Path::new("tests").join("parser"),
       strategy: Box::new(TestPerFileCollectionStrategy { file_pattern: None }),
       filter_override: None,
     },
