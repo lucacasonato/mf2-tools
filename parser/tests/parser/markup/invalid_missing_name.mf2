@@ -1,0 +1,26 @@
+{# }
+=== spans ===
+                    {# }
+SimpleMessage       ^^^^
+Markup              ^^^^
+Identifier            
+=== diagnostics ===
+Markup is missing an identifier (at @0..4)
+  {# }
+  ^^^^
+=== ast ===
+SimpleMessage {
+    parts: [
+        Markup {
+            span: @0..4,
+            kind: Open,
+            id: Identifier {
+                start: @2,
+                namespace: None,
+                name: "",
+            },
+            options: [],
+            attributes: [],
+        },
+    ],
+}

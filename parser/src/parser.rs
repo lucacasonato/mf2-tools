@@ -320,6 +320,11 @@ impl<'a> Parser<'a> {
     debug_assert_eq!(n, '$');
 
     let name = self.parse_name();
+    if name.is_empty() {
+      self.report(Diagnostic::VariableMissingName {
+        span: Span::new(start..self.current_location()),
+      });
+    }
 
     Variable { start, name }
   }
@@ -369,16 +374,17 @@ impl<'a> Parser<'a> {
       self.report(Diagnostic::AttributeMissingSpaceBefore { span });
     }
 
+    if key.is_empty() {
+      self.report(Diagnostic::AttributeMissingKey { span })
+    }
+
     Attribute { span, key, value }
   }
 
+  /// Caller must ensure the returned [Identifier] is not [Identifier::is_empty].
   fn parse_identifier(&mut self) -> Identifier<'a> {
     let start = self.current_location();
     let name_or_namespace = self.parse_name();
-
-    if name_or_namespace.is_empty() && !matches!(self.peek(), Some((_, ':'))) {
-      todo!("Handle the missing identifier name case")
-    }
 
     let id = if self.eat(':').is_some() {
       let name = self.parse_name();
@@ -395,7 +401,9 @@ impl<'a> Parser<'a> {
       }
     };
 
-    if id.name.is_empty() {
+    // Report an error if id.name is empty, but id.namespace is not. If they are
+    // both empty, the caller will deal with it.
+    if id.name.is_empty() && !id.namespace.is_none() {
       self.report(Diagnostic::MissingIdentifierName {
         identifier: id.clone(),
       });
@@ -482,7 +490,8 @@ impl<'a> Parser<'a> {
           let has_name_start = self
             .peek()
             // also allow : as error recovery for `{ :fn a:b=c :d=e }` (missing namespace on option)
-            .map(|(_, c)| matches!(c, chars::name_start!() | ':'))
+            // also allow = as error recovery for { :fn a=b =c } (missing key on option)
+            .map(|(_, c)| matches!(c, chars::name_start!() | ':' | '='))
             .unwrap_or(false);
           if !has_name_start {
             self.text.reset_to(before_space);
@@ -492,7 +501,15 @@ impl<'a> Parser<'a> {
           options.push(self.parse_option());
         }
 
-        Some(Annotation::Function(Function { start, id, options }))
+        let function = Function { start, id, options };
+
+        if function.id.is_empty() {
+          self.report(Diagnostic::FunctionMissingIdentifier {
+            span: function.span(),
+          })
+        }
+
+        Some(Annotation::Function(function))
       }
       Some((start, sigil @ ('^' | '&'))) => {
         // private-use-annotation
@@ -551,7 +568,15 @@ impl<'a> Parser<'a> {
       }))
     };
 
-    FnOrMarkupOption { key, value }
+    let option = FnOrMarkupOption { key, value };
+
+    if option.key.is_empty() {
+      self.report(Diagnostic::OptionMissingKey {
+        span: option.span(),
+      })
+    }
+
+    option
   }
 
   fn parse_reserved_body(&mut self) -> Vec<ReservedBodyPart<'a>> {
@@ -715,7 +740,6 @@ impl<'a> Parser<'a> {
   }
 
   fn parse_digits(&mut self) -> &'a str {
-    // todo: at least 1
     let start = self.current_location();
     while let Some((_, '0'..='9')) = self.peek() {
       self.next();
@@ -793,7 +817,9 @@ impl<'a> Parser<'a> {
           self.next(); // consume '}'
           break false;
         }
-        Some((_, chars::name_start!())) if had_space => {
+        // also allow : as error recovery for `{#fn a:b=c :d=e}` (missing namespace on option)
+        // also allow = as error recovery for {#fn a=b =c} (missing key on option)
+        Some((_, chars::name_start!() | ':' | '=')) if had_space => {
           let option = self.parse_option();
           if let Some(previous_attribute) = attributes.last() {
             self.report(Diagnostic::MarkupOptionAfterAttribute {
@@ -820,6 +846,10 @@ impl<'a> Parser<'a> {
       options,
       attributes,
     };
+
+    if markup.id.is_empty() {
+      self.report(Diagnostic::MarkupMissingIdentifier { span: markup.span })
+    }
 
     if report_missing_close {
       self.report(Diagnostic::MarkupMissingClosingBrace { span: markup.span });

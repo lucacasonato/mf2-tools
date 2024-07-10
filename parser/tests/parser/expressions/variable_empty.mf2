@@ -5,7 +5,9 @@ SimpleMessage       ^^^^
 VariableExpression  ^^^^
 Variable             ^
 === diagnostics ===
-
+Variable is missing a name (at @1..2)
+  {$ }
+   ^
 === ast ===
 SimpleMessage {
     parts: [

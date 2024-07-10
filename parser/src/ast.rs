@@ -278,6 +278,12 @@ impl Visitable for Identifier<'_> {
   fn apply_visitor_to_children<V: Visit + ?Sized>(&self, _visitor: &mut V) {}
 }
 
+impl Identifier<'_> {
+  pub fn is_empty(&self) -> bool {
+    self.namespace.is_none() && self.name.is_empty()
+  }
+}
+
 #[derive(Debug, Clone)]
 pub struct Function<'a> {
   pub start: Location,

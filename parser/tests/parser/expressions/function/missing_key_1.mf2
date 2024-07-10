@@ -1,0 +1,44 @@
+{:hello =foo}
+=== spans ===
+                    {:hello =foo}
+SimpleMessage       ^^^^^^^^^^^^^
+AnnotationExpression^^^^^^^^^^^^^
+Function             ^^^^^^^^^^^
+Identifier            ^^^^^
+FnOrMarkupOption            ^^^^
+Identifier                  
+Text                         ^^^
+=== diagnostics ===
+Option is missing a key (at @8..12)
+  {:hello =foo}
+          ^^^^
+=== ast ===
+SimpleMessage {
+    parts: [
+        AnnotationExpression {
+            span: @0..13,
+            annotation: Function {
+                start: @1,
+                id: Identifier {
+                    start: @2,
+                    namespace: None,
+                    name: "hello",
+                },
+                options: [
+                    FnOrMarkupOption {
+                        key: Identifier {
+                            start: @8,
+                            namespace: None,
+                            name: "",
+                        },
+                        value: Text {
+                            start: @9,
+                            content: "foo",
+                        },
+                    },
+                ],
+            },
+            attributes: [],
+        },
+    ],
+}
