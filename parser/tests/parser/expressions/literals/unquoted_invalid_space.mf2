@@ -3,16 +3,12 @@ a{abc def}
                     a{abc def}
 SimpleMessage       ^^^^^^^^^^
 Text                ^
-LiteralExpression    ^^^^^
+LiteralExpression    ^^^^^^^^^
 Text                  ^^^
-Text                      ^^^^
 === diagnostics ===
-Placeholder is missing a closing brace (at @1..6)
+Unrecognized placeholder contents (at @6..9)
   a{abc def}
-   ^^^^^
-'}' in simple messages must be escaped (at @9)
-  a{abc def}
-           ^
+        ^^^
 === ast ===
 SimpleMessage {
     parts: [
@@ -21,17 +17,13 @@ SimpleMessage {
             content: "a",
         },
         LiteralExpression {
-            span: @1..6,
+            span: @1..10,
             literal: Text {
                 start: @2,
                 content: "abc",
             },
             annotation: None,
             attributes: [],
-        },
-        Text {
-            start: @6,
-            content: "def}",
         },
     ],
 }

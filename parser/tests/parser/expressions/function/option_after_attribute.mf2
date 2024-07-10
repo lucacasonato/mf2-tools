@@ -2,26 +2,22 @@
 === spans ===
                     {1 :hello @world a=b}
 SimpleMessage       ^^^^^^^^^^^^^^^^^^^^^
-LiteralExpression   ^^^^^^^^^^^^^^^^^
+LiteralExpression   ^^^^^^^^^^^^^^^^^^^^^
 Number               ^
 Number.integral      ^
 Function               ^^^^^^
 Identifier              ^^^^^
 Attribute                     ^^^^^^
 Identifier                     ^^^^^
-Text                                 ^^^^
 === diagnostics ===
-Placeholder is missing a closing brace (at @0..17)
+Unrecognized placeholder contents (at @17..20)
   {1 :hello @world a=b}
-  ^^^^^^^^^^^^^^^^^
-'}' in simple messages must be escaped (at @20)
-  {1 :hello @world a=b}
-                      ^
+                   ^^^
 === ast ===
 SimpleMessage {
     parts: [
         LiteralExpression {
-            span: @0..17,
+            span: @0..21,
             literal: Number {
                 start: @1,
                 raw: "1",
@@ -52,10 +48,6 @@ SimpleMessage {
                     value: None,
                 },
             ],
-        },
-        Text {
-            start: @17,
-            content: "a=b}",
         },
     ],
 }
