@@ -1,0 +1,41 @@
+{#foo !abc@hello /}
+=== spans ===
+                    {#foo !abc@hello /}
+SimpleMessage       ^^^^^^^^^^^^^^^^^^^
+Markup              ^^^^^^^^^^^^^^^^^^^
+Identifier            ^^^
+Attribute                     ^^^^^^
+Identifier                     ^^^^^
+=== diagnostics ===
+Unrecognized markup contents (at @6..10)
+  {#foo !abc@hello /}
+        ^^^^
+Attributes must be preceeded by a leading space (at @10..16)
+  {#foo !abc@hello /}
+            ^^^^^^
+=== ast ===
+SimpleMessage {
+    parts: [
+        Markup {
+            span: @0..19,
+            kind: Standalone,
+            id: Identifier {
+                start: @2,
+                namespace: None,
+                name: "foo",
+            },
+            options: [],
+            attributes: [
+                Attribute {
+                    span: @10..16,
+                    key: Identifier {
+                        start: @11,
+                        namespace: None,
+                        name: "hello",
+                    },
+                    value: None,
+                },
+            ],
+        },
+    ],
+}
