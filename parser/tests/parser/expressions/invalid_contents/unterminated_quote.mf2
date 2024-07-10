@@ -6,12 +6,12 @@ LiteralExpression   ^^^^^^^
 Number               ^
 Number.integral      ^
 === diagnostics ===
-Placeholder is missing a closing brace (at @0..7)
-  {1 a |}
-  ^^^^^^^
 Quoted string is missing a closing quote (at @5..7)
   {1 a |}
        ^^
+Placeholder is missing a closing brace (at @0..7)
+  {1 a |}
+  ^^^^^^^
 Unrecognized placeholder contents (at @3..7)
   {1 a |}
      ^^^^

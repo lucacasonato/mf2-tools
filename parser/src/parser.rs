@@ -204,23 +204,18 @@ impl<'a> Parser<'a> {
 
     let contents_end = self.current_location();
     let mut after_invalid = None;
-    let mut opening_quote_loc = None;
 
     loop {
       match self.peek() {
-        Some((loc, '|')) => {
-          self.next();
-          if opening_quote_loc.is_none() {
-            opening_quote_loc = Some(loc);
-          } else {
-            opening_quote_loc = None;
-          }
+        Some((_, '|')) => {
+          self.parse_quoted();
+          after_invalid = Some(self.current_location());
         }
-        Some((_, '}')) if opening_quote_loc.is_none() => {
+        Some((_, '}')) => {
           self.next();
           break;
         }
-        Some((_, chars::space!())) if opening_quote_loc.is_none() => {
+        Some((_, chars::space!())) => {
           self.next();
         }
         Some((_, '\\')) => {
@@ -241,11 +236,6 @@ impl<'a> Parser<'a> {
     }
 
     if let Some(invalid_end) = after_invalid {
-      if let Some(opening_quote_loc) = opening_quote_loc {
-        self.report(Diagnostic::UnterminatedQuoted {
-          span: Span::new(opening_quote_loc..invalid_end),
-        });
-      }
       self.report(Diagnostic::PlaceholderInvalidContents {
         span: Span::new(contents_end..invalid_end),
       });
