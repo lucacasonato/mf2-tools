@@ -107,6 +107,10 @@ diagnostics! {
       message: ("Unrecognized placeholder contents (at {:?})", span),
       span: *span,
     },
+    MarkupInvalidContents { span: Span } => {
+      message: ("Unrecognized markup contents (at {:?})", span),
+      span: *span,
+    },
     MissingIdentifierName { identifier: Identifier<'a> } => {
       message: ("Identifier is missing a name (at {:?})", identifier.span()),
       span: identifier.span(),

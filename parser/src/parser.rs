@@ -146,7 +146,7 @@ impl<'a> Parser<'a> {
   }
 
   fn parse_escape(&mut self) -> Option<Escape> {
-    let (start, c) = self.next().unwrap();
+    let (start, c) = self.next().unwrap(); // consume '\'
     debug_assert_eq!(c, '\\');
 
     let escaped_char = match self.next() {
@@ -766,52 +766,46 @@ impl<'a> Parser<'a> {
     let mut attributes = vec![];
 
     let mut had_space = self.skip_spaces();
-    let report_missing_close = loop {
+    let report_missing_close = 'outer: loop {
       match self.peek() {
         Some((start, '@')) => {
           attributes.push(self.parse_attribute(start, &mut had_space));
         }
         Some((self_close, '/')) => {
+          self.next(); // consume '/'
+
+          had_space = self.skip_spaces();
+
+          let report_missing_close = match self.peek() {
+            Some((_, '}')) => {
+              if had_space {
+                self.report(
+                  Diagnostic::MarkupInvalidSpaceBetweenSelfCloseAndBrace {
+                    space: Span::new(
+                      (self_close + '/')..self.current_location(),
+                    ),
+                  },
+                );
+              }
+
+              self.next(); // consume '}'
+              false
+            }
+            None => true,
+            Some(_) => {
+              self.skip_invalid_markup_contents(self_close, &mut had_space);
+              continue 'outer;
+            }
+          };
+
           if matches!(markup_kind, MarkupKind::Close) {
             self.report(Diagnostic::MarkupCloseInvalidSelfClose {
               self_close_loc: self_close,
             });
           }
-          self.next(); // consume '/'
           markup_kind = MarkupKind::Standalone;
-          match self.peek() {
-            Some((_, '}')) => {
-              self.next(); // consume '}'
-              break false;
-            }
-            Some((before_first_space, chars::space!())) => {
-              self.skip_spaces();
-              match self.peek() {
-                Some((close_brace, '}')) => {
-                  self.next(); // consume '}'
-                  self.report(
-                    Diagnostic::MarkupInvalidSpaceBetweenSelfCloseAndBrace {
-                      space: Span::new(before_first_space..close_brace),
-                    },
-                  );
-                  break false;
-                }
-                None => {
-                  break true;
-                }
-                _ => {
-                  self.text.reset_to(before_first_space);
-                  todo!("report expected }} after /")
-                }
-              }
-            }
-            None => {
-              break true;
-            }
-            _ => {
-              todo!("report invalid char in markup")
-            }
-          }
+
+          break report_missing_close;
         }
         Some((_, '}')) => {
           self.next(); // consume '}'
@@ -830,10 +824,12 @@ impl<'a> Parser<'a> {
           options.push(option);
           had_space = self.skip_spaces();
         }
+        Some((loc, _)) => {
+          self.skip_invalid_markup_contents(loc, &mut had_space);
+        }
         None => {
           break true;
         }
-        _ => todo!("report invalid char in markup"),
       }
     };
 
@@ -856,6 +852,60 @@ impl<'a> Parser<'a> {
     }
 
     markup
+  }
+
+  fn skip_invalid_markup_contents(
+    &mut self,
+    start: Location,
+    had_space: &mut bool,
+  ) {
+    let mut last_space_start = None;
+
+    while let Some((loc, c)) = self.peek() {
+      match c {
+        '}' => {
+          break;
+        }
+        '\\' => {
+          self.parse_escape();
+          last_space_start = None;
+        }
+        '|' => {
+          self.parse_quoted();
+          last_space_start = None;
+        }
+        '/' | '@' => {
+          break;
+        }
+        chars::space!() => {
+          if last_space_start.is_none() {
+            last_space_start = Some(loc);
+          }
+          self.next();
+        }
+        chars::name_start!() | ':' | '=' if last_space_start.is_some() => {
+          break;
+        }
+        _ => {
+          self.next();
+          last_space_start = None;
+        }
+      }
+    }
+
+    let end = if let Some(start) = last_space_start {
+      *had_space = true;
+      start
+    } else {
+      *had_space = false;
+      self.current_location()
+    };
+
+    if end != start {
+      self.report(Diagnostic::MarkupInvalidContents {
+        span: Span::new(start..end),
+      });
+    }
   }
 }
 

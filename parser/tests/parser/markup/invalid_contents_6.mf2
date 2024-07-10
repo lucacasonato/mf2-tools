@@ -1,0 +1,44 @@
+{#foo !abc =asd /}
+=== spans ===
+                    {#foo !abc =asd /}
+SimpleMessage       ^^^^^^^^^^^^^^^^^^
+Markup              ^^^^^^^^^^^^^^^^^^
+Identifier            ^^^
+FnOrMarkupOption               ^^^^
+Identifier                     
+Text                            ^^^
+=== diagnostics ===
+Unrecognized markup contents (at @6..10)
+  {#foo !abc =asd /}
+        ^^^^
+Option is missing a key (at @11..15)
+  {#foo !abc =asd /}
+             ^^^^
+=== ast ===
+SimpleMessage {
+    parts: [
+        Markup {
+            span: @0..18,
+            kind: Standalone,
+            id: Identifier {
+                start: @2,
+                namespace: None,
+                name: "foo",
+            },
+            options: [
+                FnOrMarkupOption {
+                    key: Identifier {
+                        start: @11,
+                        namespace: None,
+                        name: "",
+                    },
+                    value: Text {
+                        start: @12,
+                        content: "asd",
+                    },
+                },
+            ],
+            attributes: [],
+        },
+    ],
+}
