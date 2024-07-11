@@ -1,0 +1,26 @@
+{#foo 1}
+=== spans ===
+                    {#foo 1}
+SimpleMessage       ^^^^^^^^
+Markup              ^^^^^^^^
+Identifier            ^^^
+=== diagnostics ===
+Unrecognized markup contents (at @6..7)
+  {#foo 1}
+        ^
+=== ast ===
+SimpleMessage {
+    parts: [
+        Markup {
+            span: @0..8,
+            kind: Open,
+            id: Identifier {
+                start: @2,
+                namespace: None,
+                name: "foo",
+            },
+            options: [],
+            attributes: [],
+        },
+    ],
+}
