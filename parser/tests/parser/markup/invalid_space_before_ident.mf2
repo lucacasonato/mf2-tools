@@ -1,0 +1,44 @@
+{# foo}
+=== spans ===
+                    {# foo}
+SimpleMessage       ^^^^^^^
+Markup              ^^^^^^^
+Identifier            
+FnOrMarkupOption       ^^^
+Identifier             ^^^
+Text                      
+=== diagnostics ===
+Option is missing a value, which is required (at @3..6)
+  {# foo}
+     ^^^
+Markup is missing an identifier (at @0..7)
+  {# foo}
+  ^^^^^^^
+=== ast ===
+SimpleMessage {
+    parts: [
+        Markup {
+            span: @0..7,
+            kind: Open,
+            id: Identifier {
+                start: @2,
+                namespace: None,
+                name: "",
+            },
+            options: [
+                FnOrMarkupOption {
+                    key: Identifier {
+                        start: @3,
+                        namespace: None,
+                        name: "foo",
+                    },
+                    value: Text {
+                        start: @6,
+                        content: "",
+                    },
+                },
+            ],
+            attributes: [],
+        },
+    ],
+}

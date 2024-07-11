@@ -59,8 +59,16 @@ diagnostics! {
       message: ("Number is missing an exponent part (at {:?})", number.span()),
       span: number.span(),
     },
+    OptionMissingKey { span: Span } => {
+      message: ("Option is missing a key (at {:?})", span),
+      span: *span,
+    },
     OptionMissingValue { span: Span } => {
       message: ("Option is missing a value, which is required (at {:?})", span),
+      span: *span,
+    },
+    MarkupMissingIdentifier { span: Span } => {
+      message: ("Markup is missing an identifier (at {:?})", span),
       span: *span,
     },
     MarkupMissingClosingBrace { span: Span } => {
@@ -78,6 +86,10 @@ diagnostics! {
     MarkupOptionAfterAttribute { previous_attribute: Attribute<'a>, option: FnOrMarkupOption<'a> } => {
       message: ("Markup has option after attribute (at {:?})", option.span()),
       span: option.span(),
+    },
+    FunctionMissingIdentifier { span: Span } => {
+      message: ("Function is missing an identifier (at {:?})", span),
+      span: *span,
     },
     UnterminatedQuoted { span: Span } => {
       message: ("Quoted string is missing a closing quote (at {:?})", span),
@@ -131,6 +143,10 @@ diagnostics! {
       message: ("'@' must be immediately followed by an identifier, without spaces (at {:?})", span),
       span: *span,
     },
+    AttributeMissingKey { span: Span } => {
+      message: ("Attribute is missing a key (at {:?})", span),
+      span: *span,
+    },
     AttributeMissingValue { span: Span } => {
       message: ("Attribute is missing a value (at {:?})", span),
       span: *span,
@@ -138,7 +154,11 @@ diagnostics! {
     ComplexMessageNotYetSupported { span: Span } => {
       message: ("Complex messages are not yet supported (at {:?})", *span),
       span: *span,
-    }
+    },
+    VariableMissingName { span: Span } => {
+      message: ("Variable is missing a name (at {:?})", span),
+      span: *span,
+    },
   }
 }
 
