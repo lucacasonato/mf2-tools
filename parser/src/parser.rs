@@ -507,7 +507,7 @@ impl<'a> Parser<'a> {
         let function = Function { start, id, options };
 
         if is_id_empty {
-          self.report(Diagnostic::AttributeMissingKey {
+          self.report(Diagnostic::FunctionMissingIdentifier {
             span: function.span(),
           });
         }
