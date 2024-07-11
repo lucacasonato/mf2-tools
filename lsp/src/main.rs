@@ -1,3 +1,5 @@
+mod documents;
+
 use lsp_server::Connection;
 use lsp_server::Message;
 use lsp_server::Notification;
@@ -6,25 +8,25 @@ use lsp_types::notification::DidChangeTextDocument;
 use lsp_types::notification::DidCloseTextDocument;
 use lsp_types::notification::DidOpenTextDocument;
 use lsp_types::request::HoverRequest;
-use lsp_types::Diagnostic;
 use lsp_types::InitializeParams;
-use lsp_types::Position;
 use lsp_types::PublishDiagnosticsParams;
-use lsp_types::Range;
 use lsp_types::ServerCapabilities;
 use lsp_types::TextDocumentSyncCapability;
 use lsp_types::TextDocumentSyncKind;
 use lsp_types::Uri;
-use mf2_parser::parse;
-use mf2_parser::Location;
-use mf2_parser::SourceTextInfo;
+
+use crate::documents::Documents;
 
 fn main() -> Result<(), anyhow::Error> {
   let (connection, _threads) = Connection::stdio();
 
   let capabilities = ServerCapabilities {
-    text_document_sync: Some(TextDocumentSyncCapability::Kind(
-      TextDocumentSyncKind::FULL,
+    text_document_sync: Some(TextDocumentSyncCapability::Options(
+      lsp_types::TextDocumentSyncOptions {
+        open_close: Some(true),
+        change: Some(TextDocumentSyncKind::FULL),
+        ..lsp_types::TextDocumentSyncOptions::default()
+      },
     )),
     ..ServerCapabilities::default()
   };
@@ -37,10 +39,15 @@ fn main() -> Result<(), anyhow::Error> {
 
   eprintln!("Server initialized.");
 
+  let mut server = LanguageServer {
+    connection,
+    documents: Documents::default(),
+  };
+
   loop {
-    match connection.receiver.recv()? {
+    match server.connection.receiver.recv()? {
       Message::Request(req) => {
-        if connection.handle_shutdown(&req).unwrap_or(true) {
+        if server.connection.handle_shutdown(&req).unwrap_or(true) {
           break;
         }
 
@@ -57,7 +64,7 @@ fn main() -> Result<(), anyhow::Error> {
                     >(req.params)?;
                   )?
                   let result: <$name as lsp_types::request::Request>::Result = $body;
-                  connection.sender.send(Message::Response(Response::new_ok(req.id, result)))?;
+                  server.connection.sender.send(Message::Response(Response::new_ok(req.id, result)))?;
                 }
               )*
               _ => {
@@ -101,25 +108,26 @@ fn main() -> Result<(), anyhow::Error> {
           DidOpenTextDocument(params) => {
             eprintln!("Opened document: {:#?}", params);
 
-            validate_message(
-              &params.text_document.text,
+            server.on_document_changed(
+              params.text_document.text,
               params.text_document.uri,
               params.text_document.version,
-              &connection
-            )?;
+            );
           }
           DidChangeTextDocument(params) => {
             eprintln!("Changed document: {:#?}", params);
 
-            validate_message(
-              &params.content_changes[0].text,
+            let text = params.content_changes.into_iter().next().unwrap().text;
+            server.on_document_changed(
+              text,
               params.text_document.uri,
               params.text_document.version,
-              &connection
-            )?;
+            );
           }
           DidCloseTextDocument(params) => {
             eprintln!("Closed document: {:#?}", params);
+
+            server.on_document_closed(params.text_document.uri);
           }
         }
       }
@@ -130,47 +138,38 @@ fn main() -> Result<(), anyhow::Error> {
   Ok(())
 }
 
-fn validate_message(
-  text: &str,
-  uri: Uri,
-  version: i32,
-  connection: &Connection,
-) -> Result<(), anyhow::Error> {
-  let (_ast, diagnostics, text_info) = parse(text);
+struct LanguageServer {
+  connection: Connection,
+  documents: Documents,
+}
 
-  let diagnostics = diagnostics
-    .into_iter()
-    .map(|diag| {
-      let span = diag.span();
+impl LanguageServer {
+  fn send_notification(&self, notification: Notification) {
+    if let Err(err) = self
+      .connection
+      .sender
+      .send(Message::Notification(notification))
+    {
+      eprintln!("Error sending notification: {:#?}", err);
+    }
+  }
 
-      fn loc_to_pos(info: &SourceTextInfo, loc: Location) -> Position {
-        let (line, character) = info.utf16_line_col(loc);
-        Position { line, character }
-      }
+  fn on_document_changed(&mut self, text: String, uri: Uri, version: i32) {
+    let document = self.documents.on_change(uri.clone(), version, text);
 
-      Diagnostic {
-        range: Range {
-          start: loc_to_pos(&text_info, span.start),
-          end: loc_to_pos(&text_info, span.end),
-        },
-        severity: Some(lsp_types::DiagnosticSeverity::ERROR),
-        message: diag.to_string(),
-        source: Some("mf2".to_string()),
-        ..Diagnostic::default()
-      }
-    })
-    .collect();
+    let params = PublishDiagnosticsParams {
+      uri,
+      version: Some(document.version),
+      diagnostics: document.diagnostics(),
+    };
 
-  let params = PublishDiagnosticsParams {
-    uri,
-    version: Some(version),
-    diagnostics,
-  };
+    self.send_notification(Notification {
+      method: "textDocument/publishDiagnostics".to_string(),
+      params: serde_json::to_value(params).unwrap(),
+    });
+  }
 
-  connection.sender.send(Message::Notification(Notification {
-    method: "textDocument/publishDiagnostics".to_string(),
-    params: serde_json::to_value(params).unwrap(),
-  }))?;
-
-  Ok(())
+  fn on_document_closed(&mut self, uri: Uri) {
+    self.documents.on_close(uri);
+  }
 }
