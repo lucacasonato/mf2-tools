@@ -344,7 +344,7 @@ impl<'a> Parser<'a> {
       });
     }
 
-    let key = self.parse_identifier();
+    let (key, is_key_empty) = self.parse_identifier();
 
     let mut end = self.current_location();
     *had_space = self.skip_spaces();
@@ -374,15 +374,16 @@ impl<'a> Parser<'a> {
       self.report(Diagnostic::AttributeMissingSpaceBefore { span });
     }
 
-    if key.is_empty() {
-      self.report(Diagnostic::AttributeMissingKey { span })
+    if is_key_empty {
+      self.report(Diagnostic::AttributeMissingKey { span });
     }
 
     Attribute { span, key, value }
   }
 
-  /// Caller must ensure the returned [Identifier] is not [Identifier::is_empty].
-  fn parse_identifier(&mut self) -> Identifier<'a> {
+  // Returns the identifier and a boolean indicating if the identifier is empty.
+  // The caller should report an error if the identifier is empty.
+  fn parse_identifier(&mut self) -> (Identifier<'a>, bool) {
     let start = self.current_location();
     let name_or_namespace = self.parse_name();
 
@@ -414,7 +415,8 @@ impl<'a> Parser<'a> {
       });
     }
 
-    id
+    let is_empty = id.namespace.is_none() && id.name.is_empty();
+    (id, is_empty)
   }
 
   fn skip_name(&mut self) {
@@ -427,6 +429,7 @@ impl<'a> Parser<'a> {
     }
   }
 
+  // Caller must handle empty name
   fn parse_name(&mut self) -> &'a str {
     let start = self.current_location();
     self.skip_name();
@@ -476,7 +479,7 @@ impl<'a> Parser<'a> {
         // function
         self.next(); // consume ':'
 
-        let id = self.parse_identifier();
+        let (id, is_id_empty) = self.parse_identifier();
 
         let mut options = vec![];
 
@@ -503,10 +506,10 @@ impl<'a> Parser<'a> {
 
         let function = Function { start, id, options };
 
-        if function.id.is_empty() {
-          self.report(Diagnostic::FunctionMissingIdentifier {
+        if is_id_empty {
+          self.report(Diagnostic::AttributeMissingKey {
             span: function.span(),
-          })
+          });
         }
 
         Some(Annotation::Function(function))
@@ -543,7 +546,7 @@ impl<'a> Parser<'a> {
   }
 
   fn parse_option(&mut self) -> FnOrMarkupOption<'a> {
-    let key = self.parse_identifier();
+    let (key, is_key_empty) = self.parse_identifier();
     self.skip_spaces();
     let value = if let Some(equals_loc) = self.eat('=') {
       self.skip_spaces();
@@ -570,7 +573,7 @@ impl<'a> Parser<'a> {
 
     let option = FnOrMarkupOption { key, value };
 
-    if option.key.is_empty() {
+    if is_key_empty {
       self.report(Diagnostic::OptionMissingKey {
         span: option.span(),
       })
@@ -739,6 +742,7 @@ impl<'a> Parser<'a> {
     num
   }
 
+  // Caller must handle empty digits, and leading zero
   fn parse_digits(&mut self) -> &'a str {
     let start = self.current_location();
     while let Some((_, '0'..='9')) = self.peek() {
@@ -756,7 +760,7 @@ impl<'a> Parser<'a> {
     let c = self.next();
     debug_assert!(matches!(c, Some((_, '#' | '/'))));
 
-    let id = self.parse_identifier();
+    let (id, is_id_empty) = self.parse_identifier();
 
     let mut markup_kind = match kind {
       MarkupStartKind::OpenOrStandalone => MarkupKind::Open,
@@ -847,7 +851,7 @@ impl<'a> Parser<'a> {
       attributes,
     };
 
-    if markup.id.is_empty() {
+    if is_id_empty {
       self.report(Diagnostic::MarkupMissingIdentifier { span: markup.span })
     }
 
