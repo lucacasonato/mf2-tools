@@ -12,16 +12,19 @@ env:
 
 jobs:
   build:
-    name: "ci-${{ runner.os }}"
+    name: "ci-${{ matrix.name }}"
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
         include:
-          - os: ubuntu-24.04
+          - name: linux
+            os: ubuntu-24.04
             target-tuple: x86_64-unknown-linux-gnu
-          - os: windows-2022
+          - name: windows
+            os: windows-2022
             target-tuple: x86_64-pc-windows-msvc
-          - os: macos-14
+          - name: macos
+            os: macos-14
             target-tuple: aarch64-apple-darwin
 
     steps:
