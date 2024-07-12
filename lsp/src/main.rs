@@ -20,6 +20,16 @@ use mf2_parser::Location;
 use mf2_parser::SourceTextInfo;
 
 fn main() -> Result<(), anyhow::Error> {
+  eprintln!(
+    "Starting server... mflsp {}{}",
+    env!("CARGO_PKG_VERSION"),
+    if option_env!("MF2LSP_OFFICIAL_BUILD") == Some("true") {
+      " (official)"
+    } else {
+      ""
+    }
+  );
+
   let (connection, _threads) = Connection::stdio();
 
   let capabilities = ServerCapabilities {
@@ -30,12 +40,28 @@ fn main() -> Result<(), anyhow::Error> {
   };
 
   let server_capabilities = serde_json::to_value(capabilities).unwrap();
-  let initialization_params = connection.initialize(server_capabilities)?;
+  let (initialize_id, initialize_params) = connection.initialize_start()?;
 
-  let _initialization_params =
-    serde_json::from_value::<InitializeParams>(initialization_params)?;
+  let initialize_result = serde_json::json!({
+    "capabilities": server_capabilities,
+    "serverInfo": {
+      "name": "mf2lsp",
+      "version": env!("CARGO_PKG_VERSION"),
+    },
+  });
+  connection.initialize_finish(initialize_id, initialize_result)?;
 
-  eprintln!("Server initialized.");
+  let initialize_params =
+    serde_json::from_value::<InitializeParams>(initialize_params)?;
+
+  eprint!("Server initialized.");
+  if let Some(client_info) = initialize_params.client_info {
+    eprint!(" Connected to: {}", client_info.name);
+    if let Some(version) = client_info.version {
+      eprint!(" {}", version);
+    }
+  }
+  eprintln!();
 
   loop {
     match connection.receiver.recv()? {

@@ -9,6 +9,7 @@ on:
 
 env:
   CARGO_TERM_COLOR: always
+  MF2LSP_OFFICIAL_BUILD: ${{ github.event_name == 'push' && startsWith(github.ref, 'refs/tags/') }}
 
 jobs:
   build:
