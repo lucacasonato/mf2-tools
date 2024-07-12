@@ -12,17 +12,25 @@ env:
 
 jobs:
   build:
-    name: "ci-${{ matrix.os }}"
+    name: "ci-${{ runner.os }}"
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
+        include:
+          - os: ubuntu-24.04
+            target-tuple: x86_64-unknown-linux-gnu
+          - os: windows-2022
+            target-tuple: x86_64-pc-windows-msvc
+          - os: macos-14
+            target-tuple: aarch64-apple-darwin
 
     steps:
       - name: Configure Git
         run: git config --global core.autocrlf false
 
       - uses: actions/checkout@v4
+
+      - uses: dsherret/rust-toolchain-file@v1
 
       - uses: Swatinem/rust-cache@v2
 
@@ -42,23 +50,19 @@ jobs:
       - name: Zip up the release build (unix)
         if: runner.os != 'Windows'
         run: |
-          export TARGET_TUPLE=$( rustc -vV | sed -n 's|host: ||p' )
-          echo "TARGET_TUPLE=$TARGET_TUPLE" >> $GITHUB_ENV
           cd target/release
-          zip -r ../../mf2lsp-$TARGET_TUPLE.zip mf2lsp
+          zip -r ../../mf2lsp-${{ matrix.target-tuple }}.zip mf2lsp
 
       - name: Zip up the release build (windows)
         if: runner.os == 'Windows'
         run: |
-          $env:TARGET_TUPLE = $( rustc -vV | Select-String -Pattern 'host: ' ).ToString().Replace('host: ', '')
-          echo "TARGET_TUPLE=$TARGET_TUPLE" >> $env:GITHUB_ENV
           cd target\release
-          Compress-Archive -Path mf2lsp.exe -DestinationPath ..\..\mf2lsp-$env:TARGET_TUPLE.zip
+          Compress-Archive -Path mf2lsp.exe -DestinationPath ..\..\mf2lsp-${{ matrix.target-tuple }}.zip
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: mf2lsp-${{ env.TARGET_TUPLE }}
+          name: mf2lsp-${{ matrix.target-tuple }}
           path: mf2lsp-*.zip
 
       - name: GitHub release
