@@ -65,7 +65,7 @@ jobs:
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: mf2lsp-${{ matrix.target-tuple }}
+          name: mf2lsp-${{ matrix.target-tuple }}.zip
           path: mf2lsp-*.zip
 
       - name: GitHub release
