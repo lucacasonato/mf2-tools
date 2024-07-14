@@ -91,7 +91,7 @@ impl Visitable for Message<'_> {
 
 #[derive(Debug, Clone)]
 pub struct Pattern<'a> {
-  pub parts: Vec<MessagePart<'a>>,
+  pub parts: Vec<PatternPart<'a>>,
 }
 
 impl Spanned for Pattern<'_> {
@@ -118,8 +118,8 @@ impl Visitable for Pattern<'_> {
 }
 
 ast_enum! {
-  #[visit(visit_message_part)]
-  pub enum MessagePart<'a> {
+  #[visit(visit_pattern_part)]
+  pub enum PatternPart<'a> {
     Text<'a>,
     Escape,
     Expression<'a>,

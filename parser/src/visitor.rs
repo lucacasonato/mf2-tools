@@ -11,7 +11,7 @@ macro_rules! visit {
 pub trait Visit {
   visit!(visit_message, message, Message);
   visit!(visit_pattern, msg, Pattern);
-  visit!(visit_message_part, part, MessagePart);
+  visit!(visit_pattern_part, part, PatternPart);
   visit!(visit_text, text, Text);
   visit!(visit_escape, escape, Escape);
   visit!(visit_expression, expr, Expression);
