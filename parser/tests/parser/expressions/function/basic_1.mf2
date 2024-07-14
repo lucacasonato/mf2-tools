@@ -1,7 +1,7 @@
 Count: {$var :number}
 === spans ===
                     Count: {$var :number}
-SimpleMessage       ^^^^^^^^^^^^^^^^^^^^^
+Pattern             ^^^^^^^^^^^^^^^^^^^^^
 Text                ^^^^^^^
 VariableExpression         ^^^^^^^^^^^^^^
 Variable                    ^^^^
@@ -10,7 +10,7 @@ Identifier                        ^^^^^^
 === diagnostics ===
 
 === ast ===
-SimpleMessage {
+Pattern {
     parts: [
         Text {
             start: @0,

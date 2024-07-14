@@ -1,7 +1,7 @@
 {#foo /
 === spans ===
                     {#foo /
-SimpleMessage       ^^^^^^^
+Pattern             ^^^^^^^
 Markup              ^^^^^^^
 Identifier            ^^^
 === diagnostics ===
@@ -9,7 +9,7 @@ Markup is missing a closing brace (at @0..7)
   {#foo /
   ^^^^^^^
 === ast ===
-SimpleMessage {
+Pattern {
     parts: [
         Markup {
             span: @0..7,

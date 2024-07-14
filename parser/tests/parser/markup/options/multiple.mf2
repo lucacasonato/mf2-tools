@@ -1,7 +1,7 @@
 {#foo abc = val1 def=val2 }
 === spans ===
                     {#foo abc = val1 def=val2 }
-SimpleMessage       ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Pattern             ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 Markup              ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 Identifier            ^^^
 FnOrMarkupOption          ^^^^^^^^^^
@@ -13,7 +13,7 @@ Text                                     ^^^^
 === diagnostics ===
 
 === ast ===
-SimpleMessage {
+Pattern {
     parts: [
         Markup {
             span: @0..27,

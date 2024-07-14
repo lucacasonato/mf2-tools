@@ -1,7 +1,7 @@
 {#el @attr }
 === spans ===
                     {#el @attr }
-SimpleMessage       ^^^^^^^^^^^^
+Pattern             ^^^^^^^^^^^^
 Markup              ^^^^^^^^^^^^
 Identifier            ^^
 Attribute                ^^^^^
@@ -9,7 +9,7 @@ Identifier                ^^^^
 === diagnostics ===
 
 === ast ===
-SimpleMessage {
+Pattern {
     parts: [
         Markup {
             span: @0..12,

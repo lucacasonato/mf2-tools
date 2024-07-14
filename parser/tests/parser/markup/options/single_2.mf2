@@ -1,7 +1,7 @@
 {#foo hello =1}
 === spans ===
                     {#foo hello =1}
-SimpleMessage       ^^^^^^^^^^^^^^^
+Pattern             ^^^^^^^^^^^^^^^
 Markup              ^^^^^^^^^^^^^^^
 Identifier            ^^^
 FnOrMarkupOption          ^^^^^^^^
@@ -11,7 +11,7 @@ Number.integral                  ^
 === diagnostics ===
 
 === ast ===
-SimpleMessage {
+Pattern {
     parts: [
         Markup {
             span: @0..15,

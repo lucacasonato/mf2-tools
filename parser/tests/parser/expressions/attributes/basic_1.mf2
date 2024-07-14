@@ -1,7 +1,7 @@
 {1 @hello}
 === spans ===
                     {1 @hello}
-SimpleMessage       ^^^^^^^^^^
+Pattern             ^^^^^^^^^^
 LiteralExpression   ^^^^^^^^^^
 Number               ^
 Number.integral      ^
@@ -10,7 +10,7 @@ Identifier              ^^^^^
 === diagnostics ===
 
 === ast ===
-SimpleMessage {
+Pattern {
     parts: [
         LiteralExpression {
             span: @0..10,

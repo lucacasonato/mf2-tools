@@ -1,7 +1,7 @@
 {}
 === spans ===
                     {}
-SimpleMessage       ^^
+Pattern             ^^
 LiteralExpression   ^^
 Text                
 === diagnostics ===
@@ -9,7 +9,7 @@ Placeholder is missing a variable reference, literal, or annotation (at @0..2)
   {}
   ^^
 === ast ===
-SimpleMessage {
+Pattern {
     parts: [
         LiteralExpression {
             span: @0..2,

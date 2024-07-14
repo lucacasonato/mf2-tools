@@ -2,7 +2,7 @@
 def
 === spans ===
                     { |abc↵def
-SimpleMessage       ^^^^^^^^^^
+Pattern             ^^^^^^^^^^
 LiteralExpression   ^^^^^^^^^^
 Quoted                ^^^^^^^^
 === diagnostics ===
@@ -13,7 +13,7 @@ Placeholder is missing a closing brace (at @0..10)
   { |abc↵def
   ^^^^^^^^^^
 === ast ===
-SimpleMessage {
+Pattern {
     parts: [
         LiteralExpression {
             span: @0..10,

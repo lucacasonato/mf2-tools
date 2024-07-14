@@ -1,7 +1,7 @@
 {: hello}
 === spans ===
                     {: hello}
-SimpleMessage       ^^^^^^^^^
+Pattern             ^^^^^^^^^
 AnnotationExpression^^^^^^^^^
 Function             ^^^^^^^
 Identifier            
@@ -16,7 +16,7 @@ Function is missing an identifier (at @1..8)
   {: hello}
    ^^^^^^^
 === ast ===
-SimpleMessage {
+Pattern {
     parts: [
         AnnotationExpression {
             span: @0..9,

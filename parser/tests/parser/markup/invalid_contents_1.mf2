@@ -1,7 +1,7 @@
 {#foo /hello}
 === spans ===
                     {#foo /hello}
-SimpleMessage       ^^^^^^^^^^^^^
+Pattern             ^^^^^^^^^^^^^
 Markup              ^^^^^^^^^^^^^
 Identifier            ^^^
 === diagnostics ===
@@ -9,7 +9,7 @@ Unrecognized markup contents (at @6..12)
   {#foo /hello}
         ^^^^^^
 === ast ===
-SimpleMessage {
+Pattern {
     parts: [
         Markup {
             span: @0..13,

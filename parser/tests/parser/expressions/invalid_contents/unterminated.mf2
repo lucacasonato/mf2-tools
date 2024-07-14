@@ -1,7 +1,7 @@
 {1 abc
 === spans ===
                     {1 abc
-SimpleMessage       ^^^^^^
+Pattern             ^^^^^^
 LiteralExpression   ^^^^^^
 Number               ^
 Number.integral      ^
@@ -13,7 +13,7 @@ Unrecognized placeholder contents (at @3..6)
   {1 abc
      ^^^
 === ast ===
-SimpleMessage {
+Pattern {
     parts: [
         LiteralExpression {
             span: @0..6,

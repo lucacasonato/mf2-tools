@@ -1,7 +1,7 @@
 {#el @option= }
 === spans ===
                     {#el @option= }
-SimpleMessage       ^^^^^^^^^^^^^^^
+Pattern             ^^^^^^^^^^^^^^^
 Markup              ^^^^^^^^^^^^^^^
 Identifier            ^^
 Attribute                ^^^^^^^^
@@ -11,7 +11,7 @@ Attribute is missing a value (at @5..13)
   {#el @option= }
        ^^^^^^^^
 === ast ===
-SimpleMessage {
+Pattern {
     parts: [
         Markup {
             span: @0..15,

@@ -1,7 +1,7 @@
 a{abc def}
 === spans ===
                     a{abc def}
-SimpleMessage       ^^^^^^^^^^
+Pattern             ^^^^^^^^^^
 Text                ^
 LiteralExpression    ^^^^^^^^^
 Text                  ^^^
@@ -10,7 +10,7 @@ Unrecognized placeholder contents (at @6..9)
   a{abc def}
         ^^^
 === ast ===
-SimpleMessage {
+Pattern {
     parts: [
         Text {
             start: @0,

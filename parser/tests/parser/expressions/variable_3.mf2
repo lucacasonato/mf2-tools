@@ -1,13 +1,13 @@
 {$var }
 === spans ===
                     {$var }
-SimpleMessage       ^^^^^^^
+Pattern             ^^^^^^^
 VariableExpression  ^^^^^^^
 Variable             ^^^^
 === diagnostics ===
 
 === ast ===
-SimpleMessage {
+Pattern {
     parts: [
         VariableExpression {
             span: @0..7,

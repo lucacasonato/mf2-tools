@@ -1,7 +1,7 @@
 {$ var}
 === spans ===
                     {$ var}
-SimpleMessage       ^^^^^^^
+Pattern             ^^^^^^^
 VariableExpression  ^^^^^^^
 Variable             ^
 === diagnostics ===
@@ -12,7 +12,7 @@ Unrecognized placeholder contents (at @3..6)
   {$ var}
      ^^^
 === ast ===
-SimpleMessage {
+Pattern {
     parts: [
         VariableExpression {
             span: @0..7,

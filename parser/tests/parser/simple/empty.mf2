@@ -1,12 +1,12 @@
 
 === spans ===
                     
-SimpleMessage       
+Pattern             
 Text                
 === diagnostics ===
 
 === ast ===
-SimpleMessage {
+Pattern {
     parts: [
         Text {
             start: @0,

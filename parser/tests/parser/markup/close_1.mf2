@@ -1,13 +1,13 @@
 {/close}
 === spans ===
                     {/close}
-SimpleMessage       ^^^^^^^^
+Pattern             ^^^^^^^^
 Markup              ^^^^^^^^
 Identifier            ^^^^^
 === diagnostics ===
 
 === ast ===
-SimpleMessage {
+Pattern {
     parts: [
         Markup {
             span: @0..8,

@@ -5,7 +5,7 @@ Hello, \|World!
 a\|\|
 === spans ===
                     \{\|\}\\↵Hello,\|World!↵Hello,\| World!↵Hello, \|World!↵a\|\|
-SimpleMessage       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Pattern             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 Escape              ^^
 Escape                ^^
 Escape                  ^^
@@ -22,7 +22,7 @@ Escape                                                                         ^
 === diagnostics ===
 
 === ast ===
-SimpleMessage {
+Pattern {
     parts: [
         Escape {
             start: @0,

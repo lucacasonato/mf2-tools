@@ -3,7 +3,7 @@ a{ 1e }
 { 1e- }
 === spans ===
                     a{ 1e }↵{ 1e+ }↵{ 1e- }
-SimpleMessage       ^^^^^^^^^^^^^^^^^^^^^^^
+Pattern             ^^^^^^^^^^^^^^^^^^^^^^^
 Text                ^
 LiteralExpression    ^^^^^^
 Number                 ^^
@@ -30,7 +30,7 @@ Number is missing an exponent part (at @18..21)
   a{ 1e }↵{ 1e+ }↵{ 1e- }
                     ^^^
 === ast ===
-SimpleMessage {
+Pattern {
     parts: [
         Text {
             start: @0,

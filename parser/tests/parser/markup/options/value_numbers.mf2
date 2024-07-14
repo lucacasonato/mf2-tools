@@ -2,7 +2,7 @@
 {#el opt = -1.0 }
 === spans ===
                     {#el opt = 1.0 }↵{#el opt = -1.0 }
-SimpleMessage       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Pattern             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 Markup              ^^^^^^^^^^^^^^^^
 Identifier            ^^
 FnOrMarkupOption         ^^^^^^^^^
@@ -21,7 +21,7 @@ Number.fractional                                  ^
 === diagnostics ===
 
 === ast ===
-SimpleMessage {
+Pattern {
     parts: [
         Markup {
             span: @0..16,

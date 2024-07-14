@@ -1,7 +1,7 @@
 {1 @foo=}
 === spans ===
                     {1 @foo=}
-SimpleMessage       ^^^^^^^^^
+Pattern             ^^^^^^^^^
 LiteralExpression   ^^^^^^^^^
 Number               ^
 Number.integral      ^
@@ -12,7 +12,7 @@ Attribute is missing a value (at @3..8)
   {1 @foo=}
      ^^^^^
 === ast ===
-SimpleMessage {
+Pattern {
     parts: [
         LiteralExpression {
             span: @0..9,

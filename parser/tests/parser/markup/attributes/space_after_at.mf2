@@ -1,7 +1,7 @@
 {#el @   attr=1}
 === spans ===
                     {#el @   attr=1}
-SimpleMessage       ^^^^^^^^^^^^^^^^
+Pattern             ^^^^^^^^^^^^^^^^
 Markup              ^^^^^^^^^^^^^^^^
 Identifier            ^^
 Attribute                ^^^^^^^^^^
@@ -13,7 +13,7 @@ Number.integral                   ^
   {#el @   attr=1}
         ^^^
 === ast ===
-SimpleMessage {
+Pattern {
     parts: [
         Markup {
             span: @0..16,

@@ -1,14 +1,14 @@
  .input { $hello :space }
 === spans ===
                      .input { $hello :space }
-SimpleMessage       ^^^^^^^^^^^^^^^^^^^^^^^^^
+Pattern             ^^^^^^^^^^^^^^^^^^^^^^^^^
 Text                ^^^^^^^^^^^^^^^^^^^^^^^^^
 === diagnostics ===
 Complex messages are not yet supported (at @1..25)
    .input { $hello :space }
    ^^^^^^^^^^^^^^^^^^^^^^^^
 === ast ===
-SimpleMessage {
+Pattern {
     parts: [
         Text {
             start: @0,

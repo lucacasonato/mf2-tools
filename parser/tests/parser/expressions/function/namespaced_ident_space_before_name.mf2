@@ -1,7 +1,7 @@
 {$var :a: b}
 === spans ===
                     {$var :a: b}
-SimpleMessage       ^^^^^^^^^^^^
+Pattern             ^^^^^^^^^^^^
 VariableExpression  ^^^^^^^^^^^^
 Variable             ^^^^
 Function                  ^^^^^
@@ -17,7 +17,7 @@ Option is missing a value, which is required (at @10..11)
   {$var :a: b}
             ^
 === ast ===
-SimpleMessage {
+Pattern {
     parts: [
         VariableExpression {
             span: @0..12,

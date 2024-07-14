@@ -1,7 +1,7 @@
 {$ }
 === spans ===
                     {$ }
-SimpleMessage       ^^^^
+Pattern             ^^^^
 VariableExpression  ^^^^
 Variable             ^
 === diagnostics ===
@@ -9,7 +9,7 @@ Variable is missing a name (at @1..2)
   {$ }
    ^
 === ast ===
-SimpleMessage {
+Pattern {
     parts: [
         VariableExpression {
             span: @0..4,

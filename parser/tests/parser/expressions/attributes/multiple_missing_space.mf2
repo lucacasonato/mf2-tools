@@ -1,7 +1,7 @@
 {1 @foo@hello=world}
 === spans ===
                     {1 @foo@hello=world}
-SimpleMessage       ^^^^^^^^^^^^^^^^^^^^
+Pattern             ^^^^^^^^^^^^^^^^^^^^
 LiteralExpression   ^^^^^^^^^^^^^^^^^^^^
 Number               ^
 Number.integral      ^
@@ -15,7 +15,7 @@ Attributes must be preceeded by a leading space (at @7..19)
   {1 @foo@hello=world}
          ^^^^^^^^^^^^
 === ast ===
-SimpleMessage {
+Pattern {
     parts: [
         LiteralExpression {
             span: @0..20,

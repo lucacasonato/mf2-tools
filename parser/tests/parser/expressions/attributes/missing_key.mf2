@@ -1,7 +1,7 @@
 {$var @=bar}
 === spans ===
                     {$var @=bar}
-SimpleMessage       ^^^^^^^^^^^^
+Pattern             ^^^^^^^^^^^^
 VariableExpression  ^^^^^^^^^^^^
 Variable             ^^^^
 Attribute                 ^^^^^
@@ -12,7 +12,7 @@ Attribute is missing a key (at @6..11)
   {$var @=bar}
         ^^^^^
 === ast ===
-SimpleMessage {
+Pattern {
     parts: [
         VariableExpression {
             span: @0..12,

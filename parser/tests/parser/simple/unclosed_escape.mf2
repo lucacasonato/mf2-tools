@@ -1,14 +1,14 @@
 hello\
 === spans ===
                     hello\
-SimpleMessage       ^^^^^
+Pattern             ^^^^^
 Text                ^^^^^
 === diagnostics ===
 Escape sequence is missing a character to escape (at @5)
   hello\
        ^
 === ast ===
-SimpleMessage {
+Pattern {
     parts: [
         Text {
             start: @0,

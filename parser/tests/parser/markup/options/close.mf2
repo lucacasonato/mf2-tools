@@ -1,7 +1,7 @@
 {/el opt=val }
 === spans ===
                     {/el opt=val }
-SimpleMessage       ^^^^^^^^^^^^^^
+Pattern             ^^^^^^^^^^^^^^
 Markup              ^^^^^^^^^^^^^^
 Identifier            ^^
 FnOrMarkupOption         ^^^^^^^
@@ -10,7 +10,7 @@ Text                         ^^^
 === diagnostics ===
 
 === ast ===
-SimpleMessage {
+Pattern {
     parts: [
         Markup {
             span: @0..14,

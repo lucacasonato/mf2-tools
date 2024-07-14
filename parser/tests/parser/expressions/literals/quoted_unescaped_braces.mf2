@@ -1,14 +1,14 @@
 {|a}b{c|}
 === spans ===
                     {|a}b{c|}
-SimpleMessage       ^^^^^^^^^
+Pattern             ^^^^^^^^^
 LiteralExpression   ^^^^^^^^^
 Quoted               ^^^^^^^
 Text                  ^^^^^
 === diagnostics ===
 
 === ast ===
-SimpleMessage {
+Pattern {
     parts: [
         LiteralExpression {
             span: @0..9,
