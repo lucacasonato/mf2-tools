@@ -1,4 +1,4 @@
-use ast::SimpleMessage;
+use ast::Pattern;
 use parser::Parser;
 
 pub mod ast;
@@ -14,7 +14,7 @@ pub use visitor::{Visit, Visitable};
 
 pub fn parse(
   message: &str,
-) -> (SimpleMessage, Vec<Diagnostic>, SourceTextInfo) {
+) -> (Pattern, Vec<Diagnostic>, SourceTextInfo) {
   Parser::new(message).parse()
 }
 

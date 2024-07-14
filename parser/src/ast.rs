@@ -49,12 +49,52 @@ macro_rules! ast_enum {
   };
 }
 
+#[derive(Clone)]
+pub enum Message<'a> {
+  Simple(Pattern<'a>),
+  Complex(ComplexMessage<'a>),
+}
+
+impl Debug for Message<'_> {
+  fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+    match self {
+      Message::Simple(pattern) => Debug::fmt(pattern, f),
+      Message::Complex(complex) => Debug::fmt(complex, f),
+    }
+  }
+}
+
+impl Spanned for Message<'_> {
+  fn span(&self) -> Span {
+    match self {
+      Message::Simple(pattern) => pattern.span(),
+      Message::Complex(complex) => complex.span(),
+    }
+  }
+}
+
+impl Visitable for Message<'_> {
+  fn apply_visitor<V: Visit + ?Sized>(&self, visitor: &mut V) {
+    match self {
+      Message::Simple(pattern) => pattern.apply_visitor(visitor),
+      Message::Complex(complex) => complex.apply_visitor(visitor),
+    }
+  }
+
+  fn apply_visitor_to_children<V: Visit + ?Sized>(&self, visitor: &mut V) {
+    match self {
+      Message::Simple(pattern) => pattern.apply_visitor_to_children(visitor),
+      Message::Complex(complex) => complex.apply_visitor_to_children(visitor),
+    }
+  }
+}
+
 #[derive(Debug, Clone)]
-pub struct SimpleMessage<'a> {
+pub struct Pattern<'a> {
   pub parts: Vec<MessagePart<'a>>,
 }
 
-impl Spanned for SimpleMessage<'_> {
+impl Spanned for Pattern<'_> {
   fn span(&self) -> Span {
     match (self.parts.first(), self.parts.last()) {
       (Some(first), Some(last)) => {
@@ -65,9 +105,9 @@ impl Spanned for SimpleMessage<'_> {
   }
 }
 
-impl Visitable for SimpleMessage<'_> {
+impl Visitable for Pattern<'_> {
   fn apply_visitor<V: Visit + ?Sized>(&self, visitor: &mut V) {
-    visitor.visit_simple_message(self);
+    visitor.visit_pattern(self);
   }
 
   fn apply_visitor_to_children<V: Visit + ?Sized>(&self, visitor: &mut V) {
@@ -609,4 +649,255 @@ impl Visitable for Markup<'_> {
       attribute.apply_visitor(visitor);
     }
   }
+}
+
+#[derive(Debug, Clone)]
+pub struct ComplexMessage<'a> {
+  pub declarations: Vec<Declaration<'a>>,
+}
+
+impl Spanned for ComplexMessage<'_> {
+  fn span(&self) -> Span {
+    todo!();
+  }
+}
+
+impl Visitable for ComplexMessage<'_> {
+  fn apply_visitor<V: Visit + ?Sized>(&self, visitor: &mut V) {
+    visitor.visit_complex_message(self);
+  }
+
+  fn apply_visitor_to_children<V: Visit + ?Sized>(&self, visitor: &mut V) {
+    for declaration in &self.declarations {
+      declaration.apply_visitor(visitor);
+    }
+
+    todo!();
+  }
+}
+
+ast_enum! {
+  #[visit(visit_declaration)]
+  pub enum Declaration<'a> {
+    InputDeclaration<'a>,
+    LocalDeclaration<'a>,
+    ReservedStatement<'a>,
+  }
+}
+
+#[derive(Debug, Clone)]
+pub struct InputDeclaration<'a> {
+  pub start: Location,
+  pub expression: VariableExpression<'a>,
+}
+
+impl Spanned for InputDeclaration<'_> {
+  fn span(&self) -> Span {
+    let start = self.start;
+    let end = self.expression.span().end;
+    Span::new(start..end)
+  }
+}
+
+impl Visitable for InputDeclaration<'_> {
+  fn apply_visitor<V: Visit + ?Sized>(&self, visitor: &mut V) {
+    visitor.visit_input_declaration(self);
+  }
+
+  fn apply_visitor_to_children<V: Visit + ?Sized>(&self, visitor: &mut V) {
+    self.expression.apply_visitor(visitor);
+  }
+}
+
+#[derive(Debug, Clone)]
+pub struct LocalDeclaration<'a> {
+  pub start: Location,
+  pub variable: Variable<'a>,
+  pub expression: Expression<'a>,
+}
+
+impl Spanned for LocalDeclaration<'_> {
+  fn span(&self) -> Span {
+    let start = self.start;
+    let end = self.expression.span().end;
+    Span::new(start..end)
+  }
+}
+
+impl Visitable for LocalDeclaration<'_> {
+  fn apply_visitor<V: Visit + ?Sized>(&self, visitor: &mut V) {
+    visitor.visit_local_declaration(self);
+  }
+
+  fn apply_visitor_to_children<V: Visit + ?Sized>(&self, visitor: &mut V) {
+    self.variable.apply_visitor(visitor);
+    self.expression.apply_visitor(visitor);
+  }
+}
+
+#[derive(Debug, Clone)]
+pub struct ReservedStatement<'a> {
+  pub start: Location,
+  pub name: &'a str,
+  pub body: Vec<ReservedBodyPart<'a>>,
+  pub expressions: Vec<Expression<'a>>,
+}
+
+impl Spanned for ReservedStatement<'_> {
+  fn span(&self) -> Span {
+    let start = self.start;
+    let end = self
+      .expressions
+      .last()
+      .map(|last| last.span().end)
+      .unwrap_or_else(|| {
+        self
+          .body
+          .last()
+          .map(|last| last.span().end)
+          .unwrap_or_else(|| start + '.' + self.name)
+      });
+    Span::new(start..end)
+  }
+}
+
+impl Visitable for ReservedStatement<'_> {
+  fn apply_visitor<V: Visit + ?Sized>(&self, visitor: &mut V) {
+    visitor.visit_reserved_statement(self);
+  }
+
+  fn apply_visitor_to_children<V: Visit + ?Sized>(&self, visitor: &mut V) {
+    for part in &self.body {
+      part.apply_visitor(visitor);
+    }
+    for expression in &self.expressions {
+      expression.apply_visitor(visitor);
+    }
+  }
+}
+
+ast_enum! {
+  #[visit(visit_complex_message_body)]
+  pub enum ComplexMessageBody<'a> {
+    QuotedPattern<'a>,
+    Matcher<'a>,
+  }
+}
+
+#[derive(Debug, Clone)]
+pub struct QuotedPattern<'a> {
+  pub start: Location,
+  pub pattern: Pattern<'a>,
+}
+
+impl Spanned for QuotedPattern<'_> {
+  fn span(&self) -> Span {
+    let start = self.start;
+    let end = self.pattern.span().end + "}}";
+    Span::new(start..end)
+  }
+}
+
+impl Visitable for QuotedPattern<'_> {
+  fn apply_visitor<V: Visit + ?Sized>(&self, visitor: &mut V) {
+    visitor.visit_quoted_pattern(self);
+  }
+
+  fn apply_visitor_to_children<V: Visit + ?Sized>(&self, visitor: &mut V) {
+    self.pattern.apply_visitor(visitor);
+  }
+}
+
+#[derive(Debug, Clone)]
+pub struct Matcher<'a> {
+  pub start: Location,
+  pub selectors: Vec<Expression<'a>>,
+  pub variants: Vec<Variant<'a>>,
+}
+
+impl Spanned for Matcher<'_> {
+  fn span(&self) -> Span {
+    let start = self.start;
+    let end = self
+      .variants
+      .last()
+      .map(|last| last.span().end)
+      .unwrap_or_else(|| {
+        self
+          .selectors
+          .last()
+          .map(|last| last.span().end)
+          .unwrap_or_else(|| start + ".match")
+      });
+    Span::new(start..end)
+  }
+}
+
+impl Visitable for Matcher<'_> {
+  fn apply_visitor<V: Visit + ?Sized>(&self, visitor: &mut V) {
+    visitor.visit_matcher(self);
+  }
+
+  fn apply_visitor_to_children<V: Visit + ?Sized>(&self, visitor: &mut V) {
+    for selector in &self.selectors {
+      selector.apply_visitor(visitor);
+    }
+    for variant in &self.variants {
+      variant.apply_visitor(visitor);
+    }
+  }
+}
+
+#[derive(Debug, Clone)]
+pub struct Variant<'a> {
+  pub keys: Vec<Key<'a>>,
+  pub pattern: QuotedPattern<'a>,
+}
+
+impl Spanned for Variant<'_> {
+  fn span(&self) -> Span {
+    let start = self.keys.first().map(|first| first.span().start).unwrap_or_else(|| self.pattern.span().start);
+    let end = self.pattern.span().end;
+    Span::new(start..end)
+  }
+}
+
+impl Visitable for Variant<'_> {
+  fn apply_visitor<V: Visit + ?Sized>(&self, visitor: &mut V) {
+    visitor.visit_variant(self);
+  }
+
+  fn apply_visitor_to_children<V: Visit + ?Sized>(&self, visitor: &mut V) {
+    for key in &self.keys {
+      key.apply_visitor(visitor);
+    }
+    self.pattern.apply_visitor(visitor);
+  }
+}
+
+ast_enum! {
+  #[visit(visit_key)]
+  pub enum Key<'a> {
+    Literal<'a>,
+    Star,
+  }
+}
+
+#[derive(Debug, Clone)]
+pub struct Star {
+  pub start: Location
+}
+
+impl Spanned for Star {
+  fn span(&self) -> Span {
+    Span::new(self.start..self.start + '*')
+  }
+}
+
+impl Visitable for Star {
+  fn apply_visitor<V: Visit + ?Sized>(&self, visitor: &mut V) {
+    visitor.visit_star(self);
+  }
+
+  fn apply_visitor_to_children<V: Visit + ?Sized>(&self, _visitor: &mut V) {}
 }
