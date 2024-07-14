@@ -654,11 +654,18 @@ impl Visitable for Markup<'_> {
 #[derive(Debug, Clone)]
 pub struct ComplexMessage<'a> {
   pub declarations: Vec<Declaration<'a>>,
+  pub body: ComplexMessageBody<'a>,
 }
 
 impl Spanned for ComplexMessage<'_> {
   fn span(&self) -> Span {
-    todo!();
+    let start = self
+      .declarations
+      .first()
+      .map(|first| first.span().start)
+      .unwrap_or_else(|| self.body.span().start);
+    let end = self.body.span().end;
+    Span::new(start..end)
   }
 }
 
@@ -671,8 +678,7 @@ impl Visitable for ComplexMessage<'_> {
     for declaration in &self.declarations {
       declaration.apply_visitor(visitor);
     }
-
-    todo!();
+    self.body.apply_visitor(visitor);
   }
 }
 
