@@ -856,7 +856,11 @@ pub struct Variant<'a> {
 
 impl Spanned for Variant<'_> {
   fn span(&self) -> Span {
-    let start = self.keys.first().map(|first| first.span().start).unwrap_or_else(|| self.pattern.span().start);
+    let start = self
+      .keys
+      .first()
+      .map(|first| first.span().start)
+      .unwrap_or_else(|| self.pattern.span().start);
     let end = self.pattern.span().end;
     Span::new(start..end)
   }
@@ -885,7 +889,7 @@ ast_enum! {
 
 #[derive(Debug, Clone)]
 pub struct Star {
-  pub start: Location
+  pub start: Location,
 }
 
 impl Spanned for Star {

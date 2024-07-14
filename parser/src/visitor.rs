@@ -43,7 +43,8 @@ pub trait Visit {
   visit!(visit_matcher, matcher, Matcher);
   visit!(visit_variant, variant, Variant);
   visit!(visit_key, key, Key);
-  visit!(visit_star, star, Star);}
+  visit!(visit_star, star, Star);
+}
 
 pub trait Visitable {
   fn apply_visitor<V: Visit + ?Sized>(&self, visitor: &mut V);
