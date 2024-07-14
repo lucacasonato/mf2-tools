@@ -1,7 +1,7 @@
 {1 :hello @world a=b}
 === spans ===
                     {1 :hello @world a=b}
-SimpleMessage       ^^^^^^^^^^^^^^^^^^^^^
+Pattern             ^^^^^^^^^^^^^^^^^^^^^
 LiteralExpression   ^^^^^^^^^^^^^^^^^^^^^
 Number               ^
 Number.integral      ^
@@ -14,7 +14,7 @@ Unrecognized placeholder contents (at @17..20)
   {1 :hello @world a=b}
                    ^^^
 === ast ===
-SimpleMessage {
+Pattern {
     parts: [
         LiteralExpression {
             span: @0..21,

@@ -1,7 +1,7 @@
 {:hello =foo}
 === spans ===
                     {:hello =foo}
-SimpleMessage       ^^^^^^^^^^^^^
+Pattern             ^^^^^^^^^^^^^
 AnnotationExpression^^^^^^^^^^^^^
 Function             ^^^^^^^^^^^
 Identifier            ^^^^^
@@ -13,7 +13,7 @@ Option is missing a key (at @8..12)
   {:hello =foo}
           ^^^^
 === ast ===
-SimpleMessage {
+Pattern {
     parts: [
         AnnotationExpression {
             span: @0..13,

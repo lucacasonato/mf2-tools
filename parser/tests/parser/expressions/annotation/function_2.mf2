@@ -1,14 +1,14 @@
 { :hello}
 === spans ===
                     { :hello}
-SimpleMessage       ^^^^^^^^^
+Pattern             ^^^^^^^^^
 AnnotationExpression^^^^^^^^^
 Function              ^^^^^^
 Identifier             ^^^^^
 === diagnostics ===
 
 === ast ===
-SimpleMessage {
+Pattern {
     parts: [
         AnnotationExpression {
             span: @0..9,

@@ -1,14 +1,14 @@
 Hello}
 === spans ===
                     Hello}
-SimpleMessage       ^^^^^^
+Pattern             ^^^^^^
 Text                ^^^^^^
 === diagnostics ===
 '}' in simple messages must be escaped (at @5)
   Hello}
        ^
 === ast ===
-SimpleMessage {
+Pattern {
     parts: [
         Text {
             start: @0,

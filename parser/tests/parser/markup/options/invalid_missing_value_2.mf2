@@ -1,7 +1,7 @@
 {#el option= }
 === spans ===
                     {#el option= }
-SimpleMessage       ^^^^^^^^^^^^^^
+Pattern             ^^^^^^^^^^^^^^
 Markup              ^^^^^^^^^^^^^^
 Identifier            ^^
 FnOrMarkupOption         ^^^^^^^
@@ -12,7 +12,7 @@ Option is missing a value, which is required (at @5..12)
   {#el option= }
        ^^^^^^^
 === ast ===
-SimpleMessage {
+Pattern {
     parts: [
         Markup {
             span: @0..14,

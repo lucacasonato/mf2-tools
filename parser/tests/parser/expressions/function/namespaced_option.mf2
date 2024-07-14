@@ -1,7 +1,7 @@
 {$var :number a:b=c}
 === spans ===
                     {$var :number a:b=c}
-SimpleMessage       ^^^^^^^^^^^^^^^^^^^^
+Pattern             ^^^^^^^^^^^^^^^^^^^^
 VariableExpression  ^^^^^^^^^^^^^^^^^^^^
 Variable             ^^^^
 Function                  ^^^^^^^^^^^^^
@@ -12,7 +12,7 @@ Text                                  ^
 === diagnostics ===
 
 === ast ===
-SimpleMessage {
+Pattern {
     parts: [
         VariableExpression {
             span: @0..20,

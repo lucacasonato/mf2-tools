@@ -1,7 +1,7 @@
 {1 a |}
 === spans ===
                     {1 a |}
-SimpleMessage       ^^^^^^^
+Pattern             ^^^^^^^
 LiteralExpression   ^^^^^^^
 Number               ^
 Number.integral      ^
@@ -16,7 +16,7 @@ Unrecognized placeholder contents (at @3..7)
   {1 a |}
      ^^^^
 === ast ===
-SimpleMessage {
+Pattern {
     parts: [
         LiteralExpression {
             span: @0..7,

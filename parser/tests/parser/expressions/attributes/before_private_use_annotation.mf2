@@ -1,7 +1,7 @@
 {1 @foo ^bar}
 === spans ===
                     {1 @foo ^bar}
-SimpleMessage       ^^^^^^^^^^^^^
+Pattern             ^^^^^^^^^^^^^
 LiteralExpression   ^^^^^^^^^^^^^
 Number               ^
 Number.integral      ^
@@ -12,7 +12,7 @@ Unrecognized placeholder contents (at @8..12)
   {1 @foo ^bar}
           ^^^^
 === ast ===
-SimpleMessage {
+Pattern {
     parts: [
         LiteralExpression {
             span: @0..13,

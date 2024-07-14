@@ -16,12 +16,12 @@ use crate::ast::Markup;
 use crate::ast::MarkupKind;
 use crate::ast::MessagePart;
 use crate::ast::Number;
+use crate::ast::Pattern;
 use crate::ast::PrivateUseAnnotation;
 use crate::ast::Quoted;
 use crate::ast::QuotedPart;
 use crate::ast::ReservedAnnotation;
 use crate::ast::ReservedBodyPart;
-use crate::ast::SimpleMessage;
 use crate::ast::Text;
 use crate::ast::Variable;
 use crate::ast::VariableExpression;
@@ -49,7 +49,7 @@ impl<'a> Parser<'a> {
 
   pub fn parse(
     mut self,
-  ) -> (SimpleMessage<'a>, Vec<Diagnostic<'a>>, SourceTextInfo<'a>) {
+  ) -> (Pattern<'a>, Vec<Diagnostic<'a>>, SourceTextInfo<'a>) {
     while let Some((loc, c)) = self.peek() {
       match c {
         chars::space!() => {
@@ -60,7 +60,7 @@ impl<'a> Parser<'a> {
         // Also include `\0` and `}` for error recovery.
         chars::simple_start!() | '\0' | '}' => {
           return (
-            self.parse_simple_message(),
+            self.parse_pattern(),
             self.diagnostics,
             self.text.into_info(),
           )
@@ -78,7 +78,7 @@ impl<'a> Parser<'a> {
     let end = self.text.end_location();
 
     (
-      SimpleMessage {
+      Pattern {
         parts: vec![MessagePart::Text(self.slice_text(start..end))],
       },
       self.diagnostics,
@@ -100,7 +100,7 @@ impl<'a> Parser<'a> {
     self.diagnostics.push(diagnostic);
   }
 
-  fn parse_simple_message(&mut self) -> SimpleMessage<'a> {
+  fn parse_pattern(&mut self) -> Pattern<'a> {
     let mut parts = vec![];
 
     let mut start = self.text.start_location();
@@ -142,7 +142,7 @@ impl<'a> Parser<'a> {
       parts.push(MessagePart::Text(self.slice_text(start..end)));
     }
 
-    SimpleMessage { parts }
+    Pattern { parts }
   }
 
   fn parse_escape(&mut self) -> Option<Escape> {

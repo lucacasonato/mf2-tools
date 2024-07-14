@@ -1,7 +1,7 @@
 hello\tbar
 === spans ===
                     hello\tbar
-SimpleMessage       ^^^^^^^^^^
+Pattern             ^^^^^^^^^^
 Text                ^^^^^
 Escape                   ^^
 Text                       ^^^
@@ -10,7 +10,7 @@ Escape sequence can only escape '}', '{', '|', and '\' (found 't' at @6)
   hello\tbar
         ^
 === ast ===
-SimpleMessage {
+Pattern {
     parts: [
         Text {
             start: @0,

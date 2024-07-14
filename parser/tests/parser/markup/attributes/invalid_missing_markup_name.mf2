@@ -1,7 +1,7 @@
 {#@foo = bar }
 === spans ===
                     {#@foo = bar }
-SimpleMessage       ^^^^^^^^^^^^^^
+Pattern             ^^^^^^^^^^^^^^
 Markup              ^^^^^^^^^^^^^^
 Identifier            
 Attribute             ^^^^^^^^^^
@@ -15,7 +15,7 @@ Markup is missing an identifier (at @0..14)
   {#@foo = bar }
   ^^^^^^^^^^^^^^
 === ast ===
-SimpleMessage {
+Pattern {
     parts: [
         Markup {
             span: @0..14,

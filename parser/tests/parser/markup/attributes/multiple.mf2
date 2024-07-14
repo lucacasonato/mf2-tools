@@ -1,7 +1,7 @@
 {#el @attr1 @attr2=val @attr3 }
 === spans ===
                     {#el @attr1 @attr2=val @attr3 }
-SimpleMessage       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Pattern             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 Markup              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 Identifier            ^^
 Attribute                ^^^^^^
@@ -14,7 +14,7 @@ Identifier                                  ^^^^^
 === diagnostics ===
 
 === ast ===
-SimpleMessage {
+Pattern {
     parts: [
         Markup {
             span: @0..31,

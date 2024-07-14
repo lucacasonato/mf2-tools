@@ -1,7 +1,7 @@
 {#el @attr1@attr2 }
 === spans ===
                     {#el @attr1@attr2 }
-SimpleMessage       ^^^^^^^^^^^^^^^^^^^
+Pattern             ^^^^^^^^^^^^^^^^^^^
 Markup              ^^^^^^^^^^^^^^^^^^^
 Identifier            ^^
 Attribute                ^^^^^^
@@ -13,7 +13,7 @@ Attributes must be preceeded by a leading space (at @11..17)
   {#el @attr1@attr2 }
              ^^^^^^
 === ast ===
-SimpleMessage {
+Pattern {
     parts: [
         Markup {
             span: @0..19,

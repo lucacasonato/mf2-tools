@@ -1,7 +1,7 @@
 a{ 0 }
 === spans ===
                     a{ 0 }
-SimpleMessage       ^^^^^^
+Pattern             ^^^^^^
 Text                ^
 LiteralExpression    ^^^^^
 Number                 ^
@@ -9,7 +9,7 @@ Number.integral        ^
 === diagnostics ===
 
 === ast ===
-SimpleMessage {
+Pattern {
     parts: [
         Text {
             start: @0,

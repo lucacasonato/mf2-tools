@@ -1,7 +1,7 @@
 a{ 1.34e+56 }
 === spans ===
                     a{ 1.34e+56 }
-SimpleMessage       ^^^^^^^^^^^^^
+Pattern             ^^^^^^^^^^^^^
 Text                ^
 LiteralExpression    ^^^^^^^^^^^^
 Number                 ^^^^^^^^
@@ -11,7 +11,7 @@ Number.exponent              ^^
 === diagnostics ===
 
 === ast ===
-SimpleMessage {
+Pattern {
     parts: [
         Text {
             start: @0,

@@ -1,7 +1,7 @@
 a{|abc\|def|}
 === spans ===
                     a{|abc\|def|}
-SimpleMessage       ^^^^^^^^^^^^^
+Pattern             ^^^^^^^^^^^^^
 Text                ^
 LiteralExpression    ^^^^^^^^^^^^
 Quoted                ^^^^^^^^^^
@@ -11,7 +11,7 @@ Text                        ^^^
 === diagnostics ===
 
 === ast ===
-SimpleMessage {
+Pattern {
     parts: [
         Text {
             start: @0,

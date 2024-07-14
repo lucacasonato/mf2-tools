@@ -1,7 +1,7 @@
 {:a: b}
 === spans ===
                     {:a: b}
-SimpleMessage       ^^^^^^^
+Pattern             ^^^^^^^
 AnnotationExpression^^^^^^^
 Function             ^^^^^
 Identifier            ^^
@@ -16,7 +16,7 @@ Option is missing a value, which is required (at @5..6)
   {:a: b}
        ^
 === ast ===
-SimpleMessage {
+Pattern {
     parts: [
         AnnotationExpression {
             span: @0..7,

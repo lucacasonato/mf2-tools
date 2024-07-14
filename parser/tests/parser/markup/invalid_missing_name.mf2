@@ -1,7 +1,7 @@
 {# }
 === spans ===
                     {# }
-SimpleMessage       ^^^^
+Pattern             ^^^^
 Markup              ^^^^
 Identifier            
 === diagnostics ===
@@ -9,7 +9,7 @@ Markup is missing an identifier (at @0..4)
   {# }
   ^^^^
 === ast ===
-SimpleMessage {
+Pattern {
     parts: [
         Markup {
             span: @0..4,

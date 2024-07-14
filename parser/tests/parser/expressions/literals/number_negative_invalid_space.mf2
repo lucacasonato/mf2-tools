@@ -1,7 +1,7 @@
 a{ - 1 }
 === spans ===
                     a{ - 1 }
-SimpleMessage       ^^^^^^^^
+Pattern             ^^^^^^^^
 Text                ^
 LiteralExpression    ^^^^^^^
 Number                 ^
@@ -14,7 +14,7 @@ Unrecognized placeholder contents (at @5..6)
   a{ - 1 }
        ^
 === ast ===
-SimpleMessage {
+Pattern {
     parts: [
         Text {
             start: @0,

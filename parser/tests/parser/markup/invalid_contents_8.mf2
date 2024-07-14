@@ -1,7 +1,7 @@
 {#foo !abc@hello /}
 === spans ===
                     {#foo !abc@hello /}
-SimpleMessage       ^^^^^^^^^^^^^^^^^^^
+Pattern             ^^^^^^^^^^^^^^^^^^^
 Markup              ^^^^^^^^^^^^^^^^^^^
 Identifier            ^^^
 Attribute                     ^^^^^^
@@ -14,7 +14,7 @@ Attributes must be preceeded by a leading space (at @10..16)
   {#foo !abc@hello /}
             ^^^^^^
 === ast ===
-SimpleMessage {
+Pattern {
     parts: [
         Markup {
             span: @0..19,

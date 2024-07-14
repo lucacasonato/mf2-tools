@@ -1,7 +1,7 @@
 {#foo = bar }
 === spans ===
                     {#foo = bar }
-SimpleMessage       ^^^^^^^^^^^^^
+Pattern             ^^^^^^^^^^^^^
 Markup              ^^^^^^^^^^^^^
 Identifier            ^^^
 FnOrMarkupOption          ^^^^^
@@ -12,7 +12,7 @@ Option is missing a key (at @6..11)
   {#foo = bar }
         ^^^^^
 === ast ===
-SimpleMessage {
+Pattern {
     parts: [
         Markup {
             span: @0..13,

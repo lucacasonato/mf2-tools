@@ -1,7 +1,7 @@
 {#foo !abc :a=b /}
 === spans ===
                     {#foo !abc :a=b /}
-SimpleMessage       ^^^^^^^^^^^^^^^^^^
+Pattern             ^^^^^^^^^^^^^^^^^^
 Markup              ^^^^^^^^^^^^^^^^^^
 Identifier            ^^^
 FnOrMarkupOption               ^^^^
@@ -15,7 +15,7 @@ Identifier is missing a namespace (at @11..13)
   {#foo !abc :a=b /}
              ^^
 === ast ===
-SimpleMessage {
+Pattern {
     parts: [
         Markup {
             span: @0..18,

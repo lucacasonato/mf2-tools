@@ -1,12 +1,12 @@
 Hello, World!
 === spans ===
                     Hello, World!
-SimpleMessage       ^^^^^^^^^^^^^
+Pattern             ^^^^^^^^^^^^^
 Text                ^^^^^^^^^^^^^
 === diagnostics ===
 
 === ast ===
-SimpleMessage {
+Pattern {
     parts: [
         Text {
             start: @0,

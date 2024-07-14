@@ -1,7 +1,7 @@
 {#el opt = $var }
 === spans ===
                     {#el opt = $var }
-SimpleMessage       ^^^^^^^^^^^^^^^^^
+Pattern             ^^^^^^^^^^^^^^^^^
 Markup              ^^^^^^^^^^^^^^^^^
 Identifier            ^^
 FnOrMarkupOption         ^^^^^^^^^^
@@ -10,7 +10,7 @@ Variable                       ^^^^
 === diagnostics ===
 
 === ast ===
-SimpleMessage {
+Pattern {
     parts: [
         Markup {
             span: @0..17,

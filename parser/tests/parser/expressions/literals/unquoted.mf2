@@ -1,14 +1,14 @@
 a{abc}
 === spans ===
                     a{abc}
-SimpleMessage       ^^^^^^
+Pattern             ^^^^^^
 Text                ^
 LiteralExpression    ^^^^^
 Text                  ^^^
 === diagnostics ===
 
 === ast ===
-SimpleMessage {
+Pattern {
     parts: [
         Text {
             start: @0,

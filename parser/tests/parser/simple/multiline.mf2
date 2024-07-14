@@ -6,7 +6,7 @@ hi
 
 === spans ===
                     hello↵hi↵{↵⇥0↵}↵
-SimpleMessage       ^^^^^^^^^^^^^^^^
+Pattern             ^^^^^^^^^^^^^^^^
 Text                ^^^^^^^^^
 LiteralExpression            ^^^^^^
 Number                          ^
@@ -15,7 +15,7 @@ Text                               ^
 === diagnostics ===
 
 === ast ===
-SimpleMessage {
+Pattern {
     parts: [
         Text {
             start: @0,

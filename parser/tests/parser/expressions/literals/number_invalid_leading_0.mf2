@@ -1,7 +1,7 @@
 a{ 01 }
 === spans ===
                     a{ 01 }
-SimpleMessage       ^^^^^^^
+Pattern             ^^^^^^^
 Text                ^
 LiteralExpression    ^^^^^^
 Number                 ^^
@@ -11,7 +11,7 @@ Number has a leading zero in the integral part (at @3..5)
   a{ 01 }
      ^^
 === ast ===
-SimpleMessage {
+Pattern {
     parts: [
         Text {
             start: @0,

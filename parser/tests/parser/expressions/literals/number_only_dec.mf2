@@ -1,7 +1,7 @@
 a{ .03 }
 === spans ===
                     a{ .03 }
-SimpleMessage       ^^^^^^^^
+Pattern             ^^^^^^^^
 Text                ^
 LiteralExpression    ^^^^^^^
 Number                 ^^^
@@ -12,7 +12,7 @@ Number is missing an integral part (at @3..6)
   a{ .03 }
      ^^^
 === ast ===
-SimpleMessage {
+Pattern {
     parts: [
         Text {
             start: @0,
