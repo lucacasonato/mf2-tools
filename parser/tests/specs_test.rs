@@ -11,7 +11,7 @@ use file_test_runner::collection::CollectedTest;
 use file_test_runner::RunOptions;
 use file_test_runner::TestResult;
 use mf2_parser::ast;
-use mf2_parser::ast::Pattern;
+use mf2_parser::ast::Message;
 use mf2_parser::parse;
 use mf2_parser::Diagnostic;
 use mf2_parser::Span;
@@ -114,7 +114,7 @@ fn run_test(test: &CollectedTest) {
   }
 }
 
-fn generated_actual_ast_dbg(actual_ast: &Pattern) -> String {
+fn generated_actual_ast_dbg(actual_ast: &Message) -> String {
   format!("{actual_ast:#?}")
 }
 
@@ -149,7 +149,7 @@ fn generate_actual_diagnostics(
 }
 
 fn generate_actual_spans(
-  actual_ast: &Pattern,
+  actual_ast: &Message,
   input_message: &str,
   normalized_message: &str,
 ) -> String {

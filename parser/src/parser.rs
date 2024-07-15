@@ -14,9 +14,10 @@ use crate::ast::LiteralExpression;
 use crate::ast::LiteralOrVariable;
 use crate::ast::Markup;
 use crate::ast::MarkupKind;
-use crate::ast::MessagePart;
+use crate::ast::Message;
 use crate::ast::Number;
 use crate::ast::Pattern;
+use crate::ast::PatternPart;
 use crate::ast::PrivateUseAnnotation;
 use crate::ast::Quoted;
 use crate::ast::QuotedPart;
@@ -49,7 +50,7 @@ impl<'a> Parser<'a> {
 
   pub fn parse(
     mut self,
-  ) -> (Pattern<'a>, Vec<Diagnostic<'a>>, SourceTextInfo<'a>) {
+  ) -> (Message<'a>, Vec<Diagnostic<'a>>, SourceTextInfo<'a>) {
     while let Some((loc, c)) = self.peek() {
       match c {
         chars::space!() => {
@@ -60,7 +61,7 @@ impl<'a> Parser<'a> {
         // Also include `\0` and `}` for error recovery.
         chars::simple_start!() | '\0' | '}' => {
           return (
-            self.parse_pattern(),
+            Message::Simple(self.parse_pattern()),
             self.diagnostics,
             self.text.into_info(),
           )
@@ -78,9 +79,9 @@ impl<'a> Parser<'a> {
     let end = self.text.end_location();
 
     (
-      Pattern {
-        parts: vec![MessagePart::Text(self.slice_text(start..end))],
-      },
+      Message::Simple(Pattern {
+        parts: vec![PatternPart::Text(self.slice_text(start..end))],
+      }),
       self.diagnostics,
       self.text.into_info(),
     )
@@ -108,17 +109,17 @@ impl<'a> Parser<'a> {
       match c {
         '\\' => {
           if loc != start {
-            parts.push(MessagePart::Text(self.slice_text(start..loc)));
+            parts.push(PatternPart::Text(self.slice_text(start..loc)));
           }
           let escape = self.parse_escape();
           if let Some(escape) = escape {
-            parts.push(MessagePart::Escape(escape));
+            parts.push(PatternPart::Escape(escape));
           }
           start = self.current_location();
         }
         '{' => {
           if loc != start {
-            parts.push(MessagePart::Text(self.slice_text(start..loc)));
+            parts.push(PatternPart::Text(self.slice_text(start..loc)));
           }
           parts.push(self.parse_placeholder());
           start = self.current_location();
@@ -139,7 +140,7 @@ impl<'a> Parser<'a> {
 
     let end = self.current_location();
     if end != start {
-      parts.push(MessagePart::Text(self.slice_text(start..end)));
+      parts.push(PatternPart::Text(self.slice_text(start..end)));
     }
 
     Pattern { parts }
@@ -170,7 +171,7 @@ impl<'a> Parser<'a> {
     })
   }
 
-  fn parse_placeholder(&mut self) -> MessagePart<'a> {
+  fn parse_placeholder(&mut self) -> PatternPart<'a> {
     let (start, c) = self.next().unwrap(); // consume '{'
     debug_assert_eq!(c, '{');
 
@@ -178,12 +179,12 @@ impl<'a> Parser<'a> {
 
     match self.peek() {
       Some((_, '#')) => {
-        return MessagePart::Markup(
+        return PatternPart::Markup(
           self.parse_markup(start, MarkupStartKind::OpenOrStandalone),
         )
       }
       Some((_, '/')) => {
-        return MessagePart::Markup(
+        return PatternPart::Markup(
           self.parse_markup(start, MarkupStartKind::Close),
         )
       }
@@ -294,7 +295,7 @@ impl<'a> Parser<'a> {
       }
     };
 
-    MessagePart::Expression(expr)
+    PatternPart::Expression(expr)
   }
 
   fn parse_literal_or_variable(&mut self) -> Option<LiteralOrVariable<'a>> {
