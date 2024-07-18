@@ -792,15 +792,13 @@ ast_enum! {
 
 #[derive(Debug, Clone)]
 pub struct QuotedPattern<'a> {
-  pub start: Location,
+  pub span: Span,
   pub pattern: Pattern<'a>,
 }
 
 impl Spanned for QuotedPattern<'_> {
   fn span(&self) -> Span {
-    let start = self.start;
-    let end = self.pattern.span().end + "}}";
-    Span::new(start..end)
+    self.span
   }
 }
 

@@ -3,6 +3,8 @@ use std::ops::Range;
 use crate::ast::Annotation;
 use crate::ast::AnnotationExpression;
 use crate::ast::Attribute;
+use crate::ast::ComplexMessage;
+use crate::ast::ComplexMessageBody;
 use crate::ast::Escape;
 use crate::ast::ExponentSign;
 use crate::ast::Expression;
@@ -21,6 +23,7 @@ use crate::ast::PatternPart;
 use crate::ast::PrivateUseAnnotation;
 use crate::ast::Quoted;
 use crate::ast::QuotedPart;
+use crate::ast::QuotedPattern;
 use crate::ast::ReservedAnnotation;
 use crate::ast::ReservedBodyPart;
 use crate::ast::Text;
@@ -56,21 +59,46 @@ impl<'a> Parser<'a> {
         chars::space!() => {
           self.next();
         }
-        // Allow unreachable patterns because space is already handled above.
-        #[allow(unreachable_patterns)]
-        // Also include `\0` and `}` for error recovery.
-        chars::simple_start!() | '\0' | '}' => {
+
+        crate::chars::content!() | '@' | '|' // simple-start-char
+         | '\\' // escaped-char
+         | '\0' | '}' // error recovery
+        => {
           return (
-            Message::Simple(self.parse_pattern()),
+            Message::Simple(self.parse_pattern(self.text.start_location())),
             self.diagnostics,
             self.text.into_info(),
           )
         }
+        '{' => {
+          // This could now either be a quoted pattern (so a complex message),
+          // or a placeholder (so a simple message).
+          self.next(); // eat '{'
+          let peeked = self.peek();
+          self.text.reset_to(loc); // reset to '{'
+          match peeked {
+            Some((_, '{')) => {
+              return (
+                Message::Complex(self.parse_complex_message()),
+                self.diagnostics,
+                self.text.into_info(),
+              )
+            }
+            _ => {
+              return (
+                Message::Simple(self.parse_pattern(self.text.start_location())),
+                self.diagnostics,
+                self.text.into_info(),
+              )
+            }
+          }
+        }
         '.' => {
-          self.report(Diagnostic::ComplexMessageNotYetSupported {
-            span: Span::new(loc..self.text.end_location()),
-          });
-          break;
+          return (
+            Message::Complex(self.parse_complex_message()),
+            self.diagnostics,
+            self.text.into_info(),
+          )
         }
       }
     }
@@ -101,10 +129,9 @@ impl<'a> Parser<'a> {
     self.diagnostics.push(diagnostic);
   }
 
-  fn parse_pattern(&mut self) -> Pattern<'a> {
+  fn parse_pattern(&mut self, mut start: Location) -> Pattern<'a> {
     let mut parts = vec![];
 
-    let mut start = self.text.start_location();
     while let Some((loc, c)) = self.peek() {
       match c {
         '\\' => {
@@ -911,6 +938,78 @@ impl<'a> Parser<'a> {
         span: Span::new(start..end),
       });
     }
+  }
+
+  fn parse_complex_message(&mut self) -> ComplexMessage<'a> {
+    let mut declarations = vec![];
+    let mut body = None;
+
+    loop {
+      match self.peek() {
+        Some((_, chars::space!())) => {
+          self.next();
+        }
+        Some((_, '.')) => {
+          let name = self.parse_name();
+          match name {
+            "input" => {
+              todo!("input declaration")
+            }
+            "local" => {
+              todo!("local declaration")
+            }
+            "match" => {
+              todo!("matcher")
+            }
+            _ => {
+              todo!("reserved statement")
+            }
+          }
+        }
+        Some((loc, '{')) => {
+          // parse quoted pattern, or error recover for placeholder
+          self.next(); // consume '{'
+          let peeked = self.peek();
+          if let Some((_, '{')) = peeked {
+            todo!("quoted pattern")
+          } else {
+            self.text.reset_to(loc); // reset to '{'
+            break;
+          }
+        }
+        _ => {
+          break;
+        }
+      }
+    }
+
+    // error recovery for an unquoted pattern
+    if self.peek().is_some() {
+      let pattern = self.parse_pattern(self.current_location());
+      if body.is_some() {
+        todo!("report as extra content");
+      } else {
+        body = Some(ComplexMessageBody::QuotedPattern(QuotedPattern {
+          span: pattern.span(),
+          pattern,
+        }));
+      }
+    }
+
+    let body = body.unwrap_or_else(|| {
+      todo!("report as missing body");
+      ComplexMessageBody::QuotedPattern(QuotedPattern {
+        span: Span::new(self.current_location()..self.current_location()),
+        pattern: Pattern {
+          parts: vec![PatternPart::Text(Text {
+            start: self.current_location(),
+            content: "",
+          })],
+        },
+      })
+    });
+
+    ComplexMessage { declarations, body }
   }
 }
 

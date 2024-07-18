@@ -14,15 +14,6 @@ macro_rules! space {
 }
 pub(crate) use space;
 
-macro_rules! simple_start {
-  () => {
-    crate::chars::content!() | crate::chars::space!() | '@' | '|' | // simple-start-char
-    '\\' | // escaped-char
-    '{' // placeholder
-  };
-}
-pub(crate) use simple_start;
-
 macro_rules! reserved {
   () => {
     crate::chars::content!() | '.'
