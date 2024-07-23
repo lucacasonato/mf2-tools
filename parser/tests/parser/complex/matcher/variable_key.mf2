@@ -8,8 +8,8 @@ Matcher             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 LiteralExpression          ^^^
 Number                      ^
 Number.integral             ^
-Variant                         ^^^^^^^^^^^^^
-Text                            ^^^
+Variant                        ^^^^^^^^^^^^^^
+Text                           ^^^^
 QuotedPattern                       ^^^^^^^^^
 Pattern                               ^^^^^
 Text                                  ^^^^^
@@ -45,8 +45,8 @@ ComplexMessage {
             Variant {
                 keys: [
                     Text {
-                        start: @12,
-                        content: "var",
+                        start: @11,
+                        content: "$var",
                     },
                 ],
                 pattern: QuotedPattern {

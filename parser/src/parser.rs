@@ -68,7 +68,7 @@ impl<'a> Parser<'a> {
           self.next();
         }
 
-        crate::chars::content!() | '@' | '|' // simple-start-char
+        chars::content!() | '@' | '|' // simple-start-char
          | '\\' // escaped-char
          | '\0' | '}' // error recovery
         => {
@@ -237,9 +237,7 @@ impl<'a> Parser<'a> {
       _ => {}
     }
 
-    let expr = self.parse_expression(start);
-
-    PatternPart::Expression(expr)
+    PatternPart::Expression(self.parse_expression(start))
   }
 
   // Caller must consume the opening `{` before calling this function and pass
@@ -991,8 +989,9 @@ impl<'a> Parser<'a> {
               let matcher = self.parse_matcher(start);
               if body.is_some() {
                 todo!("multiple bodies")
+              } else {
+                body = Some(ComplexMessageBody::Matcher(matcher));
               }
-              body = Some(ComplexMessageBody::Matcher(matcher));
               continue;
             }
             _ => {
@@ -1007,14 +1006,17 @@ impl<'a> Parser<'a> {
           }
           declarations.push(declaration);
         }
-        Some((loc, '{')) if body.is_none() => {
+        Some((loc, '{')) => {
           // parse quoted pattern, or error recover for placeholder
           self.next(); // consume '{'
           let peeked = self.peek();
           if let Some((_, '{')) = peeked {
-            body = Some(ComplexMessageBody::QuotedPattern(
-              self.parse_quoted_pattern(loc),
-            ));
+            let quoted = self.parse_quoted_pattern(loc);
+            if body.is_none() {
+              body = Some(ComplexMessageBody::QuotedPattern(quoted));
+            } else {
+              todo!("multiple bodies")
+            }
           } else {
             self.text.reset_to(loc); // reset to '{'
             break;
@@ -1028,12 +1030,14 @@ impl<'a> Parser<'a> {
 
     // error recovery for an unquoted pattern
     if self.peek().is_some() {
+      debug_assert!(!matches!(self.peek(), Some((_, chars::space!()))));
       if body.is_some() {
         self.report(Diagnostic::ComplexMessageTrailingContent {
           span: Span::new(self.current_location()..self.text.end_location()),
         });
       } else {
         let pattern = self.parse_pattern(self.current_location(), false);
+        // todo: remove trailing spaces from the pattern
         self.report(Diagnostic::ComplexMessageBodyNotQuoted {
           span: pattern.span(),
         });
@@ -1086,6 +1090,7 @@ impl<'a> Parser<'a> {
     self.skip_spaces();
 
     if self.eat('=').is_none() {
+      // if next token is a brace, report missing equals but keep parsing as local decl
       todo!("go into declaration error recovery");
     }
 
@@ -1133,6 +1138,8 @@ impl<'a> Parser<'a> {
   }
 
   fn parse_matcher(&mut self, start: Location) -> Matcher<'a> {
+    // At this point, `.match` has already been consumed. `start` is the location of the `.`.
+
     let mut selectors = vec![];
 
     self.skip_spaces();
@@ -1143,64 +1150,66 @@ impl<'a> Parser<'a> {
       self.skip_spaces();
     }
 
-    let mut variants = vec![];
-    let mut keys = vec![];
+    // todo, report error for no selectors
 
-    let mut had_space_or_quoted_pattern = true;
+    let mut variants = vec![];
+    let mut current_variant_keys = vec![];
+
+    let mut had_space_or_closing_curly = true; // we had an expression
     while let Some((loc, c)) = self.peek() {
       match c {
         '*' => {
           self.next();
           let key = Key::Star(Star { start: loc });
-          if !had_space_or_quoted_pattern {
+          if !had_space_or_closing_curly {
             self.report(Diagnostic::MissingSpaceBeforeKey { span: key.span() })
           }
-          keys.push(key);
-          had_space_or_quoted_pattern = self.skip_spaces();
+          current_variant_keys.push(key);
+          had_space_or_closing_curly = self.skip_spaces();
         }
         '{' => {
           self.next();
           if let Some((_, '{')) = self.peek() {
             let pattern = self.parse_quoted_pattern(loc);
-            let keys = std::mem::take(&mut keys);
+            let keys = std::mem::take(&mut current_variant_keys);
+            // todo, at least one key is required
             variants.push(Variant { keys, pattern });
           } else {
-            todo!("recover from expression as matcher key")
+            todo!("parse as expression and use as quoted pattern for variant")
           }
           self.skip_spaces();
-          had_space_or_quoted_pattern = true;
+          had_space_or_closing_curly = true;
         }
         _ => {
           let literal_or_variable = self.parse_literal_or_variable();
           let key = match literal_or_variable {
             Some(LiteralOrVariable::Literal(literal)) => Key::Literal(literal),
             Some(LiteralOrVariable::Variable(variable)) => {
-              self.report(Diagnostic::MatcherKeyIsVariable {
-                span: variable.span(),
-              });
+              let span = variable.span();
+              self.report(Diagnostic::MatcherKeyIsVariable { span });
               Key::Literal(Literal::Text(Text {
-                start: variable.start + '$',
-                content: variable.name,
+                start: variable.start,
+                content: self.text.slice(span.start..span.end),
               }))
             }
             None => {
               // eat until the next space or quoted pattern
-              
+
               todo!("error recovery for invalid matcher key")
             }
           };
-          if !had_space_or_quoted_pattern {
+          if !had_space_or_closing_curly {
             self.report(Diagnostic::MissingSpaceBeforeKey { span: key.span() })
           }
-          keys.push(key);
-          had_space_or_quoted_pattern = self.skip_spaces();
+          current_variant_keys.push(key);
+          had_space_or_closing_curly = self.skip_spaces();
         }
       }
     }
 
-    if !keys.is_empty() {
+    if !current_variant_keys.is_empty() {
       variants.push(Variant {
-        keys: std::mem::take(&mut keys),
+        keys: std::mem::take(&mut current_variant_keys),
         pattern: QuotedPattern {
           span: Span::new(self.current_location()..self.current_location()),
           pattern: Pattern {
