@@ -1,0 +1,75 @@
+.local $a = {1}
+{{}}
+.local $b = {1}
+=== spans ===
+                    .local $a = {1}↵{{}}↵.local $b = {1}
+ComplexMessage      ^^^^^^^^^^^^^^^^^^^^
+Declaration         ^^^^^^^^^^^^^^^
+LocalDeclaration    ^^^^^^^^^^^^^^^
+Variable                   ^^
+LiteralExpression               ^^^
+Number                           ^
+Number.integral                  ^
+Declaration                              ^^^^^^^^^^^^^^^
+LocalDeclaration                         ^^^^^^^^^^^^^^^
+Variable                                        ^^
+LiteralExpression                                    ^^^
+Number                                                ^
+Number.integral                                       ^
+QuotedPattern                       ^^^^
+Pattern             
+=== diagnostics ===
+Declarations must occur before the body, but was found after the body (at @21..36)
+  .local $a = {1}↵{{}}↵.local $b = {1}
+                       ^^^^^^^^^^^^^^^
+=== ast ===
+ComplexMessage {
+    declarations: [
+        LocalDeclaration {
+            start: @0,
+            variable: Variable {
+                start: @7,
+                name: "a",
+            },
+            expression: LiteralExpression {
+                span: @12..15,
+                literal: Number {
+                    start: @13,
+                    raw: "1",
+                    is_negative: false,
+                    integral_len: 1,
+                    fractional_len: None,
+                    exponent_len: None,
+                },
+                annotation: None,
+                attributes: [],
+            },
+        },
+        LocalDeclaration {
+            start: @21,
+            variable: Variable {
+                start: @28,
+                name: "b",
+            },
+            expression: LiteralExpression {
+                span: @33..36,
+                literal: Number {
+                    start: @34,
+                    raw: "1",
+                    is_negative: false,
+                    integral_len: 1,
+                    fractional_len: None,
+                    exponent_len: None,
+                },
+                annotation: None,
+                attributes: [],
+            },
+        },
+    ],
+    body: QuotedPattern {
+        span: @16..20,
+        pattern: Pattern {
+            parts: [],
+        },
+    },
+}

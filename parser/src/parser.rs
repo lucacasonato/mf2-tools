@@ -3,17 +3,24 @@ use std::ops::Range;
 use crate::ast::Annotation;
 use crate::ast::AnnotationExpression;
 use crate::ast::Attribute;
+use crate::ast::ComplexMessage;
+use crate::ast::ComplexMessageBody;
+use crate::ast::Declaration;
 use crate::ast::Escape;
 use crate::ast::ExponentSign;
 use crate::ast::Expression;
 use crate::ast::FnOrMarkupOption;
 use crate::ast::Function;
 use crate::ast::Identifier;
+use crate::ast::InputDeclaration;
+use crate::ast::Key;
 use crate::ast::Literal;
 use crate::ast::LiteralExpression;
 use crate::ast::LiteralOrVariable;
+use crate::ast::LocalDeclaration;
 use crate::ast::Markup;
 use crate::ast::MarkupKind;
+use crate::ast::Matcher;
 use crate::ast::Message;
 use crate::ast::Number;
 use crate::ast::Pattern;
@@ -21,11 +28,15 @@ use crate::ast::PatternPart;
 use crate::ast::PrivateUseAnnotation;
 use crate::ast::Quoted;
 use crate::ast::QuotedPart;
+use crate::ast::QuotedPattern;
 use crate::ast::ReservedAnnotation;
 use crate::ast::ReservedBodyPart;
+use crate::ast::ReservedStatement;
+use crate::ast::Star;
 use crate::ast::Text;
 use crate::ast::Variable;
 use crate::ast::VariableExpression;
+use crate::ast::Variant;
 use crate::chars;
 use crate::diagnostic::Diagnostic;
 use crate::util::LengthShort;
@@ -56,21 +67,46 @@ impl<'a> Parser<'a> {
         chars::space!() => {
           self.next();
         }
-        // Allow unreachable patterns because space is already handled above.
-        #[allow(unreachable_patterns)]
-        // Also include `\0` and `}` for error recovery.
-        chars::simple_start!() | '\0' | '}' => {
+
+        chars::content!() | '@' | '|' // simple-start-char
+         | '\\' // escaped-char
+         | '\0' | '}' // error recovery
+        => {
           return (
-            Message::Simple(self.parse_pattern()),
+            Message::Simple(self.parse_pattern(self.text.start_location(), false)),
             self.diagnostics,
             self.text.into_info(),
           )
         }
+        '{' => {
+          // This could now either be a quoted pattern (so a complex message),
+          // or a placeholder (so a simple message).
+          self.next(); // eat '{'
+          let peeked = self.peek();
+          self.text.reset_to(loc); // reset to '{'
+          match peeked {
+            Some((_, '{')) => {
+              return (
+                Message::Complex(self.parse_complex_message()),
+                self.diagnostics,
+                self.text.into_info(),
+              )
+            }
+            _ => {
+              return (
+                Message::Simple(self.parse_pattern(self.text.start_location(), false)),
+                self.diagnostics,
+                self.text.into_info(),
+              )
+            }
+          }
+        }
         '.' => {
-          self.report(Diagnostic::ComplexMessageNotYetSupported {
-            span: Span::new(loc..self.text.end_location()),
-          });
-          break;
+          return (
+            Message::Complex(self.parse_complex_message()),
+            self.diagnostics,
+            self.text.into_info(),
+          )
         }
       }
     }
@@ -101,10 +137,13 @@ impl<'a> Parser<'a> {
     self.diagnostics.push(diagnostic);
   }
 
-  fn parse_pattern(&mut self) -> Pattern<'a> {
+  fn parse_pattern(
+    &mut self,
+    mut start: Location,
+    inside_quoted: bool,
+  ) -> Pattern<'a> {
     let mut parts = vec![];
 
-    let mut start = self.text.start_location();
     while let Some((loc, c)) = self.peek() {
       match c {
         '\\' => {
@@ -132,8 +171,15 @@ impl<'a> Parser<'a> {
           self.next();
         }
         '}' => {
-          self.report(Diagnostic::InvalidClosingBrace { brace_loc: loc });
+          // If we are inside a quoted pattern, and we see a double closing
+          // brace, we should return early.
           self.next();
+          if inside_quoted && self.peek().map(|(_, c)| c) == Some('}') {
+            self.text.reset_to(loc);
+            break;
+          } else {
+            self.report(Diagnostic::InvalidClosingBrace { brace_loc: loc });
+          }
         }
       }
     }
@@ -191,6 +237,13 @@ impl<'a> Parser<'a> {
       _ => {}
     }
 
+    PatternPart::Expression(self.parse_expression(start))
+  }
+
+  // Caller must consume the opening `{` before calling this function and pass
+  // the location of the opening `{` as `start`. The caller must also consume
+  // spaces after the opening `{` before calling this function.
+  fn parse_expression(&mut self, start: Location) -> Expression<'a> {
     let lit_or_var = self.parse_literal_or_variable();
 
     let mut had_space = lit_or_var.is_none() || self.skip_spaces();
@@ -253,7 +306,7 @@ impl<'a> Parser<'a> {
     let end = self.current_location();
     let span = Span::new(start..end);
 
-    let expr = match lit_or_var {
+    match lit_or_var {
       Some(LiteralOrVariable::Variable(variable)) => {
         Expression::VariableExpression(VariableExpression {
           span,
@@ -293,9 +346,7 @@ impl<'a> Parser<'a> {
           })
         }
       }
-    };
-
-    PatternPart::Expression(expr)
+    }
   }
 
   fn parse_literal_or_variable(&mut self) -> Option<LiteralOrVariable<'a>> {
@@ -910,6 +961,300 @@ impl<'a> Parser<'a> {
       self.report(Diagnostic::MarkupInvalidContents {
         span: Span::new(start..end),
       });
+    }
+  }
+
+  fn parse_complex_message(&mut self) -> ComplexMessage<'a> {
+    let mut declarations = vec![];
+    let mut body = None;
+
+    loop {
+      match self.peek() {
+        Some((_, chars::space!())) => {
+          self.next();
+        }
+        Some((start, '.')) => {
+          self.next(); // consume '.'
+          let name = self.parse_name();
+          let declaration = match name {
+            "input" => {
+              let input = self.parse_input_declaration(start);
+              Declaration::InputDeclaration(input)
+            }
+            "local" => {
+              let local = self.parse_local_declaration(start);
+              Declaration::LocalDeclaration(local)
+            }
+            "match" => {
+              let matcher = self.parse_matcher(start);
+              if body.is_some() {
+                todo!("multiple bodies")
+              } else {
+                body = Some(ComplexMessageBody::Matcher(matcher));
+              }
+              continue;
+            }
+            _ => {
+              let reserved = self.parse_reserved_statement();
+              Declaration::ReservedStatement(reserved)
+            }
+          };
+          if body.is_some() {
+            self.report(Diagnostic::ComplexMessageDeclarationAfterBody {
+              span: declaration.span(),
+            });
+          }
+          declarations.push(declaration);
+        }
+        Some((loc, '{')) => {
+          // parse quoted pattern, or error recover for placeholder
+          self.next(); // consume '{'
+          let peeked = self.peek();
+          if let Some((_, '{')) = peeked {
+            let quoted = self.parse_quoted_pattern(loc);
+            if body.is_none() {
+              body = Some(ComplexMessageBody::QuotedPattern(quoted));
+            } else {
+              todo!("multiple bodies")
+            }
+          } else {
+            self.text.reset_to(loc); // reset to '{'
+            break;
+          }
+        }
+        _ => {
+          break;
+        }
+      }
+    }
+
+    // error recovery for an unquoted pattern
+    if self.peek().is_some() {
+      debug_assert!(!matches!(self.peek(), Some((_, chars::space!()))));
+      if body.is_some() {
+        self.report(Diagnostic::ComplexMessageTrailingContent {
+          span: Span::new(self.current_location()..self.text.end_location()),
+        });
+      } else {
+        let pattern = self.parse_pattern(self.current_location(), false);
+        // todo: remove trailing spaces from the pattern
+        self.report(Diagnostic::ComplexMessageBodyNotQuoted {
+          span: pattern.span(),
+        });
+        body = Some(ComplexMessageBody::QuotedPattern(QuotedPattern {
+          span: pattern.span(),
+          pattern,
+        }));
+      }
+    }
+
+    let body = body.unwrap_or_else(|| {
+      self.report(Diagnostic::ComplexMessageMissingBody {
+        span: Span::new(self.current_location()..self.current_location()),
+      });
+      ComplexMessageBody::QuotedPattern(QuotedPattern {
+        span: Span::new(self.current_location()..self.current_location()),
+        pattern: Pattern {
+          parts: vec![PatternPart::Text(Text {
+            start: self.current_location(),
+            content: "",
+          })],
+        },
+      })
+    });
+
+    ComplexMessage { declarations, body }
+  }
+
+  fn parse_local_declaration(
+    &mut self,
+    start: Location,
+  ) -> LocalDeclaration<'a> {
+    // At this point, `.local` has already been consumed. `start` is the location of the `.`.
+    let has_space = self.skip_spaces();
+    if !has_space {
+      self.report(Diagnostic::LocalKeywordMissingTrailingSpace {
+        span: Span::new(start..self.current_location()),
+      });
+    }
+
+    let next = self.peek();
+    let variable = match next {
+      Some((_, '$')) => self.parse_variable(),
+      Some((_, chars::name_start!())) => {
+        todo!("report missing $ for local variable")
+      }
+      _ => todo!("go into declaration error recovery"),
+    };
+
+    self.skip_spaces();
+
+    if self.eat('=').is_none() {
+      // if next token is a brace, report missing equals but keep parsing as local decl
+      todo!("go into declaration error recovery");
+    }
+
+    self.skip_spaces();
+
+    let Some(open) = self.eat('{') else {
+      todo!("go into declaration error recovery");
+    };
+
+    self.skip_spaces();
+
+    let expression = self.parse_expression(open);
+
+    LocalDeclaration {
+      start,
+      variable,
+      expression,
+    }
+  }
+
+  fn parse_input_declaration(
+    &mut self,
+    start: Location,
+  ) -> InputDeclaration<'a> {
+    // At this point, `.input` has already been consumed. `start` is the location of the `.`.
+
+    self.skip_spaces();
+
+    let Some(open) = self.eat('{') else {
+      todo!("go into declaration error recovery");
+    };
+
+    self.skip_spaces();
+
+    let expression = self.parse_expression(open);
+    let Expression::VariableExpression(expression) = expression else {
+      todo!("report non variable input declaration")
+    };
+
+    InputDeclaration { start, expression }
+  }
+
+  fn parse_reserved_statement(&mut self) -> ReservedStatement<'a> {
+    todo!()
+  }
+
+  fn parse_matcher(&mut self, start: Location) -> Matcher<'a> {
+    // At this point, `.match` has already been consumed. `start` is the location of the `.`.
+
+    let mut selectors = vec![];
+
+    self.skip_spaces();
+    while let Some(open) = self.eat('{') {
+      self.skip_spaces();
+      let expression = self.parse_expression(open);
+      selectors.push(expression);
+      self.skip_spaces();
+    }
+
+    // todo, report error for no selectors
+
+    let mut variants = vec![];
+    let mut current_variant_keys = vec![];
+
+    let mut had_space_or_closing_curly = true; // we had an expression
+    while let Some((loc, c)) = self.peek() {
+      match c {
+        '*' => {
+          self.next();
+          let key = Key::Star(Star { start: loc });
+          if !had_space_or_closing_curly {
+            self.report(Diagnostic::MissingSpaceBeforeKey { span: key.span() })
+          }
+          current_variant_keys.push(key);
+          had_space_or_closing_curly = self.skip_spaces();
+        }
+        '{' => {
+          self.next();
+          if let Some((_, '{')) = self.peek() {
+            let pattern = self.parse_quoted_pattern(loc);
+            let keys = std::mem::take(&mut current_variant_keys);
+            // todo, at least one key is required
+            variants.push(Variant { keys, pattern });
+          } else {
+            todo!("parse as expression and use as quoted pattern for variant")
+          }
+          self.skip_spaces();
+          had_space_or_closing_curly = true;
+        }
+        _ => {
+          let literal_or_variable = self.parse_literal_or_variable();
+          let key = match literal_or_variable {
+            Some(LiteralOrVariable::Literal(literal)) => Key::Literal(literal),
+            Some(LiteralOrVariable::Variable(variable)) => {
+              let span = variable.span();
+              self.report(Diagnostic::MatcherKeyIsVariable { span });
+              Key::Literal(Literal::Text(Text {
+                start: variable.start,
+                content: self.text.slice(span.start..span.end),
+              }))
+            }
+            None => {
+              // eat until the next space or quoted pattern
+
+              todo!("error recovery for invalid matcher key")
+            }
+          };
+          if !had_space_or_closing_curly {
+            self.report(Diagnostic::MissingSpaceBeforeKey { span: key.span() })
+          }
+          current_variant_keys.push(key);
+          had_space_or_closing_curly = self.skip_spaces();
+        }
+      }
+    }
+
+    if !current_variant_keys.is_empty() {
+      variants.push(Variant {
+        keys: std::mem::take(&mut current_variant_keys),
+        pattern: QuotedPattern {
+          span: Span::new(self.current_location()..self.current_location()),
+          pattern: Pattern {
+            parts: vec![PatternPart::Text(Text {
+              start: self.current_location(),
+              content: "",
+            })],
+          },
+        },
+      });
+      todo!("report missing pattern for matcher variant")
+    }
+
+    Matcher {
+      start,
+      selectors,
+      variants,
+    }
+  }
+
+  fn parse_quoted_pattern(&mut self, start: Location) -> QuotedPattern<'a> {
+    // At this point we have consumed the first `{` (this is `start`) and are
+    // sure that the next character is `{`.
+    self.eat('{').unwrap(); // consume '{'
+
+    let pattern = self.parse_pattern(self.current_location(), true);
+
+    // Now consume the closing `}}`.
+
+    let maybe_close = self.next();
+    match maybe_close {
+      Some((_, '}')) => {
+        self.eat('}').unwrap(); // consume the second '}' - parse_pattern guarantees it's there
+      }
+      Some(_) => unreachable!(),
+      None => {
+        self.report(Diagnostic::UnterminatedQuotedPattern {
+          span: Span::new(start..self.current_location()),
+        });
+      }
+    }
+
+    QuotedPattern {
+      span: Span::new(start..self.current_location()),
+      pattern,
     }
   }
 }

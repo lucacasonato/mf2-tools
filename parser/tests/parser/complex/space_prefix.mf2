@@ -1,18 +1,48 @@
  .input { $hello :space }
+{{}}
 === spans ===
-                     .input { $hello :space }
-Pattern             ^^^^^^^^^^^^^^^^^^^^^^^^^
-Text                ^^^^^^^^^^^^^^^^^^^^^^^^^
+                     .input { $hello :space }↵{{}}
+ComplexMessage       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Declaration          ^^^^^^^^^^^^^^^^^^^^^^^^
+InputDeclaration     ^^^^^^^^^^^^^^^^^^^^^^^^
+VariableExpression          ^^^^^^^^^^^^^^^^^
+Variable                      ^^^^^^
+Function                             ^^^^^^
+Identifier                            ^^^^^
+QuotedPattern                                 ^^^^
+Pattern             
 === diagnostics ===
-Complex messages are not yet supported (at @1..25)
-   .input { $hello :space }
-   ^^^^^^^^^^^^^^^^^^^^^^^^
+
 === ast ===
-Pattern {
-    parts: [
-        Text {
-            start: @0,
-            content: " .input { $hello :space }",
+ComplexMessage {
+    declarations: [
+        InputDeclaration {
+            start: @1,
+            expression: VariableExpression {
+                span: @8..25,
+                variable: Variable {
+                    start: @10,
+                    name: "hello",
+                },
+                annotation: Some(
+                    Function {
+                        start: @17,
+                        id: Identifier {
+                            start: @18,
+                            namespace: None,
+                            name: "space",
+                        },
+                        options: [],
+                    },
+                ),
+                attributes: [],
+            },
         },
     ],
+    body: QuotedPattern {
+        span: @26..30,
+        pattern: Pattern {
+            parts: [],
+        },
+    },
 }

@@ -1,0 +1,49 @@
+.local$var = {|hello|}
+{{}}
+=== spans ===
+                    .local$var = {|hello|}↵{{}}
+ComplexMessage      ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Declaration         ^^^^^^^^^^^^^^^^^^^^^^
+LocalDeclaration    ^^^^^^^^^^^^^^^^^^^^^^
+Variable                  ^^^^
+LiteralExpression                ^^^^^^^^^
+Quoted                            ^^^^^^^
+Text                               ^^^^^
+QuotedPattern                              ^^^^
+Pattern             
+=== diagnostics ===
+'.local' keyword must be followed by a space (at @0..6)
+  .local$var = {|hello|}↵{{}}
+  ^^^^^^
+=== ast ===
+ComplexMessage {
+    declarations: [
+        LocalDeclaration {
+            start: @0,
+            variable: Variable {
+                start: @6,
+                name: "var",
+            },
+            expression: LiteralExpression {
+                span: @13..22,
+                literal: Quoted {
+                    span: @14..21,
+                    parts: [
+                        Text {
+                            start: @15,
+                            content: "hello",
+                        },
+                    ],
+                },
+                annotation: None,
+                attributes: [],
+            },
+        },
+    ],
+    body: QuotedPattern {
+        span: @23..27,
+        pattern: Pattern {
+            parts: [],
+        },
+    },
+}

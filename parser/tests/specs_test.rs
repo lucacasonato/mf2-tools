@@ -208,6 +208,15 @@ fn generate_actual_spans(
       VariableExpression: visit_variable_expression,
       AnnotationExpression: visit_annotation_expression,
       Markup: visit_markup,
+      ComplexMessage: visit_complex_message,
+      Declaration: visit_declaration,
+      InputDeclaration: visit_input_declaration,
+      LocalDeclaration: visit_local_declaration,
+      ReservedStatement: visit_reserved_statement,
+      QuotedPattern: visit_quoted_pattern,
+      Matcher: visit_matcher,
+      Variant: visit_variant,
+      Star: visit_star,
     }
 
     fn visit_number(&mut self, num: &ast::Number) {

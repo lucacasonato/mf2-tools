@@ -1,0 +1,132 @@
+.match{$a :c}{$b :d}e 1{{f}}|g| *{{h}}
+=== spans ===
+                    .match{$a :c}{$b :d}e 1{{f}}|g| *{{h}}
+ComplexMessage      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Matcher             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+VariableExpression        ^^^^^^^
+Variable                   ^^
+Function                      ^^
+Identifier                     ^
+VariableExpression               ^^^^^^^
+Variable                          ^^
+Function                             ^^
+Identifier                            ^
+Variant                                 ^^^^^^^^
+Text                                    ^
+Number                                    ^
+Number.integral                           ^
+QuotedPattern                              ^^^^^
+Pattern                                      ^
+Text                                         ^
+Variant                                         ^^^^^^^^^^
+Quoted                                          ^^^
+Text                                             ^
+Star                                                ^
+QuotedPattern                                        ^^^^^
+Pattern                                                ^
+Text                                                   ^
+=== diagnostics ===
+
+=== ast ===
+ComplexMessage {
+    declarations: [],
+    body: Matcher {
+        start: @0,
+        selectors: [
+            VariableExpression {
+                span: @6..13,
+                variable: Variable {
+                    start: @7,
+                    name: "a",
+                },
+                annotation: Some(
+                    Function {
+                        start: @10,
+                        id: Identifier {
+                            start: @11,
+                            namespace: None,
+                            name: "c",
+                        },
+                        options: [],
+                    },
+                ),
+                attributes: [],
+            },
+            VariableExpression {
+                span: @13..20,
+                variable: Variable {
+                    start: @14,
+                    name: "b",
+                },
+                annotation: Some(
+                    Function {
+                        start: @17,
+                        id: Identifier {
+                            start: @18,
+                            namespace: None,
+                            name: "d",
+                        },
+                        options: [],
+                    },
+                ),
+                attributes: [],
+            },
+        ],
+        variants: [
+            Variant {
+                keys: [
+                    Text {
+                        start: @20,
+                        content: "e",
+                    },
+                    Number {
+                        start: @22,
+                        raw: "1",
+                        is_negative: false,
+                        integral_len: 1,
+                        fractional_len: None,
+                        exponent_len: None,
+                    },
+                ],
+                pattern: QuotedPattern {
+                    span: @23..28,
+                    pattern: Pattern {
+                        parts: [
+                            Text {
+                                start: @25,
+                                content: "f",
+                            },
+                        ],
+                    },
+                },
+            },
+            Variant {
+                keys: [
+                    Quoted {
+                        span: @28..31,
+                        parts: [
+                            Text {
+                                start: @29,
+                                content: "g",
+                            },
+                        ],
+                    },
+                    Star {
+                        start: @32,
+                    },
+                ],
+                pattern: QuotedPattern {
+                    span: @33..38,
+                    pattern: Pattern {
+                        parts: [
+                            Text {
+                                start: @35,
+                                content: "h",
+                            },
+                        ],
+                    },
+                },
+            },
+        ],
+    },
+}

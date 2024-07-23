@@ -1,0 +1,78 @@
+.match {1 :a}
+a|b|{{}}
+=== spans ===
+                    .match {1 :a}↵a|b|{{}}
+ComplexMessage      ^^^^^^^^^^^^^^^^^^^^^^
+Matcher             ^^^^^^^^^^^^^^^^^^^^^^
+LiteralExpression          ^^^^^^
+Number                      ^
+Number.integral             ^
+Function                      ^^
+Identifier                     ^
+Variant                           ^^^^^^^^
+Text                              ^
+Quoted                             ^^^
+Text                                ^
+QuotedPattern                         ^^^^
+Pattern             
+=== diagnostics ===
+Key is missing a leading space (at @15..18)
+  .match {1 :a}↵a|b|{{}}
+                 ^^^
+=== ast ===
+ComplexMessage {
+    declarations: [],
+    body: Matcher {
+        start: @0,
+        selectors: [
+            LiteralExpression {
+                span: @7..13,
+                literal: Number {
+                    start: @8,
+                    raw: "1",
+                    is_negative: false,
+                    integral_len: 1,
+                    fractional_len: None,
+                    exponent_len: None,
+                },
+                annotation: Some(
+                    Function {
+                        start: @10,
+                        id: Identifier {
+                            start: @11,
+                            namespace: None,
+                            name: "a",
+                        },
+                        options: [],
+                    },
+                ),
+                attributes: [],
+            },
+        ],
+        variants: [
+            Variant {
+                keys: [
+                    Text {
+                        start: @14,
+                        content: "a",
+                    },
+                    Quoted {
+                        span: @15..18,
+                        parts: [
+                            Text {
+                                start: @16,
+                                content: "b",
+                            },
+                        ],
+                    },
+                ],
+                pattern: QuotedPattern {
+                    span: @18..22,
+                    pattern: Pattern {
+                        parts: [],
+                    },
+                },
+            },
+        ],
+    },
+}

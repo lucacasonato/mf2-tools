@@ -1,0 +1,24 @@
+{{ Hello, World! }}
+=== spans ===
+                    {{ Hello, World! }}
+ComplexMessage      ^^^^^^^^^^^^^^^^^^^
+QuotedPattern       ^^^^^^^^^^^^^^^^^^^
+Pattern               ^^^^^^^^^^^^^^^
+Text                  ^^^^^^^^^^^^^^^
+=== diagnostics ===
+
+=== ast ===
+ComplexMessage {
+    declarations: [],
+    body: QuotedPattern {
+        span: @0..19,
+        pattern: Pattern {
+            parts: [
+                Text {
+                    start: @2,
+                    content: " Hello, World! ",
+                },
+            ],
+        },
+    },
+}

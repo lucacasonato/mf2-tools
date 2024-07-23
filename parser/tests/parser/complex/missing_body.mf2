@@ -1,0 +1,48 @@
+.local $a={b}
+=== spans ===
+                    .local $a={b}
+ComplexMessage      ^^^^^^^^^^^^^
+Declaration         ^^^^^^^^^^^^^
+LocalDeclaration    ^^^^^^^^^^^^^
+Variable                   ^^
+LiteralExpression             ^^^
+Text                           ^
+QuotedPattern                    
+Pattern                          
+Text                             
+=== diagnostics ===
+Complex message is missing a body (at @13..13)
+  .local $a={b}
+               
+=== ast ===
+ComplexMessage {
+    declarations: [
+        LocalDeclaration {
+            start: @0,
+            variable: Variable {
+                start: @7,
+                name: "a",
+            },
+            expression: LiteralExpression {
+                span: @10..13,
+                literal: Text {
+                    start: @11,
+                    content: "b",
+                },
+                annotation: None,
+                attributes: [],
+            },
+        },
+    ],
+    body: QuotedPattern {
+        span: @13..13,
+        pattern: Pattern {
+            parts: [
+                Text {
+                    start: @13,
+                    content: "",
+                },
+            ],
+        },
+    },
+}

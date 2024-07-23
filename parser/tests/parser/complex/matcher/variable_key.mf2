@@ -1,0 +1,79 @@
+.match {1}
+$var {{Hello}}
+* {{}}
+=== spans ===
+                    .match {1}↵$var {{Hello}}↵* {{}}
+ComplexMessage      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Matcher             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+LiteralExpression          ^^^
+Number                      ^
+Number.integral             ^
+Variant                        ^^^^^^^^^^^^^^
+Text                           ^^^^
+QuotedPattern                       ^^^^^^^^^
+Pattern                               ^^^^^
+Text                                  ^^^^^
+Variant                                       ^^^^^^
+Star                                          ^
+QuotedPattern                                   ^^^^
+Pattern             
+=== diagnostics ===
+Matcher key cannot be a variable (at @11..15)
+  .match {1}↵$var {{Hello}}↵* {{}}
+             ^^^^
+=== ast ===
+ComplexMessage {
+    declarations: [],
+    body: Matcher {
+        start: @0,
+        selectors: [
+            LiteralExpression {
+                span: @7..10,
+                literal: Number {
+                    start: @8,
+                    raw: "1",
+                    is_negative: false,
+                    integral_len: 1,
+                    fractional_len: None,
+                    exponent_len: None,
+                },
+                annotation: None,
+                attributes: [],
+            },
+        ],
+        variants: [
+            Variant {
+                keys: [
+                    Text {
+                        start: @11,
+                        content: "$var",
+                    },
+                ],
+                pattern: QuotedPattern {
+                    span: @16..25,
+                    pattern: Pattern {
+                        parts: [
+                            Text {
+                                start: @18,
+                                content: "Hello",
+                            },
+                        ],
+                    },
+                },
+            },
+            Variant {
+                keys: [
+                    Star {
+                        start: @26,
+                    },
+                ],
+                pattern: QuotedPattern {
+                    span: @28..32,
+                    pattern: Pattern {
+                        parts: [],
+                    },
+                },
+            },
+        ],
+    },
+}

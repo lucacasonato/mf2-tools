@@ -1,0 +1,67 @@
+.input {$a :b}
+abc {$a}
+=== spans ===
+                    .input {$a :b}↵abc {$a}
+ComplexMessage      ^^^^^^^^^^^^^^^^^^^^^^^
+Declaration         ^^^^^^^^^^^^^^
+InputDeclaration    ^^^^^^^^^^^^^^
+VariableExpression         ^^^^^^^
+Variable                    ^^
+Function                       ^^
+Identifier                      ^
+QuotedPattern                      ^^^^^^^^
+Pattern                            ^^^^^^^^
+Text                               ^^^^
+VariableExpression                     ^^^^
+Variable                                ^^
+=== diagnostics ===
+Complex message body must be quoted (at @15..23)
+  .input {$a :b}↵abc {$a}
+                 ^^^^^^^^
+=== ast ===
+ComplexMessage {
+    declarations: [
+        InputDeclaration {
+            start: @0,
+            expression: VariableExpression {
+                span: @7..14,
+                variable: Variable {
+                    start: @8,
+                    name: "a",
+                },
+                annotation: Some(
+                    Function {
+                        start: @11,
+                        id: Identifier {
+                            start: @12,
+                            namespace: None,
+                            name: "b",
+                        },
+                        options: [],
+                    },
+                ),
+                attributes: [],
+            },
+        },
+    ],
+    body: QuotedPattern {
+        span: @15..23,
+        pattern: Pattern {
+            parts: [
+                Text {
+                    start: @15,
+                    content: "abc ",
+                },
+                VariableExpression {
+                    span: @19..23,
+                    variable: Variable {
+                        start: @20,
+                        name: "a",
+                    },
+                    annotation: None,
+                    attributes: [],
+                },
+            ],
+        },
+    },
+}
