@@ -1,0 +1,26 @@
+{{a}}{{b}}
+=== spans ===
+                    {{a}}{{b}}
+ComplexMessage      ^^^^^
+QuotedPattern       ^^^^^
+Pattern               ^
+Text                  ^
+=== diagnostics ===
+Complex message has content after it's body (at @5..10)
+  {{a}}{{b}}
+       ^^^^^
+=== ast ===
+ComplexMessage {
+    declarations: [],
+    body: QuotedPattern {
+        span: @0..5,
+        pattern: Pattern {
+            parts: [
+                Text {
+                    start: @2,
+                    content: "a",
+                },
+            ],
+        },
+    },
+}

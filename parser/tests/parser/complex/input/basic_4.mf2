@@ -1,0 +1,48 @@
+.input { $var :number }
+{{}}
+=== spans ===
+                    .input { $var :number }↵{{}}
+ComplexMessage      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Declaration         ^^^^^^^^^^^^^^^^^^^^^^^
+InputDeclaration    ^^^^^^^^^^^^^^^^^^^^^^^
+VariableExpression         ^^^^^^^^^^^^^^^^
+Variable                     ^^^^
+Function                          ^^^^^^^
+Identifier                         ^^^^^^
+QuotedPattern                               ^^^^
+Pattern             
+=== diagnostics ===
+
+=== ast ===
+ComplexMessage {
+    declarations: [
+        InputDeclaration {
+            start: @0,
+            expression: VariableExpression {
+                span: @7..23,
+                variable: Variable {
+                    start: @9,
+                    name: "var",
+                },
+                annotation: Some(
+                    Function {
+                        start: @14,
+                        id: Identifier {
+                            start: @15,
+                            namespace: None,
+                            name: "number",
+                        },
+                        options: [],
+                    },
+                ),
+                attributes: [],
+            },
+        },
+    ],
+    body: QuotedPattern {
+        span: @24..28,
+        pattern: Pattern {
+            parts: [],
+        },
+    },
+}

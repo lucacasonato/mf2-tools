@@ -1,0 +1,71 @@
+.match {1 :a}
+a*{{}}
+=== spans ===
+                    .match {1 :a}↵a*{{}}
+ComplexMessage      ^^^^^^^^^^^^^^^^^^^^
+Matcher             ^^^^^^^^^^^^^^^^^^^^
+LiteralExpression          ^^^^^^
+Number                      ^
+Number.integral             ^
+Function                      ^^
+Identifier                     ^
+Variant                           ^^^^^^
+Text                              ^
+Star                               ^
+QuotedPattern                       ^^^^
+Pattern             
+=== diagnostics ===
+Key is missing a leading space (at @15..16)
+  .match {1 :a}↵a*{{}}
+                 ^
+=== ast ===
+ComplexMessage {
+    declarations: [],
+    body: Matcher {
+        start: @0,
+        selectors: [
+            LiteralExpression {
+                span: @7..13,
+                literal: Number {
+                    start: @8,
+                    raw: "1",
+                    is_negative: false,
+                    integral_len: 1,
+                    fractional_len: None,
+                    exponent_len: None,
+                },
+                annotation: Some(
+                    Function {
+                        start: @10,
+                        id: Identifier {
+                            start: @11,
+                            namespace: None,
+                            name: "a",
+                        },
+                        options: [],
+                    },
+                ),
+                attributes: [],
+            },
+        ],
+        variants: [
+            Variant {
+                keys: [
+                    Text {
+                        start: @14,
+                        content: "a",
+                    },
+                    Star {
+                        start: @15,
+                    },
+                ],
+                pattern: QuotedPattern {
+                    span: @16..20,
+                    pattern: Pattern {
+                        parts: [],
+                    },
+                },
+            },
+        ],
+    },
+}

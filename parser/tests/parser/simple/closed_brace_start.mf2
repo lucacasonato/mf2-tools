@@ -4,7 +4,7 @@
 Pattern             ^^^^^^
 Text                ^^^^^^
 === diagnostics ===
-'}' in simple messages must be escaped (at @0)
+'}' in patterns must be escaped (at @0)
   }Hello
   ^
 === ast ===

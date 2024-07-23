@@ -1,0 +1,66 @@
+.match {$a :b}
+c {{d}}
+=== spans ===
+                    .match {$a :b}↵c {{d}}
+ComplexMessage      ^^^^^^^^^^^^^^^^^^^^^^
+Matcher             ^^^^^^^^^^^^^^^^^^^^^^
+VariableExpression         ^^^^^^^
+Variable                    ^^
+Function                       ^^
+Identifier                      ^
+Variant                            ^^^^^^^
+Text                               ^
+QuotedPattern                        ^^^^^
+Pattern                                ^
+Text                                   ^
+=== diagnostics ===
+
+=== ast ===
+ComplexMessage {
+    declarations: [],
+    body: Matcher {
+        start: @0,
+        selectors: [
+            VariableExpression {
+                span: @7..14,
+                variable: Variable {
+                    start: @8,
+                    name: "a",
+                },
+                annotation: Some(
+                    Function {
+                        start: @11,
+                        id: Identifier {
+                            start: @12,
+                            namespace: None,
+                            name: "b",
+                        },
+                        options: [],
+                    },
+                ),
+                attributes: [],
+            },
+        ],
+        variants: [
+            Variant {
+                keys: [
+                    Text {
+                        start: @15,
+                        content: "c",
+                    },
+                ],
+                pattern: QuotedPattern {
+                    span: @17..22,
+                    pattern: Pattern {
+                        parts: [
+                            Text {
+                                start: @19,
+                                content: "d",
+                            },
+                        ],
+                    },
+                },
+            },
+        ],
+    },
+}

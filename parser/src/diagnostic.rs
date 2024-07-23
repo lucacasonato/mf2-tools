@@ -132,7 +132,7 @@ diagnostics! {
       span: Span::new(*char_loc..(*char_loc + '\0')),
     },
     InvalidClosingBrace { brace_loc: Location } => {
-      message: ("'}}' in simple messages must be escaped (at {:?})", brace_loc),
+      message: ("'}}' in patterns must be escaped (at {:?})", brace_loc),
       span: Span::new(*brace_loc..(*brace_loc + '}')),
     },
     AnnotationMissingSpaceBefore { span: Span } => {
@@ -161,6 +161,38 @@ diagnostics! {
     },
     VariableMissingName { span: Span } => {
       message: ("Variable is missing a name (at {:?})", span),
+      span: *span,
+    },
+    UnterminatedQuotedPattern { span: Span } => {
+      message: ("Quoted pattern is missing closing braces (at {:?})", span),
+      span: *span,
+    },
+    LocalKeywordMissingTrailingSpace { span: Span } => {
+      message: ("'.local' keyword must be followed by a space (at {:?})", span),
+      span: *span,
+    },
+    MissingSpaceBeforeKey { span: Span } => {
+      message: ("Key is missing a leading space (at {:?})", span),
+      span: *span,
+    },
+    ComplexMessageMissingBody { span: Span } => {
+      message: ("Complex message is missing a body (at {:?})", span),
+      span: *span,
+    },
+    ComplexMessageTrailingContent { span: Span } => {
+      message: ("Complex message has content after it's body (at {:?})", span),
+      span: *span,
+    },
+    ComplexMessageBodyNotQuoted { span: Span } => {
+      message: ("Complex message body must be quoted (at {:?})", span),
+      span: *span,
+    },
+    ComplexMessageDeclarationAfterBody { span: Span } => {
+      message: ("Declarations must occur before the body, but was found after the body (at {:?})", span),
+      span: *span,
+    },
+    MatcherKeyIsVariable { span: Span } => {
+      message: ("Matcher key cannot be a variable (at {:?})", span),
       span: *span,
     },
   }
