@@ -18,7 +18,7 @@ ComplexMessage {
         LocalDeclaration {
             start: @0,
             variable: Variable {
-                start: @7,
+                span: @7..11,
                 name: "var",
             },
             expression: LiteralExpression {

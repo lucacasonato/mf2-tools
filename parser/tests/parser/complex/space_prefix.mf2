@@ -21,7 +21,7 @@ ComplexMessage {
             expression: VariableExpression {
                 span: @8..25,
                 variable: Variable {
-                    start: @10,
+                    span: @10..16,
                     name: "hello",
                 },
                 annotation: Some(
