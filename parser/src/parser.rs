@@ -1081,8 +1081,11 @@ impl<'a> Parser<'a> {
     let next = self.peek();
     let variable = match next {
       Some((_, '$')) => self.parse_variable(),
-      Some((_, chars::name_start!())) => {
-        todo!("report missing $ for local variable")
+      Some((start, chars::name_start!())) => {
+        let name = self.parse_name();
+        let span = Span::new(start..self.current_location());
+        self.report(Diagnostic::LocalVariableMissingDollar { span });
+        Variable { span, name }
       }
       _ => todo!("go into declaration error recovery"),
     };
