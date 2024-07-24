@@ -988,7 +988,9 @@ impl<'a> Parser<'a> {
             "match" => {
               let matcher = self.parse_matcher(start);
               if body.is_some() {
-                todo!("multiple bodies")
+                self.report(Diagnostic::ComplexMessageMultipleBodies {
+                  span: matcher.span(),
+                });
               } else {
                 body = Some(ComplexMessageBody::Matcher(matcher));
               }
@@ -1012,10 +1014,12 @@ impl<'a> Parser<'a> {
           let peeked = self.peek();
           if let Some((_, '{')) = peeked {
             let quoted = self.parse_quoted_pattern(loc);
-            if body.is_none() {
-              body = Some(ComplexMessageBody::QuotedPattern(quoted));
+            if body.is_some() {
+              self.report(Diagnostic::ComplexMessageMultipleBodies {
+                span: quoted.span(),
+              });
             } else {
-              todo!("multiple bodies")
+              body = Some(ComplexMessageBody::QuotedPattern(quoted));
             }
           } else {
             self.text.reset_to(loc); // reset to '{'
@@ -1179,6 +1183,9 @@ impl<'a> Parser<'a> {
           }
           self.skip_spaces();
           had_space_or_closing_curly = true;
+        }
+        '.' => {
+          break;
         }
         _ => {
           let literal_or_variable = self.parse_literal_or_variable();

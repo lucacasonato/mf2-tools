@@ -662,9 +662,13 @@ impl Spanned for ComplexMessage<'_> {
     let start = self
       .declarations
       .first()
-      .map(|first| first.span().start)
+      .map(|first| first.span().start.min(self.body.span().start))
       .unwrap_or_else(|| self.body.span().start);
-    let end = self.body.span().end;
+    let end = self
+      .declarations
+      .last()
+      .map(|last| last.span().end.max(self.body.span().end))
+      .unwrap_or_else(|| self.body.span().end);
     Span::new(start..end)
   }
 }

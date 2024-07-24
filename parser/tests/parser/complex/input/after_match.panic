@@ -1,3 +1,0 @@
-.local $a = {1}
-.match {$a :a} * {{}}
-.input {$b :a}

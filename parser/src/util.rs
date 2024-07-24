@@ -144,7 +144,7 @@ impl SourceTextInfo<'_> {
   }
 }
 
-#[derive(Clone, Copy, PartialEq, Eq)]
+#[derive(Clone, Copy, PartialEq, Eq, Ord, PartialOrd)]
 pub struct Location(u32);
 
 impl Location {

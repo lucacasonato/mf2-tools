@@ -1,0 +1,81 @@
+.match {a} a {{}}
+.local $a = {1}
+{{}}
+=== spans ===
+                    .match {a} a {{}}↵.local $a = {1}↵{{}}
+ComplexMessage      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Declaration                           ^^^^^^^^^^^^^^^
+LocalDeclaration                      ^^^^^^^^^^^^^^^
+Variable                                     ^^
+LiteralExpression                                 ^^^
+Number                                             ^
+Number.integral                                    ^
+Matcher             ^^^^^^^^^^^^^^^^^
+LiteralExpression          ^^^
+Text                        ^
+Variant                        ^^^^^^
+Text                           ^
+QuotedPattern                    ^^^^
+Pattern             
+=== diagnostics ===
+Declarations must occur before the body, but was found after the body (at @18..33)
+  .match {a} a {{}}↵.local $a = {1}↵{{}}
+                    ^^^^^^^^^^^^^^^
+Complex message can have only one body (at @34..38)
+  .match {a} a {{}}↵.local $a = {1}↵{{}}
+                                    ^^^^
+=== ast ===
+ComplexMessage {
+    declarations: [
+        LocalDeclaration {
+            start: @18,
+            variable: Variable {
+                start: @25,
+                name: "a",
+            },
+            expression: LiteralExpression {
+                span: @30..33,
+                literal: Number {
+                    start: @31,
+                    raw: "1",
+                    is_negative: false,
+                    integral_len: 1,
+                    fractional_len: None,
+                    exponent_len: None,
+                },
+                annotation: None,
+                attributes: [],
+            },
+        },
+    ],
+    body: Matcher {
+        start: @0,
+        selectors: [
+            LiteralExpression {
+                span: @7..10,
+                literal: Text {
+                    start: @8,
+                    content: "a",
+                },
+                annotation: None,
+                attributes: [],
+            },
+        ],
+        variants: [
+            Variant {
+                keys: [
+                    Text {
+                        start: @11,
+                        content: "a",
+                    },
+                ],
+                pattern: QuotedPattern {
+                    span: @13..17,
+                    pattern: Pattern {
+                        parts: [],
+                    },
+                },
+            },
+        ],
+    },
+}

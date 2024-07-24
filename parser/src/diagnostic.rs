@@ -191,6 +191,10 @@ diagnostics! {
       message: ("Declarations must occur before the body, but was found after the body (at {:?})", span),
       span: *span,
     },
+    ComplexMessageMultipleBodies { span: Span } => {
+      message: ("Complex message can have only one body (at {:?})", span),
+      span: *span,
+    },
     MatcherKeyIsVariable { span: Span } => {
       message: ("Matcher key cannot be a variable (at {:?})", span),
       span: *span,
