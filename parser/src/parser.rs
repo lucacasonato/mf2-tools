@@ -62,7 +62,7 @@ impl<'a> Parser<'a> {
   pub fn parse(
     mut self,
   ) -> (Message<'a>, Vec<Diagnostic<'a>>, SourceTextInfo<'a>) {
-    while let Some((loc, c)) = self.peek() {
+    while let Some((_, c)) = self.peek() {
       match c {
         chars::space!() => {
           self.next();
@@ -81,10 +81,7 @@ impl<'a> Parser<'a> {
         '{' => {
           // This could now either be a quoted pattern (so a complex message),
           // or a placeholder (so a simple message).
-          self.next(); // eat '{'
-          let peeked = self.peek();
-          self.text.reset_to(loc); // reset to '{'
-          match peeked {
+          match self.peek2() {
             Some((_, '{')) => {
               return (
                 Message::Complex(self.parse_complex_message()),
@@ -173,12 +170,11 @@ impl<'a> Parser<'a> {
         '}' => {
           // If we are inside a quoted pattern, and we see a double closing
           // brace, we should return early.
-          self.next();
-          if inside_quoted && self.peek().map(|(_, c)| c) == Some('}') {
-            self.text.reset_to(loc);
+          if inside_quoted && matches!(self.peek2(), Some((_, '}'))) {
             break;
           } else {
             self.report(Diagnostic::InvalidClosingBrace { brace_loc: loc });
+            self.next();
           }
         }
       }
@@ -504,6 +500,10 @@ impl<'a> Parser<'a> {
 
   fn peek(&mut self) -> Option<(Location, char)> {
     self.text.peek()
+  }
+
+  fn peek2(&mut self) -> Option<(Location, char)> {
+    self.text.peek2()
   }
 
   fn eat(&mut self, c: char) -> Option<Location> {
@@ -1010,9 +1010,7 @@ impl<'a> Parser<'a> {
         }
         Some((loc, '{')) => {
           // parse quoted pattern, or error recover for placeholder
-          self.next(); // consume '{'
-          let peeked = self.peek();
-          if let Some((_, '{')) = peeked {
+          if let Some((_, '{')) = self.peek2() {
             let quoted = self.parse_quoted_pattern(loc);
             if body.is_some() {
               self.report(Diagnostic::ComplexMessageMultipleBodies {
@@ -1022,7 +1020,6 @@ impl<'a> Parser<'a> {
               body = Some(ComplexMessageBody::QuotedPattern(quoted));
             }
           } else {
-            self.text.reset_to(loc); // reset to '{'
             break;
           }
         }
@@ -1175,8 +1172,7 @@ impl<'a> Parser<'a> {
           had_space_or_closing_curly = self.skip_spaces();
         }
         '{' => {
-          self.next();
-          if let Some((_, '{')) = self.peek() {
+          if let Some((_, '{')) = self.peek2() {
             let pattern = self.parse_quoted_pattern(loc);
             let keys = std::mem::take(&mut current_variant_keys);
             // todo, at least one key is required
@@ -1241,9 +1237,9 @@ impl<'a> Parser<'a> {
   }
 
   fn parse_quoted_pattern(&mut self, start: Location) -> QuotedPattern<'a> {
-    // At this point we have consumed the first `{` (this is `start`) and are
-    // sure that the next character is `{`.
-    self.eat('{').unwrap(); // consume '{'
+    // At this point we know we have {{
+    self.eat('{').unwrap();
+    self.eat('{').unwrap();
 
     let pattern = self.parse_pattern(self.current_location(), true);
 
