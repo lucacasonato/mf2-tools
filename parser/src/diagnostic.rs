@@ -171,6 +171,10 @@ diagnostics! {
       message: ("'.local' keyword must be followed by a space (at {:?})", span),
       span: *span,
     },
+    LocalVariableMissingDollar { span: Span } => {
+      message: ("Variables must be prefixed with a dollar sign (at {:?})", span),
+      span: *span,
+    },
     MissingSpaceBeforeKey { span: Span } => {
       message: ("Key is missing a leading space (at {:?})", span),
       span: *span,

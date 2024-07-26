@@ -12,7 +12,7 @@ Pattern {
         VariableExpression {
             span: @0..7,
             variable: Variable {
-                start: @2,
+                span: @2..6,
                 name: "var",
             },
             annotation: None,

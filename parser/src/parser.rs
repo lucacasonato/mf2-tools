@@ -372,13 +372,13 @@ impl<'a> Parser<'a> {
     debug_assert_eq!(n, '$');
 
     let name = self.parse_name();
+    let span = Span::new(start..self.current_location());
+
     if name.is_empty() {
-      self.report(Diagnostic::VariableMissingName {
-        span: Span::new(start..self.current_location()),
-      });
+      self.report(Diagnostic::VariableMissingName { span });
     }
 
-    Variable { start, name }
+    Variable { span, name }
   }
 
   fn parse_attribute(
@@ -1081,8 +1081,11 @@ impl<'a> Parser<'a> {
     let next = self.peek();
     let variable = match next {
       Some((_, '$')) => self.parse_variable(),
-      Some((_, chars::name_start!())) => {
-        todo!("report missing $ for local variable")
+      Some((start, chars::name_start!())) => {
+        let name = self.parse_name();
+        let span = Span::new(start..self.current_location());
+        self.report(Diagnostic::LocalVariableMissingDollar { span });
+        Variable { span, name }
       }
       _ => todo!("go into declaration error recovery"),
     };
@@ -1188,7 +1191,7 @@ impl<'a> Parser<'a> {
               let span = variable.span();
               self.report(Diagnostic::MatcherKeyIsVariable { span });
               Key::Literal(Literal::Text(Text {
-                start: variable.start,
+                start: variable.span.start,
                 content: self.text.slice(span.start..span.end),
               }))
             }
