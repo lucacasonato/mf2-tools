@@ -3,7 +3,7 @@
 .local $b = {1}
 === spans ===
                     .local $a = {1}↵.match {$a :a} * {{}}↵.local $b = {1}
-ComplexMessage      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ComplexMessage      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 Declaration         ^^^^^^^^^^^^^^^
 LocalDeclaration    ^^^^^^^^^^^^^^^
 Variable                   ^^

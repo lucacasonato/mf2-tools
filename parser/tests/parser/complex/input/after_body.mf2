@@ -3,7 +3,7 @@
 .input {$b :a}
 === spans ===
                     .local $a = {1}↵{{}}↵.input {$b :a}
-ComplexMessage      ^^^^^^^^^^^^^^^^^^^^
+ComplexMessage      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 Declaration         ^^^^^^^^^^^^^^^
 LocalDeclaration    ^^^^^^^^^^^^^^^
 Variable                   ^^
