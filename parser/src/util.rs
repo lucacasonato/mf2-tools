@@ -5,6 +5,14 @@ use std::ops::Add;
 use std::ops::Range;
 use std::str::Chars;
 
+type Peek = Option<(Location, char)>;
+
+enum Peeked {
+  None,
+  Single(Peek),
+  Double((Location, char), Peek),
+}
+
 /// The source text, represented as a series of `char`s.
 ///
 /// The source text maintains the offset of characters in the original string
@@ -12,9 +20,10 @@ use std::str::Chars;
 /// to advance the iterator, and a method to peek the next character.
 pub struct SourceTextIterator<'a> {
   original: &'a str,
-  front_offset: u32,
+  front_loc: Location,
+  iter_offset: u32,
   iter: Chars<'a>,
-  peeked: Option<Option<(Location, char)>>,
+  peeked: Peeked,
   utf8_line_starts: Vec<u32>,
 }
 
@@ -26,9 +35,10 @@ impl<'a> SourceTextIterator<'a> {
     );
     SourceTextIterator {
       original: s,
-      front_offset: 0,
+      front_loc: Location(0),
+      iter_offset: 0,
       iter: s.chars(),
-      peeked: None,
+      peeked: Peeked::None,
       utf8_line_starts: vec![0],
     }
   }
@@ -41,52 +51,74 @@ impl<'a> SourceTextIterator<'a> {
   /// location is not at a character boundary.
   pub fn reset_to(&mut self, loc: Location) {
     assert!(loc.0 <= self.end_location().0);
-    self.front_offset = loc.0;
-    self.peeked = None;
-    self.iter = self.original[self.front_offset as usize..].chars();
+    self.front_loc = loc;
+    self.iter_offset = loc.0;
+    self.peeked = Peeked::None;
+    self.iter = self.original[self.iter_offset as usize..].chars();
+  }
+
+  fn iter_next(&mut self) -> Option<char> {
+    self.iter.next().map(|ch| {
+      self.iter_offset += ch.len_utf8() as u32;
+      if ch == '\n' {
+        if *self.utf8_line_starts.last().unwrap() < self.iter_offset {
+          self.utf8_line_starts.push(self.iter_offset);
+        }
+      }
+      ch
+    })
   }
 
   pub fn next(&mut self) -> Option<(Location, char)> {
-    if let Some(peeked) = self.peeked.take() {
-      if let Some((_, ch)) = peeked {
-        self.front_offset += ch.len_utf8() as u32;
+    match self.peeked {
+      Peeked::None => self.iter_next().map(|ch| {
+        let loc = self.front_loc;
+        self.front_loc = Location(self.iter_offset);
+        (loc, ch)
+      }),
+      Peeked::Single(None) => None,
+      Peeked::Single(Some(peek)) | Peeked::Double(peek, None) => {
+        self.front_loc = Location(self.iter_offset);
+        self.peeked = Peeked::None;
+        Some(peek)
       }
-      return peeked;
-    }
-    match self.iter.next() {
-      None => None,
-      Some(ch) => {
-        let loc = Location(self.front_offset);
-        self.front_offset += ch.len_utf8() as u32;
-        if ch == '\n' && *self.utf8_line_starts.last().unwrap() < loc.0 {
-          self.utf8_line_starts.push(self.front_offset);
-        }
-        Some((loc, ch))
+      Peeked::Double(peek1, peek2 @ Some((loc, _))) => {
+        self.front_loc = loc;
+        self.peeked = Peeked::Single(peek2);
+        Some(peek1)
       }
     }
   }
 
-  pub fn peek(&mut self) -> Option<(Location, char)> {
+  pub fn peek(&mut self) -> Peek {
     match &self.peeked {
-      Some(peeked) => *peeked,
-      None => {
-        let peeked = self.iter.next().map(|ch| {
-          if ch == '\n' {
-            let after_offset = self.front_offset + '\n'.len_utf8() as u32;
-            if *self.utf8_line_starts.last().unwrap() < after_offset {
-              self.utf8_line_starts.push(after_offset);
-            }
-          }
-          (Location(self.front_offset), ch)
-        });
-        self.peeked = Some(peeked);
+      Peeked::Single(peek) => *peek,
+      Peeked::Double(peek, _) => Some(*peek),
+      Peeked::None => {
+        let peeked = self.iter_next().map(|ch| (self.front_loc, ch));
+        self.peeked = Peeked::Single(peeked);
         peeked
       }
     }
   }
 
+  pub fn peek2(&mut self) -> Peek {
+    if let Peeked::Double(_, peek) = self.peeked {
+      return peek;
+    }
+    match self.peek() {
+      None => None,
+      Some(peek1) => {
+        let loc = Location(self.iter_offset);
+        let peek2 = self.iter_next().map(|ch2| (loc, ch2));
+        self.peeked = Peeked::Double(peek1, peek2);
+        peek2
+      }
+    }
+  }
+
   pub fn current_location(&self) -> Location {
-    Location(self.front_offset)
+    self.front_loc
   }
 
   pub fn start_location(&self) -> Location {
