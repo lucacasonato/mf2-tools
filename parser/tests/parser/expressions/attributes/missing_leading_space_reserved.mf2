@@ -1,0 +1,42 @@
+{!a@foo}
+=== spans ===
+                    {!a@foo}
+Pattern             ^^^^^^^^
+AnnotationExpression^^^^^^^^
+ReservedAnnotation   ^^
+Text                  ^
+Attribute              ^^^^
+Identifier              ^^^
+=== diagnostics ===
+Attributes must be preceeded by a leading space (at @3..7)
+  {!a@foo}
+     ^^^^
+=== ast ===
+Pattern {
+    parts: [
+        AnnotationExpression {
+            span: @0..8,
+            annotation: ReservedAnnotation {
+                start: @1,
+                sigil: '!',
+                body: [
+                    Text {
+                        start: @2,
+                        content: "a",
+                    },
+                ],
+            },
+            attributes: [
+                Attribute {
+                    span: @3..7,
+                    key: Identifier {
+                        start: @4,
+                        namespace: None,
+                        name: "foo",
+                    },
+                    value: None,
+                },
+            ],
+        },
+    ],
+}

@@ -1,0 +1,41 @@
+{:fn@foo}
+=== spans ===
+                    {:fn@foo}
+Pattern             ^^^^^^^^^
+AnnotationExpression^^^^^^^^^
+Function             ^^^
+Identifier            ^^
+Attribute               ^^^^
+Identifier               ^^^
+=== diagnostics ===
+Attributes must be preceeded by a leading space (at @4..8)
+  {:fn@foo}
+      ^^^^
+=== ast ===
+Pattern {
+    parts: [
+        AnnotationExpression {
+            span: @0..9,
+            annotation: Function {
+                start: @1,
+                id: Identifier {
+                    start: @2,
+                    namespace: None,
+                    name: "fn",
+                },
+                options: [],
+            },
+            attributes: [
+                Attribute {
+                    span: @4..8,
+                    key: Identifier {
+                        start: @5,
+                        namespace: None,
+                        name: "foo",
+                    },
+                    value: None,
+                },
+            ],
+        },
+    ],
+}

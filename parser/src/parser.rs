@@ -246,16 +246,19 @@ impl<'a> Parser<'a> {
   fn parse_expression(&mut self, start: Location) -> Expression<'a> {
     let lit_or_var = self.parse_literal_or_variable();
 
-    let mut had_space = lit_or_var.is_none() || self.skip_spaces();
+    let had_space_before_annotation =
+      lit_or_var.is_none() || self.skip_spaces();
+    let mut had_space = false;
 
-    let annotation = self.maybe_parse_annotation();
+    let annotation = self.maybe_parse_annotation(&mut had_space);
     if let Some(ref annotation) = annotation {
-      if !had_space {
+      if !had_space_before_annotation {
         self.report(Diagnostic::AnnotationMissingSpaceBefore {
           span: annotation.span(),
         });
       }
-      had_space = self.skip_spaces();
+    } else {
+      had_space = had_space || had_space_before_annotation;
     }
 
     let mut attributes = vec![];
@@ -525,7 +528,10 @@ impl<'a> Parser<'a> {
     any_spaces
   }
 
-  fn maybe_parse_annotation(&mut self) -> Option<Annotation<'a>> {
+  fn maybe_parse_annotation(
+    &mut self,
+    had_space: &mut bool,
+  ) -> Option<Annotation<'a>> {
     match self.peek() {
       Some((start, ':')) => {
         // function
@@ -536,9 +542,8 @@ impl<'a> Parser<'a> {
         let mut options = vec![];
 
         loop {
-          let before_space = self.current_location();
-          let has_space = self.skip_spaces();
-          if !has_space {
+          *had_space = self.skip_spaces();
+          if !*had_space {
             break;
           }
 
@@ -549,7 +554,6 @@ impl<'a> Parser<'a> {
             .map(|(_, c)| matches!(c, chars::name_start!() | ':' | '='))
             .unwrap_or(false);
           if !has_name_start {
-            self.text.reset_to(before_space);
             break;
           }
 
@@ -570,7 +574,7 @@ impl<'a> Parser<'a> {
         // private-use-annotation
         self.next(); // consume start
 
-        let reserved_body = self.parse_reserved_body();
+        let reserved_body = self.parse_reserved_body(had_space);
 
         Some(Annotation::PrivateUseAnnotation(PrivateUseAnnotation {
           start,
@@ -585,7 +589,7 @@ impl<'a> Parser<'a> {
         // reserved annotation
         self.next(); // consume start
 
-        let reserved_body = self.parse_reserved_body();
+        let reserved_body = self.parse_reserved_body(had_space);
 
         Some(Annotation::ReservedAnnotation(ReservedAnnotation {
           start,
@@ -634,7 +638,10 @@ impl<'a> Parser<'a> {
     option
   }
 
-  fn parse_reserved_body(&mut self) -> Vec<ReservedBodyPart<'a>> {
+  fn parse_reserved_body(
+    &mut self,
+    had_space: &mut bool,
+  ) -> Vec<ReservedBodyPart<'a>> {
     let mut parts = vec![];
 
     let mut start = self.current_location();
@@ -675,11 +682,13 @@ impl<'a> Parser<'a> {
       }
     }
 
-    if let Some(start) = last_space_start {
-      self.text.reset_to(start);
-    }
+    let end = if let Some(start) = last_space_start {
+      *had_space = true;
+      start
+    } else {
+      self.current_location()
+    };
 
-    let end = self.current_location();
     if end != start {
       parts.push(ReservedBodyPart::Text(self.slice_text(start..end)));
     }

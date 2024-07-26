@@ -1,16 +1,16 @@
-{1 @foo !bar}
+{1 :bar @foo}
 === spans ===
-                    {1 @foo !bar}
+                    {1 :bar @foo}
 Pattern             ^^^^^^^^^^^^^
 LiteralExpression   ^^^^^^^^^^^^^
 Number               ^
 Number.integral      ^
-Attribute              ^^^^
+Function               ^^^^
 Identifier              ^^^
+Attribute                   ^^^^
+Identifier                   ^^^
 === diagnostics ===
-Unrecognized placeholder contents (at @8..12)
-  {1 @foo !bar}
-          ^^^^
+
 === ast ===
 Pattern {
     parts: [
@@ -24,12 +24,22 @@ Pattern {
                 fractional_len: None,
                 exponent_len: None,
             },
-            annotation: None,
+            annotation: Some(
+                Function {
+                    start: @3,
+                    id: Identifier {
+                        start: @4,
+                        namespace: None,
+                        name: "bar",
+                    },
+                    options: [],
+                },
+            ),
             attributes: [
                 Attribute {
-                    span: @3..7,
+                    span: @8..12,
                     key: Identifier {
-                        start: @4,
+                        start: @9,
                         namespace: None,
                         name: "foo",
                     },
