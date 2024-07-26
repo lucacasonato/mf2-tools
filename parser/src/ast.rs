@@ -238,13 +238,13 @@ impl Visitable for VariableExpression<'_> {
 
 #[derive(Debug, Clone)]
 pub struct Variable<'a> {
-  pub start: Location,
+  pub span: Span,
   pub name: &'a str,
 }
 
 impl Spanned for Variable<'_> {
   fn span(&self) -> Span {
-    Span::new(self.start..self.start + '$' + self.name)
+    self.span
   }
 }
 

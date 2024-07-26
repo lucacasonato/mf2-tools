@@ -14,7 +14,7 @@ Pattern {
         VariableExpression {
             span: @0..11,
             variable: Variable {
-                start: @1,
+                span: @1..5,
                 name: "var",
             },
             annotation: Some(
