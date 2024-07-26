@@ -1,0 +1,115 @@
+.local $a = {1}
+.match {$a :a} * {{}}
+.local $b = {1}
+=== spans ===
+                    .local $a = {1}↵.match {$a :a} * {{}}↵.local $b = {1}
+ComplexMessage      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Declaration         ^^^^^^^^^^^^^^^
+LocalDeclaration    ^^^^^^^^^^^^^^^
+Variable                   ^^
+LiteralExpression               ^^^
+Number                           ^
+Number.integral                  ^
+Declaration                                               ^^^^^^^^^^^^^^^
+LocalDeclaration                                          ^^^^^^^^^^^^^^^
+Variable                                                         ^^
+LiteralExpression                                                     ^^^
+Number                                                                 ^
+Number.integral                                                        ^
+Matcher                             ^^^^^^^^^^^^^^^^^^^^^
+VariableExpression                         ^^^^^^^
+Variable                                    ^^
+Function                                       ^^
+Identifier                                      ^
+Variant                                            ^^^^^^
+Star                                               ^
+QuotedPattern                                        ^^^^
+Pattern             
+=== diagnostics ===
+Declarations must occur before the body, but was found after the body (at @38..53)
+  .local $a = {1}↵.match {$a :a} * {{}}↵.local $b = {1}
+                                        ^^^^^^^^^^^^^^^
+=== ast ===
+ComplexMessage {
+    declarations: [
+        LocalDeclaration {
+            start: @0,
+            variable: Variable {
+                span: @7..9,
+                name: "a",
+            },
+            expression: LiteralExpression {
+                span: @12..15,
+                literal: Number {
+                    start: @13,
+                    raw: "1",
+                    is_negative: false,
+                    integral_len: 1,
+                    fractional_len: None,
+                    exponent_len: None,
+                },
+                annotation: None,
+                attributes: [],
+            },
+        },
+        LocalDeclaration {
+            start: @38,
+            variable: Variable {
+                span: @45..47,
+                name: "b",
+            },
+            expression: LiteralExpression {
+                span: @50..53,
+                literal: Number {
+                    start: @51,
+                    raw: "1",
+                    is_negative: false,
+                    integral_len: 1,
+                    fractional_len: None,
+                    exponent_len: None,
+                },
+                annotation: None,
+                attributes: [],
+            },
+        },
+    ],
+    body: Matcher {
+        start: @16,
+        selectors: [
+            VariableExpression {
+                span: @23..30,
+                variable: Variable {
+                    span: @24..26,
+                    name: "a",
+                },
+                annotation: Some(
+                    Function {
+                        start: @27,
+                        id: Identifier {
+                            start: @28,
+                            namespace: None,
+                            name: "a",
+                        },
+                        options: [],
+                    },
+                ),
+                attributes: [],
+            },
+        ],
+        variants: [
+            Variant {
+                keys: [
+                    Star {
+                        start: @31,
+                    },
+                ],
+                pattern: QuotedPattern {
+                    span: @33..37,
+                    pattern: Pattern {
+                        parts: [],
+                    },
+                },
+            },
+        ],
+    },
+}
