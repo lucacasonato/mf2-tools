@@ -1,0 +1,60 @@
+.local $count = 123
+{{{$count}}}
+=== spans ===
+                    .local $count = 123↵{{{$count}}}
+ComplexMessage      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Declaration         ^^^^^^^^^^^^^^^^^^^
+LocalDeclaration    ^^^^^^^^^^^^^^^^^^^
+Variable                   ^^^^^^
+LiteralExpression                   ^^^
+Number                              ^^^
+Number.integral                     ^^^
+QuotedPattern                           ^^^^^^^^^^^^
+Pattern                                   ^^^^^^^^
+VariableExpression                        ^^^^^^^^
+Variable                                   ^^^^^^
+=== diagnostics ===
+Value of a local declaration must be wrapped in braces (at @16..19)
+  .local $count = 123↵{{{$count}}}
+                  ^^^
+=== ast ===
+ComplexMessage {
+    declarations: [
+        LocalDeclaration {
+            start: @0,
+            variable: Variable {
+                span: @7..13,
+                name: "count",
+            },
+            expression: LiteralExpression {
+                span: @16..19,
+                literal: Number {
+                    start: @16,
+                    raw: "123",
+                    is_negative: false,
+                    integral_len: 3,
+                    fractional_len: None,
+                    exponent_len: None,
+                },
+                annotation: None,
+                attributes: [],
+            },
+        },
+    ],
+    body: QuotedPattern {
+        span: @20..32,
+        pattern: Pattern {
+            parts: [
+                VariableExpression {
+                    span: @22..30,
+                    variable: Variable {
+                        span: @23..29,
+                        name: "count",
+                    },
+                    annotation: None,
+                    attributes: [],
+                },
+            ],
+        },
+    },
+}

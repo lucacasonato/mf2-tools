@@ -387,6 +387,7 @@ impl<'a> Parser<'a> {
         LiteralOrVariable::Literal(Literal::Text(self.parse_literal_name()))
       }
       // '.' is for error recovery of a fractional number literal that is missing the integral part
+      // fixme: only allow '.' if the character after is a digit
       Some((_, '-' | '.' | '0'..='9')) => {
         LiteralOrVariable::Literal(Literal::Number(self.parse_number()))
       }
@@ -1037,10 +1038,7 @@ impl<'a> Parser<'a> {
               let input = self.parse_input_declaration(start);
               Declaration::InputDeclaration(input)
             }
-            "local" => {
-              let local = self.parse_local_declaration(start);
-              Declaration::LocalDeclaration(local)
-            }
+            "local" => self.parse_local_declaration(start),
             "match" => {
               let matcher = self.parse_matcher(start);
               if body.is_some() {
@@ -1123,17 +1121,10 @@ impl<'a> Parser<'a> {
     ComplexMessage { declarations, body }
   }
 
-  fn parse_local_declaration(
-    &mut self,
-    start: Location,
-  ) -> LocalDeclaration<'a> {
+  fn parse_local_declaration(&mut self, start: Location) -> Declaration<'a> {
     // At this point, `.local` has already been consumed. `start` is the location of the `.`.
+    let before_spaces = self.current_location();
     let has_space = self.skip_spaces();
-    if !has_space {
-      self.report(Diagnostic::LocalKeywordMissingTrailingSpace {
-        span: Span::new(start..self.current_location()),
-      });
-    }
 
     let next = self.peek();
     let variable = match next {
@@ -1144,31 +1135,94 @@ impl<'a> Parser<'a> {
         self.report(Diagnostic::LocalVariableMissingDollar { span });
         Variable { span, name }
       }
-      _ => todo!("go into declaration error recovery"),
+      _ => {
+        self.text.reset_to(before_spaces);
+        // parse as reserved statement
+        return Declaration::ReservedStatement(
+          self.parse_reserved_statement(start, "local"),
+        );
+      }
     };
-
-    self.skip_spaces();
-
-    if self.eat('=').is_none() {
-      // if next token is a brace, report missing equals but keep parsing as local decl
-      todo!("go into declaration error recovery");
+    if !has_space {
+      // We only report this now, since we don't know if the variable is missing
+      // and may need to error recover into a reserved statement. In that case
+      // we don't want to report this error.
+      self.report(Diagnostic::LocalKeywordMissingTrailingSpace {
+        span: Span::new(start..start + ".local"),
+      });
     }
 
+    let mut last_visible_char = variable.span.end;
+
     self.skip_spaces();
 
-    let Some(open) = self.eat('{') else {
-      todo!("go into declaration error recovery");
+    if let Some(loc) = self.eat('=') {
+      last_visible_char = loc;
+      self.skip_spaces();
+    } else {
+      self.report(Diagnostic::LocalDeclarationVariableMissingTrailingEquals {
+        span: variable.span,
+      });
+    }
+
+    let bail_and_report = |this: &mut Self| {
+      this.report(Diagnostic::LocalDeclarationMissingExpression {
+        span: Span::new(start..start + ".local"),
+      });
+      Expression::LiteralExpression(LiteralExpression {
+        span: Span::new(last_visible_char..last_visible_char),
+        literal: Literal::Text(Text {
+          start: last_visible_char,
+          content: "",
+        }),
+        annotation: None,
+        attributes: vec![],
+      })
     };
 
-    self.skip_spaces();
+    let expression = if let Some((open, '{')) = self.peek() {
+      if matches!(self.peek2(), Some((_, '{'))) {
+        bail_and_report(self)
+      } else {
+        self.next().unwrap(); // consume '{'
+        self.skip_spaces();
+        self.parse_expression(open)
+      }
+    } else if let Some((_, '.')) = self.peek() {
+      // error recovery, next statement is starting. This would also be covered by
+      // `parse_literal_or_variable` due to the number error recovery, but we want to report a
+      // better error message here.
+      bail_and_report(self)
+    } else if let Some(var) = self.parse_literal_or_variable() {
+      let span = var.span();
+      self.report(Diagnostic::LocalDeclarationValueNotWrappedInBraces { span });
+      match var {
+        LiteralOrVariable::Literal(literal) => {
+          Expression::LiteralExpression(LiteralExpression {
+            span,
+            literal,
+            annotation: None,
+            attributes: vec![],
+          })
+        }
+        LiteralOrVariable::Variable(variable) => {
+          Expression::VariableExpression(VariableExpression {
+            span,
+            variable,
+            annotation: None,
+            attributes: vec![],
+          })
+        }
+      }
+    } else {
+      bail_and_report(self)
+    };
 
-    let expression = self.parse_expression(open);
-
-    LocalDeclaration {
+    Declaration::LocalDeclaration(LocalDeclaration {
       start,
       variable,
       expression,
-    }
+    })
   }
 
   fn parse_input_declaration(
