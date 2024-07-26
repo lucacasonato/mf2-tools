@@ -21,7 +21,7 @@ enum Peeked {
 pub struct SourceTextIterator<'a> {
   original: &'a str,
   front_loc: Location,
-  iter_offset: u32,
+  str_index: u32,
   iter: Chars<'a>,
   peeked: Peeked,
   utf8_line_starts: Vec<u32>,
@@ -36,7 +36,7 @@ impl<'a> SourceTextIterator<'a> {
     SourceTextIterator {
       original: s,
       front_loc: Location(0),
-      iter_offset: 0,
+      str_index: 0,
       iter: s.chars(),
       peeked: Peeked::None,
       utf8_line_starts: vec![0],
@@ -52,18 +52,16 @@ impl<'a> SourceTextIterator<'a> {
   pub fn reset_to(&mut self, loc: Location) {
     assert!(loc.0 <= self.end_location().0);
     self.front_loc = loc;
-    self.iter_offset = loc.0;
+    self.str_index = loc.0;
     self.peeked = Peeked::None;
-    self.iter = self.original[self.iter_offset as usize..].chars();
+    self.iter = self.original[self.str_index as usize..].chars();
   }
 
   fn iter_next(&mut self) -> Option<char> {
     self.iter.next().map(|ch| {
-      self.iter_offset += ch.len_utf8() as u32;
-      if ch == '\n' {
-        if *self.utf8_line_starts.last().unwrap() < self.iter_offset {
-          self.utf8_line_starts.push(self.iter_offset);
-        }
+      self.str_index += ch.len_utf8() as u32;
+      if ch == '\n' && *self.utf8_line_starts.last().unwrap() < self.str_index {
+        self.utf8_line_starts.push(self.str_index);
       }
       ch
     })
@@ -73,12 +71,12 @@ impl<'a> SourceTextIterator<'a> {
     match self.peeked {
       Peeked::None => self.iter_next().map(|ch| {
         let loc = self.front_loc;
-        self.front_loc = Location(self.iter_offset);
+        self.front_loc = Location(self.str_index);
         (loc, ch)
       }),
       Peeked::Single(None) => None,
       Peeked::Single(Some(peek)) | Peeked::Double(peek, None) => {
-        self.front_loc = Location(self.iter_offset);
+        self.front_loc = Location(self.str_index);
         self.peeked = Peeked::None;
         Some(peek)
       }
@@ -109,7 +107,7 @@ impl<'a> SourceTextIterator<'a> {
     match self.peek() {
       None => None,
       Some(peek1) => {
-        let loc = Location(self.iter_offset);
+        let loc = Location(self.str_index);
         let peek2 = self.iter_next().map(|ch2| (loc, ch2));
         self.peeked = Peeked::Double(peek1, peek2);
         peek2
