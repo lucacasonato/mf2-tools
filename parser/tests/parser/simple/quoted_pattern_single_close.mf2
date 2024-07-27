@@ -1,0 +1,24 @@
+Hello {{}
+=== spans ===
+                    Hello {{}
+Pattern             ^^^^^^^^^
+Text                ^^^^^^^^^
+=== diagnostics ===
+'}' in patterns must be escaped (at @8)
+  Hello {{}
+          ^
+Quoted pattern is not allowed inside of patterns (at @6..8)
+  Hello {{}
+        ^^
+Quoted string is missing a closing quote (at @6..9)
+  Hello {{}
+        ^^^
+=== ast ===
+Pattern {
+    parts: [
+        Text {
+            start: @0,
+            content: "Hello {{}",
+        },
+    ],
+}

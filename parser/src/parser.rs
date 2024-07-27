@@ -141,6 +141,8 @@ impl<'a> Parser<'a> {
   ) -> Pattern<'a> {
     let mut parts = vec![];
 
+    let mut open_quoted_patterns = vec![];
+
     while let Some((loc, c)) = self.peek() {
       match c {
         '\\' => {
@@ -154,11 +156,17 @@ impl<'a> Parser<'a> {
           start = self.current_location();
         }
         '{' => {
-          if loc != start {
-            parts.push(PatternPart::Text(self.slice_text(start..loc)));
+          if matches!(self.peek2(), Some((_, '{'))) {
+            self.next().unwrap(); // consume '{'
+            self.next().unwrap(); // consume '{'
+            open_quoted_patterns.push(loc);
+          } else {
+            if loc != start {
+              parts.push(PatternPart::Text(self.slice_text(start..loc)));
+            }
+            parts.push(self.parse_placeholder());
+            start = self.current_location();
           }
-          parts.push(self.parse_placeholder());
-          start = self.current_location();
         }
         '.' | '@' | '|' | chars::content!() | chars::space!() => {
           self.next();
@@ -170,14 +178,35 @@ impl<'a> Parser<'a> {
         '}' => {
           // If we are inside a quoted pattern, and we see a double closing
           // brace, we should return early.
-          if inside_quoted && matches!(self.peek2(), Some((_, '}'))) {
-            break;
+          if (!open_quoted_patterns.is_empty() || inside_quoted)
+            && matches!(self.peek2(), Some((_, '}')))
+          {
+            if let Some(open_loc) = open_quoted_patterns.pop() {
+              self.next().unwrap(); // consume '}'
+              self.next().unwrap(); // consume '}'
+              self.report(Diagnostic::QuotedPatternInsidePattern {
+                open_span: Span::new(open_loc..open_loc + "{{"),
+                close_span: Some(Span::new(loc..self.current_location())),
+              });
+            } else {
+              break;
+            }
           } else {
             self.report(Diagnostic::InvalidClosingBrace { brace_loc: loc });
             self.next();
           }
         }
       }
+    }
+
+    while let Some(open_loc) = open_quoted_patterns.pop() {
+      self.report(Diagnostic::QuotedPatternInsidePattern {
+        open_span: Span::new(open_loc..open_loc + "{{"),
+        close_span: None,
+      });
+      self.report(Diagnostic::UnterminatedQuoted {
+        span: Span::new(open_loc..self.text.end_location()),
+      });
     }
 
     let end = self.current_location();

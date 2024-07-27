@@ -107,6 +107,10 @@ diagnostics! {
       message: ("Unrecognized placeholder contents (at {:?})", span),
       span: *span,
     },
+    QuotedPatternInsidePattern { open_span: Span, close_span: Option<Span> } => {
+      message: ("Quoted pattern is not allowed inside of patterns (at {:?})", open_span),
+      span: *open_span,
+    },
     MarkupInvalidContents { span: Span } => {
       message: ("Unrecognized markup contents (at {:?})", span),
       span: *span,
