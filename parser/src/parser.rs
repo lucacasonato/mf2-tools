@@ -159,7 +159,7 @@ impl<'a> Parser<'a> {
           if matches!(self.peek2(), Some((_, '{'))) {
             self.next().unwrap(); // consume '{'
             self.next().unwrap(); // consume '{'
-            open_quoted_patterns.push(Span::new(loc..self.current_location()));
+            open_quoted_patterns.push(loc);
           } else {
             if loc != start {
               parts.push(PatternPart::Text(self.slice_text(start..loc)));
@@ -181,11 +181,11 @@ impl<'a> Parser<'a> {
           if (!open_quoted_patterns.is_empty() || inside_quoted)
             && matches!(self.peek2(), Some((_, '}')))
           {
-            if let Some(open_span) = open_quoted_patterns.pop() {
+            if let Some(open_loc) = open_quoted_patterns.pop() {
               self.next().unwrap(); // consume '}'
               self.next().unwrap(); // consume '}'
               self.report(Diagnostic::QuotedPatternInsidePattern {
-                open_span,
+                open_span: Span::new(open_loc..open_loc + "{{"),
                 close_span: Some(Span::new(loc..self.current_location())),
               });
             } else {
@@ -199,13 +199,13 @@ impl<'a> Parser<'a> {
       }
     }
 
-    while let Some(open_span) = open_quoted_patterns.pop() {
+    while let Some(open_loc) = open_quoted_patterns.pop() {
       self.report(Diagnostic::QuotedPatternInsidePattern {
-        open_span,
+        open_span: Span::new(open_loc..open_loc + "{{"),
         close_span: None,
       });
       self.report(Diagnostic::UnterminatedQuoted {
-        span: Span::new(open_span.start..self.text.end_location()),
+        span: Span::new(open_loc..self.text.end_location()),
       });
     }
 
