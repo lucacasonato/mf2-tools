@@ -1,0 +1,28 @@
+{ ^a }
+=== spans ===
+                    { ^a }
+Pattern             ^^^^^^
+AnnotationExpression^^^^^^
+PrivateUseAnnotation  ^^
+Text                   ^
+=== diagnostics ===
+
+=== ast ===
+Pattern {
+    parts: [
+        AnnotationExpression {
+            span: @0..6,
+            annotation: PrivateUseAnnotation {
+                start: @2,
+                sigil: '^',
+                body: [
+                    Text {
+                        start: @3,
+                        content: "a",
+                    },
+                ],
+            },
+            attributes: [],
+        },
+    ],
+}

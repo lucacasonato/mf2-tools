@@ -1,0 +1,28 @@
+{!a }
+=== spans ===
+                    {!a }
+Pattern             ^^^^^
+AnnotationExpression^^^^^
+ReservedAnnotation   ^^
+Text                  ^
+=== diagnostics ===
+
+=== ast ===
+Pattern {
+    parts: [
+        AnnotationExpression {
+            span: @0..5,
+            annotation: ReservedAnnotation {
+                start: @1,
+                sigil: '!',
+                body: [
+                    Text {
+                        start: @2,
+                        content: "a",
+                    },
+                ],
+            },
+            attributes: [],
+        },
+    ],
+}
