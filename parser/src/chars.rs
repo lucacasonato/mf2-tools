@@ -14,13 +14,6 @@ macro_rules! space {
 }
 pub(crate) use space;
 
-macro_rules! reserved {
-  () => {
-    crate::chars::content!() | '.'
-  };
-}
-pub(crate) use reserved;
-
 macro_rules! name_start {
   () => {
     'a'..='z' | 'A'..='Z' | '_' |

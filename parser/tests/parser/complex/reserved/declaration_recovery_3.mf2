@@ -1,0 +1,51 @@
+.foo .local $hello = {world}
+{{}}
+=== spans ===
+                    .foo .local $hello = {world}↵{{}}
+ComplexMessage      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Declaration         ^^^^
+ReservedStatement   ^^^^
+Declaration              ^^^^^^^^^^^^^^^^^^^^^^^
+LocalDeclaration         ^^^^^^^^^^^^^^^^^^^^^^^
+Variable                        ^^^^^^
+LiteralExpression                        ^^^^^^^
+Text                                      ^^^^^
+QuotedPattern                                    ^^^^
+Pattern             
+=== diagnostics ===
+Reserved statement is missing a mandatory expression (at @0..4)
+  .foo .local $hello = {world}↵{{}}
+  ^^^^
+=== ast ===
+ComplexMessage {
+    declarations: [
+        ReservedStatement {
+            start: @0,
+            name: "foo",
+            body: [],
+            expressions: [],
+        },
+        LocalDeclaration {
+            start: @5,
+            variable: Variable {
+                span: @12..18,
+                name: "hello",
+            },
+            expression: LiteralExpression {
+                span: @21..28,
+                literal: Text {
+                    start: @22,
+                    content: "world",
+                },
+                annotation: None,
+                attributes: [],
+            },
+        },
+    ],
+    body: QuotedPattern {
+        span: @29..33,
+        pattern: Pattern {
+            parts: [],
+        },
+    },
+}

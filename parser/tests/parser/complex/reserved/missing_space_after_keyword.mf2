@@ -1,0 +1,53 @@
+.foo$hello={:foo}
+{{}}
+=== spans ===
+                    .foo$hello={:foo}↵{{}}
+ComplexMessage      ^^^^^^^^^^^^^^^^^^^^^^
+Declaration         ^^^^^^^^^^^^^^^^^
+ReservedStatement   ^^^^^^^^^^^^^^^^^
+Text                    ^^^^^^^
+AnnotationExpression           ^^^^^^
+Function                        ^^^^
+Identifier                       ^^^
+QuotedPattern                         ^^^^
+Pattern             
+=== diagnostics ===
+Reserved statement must be followed by a space before the body (at @0..4)
+  .foo$hello={:foo}↵{{}}
+  ^^^^
+=== ast ===
+ComplexMessage {
+    declarations: [
+        ReservedStatement {
+            start: @0,
+            name: "foo",
+            body: [
+                Text {
+                    start: @4,
+                    content: "$hello=",
+                },
+            ],
+            expressions: [
+                AnnotationExpression {
+                    span: @11..17,
+                    annotation: Function {
+                        start: @12,
+                        id: Identifier {
+                            start: @13,
+                            namespace: None,
+                            name: "foo",
+                        },
+                        options: [],
+                    },
+                    attributes: [],
+                },
+            ],
+        },
+    ],
+    body: QuotedPattern {
+        span: @18..22,
+        pattern: Pattern {
+            parts: [],
+        },
+    },
+}
