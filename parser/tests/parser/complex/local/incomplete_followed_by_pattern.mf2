@@ -1,0 +1,46 @@
+.local $var
+{{}}
+=== spans ===
+                    .local $var↵{{}}
+ComplexMessage      ^^^^^^^^^^^^^^^^
+Declaration         ^^^^^^^^^^^
+LocalDeclaration    ^^^^^^^^^^^
+Variable                   ^^^^
+LiteralExpression              
+Text                           
+QuotedPattern                   ^^^^
+Pattern             
+=== diagnostics ===
+Local declaration variable must be followed by an equals sign (at @7..11)
+  .local $var↵{{}}
+         ^^^^
+Local declaration is missing an expression (at @0..6)
+  .local $var↵{{}}
+  ^^^^^^
+=== ast ===
+ComplexMessage {
+    declarations: [
+        LocalDeclaration {
+            start: @0,
+            variable: Variable {
+                span: @7..11,
+                name: "var",
+            },
+            expression: LiteralExpression {
+                span: @11..11,
+                literal: Text {
+                    start: @11,
+                    content: "",
+                },
+                annotation: None,
+                attributes: [],
+            },
+        },
+    ],
+    body: QuotedPattern {
+        span: @12..16,
+        pattern: Pattern {
+            parts: [],
+        },
+    },
+}

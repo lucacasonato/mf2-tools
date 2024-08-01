@@ -215,6 +215,18 @@ diagnostics! {
       message: ("Reserved statement is missing a mandatory expression (at {:?})", span),
       span: *span,
     },
+    LocalDeclarationValueNotWrappedInBraces { span: Span } => {
+      message: ("Value of a local declaration must be wrapped in braces (at {:?})", span),
+      span: *span,
+    },
+    LocalDeclarationVariableMissingTrailingEquals { span: Span } => {
+      message: ("Local declaration variable must be followed by an equals sign (at {:?})", span),
+      span: *span,
+    },
+    LocalDeclarationMissingExpression { span: Span } => {
+      message: ("Local declaration is missing an expression (at {:?})", span),
+      span: *span,
+    },
   }
 }
 

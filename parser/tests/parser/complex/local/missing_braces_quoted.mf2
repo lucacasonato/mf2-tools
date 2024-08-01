@@ -1,0 +1,71 @@
+.local $count = |hello\|world|
+{{{$count}}}
+=== spans ===
+                    .local $count = |hello\|world|↵{{{$count}}}
+ComplexMessage      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Declaration         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+LocalDeclaration    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Variable                   ^^^^^^
+LiteralExpression                   ^^^^^^^^^^^^^^
+Quoted                              ^^^^^^^^^^^^^^
+Text                                 ^^^^^
+Escape                                    ^^
+Text                                        ^^^^^
+QuotedPattern                                      ^^^^^^^^^^^^
+Pattern                                              ^^^^^^^^
+VariableExpression                                   ^^^^^^^^
+Variable                                              ^^^^^^
+=== diagnostics ===
+Value of a local declaration must be wrapped in braces (at @16..30)
+  .local $count = |hello\|world|↵{{{$count}}}
+                  ^^^^^^^^^^^^^^
+=== ast ===
+ComplexMessage {
+    declarations: [
+        LocalDeclaration {
+            start: @0,
+            variable: Variable {
+                span: @7..13,
+                name: "count",
+            },
+            expression: LiteralExpression {
+                span: @16..30,
+                literal: Quoted {
+                    span: @16..30,
+                    parts: [
+                        Text {
+                            start: @17,
+                            content: "hello",
+                        },
+                        Escape {
+                            start: @22,
+                            escaped_char: '|',
+                        },
+                        Text {
+                            start: @24,
+                            content: "world",
+                        },
+                    ],
+                },
+                annotation: None,
+                attributes: [],
+            },
+        },
+    ],
+    body: QuotedPattern {
+        span: @31..43,
+        pattern: Pattern {
+            parts: [
+                VariableExpression {
+                    span: @33..41,
+                    variable: Variable {
+                        span: @34..40,
+                        name: "count",
+                    },
+                    annotation: None,
+                    attributes: [],
+                },
+            ],
+        },
+    },
+}

@@ -1,0 +1,79 @@
+.local $var
+.local $bar = {123}
+{{hello}}
+=== spans ===
+                    .local $var↵.local $bar = {123}↵{{hello}}
+ComplexMessage      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Declaration         ^^^^^^^^^^^
+LocalDeclaration    ^^^^^^^^^^^
+Variable                   ^^^^
+LiteralExpression              
+Text                           
+Declaration                     ^^^^^^^^^^^^^^^^^^^
+LocalDeclaration                ^^^^^^^^^^^^^^^^^^^
+Variable                               ^^^^
+LiteralExpression                             ^^^^^
+Number                                         ^^^
+Number.integral                                ^^^
+QuotedPattern                                       ^^^^^^^^^
+Pattern                                               ^^^^^
+Text                                                  ^^^^^
+=== diagnostics ===
+Local declaration variable must be followed by an equals sign (at @7..11)
+  .local $var↵.local $bar = {123}↵{{hello}}
+         ^^^^
+Local declaration is missing an expression (at @0..6)
+  .local $var↵.local $bar = {123}↵{{hello}}
+  ^^^^^^
+=== ast ===
+ComplexMessage {
+    declarations: [
+        LocalDeclaration {
+            start: @0,
+            variable: Variable {
+                span: @7..11,
+                name: "var",
+            },
+            expression: LiteralExpression {
+                span: @11..11,
+                literal: Text {
+                    start: @11,
+                    content: "",
+                },
+                annotation: None,
+                attributes: [],
+            },
+        },
+        LocalDeclaration {
+            start: @12,
+            variable: Variable {
+                span: @19..23,
+                name: "bar",
+            },
+            expression: LiteralExpression {
+                span: @26..31,
+                literal: Number {
+                    start: @27,
+                    raw: "123",
+                    is_negative: false,
+                    integral_len: 3,
+                    fractional_len: None,
+                    exponent_len: None,
+                },
+                annotation: None,
+                attributes: [],
+            },
+        },
+    ],
+    body: QuotedPattern {
+        span: @32..41,
+        pattern: Pattern {
+            parts: [
+                Text {
+                    start: @34,
+                    content: "hello",
+                },
+            ],
+        },
+    },
+}

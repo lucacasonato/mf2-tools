@@ -1,0 +1,74 @@
+.local $var #a {abc}
+{{}}
+=== spans ===
+                    .local $var #a {abc}↵{{}}
+ComplexMessage      ^^^^^^^^^^^^^^^^^^^^^^^^^
+Declaration         ^^^^^^^^^^^
+LocalDeclaration    ^^^^^^^^^^^
+Variable                   ^^^^
+LiteralExpression              
+Text                           
+QuotedPattern                   ^^^^^^^^^^^^^
+Pattern                         ^^^^^^^^^^^^^
+Text                            ^^^
+LiteralExpression                  ^^^^^
+Text                                ^^^
+Text                                    ^^^^^
+=== diagnostics ===
+Local declaration variable must be followed by an equals sign (at @7..11)
+  .local $var #a {abc}↵{{}}
+         ^^^^
+Local declaration is missing an expression (at @0..6)
+  .local $var #a {abc}↵{{}}
+  ^^^^^^
+Quoted pattern is not allowed inside of patterns (at @21..23)
+  .local $var #a {abc}↵{{}}
+                       ^^
+Complex message body must be quoted (at @12..25)
+  .local $var #a {abc}↵{{}}
+              ^^^^^^^^^^^^^
+=== ast ===
+ComplexMessage {
+    declarations: [
+        LocalDeclaration {
+            start: @0,
+            variable: Variable {
+                span: @7..11,
+                name: "var",
+            },
+            expression: LiteralExpression {
+                span: @11..11,
+                literal: Text {
+                    start: @11,
+                    content: "",
+                },
+                annotation: None,
+                attributes: [],
+            },
+        },
+    ],
+    body: QuotedPattern {
+        span: @12..25,
+        pattern: Pattern {
+            parts: [
+                Text {
+                    start: @12,
+                    content: "#a ",
+                },
+                LiteralExpression {
+                    span: @15..20,
+                    literal: Text {
+                        start: @16,
+                        content: "abc",
+                    },
+                    annotation: None,
+                    attributes: [],
+                },
+                Text {
+                    start: @20,
+                    content: "\n{{}}",
+                },
+            ],
+        },
+    },
+}
