@@ -603,7 +603,7 @@ impl<'a> Parser<'a> {
         // private-use-annotation
         self.next(); // consume start
 
-        let reserved_body = self.parse_reserved_body(had_space);
+        let reserved_body = self.parse_reserved_body(had_space, false);
 
         Some(Annotation::PrivateUseAnnotation(PrivateUseAnnotation {
           start,
@@ -618,7 +618,7 @@ impl<'a> Parser<'a> {
         // reserved annotation
         self.next(); // consume start
 
-        let reserved_body = self.parse_reserved_body(had_space);
+        let reserved_body = self.parse_reserved_body(had_space, false);
 
         Some(Annotation::ReservedAnnotation(ReservedAnnotation {
           start,
@@ -667,23 +667,39 @@ impl<'a> Parser<'a> {
     option
   }
 
+  /// Parses a reserved body.
+  ///
+  /// The `bail_on_dot` parameter is used to determine if the function should stop parsing when it
+  /// encounters a dot that is preceded by a non-name character.
   fn parse_reserved_body(
     &mut self,
     had_space: &mut bool,
+    bail_on_dot: bool,
   ) -> Vec<ReservedBodyPart<'a>> {
     let mut parts = vec![];
 
     let mut start = self.current_location();
     let mut last_space_start = None;
+    let mut had_name = false;
 
     while let Some((loc, c)) = self.peek() {
       match c {
-        chars::reserved!() => {
+        '.' => {
+          if bail_on_dot && !had_name {
+            break;
+          }
           self.next();
           last_space_start = None;
+          had_name = true;
+        }
+        chars::content!() => {
+          self.next();
+          last_space_start = None;
+          had_name = matches!(c, chars::name!());
         }
         chars::space!() => {
           self.next();
+          had_name = false;
           if last_space_start.is_none() {
             last_space_start = Some(loc);
           }
@@ -698,6 +714,7 @@ impl<'a> Parser<'a> {
           }
           start = self.current_location();
           last_space_start = None;
+          had_name = false;
         }
         '|' => {
           if loc != start {
@@ -706,6 +723,7 @@ impl<'a> Parser<'a> {
           parts.push(ReservedBodyPart::Quoted(self.parse_quoted()));
           start = self.current_location();
           last_space_start = None;
+          had_name = false;
         }
         _ => break,
       }
@@ -1034,8 +1052,8 @@ impl<'a> Parser<'a> {
               }
               continue;
             }
-            _ => {
-              let reserved = self.parse_reserved_statement();
+            name => {
+              let reserved = self.parse_reserved_statement(start, name);
               Declaration::ReservedStatement(reserved)
             }
           };
@@ -1175,8 +1193,52 @@ impl<'a> Parser<'a> {
     InputDeclaration { start, expression }
   }
 
-  fn parse_reserved_statement(&mut self) -> ReservedStatement<'a> {
-    todo!()
+  fn parse_reserved_statement(
+    &mut self,
+    start: Location,
+    name: &'a str,
+  ) -> ReservedStatement<'a> {
+    // At this point, the keyword has already been consumed. `start` is the location of the `.`
+    // preceding the keyword.
+    let mut before_spaces = self.current_location();
+    let mut had_space = self.skip_spaces();
+    if !matches!(self.peek(), Some((_, '{' | '.'))) && !had_space {
+      self.report(Diagnostic::ReservedStatementMissingSpaceBeforeBody {
+        span: Span::new(start..before_spaces),
+      });
+    }
+
+    let body = self.parse_reserved_body(&mut had_space, true);
+    if let Some(last) = body.last() {
+      before_spaces = last.span().end;
+    }
+
+    let mut expressions = vec![];
+
+    while let Some((loc, '{')) = self.peek() {
+      if matches!(self.peek2(), Some((_, '{'))) {
+        break;
+      } else {
+        self.next().unwrap(); // consume '{'
+        self.skip_spaces();
+        expressions.push(self.parse_expression(loc));
+        before_spaces = self.current_location();
+        self.skip_spaces();
+      }
+    }
+
+    if expressions.is_empty() {
+      self.report(Diagnostic::ReservedStatementMissingExpression {
+        span: Span::new(start..before_spaces),
+      });
+    }
+
+    ReservedStatement {
+      start,
+      name,
+      body,
+      expressions,
+    }
   }
 
   fn parse_matcher(&mut self, start: Location) -> Matcher<'a> {

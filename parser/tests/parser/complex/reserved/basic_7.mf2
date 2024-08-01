@@ -1,0 +1,45 @@
+.foo{:hello}
+{{}}
+=== spans ===
+                    .foo{:hello}↵{{}}
+ComplexMessage      ^^^^^^^^^^^^^^^^^
+Declaration         ^^^^^^^^^^^^
+ReservedStatement   ^^^^^^^^^^^^
+AnnotationExpression    ^^^^^^^^
+Function                 ^^^^^^
+Identifier                ^^^^^
+QuotedPattern                    ^^^^
+Pattern             
+=== diagnostics ===
+
+=== ast ===
+ComplexMessage {
+    declarations: [
+        ReservedStatement {
+            start: @0,
+            name: "foo",
+            body: [],
+            expressions: [
+                AnnotationExpression {
+                    span: @4..12,
+                    annotation: Function {
+                        start: @5,
+                        id: Identifier {
+                            start: @6,
+                            namespace: None,
+                            name: "hello",
+                        },
+                        options: [],
+                    },
+                    attributes: [],
+                },
+            ],
+        },
+    ],
+    body: QuotedPattern {
+        span: @13..17,
+        pattern: Pattern {
+            parts: [],
+        },
+    },
+}

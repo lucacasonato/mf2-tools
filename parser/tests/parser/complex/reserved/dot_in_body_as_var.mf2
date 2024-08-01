@@ -1,0 +1,51 @@
+.foo $var.two = {:hello}
+{{}}
+=== spans ===
+                    .foo $var.two = {:hello}↵{{}}
+ComplexMessage      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Declaration         ^^^^^^^^^^^^^^^^^^^^^^^^
+ReservedStatement   ^^^^^^^^^^^^^^^^^^^^^^^^
+Text                     ^^^^^^^^^^
+AnnotationExpression                ^^^^^^^^
+Function                             ^^^^^^
+Identifier                            ^^^^^
+QuotedPattern                                ^^^^
+Pattern             
+=== diagnostics ===
+
+=== ast ===
+ComplexMessage {
+    declarations: [
+        ReservedStatement {
+            start: @0,
+            name: "foo",
+            body: [
+                Text {
+                    start: @5,
+                    content: "$var.two =",
+                },
+            ],
+            expressions: [
+                AnnotationExpression {
+                    span: @16..24,
+                    annotation: Function {
+                        start: @17,
+                        id: Identifier {
+                            start: @18,
+                            namespace: None,
+                            name: "hello",
+                        },
+                        options: [],
+                    },
+                    attributes: [],
+                },
+            ],
+        },
+    ],
+    body: QuotedPattern {
+        span: @25..29,
+        pattern: Pattern {
+            parts: [],
+        },
+    },
+}

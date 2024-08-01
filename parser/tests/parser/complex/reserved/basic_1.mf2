@@ -1,0 +1,51 @@
+.foo $bar = {:hello}
+{{}}
+=== spans ===
+                    .foo $bar = {:hello}↵{{}}
+ComplexMessage      ^^^^^^^^^^^^^^^^^^^^^^^^^
+Declaration         ^^^^^^^^^^^^^^^^^^^^
+ReservedStatement   ^^^^^^^^^^^^^^^^^^^^
+Text                     ^^^^^^
+AnnotationExpression            ^^^^^^^^
+Function                         ^^^^^^
+Identifier                        ^^^^^
+QuotedPattern                            ^^^^
+Pattern             
+=== diagnostics ===
+
+=== ast ===
+ComplexMessage {
+    declarations: [
+        ReservedStatement {
+            start: @0,
+            name: "foo",
+            body: [
+                Text {
+                    start: @5,
+                    content: "$bar =",
+                },
+            ],
+            expressions: [
+                AnnotationExpression {
+                    span: @12..20,
+                    annotation: Function {
+                        start: @13,
+                        id: Identifier {
+                            start: @14,
+                            namespace: None,
+                            name: "hello",
+                        },
+                        options: [],
+                    },
+                    attributes: [],
+                },
+            ],
+        },
+    ],
+    body: QuotedPattern {
+        span: @21..25,
+        pattern: Pattern {
+            parts: [],
+        },
+    },
+}

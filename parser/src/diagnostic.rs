@@ -207,6 +207,14 @@ diagnostics! {
       message: ("Matcher key cannot be a variable (at {:?})", span),
       span: *span,
     },
+    ReservedStatementMissingSpaceBeforeBody { span: Span } => {
+      message: ("Reserved statement must be followed by a space before the body (at {:?})", span),
+      span: *span,
+    },
+    ReservedStatementMissingExpression { span: Span } => {
+      message: ("Reserved statement is missing a mandatory expression (at {:?})", span),
+      span: *span,
+    },
   }
 }
 
