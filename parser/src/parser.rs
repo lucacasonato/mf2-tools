@@ -870,7 +870,7 @@ impl<'a> Parser<'a> {
     debug_assert!(matches!(c, Some((_, '#' | '/'))));
 
     let before_id = self.current_location();
-    let had_space = self.skip_spaces();
+    let mut had_space = self.skip_spaces();
     let (mut id, is_id_empty) = self.parse_identifier();
     if is_id_empty {
       id = Identifier {
@@ -892,11 +892,9 @@ impl<'a> Parser<'a> {
     let mut options = vec![];
     let mut attributes = vec![];
 
-    let mut had_space = if is_id_empty {
-      had_space
-    } else {
-      self.skip_spaces()
-    };
+    if !is_id_empty {
+      had_space = self.skip_spaces();
+    }
     let report_missing_close = 'outer: loop {
       match self.peek() {
         Some((start, '@')) => {
