@@ -67,7 +67,7 @@ fn main() -> Result<(), anyhow::Error> {
   eprintln!();
 
   let client = LanguageClient::new(&connection);
-  let mut server = Server { client: &client };
+  let mut server = Server { client };
 
   loop {
     match connection.receiver.recv()? {
@@ -134,7 +134,7 @@ fn validate_message(
 }
 
 struct Server<'a> {
-  client: &'a LanguageClient<'a>,
+  client: LanguageClient<'a>,
 }
 
 impl LanguageServer for Server<'_> {
@@ -145,7 +145,7 @@ impl LanguageServer for Server<'_> {
       &params.text_document.text,
       params.text_document.uri,
       params.text_document.version,
-      self.client,
+      &self.client,
     ) {
       eprintln!("Error validating message: {:#?}", err);
     }
@@ -158,7 +158,7 @@ impl LanguageServer for Server<'_> {
       &params.content_changes[0].text,
       params.text_document.uri,
       params.text_document.version,
-      self.client,
+      &self.client,
     ) {
       eprintln!("Error validating message: {:#?}", err);
     }
