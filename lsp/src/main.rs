@@ -1,12 +1,11 @@
+mod protocol;
+
 use lsp_server::Connection;
 use lsp_server::Message;
-use lsp_server::Notification;
-use lsp_server::Response;
-use lsp_types::notification::DidChangeTextDocument;
-use lsp_types::notification::DidCloseTextDocument;
-use lsp_types::notification::DidOpenTextDocument;
-use lsp_types::request::HoverRequest;
 use lsp_types::Diagnostic;
+use lsp_types::DidChangeTextDocumentParams;
+use lsp_types::DidCloseTextDocumentParams;
+use lsp_types::DidOpenTextDocumentParams;
 use lsp_types::InitializeParams;
 use lsp_types::Position;
 use lsp_types::PublishDiagnosticsParams;
@@ -18,6 +17,9 @@ use lsp_types::Uri;
 use mf2_parser::parse;
 use mf2_parser::Location;
 use mf2_parser::SourceTextInfo;
+use protocol::LanguageServer;
+
+use crate::protocol::LanguageClient;
 
 fn main() -> Result<(), anyhow::Error> {
   eprintln!(
@@ -36,6 +38,7 @@ fn main() -> Result<(), anyhow::Error> {
     text_document_sync: Some(TextDocumentSyncCapability::Kind(
       TextDocumentSyncKind::FULL,
     )),
+    hover_provider: Some(lsp_types::HoverProviderCapability::Simple(true)),
     ..ServerCapabilities::default()
   };
 
@@ -63,91 +66,23 @@ fn main() -> Result<(), anyhow::Error> {
   }
   eprintln!();
 
+  let client = LanguageClient::new(&connection);
+  let mut server = Server { client };
+
   loop {
     match connection.receiver.recv()? {
-      Message::Request(req) => {
-        if connection.handle_shutdown(&req).unwrap_or(true) {
+      Message::Request(request) => {
+        if connection.handle_shutdown(&request).unwrap_or(true) {
           break;
         }
 
-        macro_rules! match_request {
-          (
-            $($name:ident$( ($params:ident) )? => $body:tt)*
-          ) => {
-            match req.method.as_str() {
-              $(
-                <$name as lsp_types::request::Request>::METHOD => {
-                  $(
-                    let $params = serde_json::from_value::<
-                      <$name as lsp_types::request::Request>::Params,
-                    >(req.params)?;
-                  )?
-                  let result: <$name as lsp_types::request::Request>::Result = $body;
-                  connection.sender.send(Message::Response(Response::new_ok(req.id, result)))?;
-                }
-              )*
-              _ => {
-                eprintln!("Unrecognized request: {}", req.method);
-              }
-            }
-          };
-        }
-
-        match_request! {
-          HoverRequest(params) => {
-            eprintln!("Hover request: {:#?}", params);
-            None
-          }
-        }
+        let response = server.handle_request(request);
+        connection.sender.send(Message::Response(response))?;
       }
       Message::Response(_) => todo!(),
 
       Message::Notification(notification) => {
-        macro_rules! match_notification {
-          (
-            $($name:ident($params:ident) => $body:tt)*
-          ) => {
-            match notification.method.as_str() {
-              $(
-                <$name as lsp_types::notification::Notification>::METHOD => {
-                  let $params = serde_json::from_value::<
-                    <$name as lsp_types::notification::Notification>::Params,
-                  >(notification.params)?;
-                  $body
-                }
-              )*
-              _ => {
-                eprintln!("Unrecognized notification: {}", notification.method);
-              }
-            }
-          };
-        }
-
-        match_notification! {
-          DidOpenTextDocument(params) => {
-            eprintln!("Opened document: {:#?}", params);
-
-            validate_message(
-              &params.text_document.text,
-              params.text_document.uri,
-              params.text_document.version,
-              &connection
-            )?;
-          }
-          DidChangeTextDocument(params) => {
-            eprintln!("Changed document: {:#?}", params);
-
-            validate_message(
-              &params.content_changes[0].text,
-              params.text_document.uri,
-              params.text_document.version,
-              &connection
-            )?;
-          }
-          DidCloseTextDocument(params) => {
-            eprintln!("Closed document: {:#?}", params);
-          }
-        }
+        server.handle_notification(notification);
       }
     }
   }
@@ -160,7 +95,7 @@ fn validate_message(
   text: &str,
   uri: Uri,
   version: i32,
-  connection: &Connection,
+  client: &LanguageClient<'_>,
 ) -> Result<(), anyhow::Error> {
   let (_ast, diagnostics, text_info) = parse(text);
 
@@ -193,10 +128,51 @@ fn validate_message(
     diagnostics,
   };
 
-  connection.sender.send(Message::Notification(Notification {
-    method: "textDocument/publishDiagnostics".to_string(),
-    params: serde_json::to_value(params).unwrap(),
-  }))?;
+  client.publish_diagnostics(params);
 
   Ok(())
+}
+
+struct Server<'a> {
+  client: LanguageClient<'a>,
+}
+
+impl LanguageServer for Server<'_> {
+  fn on_open_text_document(&mut self, params: DidOpenTextDocumentParams) {
+    eprintln!("Opened document: {:#?}", params);
+
+    if let Err(err) = validate_message(
+      &params.text_document.text,
+      params.text_document.uri,
+      params.text_document.version,
+      &self.client,
+    ) {
+      eprintln!("Error validating message: {:#?}", err);
+    }
+  }
+
+  fn on_change_text_document(&mut self, params: DidChangeTextDocumentParams) {
+    eprintln!("Changed document: {:#?}", params);
+
+    if let Err(err) = validate_message(
+      &params.content_changes[0].text,
+      params.text_document.uri,
+      params.text_document.version,
+      &self.client,
+    ) {
+      eprintln!("Error validating message: {:#?}", err);
+    }
+  }
+
+  fn on_close_text_document(&mut self, params: DidCloseTextDocumentParams) {
+    eprintln!("Closed document: {:#?}", params);
+  }
+
+  fn hover(
+    &mut self,
+    params: lsp_types::HoverParams,
+  ) -> Result<Option<lsp_types::Hover>, anyhow::Error> {
+    eprintln!("Hover request: {:#?}", params);
+    Ok(None)
+  }
 }
