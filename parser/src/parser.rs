@@ -1088,8 +1088,12 @@ impl<'a> Parser<'a> {
           span: Span::new(self.current_location()..self.text.end_location()),
         });
       } else {
-        let pattern = self.parse_pattern(self.current_location(), false);
-        // todo: remove trailing spaces from the pattern
+        let mut pattern = self.parse_pattern(self.current_location(), false);
+        if let Some(PatternPart::Text(text)) = pattern.parts.last_mut() {
+          text.content = text
+            .content
+            .trim_end_matches(|c| matches!(c, chars::space!()));
+        }
         self.report(Diagnostic::ComplexMessageBodyNotQuoted {
           span: pattern.span(),
         });

@@ -1,0 +1,74 @@
+.input {$a :b}
+  abc {$a}   
+
+
+=== spans ===
+                    .input {$a :b}↵  abc {$a}   ↵↵
+ComplexMessage      ^^^^^^^^^^^^^^^^^^^^^^^^^
+Declaration         ^^^^^^^^^^^^^^
+InputDeclaration    ^^^^^^^^^^^^^^
+VariableExpression         ^^^^^^^
+Variable                    ^^
+Function                       ^^
+Identifier                      ^
+QuotedPattern                        ^^^^^^^^
+Pattern                              ^^^^^^^^
+Text                                 ^^^^
+VariableExpression                       ^^^^
+Variable                                  ^^
+Text                                         
+=== diagnostics ===
+Complex message body must be quoted (at @17..25)
+  .input {$a :b}↵  abc {$a}   ↵↵
+                   ^^^^^^^^
+=== ast ===
+ComplexMessage {
+    declarations: [
+        InputDeclaration {
+            start: @0,
+            expression: VariableExpression {
+                span: @7..14,
+                variable: Variable {
+                    span: @8..10,
+                    name: "a",
+                },
+                annotation: Some(
+                    Function {
+                        start: @11,
+                        id: Identifier {
+                            start: @12,
+                            namespace: None,
+                            name: "b",
+                        },
+                        options: [],
+                    },
+                ),
+                attributes: [],
+            },
+        },
+    ],
+    body: QuotedPattern {
+        span: @17..25,
+        pattern: Pattern {
+            parts: [
+                Text {
+                    start: @17,
+                    content: "abc ",
+                },
+                VariableExpression {
+                    span: @21..25,
+                    variable: Variable {
+                        span: @22..24,
+                        name: "a",
+                    },
+                    annotation: None,
+                    attributes: [],
+                },
+                Text {
+                    start: @25,
+                    content: "",
+                },
+            ],
+        },
+    },
+}
