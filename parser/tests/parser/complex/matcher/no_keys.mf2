@@ -1,0 +1,50 @@
+.match {$hello}
+{{hello}}
+=== spans ===
+                    .match {$hello}↵{{hello}}
+ComplexMessage      ^^^^^^^^^^^^^^^^^^^^^^^^^
+Matcher             ^^^^^^^^^^^^^^^^^^^^^^^^^
+VariableExpression         ^^^^^^^^
+Variable                    ^^^^^^
+Variant                             ^^^^^^^^^
+QuotedPattern                       ^^^^^^^^^
+Pattern                               ^^^^^
+Text                                  ^^^^^
+=== diagnostics ===
+Matcher variant is missing key(s), at least one is required (at @16..25)
+  .match {$hello}↵{{hello}}
+                  ^^^^^^^^^
+=== ast ===
+ComplexMessage {
+    declarations: [],
+    body: Matcher {
+        start: @0,
+        selectors: [
+            VariableExpression {
+                span: @7..15,
+                variable: Variable {
+                    span: @8..14,
+                    name: "hello",
+                },
+                annotation: None,
+                attributes: [],
+            },
+        ],
+        variants: [
+            Variant {
+                keys: [],
+                pattern: QuotedPattern {
+                    span: @16..25,
+                    pattern: Pattern {
+                        parts: [
+                            Text {
+                                start: @18,
+                                content: "hello",
+                            },
+                        ],
+                    },
+                },
+            },
+        ],
+    },
+}

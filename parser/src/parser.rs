@@ -1324,14 +1324,21 @@ impl<'a> Parser<'a> {
     let mut selectors = vec![];
 
     self.skip_spaces();
-    while let Some(open) = self.eat('{') {
+    while matches!(self.peek(), Some((_, '{')))
+      && !matches!(self.peek2(), Some((_, '{')))
+    {
+      let (open, _) = self.next().unwrap(); // consume '{'
       self.skip_spaces();
       let expression = self.parse_expression(open);
       selectors.push(expression);
       self.skip_spaces();
     }
 
-    // todo, report error for no selectors
+    if selectors.is_empty() {
+      self.report(Diagnostic::MatcherMissingSelectors {
+        span: Span::new(start..start + ".match"),
+      });
+    }
 
     let mut variants = vec![];
     let mut current_variant_keys = vec![];
@@ -1352,8 +1359,13 @@ impl<'a> Parser<'a> {
           if let Some((_, '{')) = self.peek2() {
             let pattern = self.parse_quoted_pattern(loc);
             let keys = std::mem::take(&mut current_variant_keys);
-            // todo, at least one key is required
-            variants.push(Variant { keys, pattern });
+            let variant = Variant { keys, pattern };
+            if variant.keys.is_empty() {
+              self.report(Diagnostic::MatcherVariantMissingKeys {
+                span: variant.span(),
+              });
+            }
+            variants.push(variant);
           } else {
             todo!("parse as expression and use as quoted pattern for variant")
           }
@@ -1391,7 +1403,7 @@ impl<'a> Parser<'a> {
     }
 
     if !current_variant_keys.is_empty() {
-      variants.push(Variant {
+      let variant = Variant {
         keys: std::mem::take(&mut current_variant_keys),
         pattern: QuotedPattern {
           span: Span::new(self.current_location()..self.current_location()),
@@ -1402,7 +1414,10 @@ impl<'a> Parser<'a> {
             })],
           },
         },
-      });
+      };
+      // Don't need to handle the case where the variant has no keys, since we
+      // only reach this point if we have at least one key.
+      variants.push(variant);
       todo!("report missing pattern for matcher variant")
     }
 
