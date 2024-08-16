@@ -1,15 +1,17 @@
-# MessageFormat 2.0 for VS Code
+# MessageFormat 2 for VS Code
 
-This extension adds syntax highlighting support for MessageFormat 2.0 messages
+This extension adds syntax highlighting support for MessageFormat 2 messages
 contained in `.mf2` files.
 
-To use this extension, open a file containing a MessageFormat 2.0 message, and
-select the `MessageFormat 2.0` language after running the
-`> Change Language Mode` command from the Command Palette
+To use this extension, open a file containing a MessageFormat 2 message, and
+select the `MessageFormat 2` language after running the `> Change Language Mode`
+command from the Command Palette
 (<kbd>Ctrl/Cmd</kbd>+<kbd>Shift</kbd>+<kbd>P</kbd>). Files ending in `.mf2` are
-automatically highlighted as `MessageFormat 2.0`.
+automatically highlighted as `MessageFormat 2`.
 
-In JavaScript files, template strings inside of a `new Intl.MessageFormat()` expression (or `new MessageFormat`) will be highlighted. Template strings prefixed with `/* mf2 */` are also highlighted.
+In JavaScript files, template strings inside of a `new Intl.MessageFormat()`
+expression (or `new MessageFormat`) will be highlighted. Template strings
+prefixed with `/* mf2 */` are also highlighted.
 
 ### Examples
 
@@ -32,7 +34,7 @@ In JavaScript files, template strings inside of a `new Intl.MessageFormat()` exp
 ```ts
 const message = new Intl.MessageFormat(
   "en",
-  `Hello, { $name :fallback value=|World| }!`
+  `Hello, { $name :fallback value=|World| }!`,
 );
 ```
 
@@ -43,7 +45,7 @@ const message = new Intl.MessageFormat(
 </td></tr><tr><td>
 
 ```ts
-const message = /* mf2 */`
+const message = /* mf2 */ `
   .input {$count :number}
   .match {$count}
     0   {{No new notifications}}

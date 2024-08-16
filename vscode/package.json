@@ -1,6 +1,6 @@
 {
   "name": "vscode-mf2",
-  "displayName": "MessageFormat 2.0",
+  "displayName": "MessageFormat 2",
   "description": "",
   "version": "0.0.1",
   "scripts": {
@@ -27,14 +27,17 @@
   },
   "devDependencies": {
     "@types/vscode": "1.90.0",
-    "@types/node": "^20.14.9"
+    "@types/node": "^20.14.9",
+    "typescript": "^5.5",
+    "regenerate": "^1.4.2",
+    "@types/regenerate": "^1.4.3"
   },
   "contributes": {
     "languages": [
       {
         "id": "mf2",
         "aliases": [
-          "MessageFormat 2.0",
+          "MessageFormat 2",
           "mf2"
         ],
         "extensions": [
@@ -72,29 +75,29 @@
       {
         "command": "mf2.restart",
         "title": "Restart Language Server",
-        "category": "MessageFormat 2.0"
+        "category": "MessageFormat 2"
       }
     ],
     "configuration": {
-      "title": "MessageFormat 2.0",
+      "title": "MessageFormat 2",
       "properties": {
         "mf2.server.path": {
           "title": "Path",
           "type": "string",
-          "description": "The path to the MessageFormat 2.0 language server",
+          "description": "The path to the MessageFormat 2 language server",
           "scope": "machine-overridable"
         },
         "mf2.server.download.enabled": {
           "title": "Enable download",
           "type": "boolean",
-          "description": "Whether to download the MessageFormat 2.0 language server from GitHub. Defaults to true.",
+          "description": "Whether to download the MessageFormat 2 language server from GitHub. Defaults to true.",
           "default": true,
           "scope": "machine-overridable"
         },
         "mf2.server.download.version": {
           "title": "Version to download",
           "type": "string",
-          "description": "The version of the MessageFormat 2.0 language server to download from GitHub. Defaults to the latest version.",
+          "description": "The version of the MessageFormat 2 language server to download from GitHub. Defaults to the latest version.",
           "default": "latest",
           "scope": "machine-overridable"
         }

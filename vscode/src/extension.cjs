@@ -42,19 +42,19 @@ exports.Mf2Extension = class Mf2Extension {
         }
       },
       this,
-      context.subscriptions
+      context.subscriptions,
     );
 
     context.subscriptions.push(
       vscode.commands.registerCommand("mf2.restart", async () => {
         await this.#stopLanguageServer();
         await this.#startLanguageServer();
-      })
+      }),
     );
 
     this.#outputChannel = vscode.window.createOutputChannel(
-      "MessageFormat 2.0",
-      { log: true }
+      "MessageFormat 2",
+      { log: true },
     );
     context.subscriptions.push(this.#outputChannel);
 
@@ -70,7 +70,7 @@ exports.Mf2Extension = class Mf2Extension {
 
     if (!this.#configuration.server.path) {
       vscode.window.showErrorMessage(
-        "MessageFormat 2.0 Language Server could not start up because no path to the language server binary was set, and automatic downloading is disabled."
+        "MessageFormat 2 Language Server could not start up because no path to the language server binary was set, and automatic downloading is disabled.",
       );
       return;
     }
@@ -95,9 +95,9 @@ exports.Mf2Extension = class Mf2Extension {
 
     this.#ls = new LanguageClient(
       "mf2lsp",
-      "MessageFormat 2.0 Language Server",
+      "MessageFormat 2 Language Server",
       serverOptions,
-      clientOptions
+      clientOptions,
     );
 
     await this.#ls.start();

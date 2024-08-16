@@ -96,10 +96,11 @@ function root({
 }
 
 export const standalone = {
-  __: "THIS FILE IS AUTO-GENERATED. DO NOT MODIFY MANUALLY. Run `node --run build:grammar` to regenerate it from ../tools/grammar.ts",
+  __:
+    "THIS FILE IS AUTO-GENERATED. DO NOT MODIFY MANUALLY. Run `node --run build:grammar` to regenerate it from ../tools/grammar.ts",
   $schema:
     "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
-  name: "MessageFormat 2.0",
+  name: "MessageFormat 2",
   patterns: root({ begin: "^", end: "(?=file)end" }),
   fileTypes: ["mf2"],
   repository: {
@@ -287,7 +288,8 @@ export const standalone = {
 };
 
 export const js = {
-  __: "THIS FILE IS AUTO-GENERATED. DO NOT MODIFY MANUALLY. Run `node --run build:grammar` to regenerate it from ../tools/grammar.ts",
+  __:
+    "THIS FILE IS AUTO-GENERATED. DO NOT MODIFY MANUALLY. Run `node --run build:grammar` to regenerate it from ../tools/grammar.ts",
   $schema:
     "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
   scopeName: "inline.mf2",
