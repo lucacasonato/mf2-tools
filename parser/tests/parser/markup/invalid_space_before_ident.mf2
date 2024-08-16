@@ -3,17 +3,11 @@
                     {# foo}
 Pattern             ^^^^^^^
 Markup              ^^^^^^^
-Identifier            
-FnOrMarkupOption       ^^^
 Identifier             ^^^
-Text                      
 === diagnostics ===
-Option is missing a value, which is required (at @3..6)
+Markup has invalid spaces before the identifier (at @3..6)
   {# foo}
      ^^^
-Markup is missing an identifier (at @0..7)
-  {# foo}
-  ^^^^^^^
 === ast ===
 Pattern {
     parts: [
@@ -21,23 +15,11 @@ Pattern {
             span: @0..7,
             kind: Open,
             id: Identifier {
-                start: @2,
+                start: @3,
                 namespace: None,
-                name: "",
+                name: "foo",
             },
-            options: [
-                FnOrMarkupOption {
-                    key: Identifier {
-                        start: @3,
-                        namespace: None,
-                        name: "foo",
-                    },
-                    value: Text {
-                        start: @6,
-                        content: "",
-                    },
-                },
-            ],
+            options: [],
             attributes: [],
         },
     ],

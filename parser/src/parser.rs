@@ -869,7 +869,21 @@ impl<'a> Parser<'a> {
     let c = self.next();
     debug_assert!(matches!(c, Some((_, '#' | '/'))));
 
-    let (id, is_id_empty) = self.parse_identifier();
+    let before_id = self.current_location();
+    let mut had_space = self.skip_spaces();
+    let (mut id, is_id_empty) = self.parse_identifier();
+    if is_id_empty {
+      id = Identifier {
+        start: before_id,
+        namespace: None,
+        name: "",
+      };
+    } else if had_space {
+      self.report(Diagnostic::MarkupInvalidSpaceBeforeIdentifier {
+        start_loc: c.unwrap().0,
+        span: id.span(),
+      });
+    }
 
     let mut markup_kind = match kind {
       MarkupStartKind::OpenOrStandalone => MarkupKind::Open,
@@ -878,7 +892,9 @@ impl<'a> Parser<'a> {
     let mut options = vec![];
     let mut attributes = vec![];
 
-    let mut had_space = self.skip_spaces();
+    if !is_id_empty {
+      had_space = self.skip_spaces();
+    }
     let report_missing_close = 'outer: loop {
       match self.peek() {
         Some((start, '@')) => {
