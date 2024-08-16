@@ -1417,8 +1417,10 @@ impl<'a> Parser<'a> {
       };
       // Don't need to handle the case where the variant has no keys, since we
       // only reach this point if we have at least one key.
+      self.report(Diagnostic::MatcherVariantMissingBody {
+        span: variant.span(),
+      });
       variants.push(variant);
-      todo!("report missing pattern for matcher variant")
     }
 
     Matcher {
