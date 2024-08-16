@@ -251,7 +251,7 @@ diagnostics! {
     MatcherVariantMissingBody { span: Span } => {
       message: ("Matcher variant is missing a body (at {:?})", span),
       span: *span,
-    },  
+    },
   }
 }
 
