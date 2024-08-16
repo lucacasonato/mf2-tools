@@ -1,0 +1,43 @@
+.match
+* {{hello}}
+=== spans ===
+                    .match↵* {{hello}}
+ComplexMessage      ^^^^^^^^^^^^^^^^^^
+Matcher             ^^^^^^^^^^^^^^^^^^
+Variant                    ^^^^^^^^^^^
+Star                       ^
+QuotedPattern                ^^^^^^^^^
+Pattern                        ^^^^^
+Text                           ^^^^^
+=== diagnostics ===
+Matcher is missing a selector, at least one is required (at @0..6)
+  .match↵* {{hello}}
+  ^^^^^^
+=== ast ===
+ComplexMessage {
+    declarations: [],
+    body: Matcher {
+        start: @0,
+        selectors: [],
+        variants: [
+            Variant {
+                keys: [
+                    Star {
+                        start: @7,
+                    },
+                ],
+                pattern: QuotedPattern {
+                    span: @9..18,
+                    pattern: Pattern {
+                        parts: [
+                            Text {
+                                start: @11,
+                                content: "hello",
+                            },
+                        ],
+                    },
+                },
+            },
+        ],
+    },
+}

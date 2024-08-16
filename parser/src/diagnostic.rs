@@ -236,6 +236,14 @@ diagnostics! {
       message: ("Input declaration has a non-variable expression (at {:?})", expression.span()),
       span: *span,
     },
+    MatcherMissingSelectors { span: Span } => {
+      message: ("Matcher is missing a selector, at least one is required (at {:?})", span),
+      span: *span,
+    },
+    MatcherVariantMissingKeys { span: Span } => {
+      message: ("Matcher variant is missing key(s), at least one is required (at {:?})", span),
+      span: *span,
+    },
   }
 }
 
