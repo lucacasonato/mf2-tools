@@ -1,0 +1,47 @@
+.input {:foo}
+{{}}
+=== spans ===
+                    .input {:foo}↵{{}}
+ComplexMessage      ^^^^^^^^^^^^^^^^^^
+Declaration         ^^^^^^^^^^^^^
+ReservedStatement   ^^^^^^^^^^^^^
+AnnotationExpression       ^^^^^^
+Function                    ^^^^
+Identifier                   ^^^
+QuotedPattern                     ^^^^
+Pattern             
+=== diagnostics ===
+Input declaration has a non-variable expression (at @7..13)
+  .input {:foo}↵{{}}
+  ^^^^^^^^^^^^^
+=== ast ===
+ComplexMessage {
+    declarations: [
+        ReservedStatement {
+            start: @0,
+            name: "input",
+            body: [],
+            expressions: [
+                AnnotationExpression {
+                    span: @7..13,
+                    annotation: Function {
+                        start: @8,
+                        id: Identifier {
+                            start: @9,
+                            namespace: None,
+                            name: "foo",
+                        },
+                        options: [],
+                    },
+                    attributes: [],
+                },
+            ],
+        },
+    ],
+    body: QuotedPattern {
+        span: @14..18,
+        pattern: Pattern {
+            parts: [],
+        },
+    },
+}

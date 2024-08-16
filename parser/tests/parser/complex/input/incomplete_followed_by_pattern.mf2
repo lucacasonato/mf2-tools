@@ -1,0 +1,30 @@
+.input
+{{}}
+=== spans ===
+                    .input↵{{}}
+ComplexMessage      ^^^^^^^^^^^
+Declaration         ^^^^^^
+ReservedStatement   ^^^^^^
+QuotedPattern              ^^^^
+Pattern             
+=== diagnostics ===
+Input declaration is missing an expression (at @0..6)
+  .input↵{{}}
+  ^^^^^^
+=== ast ===
+ComplexMessage {
+    declarations: [
+        ReservedStatement {
+            start: @0,
+            name: "input",
+            body: [],
+            expressions: [],
+        },
+    ],
+    body: QuotedPattern {
+        span: @7..11,
+        pattern: Pattern {
+            parts: [],
+        },
+    },
+}

@@ -1,0 +1,42 @@
+.input $foo
+{{}}
+=== spans ===
+                    .input $foo↵{{}}
+ComplexMessage      ^^^^^^^^^^^^^^^^
+Declaration         ^^^^^^
+ReservedStatement   ^^^^^^
+QuotedPattern              ^^^^^^^^^
+Pattern                    ^^^^^^^^^
+Text                       ^^^^^^^^^
+=== diagnostics ===
+Input declaration is missing an expression (at @0..6)
+  .input $foo↵{{}}
+  ^^^^^^
+Quoted pattern is not allowed inside of patterns (at @12..14)
+  .input $foo↵{{}}
+              ^^
+Complex message body must be quoted (at @7..16)
+  .input $foo↵{{}}
+         ^^^^^^^^^
+=== ast ===
+ComplexMessage {
+    declarations: [
+        ReservedStatement {
+            start: @0,
+            name: "input",
+            body: [],
+            expressions: [],
+        },
+    ],
+    body: QuotedPattern {
+        span: @7..16,
+        pattern: Pattern {
+            parts: [
+                Text {
+                    start: @7,
+                    content: "$foo\n{{}}",
+                },
+            ],
+        },
+    },
+}
