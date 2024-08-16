@@ -1,0 +1,83 @@
+.match {1 :a}
+* {1}
+=== spans ===
+                    .match {1 :a}↵* {1}
+ComplexMessage      ^^^^^^^^^^^^^^^^^^^
+Matcher             ^^^^^^^^^^^^^^^^^^^
+LiteralExpression          ^^^^^^
+Number                      ^
+Number.integral             ^
+Function                      ^^
+Identifier                     ^
+Variant                           ^^^^^
+Star                              ^
+QuotedPattern                       ^^^
+Pattern                             ^^^
+LiteralExpression                   ^^^
+Number                               ^
+Number.integral                      ^
+=== diagnostics ===
+Matcher variant has an expression as body that is not in a quoted pattern (at @16..19)
+  .match {1 :a}↵* {1}
+                  ^^^
+=== ast ===
+ComplexMessage {
+    declarations: [],
+    body: Matcher {
+        start: @0,
+        selectors: [
+            LiteralExpression {
+                span: @7..13,
+                literal: Number {
+                    start: @8,
+                    raw: "1",
+                    is_negative: false,
+                    integral_len: 1,
+                    fractional_len: None,
+                    exponent_len: None,
+                },
+                annotation: Some(
+                    Function {
+                        start: @10,
+                        id: Identifier {
+                            start: @11,
+                            namespace: None,
+                            name: "a",
+                        },
+                        options: [],
+                    },
+                ),
+                attributes: [],
+            },
+        ],
+        variants: [
+            Variant {
+                keys: [
+                    Star {
+                        start: @14,
+                    },
+                ],
+                pattern: QuotedPattern {
+                    span: @16..19,
+                    pattern: Pattern {
+                        parts: [
+                            LiteralExpression {
+                                span: @16..19,
+                                literal: Number {
+                                    start: @17,
+                                    raw: "1",
+                                    is_negative: false,
+                                    integral_len: 1,
+                                    fractional_len: None,
+                                    exponent_len: None,
+                                },
+                                annotation: None,
+                                attributes: [],
+                            },
+                        ],
+                    },
+                },
+            },
+        ],
+    },
+}

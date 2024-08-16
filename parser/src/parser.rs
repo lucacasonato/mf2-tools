@@ -1356,19 +1356,30 @@ impl<'a> Parser<'a> {
           had_space_or_closing_curly = self.skip_spaces();
         }
         '{' => {
-          if let Some((_, '{')) = self.peek2() {
-            let pattern = self.parse_quoted_pattern(loc);
-            let keys = std::mem::take(&mut current_variant_keys);
-            let variant = Variant { keys, pattern };
-            if variant.keys.is_empty() {
-              self.report(Diagnostic::MatcherVariantMissingKeys {
-                span: variant.span(),
-              });
-            }
-            variants.push(variant);
+          let pattern = if let Some((_, '{')) = self.peek2() {
+            self.parse_quoted_pattern(loc)
           } else {
-            todo!("parse as expression and use as quoted pattern for variant")
+            self.next().unwrap(); // consume '{'
+            self.skip_spaces();
+            let expression = self.parse_expression(loc);
+            self.report(Diagnostic::MatcherVariantExpressionBodyNotQuoted {
+              span: expression.span(),
+            });
+            QuotedPattern {
+              span: expression.span(),
+              pattern: Pattern {
+                parts: vec![PatternPart::Expression(expression)],
+              },
+            }
+          };
+          let keys = std::mem::take(&mut current_variant_keys);
+          let variant = Variant { keys, pattern };
+          if variant.keys.is_empty() {
+            self.report(Diagnostic::MatcherVariantMissingKeys {
+              span: variant.span(),
+            });
           }
+          variants.push(variant);
           self.skip_spaces();
           had_space_or_closing_curly = true;
         }
