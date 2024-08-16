@@ -72,6 +72,10 @@ diagnostics! {
       message: ("Markup is missing an identifier (at {:?})", span),
       span: *span,
     },
+    MarkupInvalidSpaceBeforeIdentifier { span: Span, start_loc: Location } => {
+      message: ("Markup has invalid spaces before the identifier (at {:?})", span),
+      span: *span,
+    },
     MarkupMissingClosingBrace { span: Span } => {
       message: ("Markup is missing a closing brace (at {:?})", span),
       span: *span,
