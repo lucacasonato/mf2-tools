@@ -208,6 +208,10 @@ diagnostics! {
       message: ("Matcher key cannot be a variable (at {:?})", span),
       span: *span,
     },
+    InvalidMatcherLiteralKey { span: Span } => {
+      message: ("Invalid literal matcher key (at {:?})", span),
+      span: *span,
+    },
     ReservedStatementMissingSpaceBeforeBody { span: Span } => {
       message: ("Reserved statement must be followed by a space before the body (at {:?})", span),
       span: *span,

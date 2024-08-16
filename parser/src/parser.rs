@@ -1387,23 +1387,72 @@ impl<'a> Parser<'a> {
           break;
         }
         _ => {
-          let literal_or_variable = self.parse_literal_or_variable();
-          let key = match literal_or_variable {
-            Some(LiteralOrVariable::Literal(literal)) => Key::Literal(literal),
-            Some(LiteralOrVariable::Variable(variable)) => {
-              let span = variable.span();
-              self.report(Diagnostic::MatcherKeyIsVariable { span });
+          let diag_length = self.diagnostics.len();
+
+          let key = self
+            .parse_literal_or_variable()
+            .and_then(|literal_or_variable| {
+              if let LiteralOrVariable::Literal(literal @ Literal::Quoted(_)) =
+                literal_or_variable
+              {
+                return Some(Key::Literal(literal));
+              };
+
+              if !matches!(
+                self.peek(),
+                None | Some((_, chars::space!() | '{' | '|' | '*' | '.'))
+              ) {
+                return None;
+              }
+
+              match literal_or_variable {
+                LiteralOrVariable::Variable(variable) => {
+                  let span = variable.span();
+                  self.report(Diagnostic::MatcherKeyIsVariable { span });
+                  Some(Key::Literal(Literal::Text(Text {
+                    start: variable.span.start,
+                    content: self.text.slice(span.start..span.end),
+                  })))
+                }
+                LiteralOrVariable::Literal(literal) => {
+                  Some(Key::Literal(literal))
+                }
+              }
+            })
+            .unwrap_or_else(|| {
+              self.diagnostics.truncate(diag_length);
+
+              let end = loop {
+                match self.peek() {
+                  Some((end, chars::space!())) => {
+                    break end;
+                  }
+                  // handled by the outer match
+                  Some((end, '*' | '{' | '.')) => {
+                    break end;
+                  }
+                  // a subset of literal/variable starts that we want to
+                  // consider as a separate invalid key
+                  Some((end, '|')) => {
+                    break end;
+                  }
+                  None => {
+                    break self.current_location();
+                  }
+                  _ => {
+                    self.next().unwrap();
+                  }
+                }
+              };
+
+              let span = Span::new(loc..end);
+              self.report(Diagnostic::InvalidMatcherLiteralKey { span });
               Key::Literal(Literal::Text(Text {
-                start: variable.span.start,
+                start: span.start,
                 content: self.text.slice(span.start..span.end),
               }))
-            }
-            None => {
-              // eat until the next space or quoted pattern
+            });
 
-              todo!("error recovery for invalid matcher key")
-            }
-          };
           if !had_space_or_closing_curly {
             self.report(Diagnostic::MissingSpaceBeforeKey { span: key.span() })
           }

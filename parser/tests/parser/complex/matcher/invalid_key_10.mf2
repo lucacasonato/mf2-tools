@@ -1,0 +1,73 @@
+.match {1 :a}
+abc+yej% {{Hi}}
+=== spans ===
+                    .match {1 :a}↵abc+yej% {{Hi}}
+ComplexMessage      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Matcher             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+LiteralExpression          ^^^^^^
+Number                      ^
+Number.integral             ^
+Function                      ^^
+Identifier                     ^
+Variant                           ^^^^^^^^^^^^^^^
+Text                              ^^^^^^^^
+QuotedPattern                              ^^^^^^
+Pattern                                      ^^
+Text                                         ^^
+=== diagnostics ===
+Invalid literal matcher key (at @14..22)
+  .match {1 :a}↵abc+yej% {{Hi}}
+                ^^^^^^^^
+=== ast ===
+ComplexMessage {
+    declarations: [],
+    body: Matcher {
+        start: @0,
+        selectors: [
+            LiteralExpression {
+                span: @7..13,
+                literal: Number {
+                    start: @8,
+                    raw: "1",
+                    is_negative: false,
+                    integral_len: 1,
+                    fractional_len: None,
+                    exponent_len: None,
+                },
+                annotation: Some(
+                    Function {
+                        start: @10,
+                        id: Identifier {
+                            start: @11,
+                            namespace: None,
+                            name: "a",
+                        },
+                        options: [],
+                    },
+                ),
+                attributes: [],
+            },
+        ],
+        variants: [
+            Variant {
+                keys: [
+                    Text {
+                        start: @14,
+                        content: "abc+yej%",
+                    },
+                ],
+                pattern: QuotedPattern {
+                    span: @23..29,
+                    pattern: Pattern {
+                        parts: [
+                            Text {
+                                start: @25,
+                                content: "Hi",
+                            },
+                        ],
+                    },
+                },
+            },
+        ],
+    },
+}
