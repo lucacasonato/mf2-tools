@@ -1,0 +1,87 @@
+.match {1 :a}
+|abc|+yej% {{Hi}}
+=== spans ===
+                    .match {1 :a}↵|abc|+yej% {{Hi}}
+ComplexMessage      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Matcher             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+LiteralExpression          ^^^^^^
+Number                      ^
+Number.integral             ^
+Function                      ^^
+Identifier                     ^
+Variant                           ^^^^^^^^^^^^^^^^^
+Quoted                            ^^^^^
+Text                               ^^^
+Text                                   ^^^^^
+QuotedPattern                                ^^^^^^
+Pattern                                        ^^
+Text                                           ^^
+=== diagnostics ===
+Invalid literal matcher key (at @19..24)
+  .match {1 :a}↵|abc|+yej% {{Hi}}
+                     ^^^^^
+Key is missing a leading space (at @19..24)
+  .match {1 :a}↵|abc|+yej% {{Hi}}
+                     ^^^^^
+=== ast ===
+ComplexMessage {
+    declarations: [],
+    body: Matcher {
+        start: @0,
+        selectors: [
+            LiteralExpression {
+                span: @7..13,
+                literal: Number {
+                    start: @8,
+                    raw: "1",
+                    is_negative: false,
+                    integral_len: 1,
+                    fractional_len: None,
+                    exponent_len: None,
+                },
+                annotation: Some(
+                    Function {
+                        start: @10,
+                        id: Identifier {
+                            start: @11,
+                            namespace: None,
+                            name: "a",
+                        },
+                        options: [],
+                    },
+                ),
+                attributes: [],
+            },
+        ],
+        variants: [
+            Variant {
+                keys: [
+                    Quoted {
+                        span: @14..19,
+                        parts: [
+                            Text {
+                                start: @15,
+                                content: "abc",
+                            },
+                        ],
+                    },
+                    Text {
+                        start: @19,
+                        content: "+yej%",
+                    },
+                ],
+                pattern: QuotedPattern {
+                    span: @25..31,
+                    pattern: Pattern {
+                        parts: [
+                            Text {
+                                start: @27,
+                                content: "Hi",
+                            },
+                        ],
+                    },
+                },
+            },
+        ],
+    },
+}
