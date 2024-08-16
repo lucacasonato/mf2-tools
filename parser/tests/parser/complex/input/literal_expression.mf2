@@ -1,0 +1,47 @@
+.input {1}
+{{}}
+=== spans ===
+                    .input {1}↵{{}}
+ComplexMessage      ^^^^^^^^^^^^^^^
+Declaration         ^^^^^^^^^^
+ReservedStatement   ^^^^^^^^^^
+LiteralExpression          ^^^
+Number                      ^
+Number.integral             ^
+QuotedPattern                  ^^^^
+Pattern             
+=== diagnostics ===
+Input declaration has a non-variable expression (at @7..10)
+  .input {1}↵{{}}
+  ^^^^^^^^^^
+=== ast ===
+ComplexMessage {
+    declarations: [
+        ReservedStatement {
+            start: @0,
+            name: "input",
+            body: [],
+            expressions: [
+                LiteralExpression {
+                    span: @7..10,
+                    literal: Number {
+                        start: @8,
+                        raw: "1",
+                        is_negative: false,
+                        integral_len: 1,
+                        fractional_len: None,
+                        exponent_len: None,
+                    },
+                    annotation: None,
+                    attributes: [],
+                },
+            ],
+        },
+    ],
+    body: QuotedPattern {
+        span: @11..15,
+        pattern: Pattern {
+            parts: [],
+        },
+    },
+}

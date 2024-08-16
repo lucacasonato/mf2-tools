@@ -1,6 +1,7 @@
 use std::fmt;
 
 use crate::ast::Attribute;
+use crate::ast::Expression;
 use crate::ast::FnOrMarkupOption;
 use crate::ast::Identifier;
 use crate::ast::Number;
@@ -225,6 +226,14 @@ diagnostics! {
     },
     LocalDeclarationMissingExpression { span: Span } => {
       message: ("Local declaration is missing an expression (at {:?})", span),
+      span: *span,
+    },
+    InputDeclarationMissingExpression { span: Span } => {
+      message: ("Input declaration is missing an expression (at {:?})", span),
+      span: *span,
+    },
+    InputDeclarationWithInvalidExpression { span: Span, expression: Expression<'a> } => {
+      message: ("Input declaration has a non-variable expression (at {:?})", expression.span()),
       span: *span,
     },
   }

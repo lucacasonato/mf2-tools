@@ -1,0 +1,63 @@
+.input
+.local $bar = {123}
+{{hello}}
+=== spans ===
+                    .input↵.local $bar = {123}↵{{hello}}
+ComplexMessage      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Declaration         ^^^^^^
+ReservedStatement   ^^^^^^
+Declaration                ^^^^^^^^^^^^^^^^^^^
+LocalDeclaration           ^^^^^^^^^^^^^^^^^^^
+Variable                          ^^^^
+LiteralExpression                        ^^^^^
+Number                                    ^^^
+Number.integral                           ^^^
+QuotedPattern                                  ^^^^^^^^^
+Pattern                                          ^^^^^
+Text                                             ^^^^^
+=== diagnostics ===
+Input declaration is missing an expression (at @0..6)
+  .input↵.local $bar = {123}↵{{hello}}
+  ^^^^^^
+=== ast ===
+ComplexMessage {
+    declarations: [
+        ReservedStatement {
+            start: @0,
+            name: "input",
+            body: [],
+            expressions: [],
+        },
+        LocalDeclaration {
+            start: @7,
+            variable: Variable {
+                span: @14..18,
+                name: "bar",
+            },
+            expression: LiteralExpression {
+                span: @21..26,
+                literal: Number {
+                    start: @22,
+                    raw: "123",
+                    is_negative: false,
+                    integral_len: 3,
+                    fractional_len: None,
+                    exponent_len: None,
+                },
+                annotation: None,
+                attributes: [],
+            },
+        },
+    ],
+    body: QuotedPattern {
+        span: @27..36,
+        pattern: Pattern {
+            parts: [
+                Text {
+                    start: @29,
+                    content: "hello",
+                },
+            ],
+        },
+    },
+}

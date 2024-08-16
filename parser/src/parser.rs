@@ -1034,10 +1034,7 @@ impl<'a> Parser<'a> {
           self.next(); // consume '.'
           let name = self.parse_name();
           let declaration = match name {
-            "input" => {
-              let input = self.parse_input_declaration(start);
-              Declaration::InputDeclaration(input)
-            }
+            "input" => self.parse_input_declaration(start),
             "local" => self.parse_local_declaration(start),
             "match" => {
               let matcher = self.parse_matcher(start);
@@ -1225,26 +1222,48 @@ impl<'a> Parser<'a> {
     })
   }
 
-  fn parse_input_declaration(
-    &mut self,
-    start: Location,
-  ) -> InputDeclaration<'a> {
+  fn parse_input_declaration(&mut self, start: Location) -> Declaration<'a> {
     // At this point, `.input` has already been consumed. `start` is the location of the `.`.
 
+    let before_spaces = self.current_location();
     self.skip_spaces();
 
-    let Some(open) = self.eat('{') else {
-      todo!("go into declaration error recovery");
+    let (open, _) = if matches!(self.peek(), Some((_, '{')))
+      && !matches!(self.peek2(), Some((_, '{')))
+    {
+      self.next().unwrap() // consume '{'
+    } else {
+      self.text.reset_to(before_spaces);
+      let decl = Declaration::ReservedStatement(ReservedStatement {
+        name: "input",
+        start,
+        body: vec![],
+        expressions: vec![],
+      });
+      self.report(Diagnostic::InputDeclarationMissingExpression {
+        span: decl.span(),
+      });
+      return decl;
     };
 
     self.skip_spaces();
 
     let expression = self.parse_expression(open);
     let Expression::VariableExpression(expression) = expression else {
-      todo!("report non variable input declaration")
+      let decl = Declaration::ReservedStatement(ReservedStatement {
+        name: "input",
+        start,
+        body: vec![],
+        expressions: vec![expression.clone()],
+      });
+      self.report(Diagnostic::InputDeclarationWithInvalidExpression {
+        span: decl.span(),
+        expression,
+      });
+      return decl;
     };
 
-    InputDeclaration { start, expression }
+    Declaration::InputDeclaration(InputDeclaration { start, expression })
   }
 
   fn parse_reserved_statement(
