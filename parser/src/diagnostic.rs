@@ -248,6 +248,10 @@ diagnostics! {
       message: ("Matcher variant has an expression as body that is not in a quoted pattern (at {:?})", span),
       span: *span,
     },
+    MatcherVariantMissingBody { span: Span } => {
+      message: ("Matcher variant is missing a body (at {:?})", span),
+      span: *span,
+    },
   }
 }
 
