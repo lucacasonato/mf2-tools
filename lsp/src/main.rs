@@ -1,6 +1,7 @@
+mod protocol;
+
 use lsp_server::Connection;
 use lsp_server::Message;
-use lsp_server::Notification;
 use lsp_server::Response;
 use lsp_types::notification::DidChangeTextDocument;
 use lsp_types::notification::DidCloseTextDocument;
@@ -18,6 +19,8 @@ use lsp_types::Uri;
 use mf2_parser::parse;
 use mf2_parser::Location;
 use mf2_parser::SourceTextInfo;
+
+use crate::protocol::LanguageClient;
 
 fn main() -> Result<(), anyhow::Error> {
   eprintln!(
@@ -62,6 +65,8 @@ fn main() -> Result<(), anyhow::Error> {
     }
   }
   eprintln!();
+
+  let client = LanguageClient::new(&connection);
 
   loop {
     match connection.receiver.recv()? {
@@ -131,7 +136,7 @@ fn main() -> Result<(), anyhow::Error> {
               &params.text_document.text,
               params.text_document.uri,
               params.text_document.version,
-              &connection
+              &client
             )?;
           }
           DidChangeTextDocument(params) => {
@@ -141,7 +146,7 @@ fn main() -> Result<(), anyhow::Error> {
               &params.content_changes[0].text,
               params.text_document.uri,
               params.text_document.version,
-              &connection
+              &client
             )?;
           }
           DidCloseTextDocument(params) => {
@@ -160,7 +165,7 @@ fn validate_message(
   text: &str,
   uri: Uri,
   version: i32,
-  connection: &Connection,
+  client: &LanguageClient<'_>,
 ) -> Result<(), anyhow::Error> {
   let (_ast, diagnostics, text_info) = parse(text);
 
@@ -193,10 +198,7 @@ fn validate_message(
     diagnostics,
   };
 
-  connection.sender.send(Message::Notification(Notification {
-    method: "textDocument/publishDiagnostics".to_string(),
-    params: serde_json::to_value(params).unwrap(),
-  }))?;
+  client.publish_diagnostics(params);
 
   Ok(())
 }
