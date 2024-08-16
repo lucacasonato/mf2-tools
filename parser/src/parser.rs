@@ -1400,7 +1400,7 @@ impl<'a> Parser<'a> {
 
               if !matches!(
                 self.peek(),
-                None | Some((_, chars::space!() | '{' | '|' | '*' | '.'))
+                None | Some((_, chars::space!() | '{' | '|' | '*'))
               ) {
                 return None;
               }
@@ -1424,16 +1424,11 @@ impl<'a> Parser<'a> {
 
               let end = loop {
                 match self.peek() {
-                  Some((end, chars::space!())) => {
+                  Some((end, chars::space!() | '{')) => {
                     break end;
                   }
-                  // handled by the outer match
-                  Some((end, '*' | '{' | '.')) => {
-                    break end;
-                  }
-                  // a subset of literal/variable starts that we want to
-                  // consider as a separate invalid key
-                  Some((end, '|')) => {
+                  // starts the next key, with a missing space in between
+                  Some((end, '|' | '*')) => {
                     break end;
                   }
                   None => {
