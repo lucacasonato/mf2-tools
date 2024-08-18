@@ -47,24 +47,27 @@ impl<'a> SourceTextIterator<'a> {
 
   /// Resets the iterator to the given location.
   ///
+  /// The location reset to must be before the current location to ensure line
+  /// start tracking is correct.
+  ///
   /// ## Panics
   ///
   /// Panics if the location falls outside of the source text, or if the
   /// location is not at a character boundary.
   pub fn reset_to(&mut self, loc: Location) {
+    assert!(loc <= self.front_loc);
     assert!(loc.0 <= self.end_location().0);
     self.front_loc = loc;
     self.str_index = loc.0;
     self.peeked = Peeked::None;
     self.iter = self.original[self.str_index as usize..].chars();
+    self.prev_char_was_cr =
+      self.original[..self.str_index as usize].ends_with('\r');
   }
 
   fn iter_next(&mut self) -> Option<char> {
     self.iter.next().map(|ch| {
       match ch {
-        '\r' => {
-          self.prev_char_was_cr = true;
-        }
         '\n' => {
           if *self.utf8_line_starts.last().unwrap() < self.str_index {
             self.utf8_line_starts.push(self.str_index + 1);
@@ -76,8 +79,8 @@ impl<'a> SourceTextIterator<'a> {
             if *self.utf8_line_starts.last().unwrap() < self.str_index {
               self.utf8_line_starts.push(self.str_index);
             }
-            self.prev_char_was_cr = false;
           }
+          self.prev_char_was_cr = ch == '\r';
         }
       }
       self.str_index += ch.len_utf8() as u32;
@@ -600,5 +603,18 @@ mod tests {
 
     // Out of bounds column index
     assert_utf16_loc!((0, 10) == 2);
+  }
+
+  #[test]
+  fn source_text_line_col_reset() {
+    let source = "a\rb";
+    let mut source_text = super::SourceTextIterator::new(source);
+    assert_eq!(source_text.next(), Some((super::Location(0), 'a')));
+    assert_eq!(source_text.next(), Some((super::Location(1), '\r')));
+    source_text.reset_to(super::Location(2)); // doesn't change anything, but \r tracking must be set correctly now
+    assert_eq!(source_text.next(), Some((super::Location(2), 'b')));
+    assert_eq!(source_text.next(), None);
+    let info = source_text.into_info();
+    assert_eq!(info.utf8_line_starts, vec![0, 2]);
   }
 }
