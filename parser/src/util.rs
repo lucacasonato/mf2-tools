@@ -248,7 +248,7 @@ impl SourceTextInfo<'_> {
     location
   }
 
-  /// Returns the location of the given UTF-8 line and column index pair.
+  /// Returns the location of the given UTF-16 line and column index pair.
   ///
   /// If the line index is out of bounds, returns a location pointing to the end
   /// of the source text.
