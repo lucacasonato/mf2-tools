@@ -417,7 +417,7 @@ mod tests {
   #[test]
   fn source_text_line_col_from_loc() {
     let mut source_text = super::SourceTextIterator::new(SOURCE);
-    while let Some(_) = source_text.next() {}
+    while source_text.next().is_some() {}
     let info = source_text.into_info();
 
     macro_rules! assert_utf8_line_col {
@@ -500,7 +500,7 @@ mod tests {
   #[test]
   fn source_text_loc_from_line_col() {
     let mut source_text = super::SourceTextIterator::new(SOURCE);
-    while let Some(_) = source_text.next() {}
+    while source_text.next().is_some() {}
     let info = source_text.into_info();
 
     macro_rules! assert_utf8_loc {
