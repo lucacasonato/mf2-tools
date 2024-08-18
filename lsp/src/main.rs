@@ -3,20 +3,17 @@ mod protocol;
 
 use lsp_server::Connection;
 use lsp_server::Message;
+use lsp_types::CodeAction;
 use lsp_types::Diagnostic;
 use lsp_types::DidChangeTextDocumentParams;
 use lsp_types::DidCloseTextDocumentParams;
 use lsp_types::DidOpenTextDocumentParams;
 use lsp_types::InitializeParams;
-use lsp_types::Position;
 use lsp_types::PublishDiagnosticsParams;
-use lsp_types::Range;
 use lsp_types::ServerCapabilities;
 use lsp_types::TextDocumentSyncCapability;
 use lsp_types::TextDocumentSyncKind;
 use lsp_types::Uri;
-use mf2_parser::Location;
-use mf2_parser::SourceTextInfo;
 use mf2_parser::Spanned;
 
 use std::collections::hash_map::Entry;
@@ -44,6 +41,14 @@ fn main() -> Result<(), anyhow::Error> {
       TextDocumentSyncKind::FULL,
     )),
     hover_provider: Some(lsp_types::HoverProviderCapability::Simple(true)),
+    code_action_provider: Some(
+      lsp_types::CodeActionProviderCapability::Options(
+        lsp_types::CodeActionOptions {
+          code_action_kinds: Some(vec![lsp_types::CodeActionKind::QUICKFIX]),
+          ..lsp_types::CodeActionOptions::default()
+        },
+      ),
+    ),
     ..ServerCapabilities::default()
   };
 
@@ -125,27 +130,12 @@ impl Server<'_> {
       version: Some(document.version),
       diagnostics: diagnostics
         .iter()
-        .map(|diag| {
-          let span = diag.span();
-
-          fn loc_to_pos(info: &SourceTextInfo, loc: Location) -> Position {
-            let line_col = info.utf16_line_col(loc);
-            Position {
-              line: line_col.line,
-              character: line_col.col,
-            }
-          }
-
-          Diagnostic {
-            range: Range {
-              start: loc_to_pos(&parsed.info, span.start),
-              end: loc_to_pos(&parsed.info, span.end),
-            },
-            severity: Some(lsp_types::DiagnosticSeverity::ERROR),
-            message: diag.to_string(),
-            source: Some("mf2".to_string()),
-            ..Diagnostic::default()
-          }
+        .map(|diag| Diagnostic {
+          range: document.span_to_range(diag.span()),
+          severity: Some(lsp_types::DiagnosticSeverity::ERROR),
+          message: diag.to_string(),
+          source: Some("mf2".to_string()),
+          ..Diagnostic::default()
         })
         .collect(),
     });
@@ -201,5 +191,69 @@ impl LanguageServer for Server<'_> {
       }),
       range: Some(document.span_to_range(node.span())),
     }))
+  }
+
+  fn code_action(
+    &mut self,
+    params: lsp_types::CodeActionParams,
+  ) -> Result<Option<lsp_types::CodeActionResponse>, anyhow::Error> {
+    let maybe_document = self.documents.get(&params.text_document.uri);
+    let Some(document) = maybe_document else {
+      return Ok(None);
+    };
+
+    let span = document.range_to_span(params.range);
+
+    let diagnostics = document
+      .parsed
+      .get()
+      .diagnostics
+      .iter()
+      .filter(|diag| diag.span().contains(dbg!(&span)))
+      .filter_map(|d| fix_for_diagnostic(document, d).map(Into::into))
+      .collect::<Vec<_>>();
+
+    Ok(Some(diagnostics))
+  }
+}
+
+fn fix_for_diagnostic(
+  document: &Document,
+  diag: &mf2_parser::Diagnostic,
+) -> Option<lsp_types::CodeAction> {
+  match diag {
+    mf2_parser::Diagnostic::MarkupInvalidSpaceBeforeIdentifier { .. } => {
+      Some(CodeAction {
+        title: "Remove space before identifier".to_string(),
+        kind: Some(lsp_types::CodeActionKind::QUICKFIX),
+        edit: Some(lsp_types::WorkspaceEdit {
+          changes: Some(
+            [(
+              document.uri.clone(),
+              vec![lsp_types::TextEdit {
+                range: document.span_to_range(diag.span()),
+                new_text: "".to_string(),
+              }],
+            )]
+            .into_iter()
+            .collect(),
+          ),
+          change_annotations: None,
+          document_changes: None,
+        }),
+        command: None,
+        diagnostics: Some(vec![Diagnostic {
+          range: document.span_to_range(diag.span()),
+          severity: Some(lsp_types::DiagnosticSeverity::ERROR),
+          message: diag.to_string(),
+          source: Some("mf2".to_string()),
+          ..Diagnostic::default()
+        }]),
+        is_preferred: Some(true),
+        disabled: None,
+        data: None,
+      })
+    }
+    _ => None,
   }
 }

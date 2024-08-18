@@ -881,7 +881,7 @@ impl<'a> Parser<'a> {
     } else if had_space {
       self.report(Diagnostic::MarkupInvalidSpaceBeforeIdentifier {
         start_loc: c.unwrap().0,
-        span: id.span(),
+        id: id.clone(),
       });
     }
 

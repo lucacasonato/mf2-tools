@@ -7,7 +7,7 @@ Identifier             ^^^
 === diagnostics ===
 Markup has invalid spaces before the identifier (at @3..6)
   {# foo}
-     ^^^
+    ^
 === ast ===
 Pattern {
     parts: [

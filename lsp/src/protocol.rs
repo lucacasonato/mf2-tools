@@ -3,6 +3,7 @@ use lsp_types::notification::DidChangeTextDocument;
 use lsp_types::notification::DidCloseTextDocument;
 use lsp_types::notification::DidOpenTextDocument;
 use lsp_types::notification::PublishDiagnostics;
+use lsp_types::request::CodeActionRequest;
 use lsp_types::request::HoverRequest;
 
 pub struct LanguageClient<'a> {
@@ -145,6 +146,7 @@ language_server! {
   },
   requests: {
     hover: HoverRequest,
+    code_action: CodeActionRequest,
   }
 }
 
