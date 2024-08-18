@@ -151,10 +151,10 @@ impl<'a> SourceTextIterator<'a> {
 
   pub fn into_info(mut self) -> SourceTextInfo<'a> {
     assert_eq!(self.str_index, self.original.len() as u32);
-    if self.prev_char_was_cr {
-      if *self.utf8_line_starts.last().unwrap() < self.str_index {
-        self.utf8_line_starts.push(self.str_index);
-      }
+    if self.prev_char_was_cr
+      && *self.utf8_line_starts.last().unwrap() < self.str_index
+    {
+      self.utf8_line_starts.push(self.str_index);
     }
     SourceTextInfo {
       text: self.original,
@@ -232,8 +232,7 @@ impl SourceTextInfo<'_> {
 
     let mut col = line_col.col as usize;
     let mut location = Location(line_start as u32);
-    let mut iter = line_text.chars();
-    while let Some(ch) = iter.next() {
+    for ch in line_text.chars() {
       col = match col.checked_sub(ch.len_utf8()) {
         Some(x) => x,
         None => break,
@@ -269,8 +268,7 @@ impl SourceTextInfo<'_> {
 
     let mut col = line_col.col as usize;
     let mut location = Location(line_start as u32);
-    let mut iter = line_text.chars();
-    while let Some(ch) = iter.next() {
+    for ch in line_text.chars() {
       col = match col.checked_sub(ch.len_utf16()) {
         Some(x) => x,
         None => break,
