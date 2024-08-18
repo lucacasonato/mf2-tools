@@ -166,6 +166,7 @@ class LSPDecoderStream extends TransformStream<
           endOfHeaders + 4,
           endOfHeaders + 4 + contentLength,
         );
+        if (bodyBytes.length < contentLength) return;
         const body = new TextDecoder().decode(bodyBytes);
         try {
           const message = JSON.parse(body);
