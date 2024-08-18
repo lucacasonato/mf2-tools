@@ -1,3 +1,4 @@
+mod document;
 mod protocol;
 
 use lsp_server::Connection;
@@ -14,12 +15,15 @@ use lsp_types::ServerCapabilities;
 use lsp_types::TextDocumentSyncCapability;
 use lsp_types::TextDocumentSyncKind;
 use lsp_types::Uri;
-use mf2_parser::parse;
 use mf2_parser::Location;
 use mf2_parser::SourceTextInfo;
-use protocol::LanguageServer;
 
+use std::collections::hash_map::Entry;
+use std::collections::HashMap;
+
+use crate::document::Document;
 use crate::protocol::LanguageClient;
+use crate::protocol::LanguageServer;
 
 fn main() -> Result<(), anyhow::Error> {
   eprintln!(
@@ -67,7 +71,10 @@ fn main() -> Result<(), anyhow::Error> {
   eprintln!();
 
   let client = LanguageClient::new(&connection);
-  let mut server = Server { client };
+  let mut server = Server {
+    client,
+    documents: HashMap::new(),
+  };
 
   loop {
     match connection.receiver.recv()? {
@@ -90,76 +97,81 @@ fn main() -> Result<(), anyhow::Error> {
   Ok(())
 }
 
-fn validate_message(
-  text: &str,
-  uri: Uri,
-  version: i32,
-  client: &LanguageClient<'_>,
-) -> Result<(), anyhow::Error> {
-  let (_ast, diagnostics, text_info) = parse(text);
-
-  let diagnostics = diagnostics
-    .into_iter()
-    .map(|diag| {
-      let span = diag.span();
-
-      fn loc_to_pos(info: &SourceTextInfo, loc: Location) -> Position {
-        let (line, character) = info.utf16_line_col(loc);
-        Position { line, character }
-      }
-
-      Diagnostic {
-        range: Range {
-          start: loc_to_pos(&text_info, span.start),
-          end: loc_to_pos(&text_info, span.end),
-        },
-        severity: Some(lsp_types::DiagnosticSeverity::ERROR),
-        message: diag.to_string(),
-        source: Some("mf2".to_string()),
-        ..Diagnostic::default()
-      }
-    })
-    .collect();
-
-  let params = PublishDiagnosticsParams {
-    uri,
-    version: Some(version),
-    diagnostics,
-  };
-
-  client.publish_diagnostics(params);
-
-  Ok(())
-}
-
 struct Server<'a> {
   client: LanguageClient<'a>,
+  documents: HashMap<Uri, Document>,
+}
+
+impl Server<'_> {
+  fn on_document_change(&mut self, uri: Uri, version: i32, text: String) {
+    let document = Document::new(uri.clone(), version, text.into_boxed_str());
+    let entry = self.documents.entry(uri.clone());
+    let document = match entry {
+      Entry::Occupied(mut entry) => {
+        assert!(entry.get().version < document.version);
+        entry.insert(document);
+        entry.into_mut()
+      }
+      Entry::Vacant(entry) => entry.insert(document),
+    };
+
+    let parsed = document.parsed.get();
+
+    let diagnostics = &parsed.diagnostics;
+
+    self.client.publish_diagnostics(PublishDiagnosticsParams {
+      uri,
+      version: Some(document.version),
+      diagnostics: diagnostics
+        .iter()
+        .map(|diag| {
+          let span = diag.span();
+
+          fn loc_to_pos(info: &SourceTextInfo, loc: Location) -> Position {
+            let (line, character) = info.utf16_line_col(loc);
+            Position { line, character }
+          }
+
+          Diagnostic {
+            range: Range {
+              start: loc_to_pos(&parsed.info, span.start),
+              end: loc_to_pos(&parsed.info, span.end),
+            },
+            severity: Some(lsp_types::DiagnosticSeverity::ERROR),
+            message: diag.to_string(),
+            source: Some("mf2".to_string()),
+            ..Diagnostic::default()
+          }
+        })
+        .collect(),
+    });
+  }
 }
 
 impl LanguageServer for Server<'_> {
   fn on_open_text_document(&mut self, params: DidOpenTextDocumentParams) {
-    if let Err(err) = validate_message(
-      &params.text_document.text,
-      params.text_document.uri,
+    self.on_document_change(
+      params.text_document.uri.clone(),
       params.text_document.version,
-      &self.client,
-    ) {
-      eprintln!("Error validating message: {:#?}", err);
-    }
+      params.text_document.text,
+    );
   }
 
-  fn on_change_text_document(&mut self, params: DidChangeTextDocumentParams) {
-    if let Err(err) = validate_message(
-      &params.content_changes[0].text,
-      params.text_document.uri,
+  fn on_change_text_document(
+    &mut self,
+    mut params: DidChangeTextDocumentParams,
+  ) {
+    assert_eq!(params.content_changes.len(), 1);
+    self.on_document_change(
+      params.text_document.uri.clone(),
       params.text_document.version,
-      &self.client,
-    ) {
-      eprintln!("Error validating message: {:#?}", err);
-    }
+      params.content_changes.remove(0).text,
+    );
   }
 
-  fn on_close_text_document(&mut self, _params: DidCloseTextDocumentParams) {}
+  fn on_close_text_document(&mut self, params: DidCloseTextDocumentParams) {
+    self.documents.remove(&params.text_document.uri);
+  }
 
   fn hover(
     &mut self,
