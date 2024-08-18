@@ -128,8 +128,11 @@ impl Server<'_> {
           let span = diag.span();
 
           fn loc_to_pos(info: &SourceTextInfo, loc: Location) -> Position {
-            let (line, character) = info.utf16_line_col(loc);
-            Position { line, character }
+            let line_col = info.utf16_line_col(loc);
+            Position {
+              line: line_col.line,
+              character: line_col.col,
+            }
           }
 
           Diagnostic {
