@@ -14,7 +14,7 @@ use yoke::Yoke;
 use yoke::Yokeable;
 
 pub struct Document {
-  pub _uri: Uri,
+  pub uri: Uri,
   pub version: i32,
   pub parsed: Yoke<ParsedDocument<'static>, Box<str>>,
 }
@@ -37,7 +37,7 @@ impl Document {
       }
     });
     Document {
-      _uri: uri,
+      uri,
       version,
       parsed,
     }
@@ -62,6 +62,13 @@ impl Document {
     Range {
       start: self.loc_to_pos(span.start),
       end: self.loc_to_pos(span.end),
+    }
+  }
+
+  pub fn range_to_span(&self, range: Range) -> Span {
+    Span {
+      start: self.pos_to_loc(range.start),
+      end: self.pos_to_loc(range.end),
     }
   }
 

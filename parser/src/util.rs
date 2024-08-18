@@ -349,6 +349,10 @@ impl Span {
   pub fn contains_loc(&self, loc: Location) -> bool {
     self.start.0 <= loc.0 && self.end.0 > loc.0
   }
+
+  pub fn contains(&self, other: &Span) -> bool {
+    self.start.0 <= other.start.0 && self.end.0 >= other.end.0
+  }
 }
 
 impl Debug for Span {
