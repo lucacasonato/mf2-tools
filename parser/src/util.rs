@@ -75,10 +75,10 @@ impl<'a> SourceTextIterator<'a> {
           self.prev_char_was_cr = false;
         }
         _ => {
-          if self.prev_char_was_cr {
-            if *self.utf8_line_starts.last().unwrap() < self.str_index {
-              self.utf8_line_starts.push(self.str_index);
-            }
+          if self.prev_char_was_cr
+            && *self.utf8_line_starts.last().unwrap() < self.str_index
+          {
+            self.utf8_line_starts.push(self.str_index);
           }
           self.prev_char_was_cr = ch == '\r';
         }
