@@ -2,7 +2,6 @@
   "workspace": [
     "./lsp/test/"
   ],
-  "nodeModulesDir": true,
   "tasks": {
     "test": "cd lsp/test && deno test -A"
   }
