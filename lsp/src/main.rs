@@ -17,6 +17,7 @@ use lsp_types::TextDocumentSyncKind;
 use lsp_types::Uri;
 use mf2_parser::Location;
 use mf2_parser::SourceTextInfo;
+use mf2_parser::Spanned;
 
 use std::collections::hash_map::Entry;
 use std::collections::HashMap;
@@ -180,7 +181,25 @@ impl LanguageServer for Server<'_> {
     &mut self,
     params: lsp_types::HoverParams,
   ) -> Result<Option<lsp_types::Hover>, anyhow::Error> {
-    eprintln!("Hover request: {:#?}", params);
-    Ok(None)
+    let maybe_document = self
+      .documents
+      .get(&params.text_document_position_params.text_document.uri);
+    let Some(document) = maybe_document else {
+      return Ok(None);
+    };
+
+    let maybe_node =
+      document.find_node(params.text_document_position_params.position);
+    let Some(node) = maybe_node else {
+      return Ok(None);
+    };
+
+    Ok(Some(lsp_types::Hover {
+      contents: lsp_types::HoverContents::Markup(lsp_types::MarkupContent {
+        kind: lsp_types::MarkupKind::PlainText,
+        value: format!("{:?}", node),
+      }),
+      range: Some(document.span_to_range(node.span())),
+    }))
   }
 }
