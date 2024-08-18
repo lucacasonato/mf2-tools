@@ -1,0 +1,8 @@
+{
+  "workspace": [
+    "./lsp/test/"
+  ],
+  "tasks": {
+    "test": "cd lsp/test && deno test -A"
+  }
+}
