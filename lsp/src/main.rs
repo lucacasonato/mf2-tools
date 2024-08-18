@@ -80,7 +80,6 @@ fn main() -> Result<(), anyhow::Error> {
         connection.sender.send(Message::Response(response))?;
       }
       Message::Response(_) => todo!(),
-
       Message::Notification(notification) => {
         server.handle_notification(notification);
       }
@@ -139,8 +138,6 @@ struct Server<'a> {
 
 impl LanguageServer for Server<'_> {
   fn on_open_text_document(&mut self, params: DidOpenTextDocumentParams) {
-    eprintln!("Opened document: {:#?}", params);
-
     if let Err(err) = validate_message(
       &params.text_document.text,
       params.text_document.uri,
@@ -152,8 +149,6 @@ impl LanguageServer for Server<'_> {
   }
 
   fn on_change_text_document(&mut self, params: DidChangeTextDocumentParams) {
-    eprintln!("Changed document: {:#?}", params);
-
     if let Err(err) = validate_message(
       &params.content_changes[0].text,
       params.text_document.uri,
@@ -164,9 +159,7 @@ impl LanguageServer for Server<'_> {
     }
   }
 
-  fn on_close_text_document(&mut self, params: DidCloseTextDocumentParams) {
-    eprintln!("Closed document: {:#?}", params);
-  }
+  fn on_close_text_document(&mut self, _params: DidCloseTextDocumentParams) {}
 
   fn hover(
     &mut self,

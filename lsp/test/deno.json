@@ -1,0 +1,8 @@
+{
+  "imports": {
+    "@std/assert": "jsr:@std/assert@^1.0.2",
+    "@std/bytes": "jsr:@std/bytes@^1.0.2",
+    "vscode-languageserver-protocol": "npm:vscode-languageserver-protocol@^3.17.5",
+    "vscode-languageserver-types": "npm:vscode-languageserver-types@^3.17.5"
+  }
+}
