@@ -21,7 +21,7 @@ pub struct ParsedDocument<'a> {
 impl Document {
   pub fn new(uri: Uri, version: i32, text: Box<str>) -> Document {
     let parsed = Yoke::attach_to_cart(text, |text| {
-      let (ast, diagnostics, info) = mf2_parser::parse(&text);
+      let (ast, diagnostics, info) = mf2_parser::parse(text);
       ParsedDocument {
         _ast: ast,
         diagnostics,
