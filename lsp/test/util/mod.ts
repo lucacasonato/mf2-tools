@@ -167,8 +167,13 @@ class LSPDecoderStream extends TransformStream<
           endOfHeaders + 4 + contentLength,
         );
         const body = new TextDecoder().decode(bodyBytes);
-        const message = JSON.parse(body);
-        controller.enqueue(message);
+        try {
+          const message = JSON.parse(body);
+          controller.enqueue(message);
+        } catch (e) {
+          e.message += " while parsing " + JSON.stringify(body);
+          throw e;
+        }
         const length = endOfHeaders + 4 + contentLength;
         if (this.#message.length === length) {
           this.#message = null;
