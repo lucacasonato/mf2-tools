@@ -2,7 +2,7 @@
   "name": "vscode-mf2",
   "displayName": "MessageFormat 2",
   "description": "",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "scripts": {
     "build:grammar": "deno run --allow-write ./tools/build.ts",
     "watch:grammar": "deno run --allow-write --watch ./tools/build.ts",
