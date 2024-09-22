@@ -1,19 +1,19 @@
-.match $a
-a*{{}}
+.match$a
+a * {{}}
 === spans ===
-                    .match $a↵a*{{}}
-ComplexMessage      ^^^^^^^^^^^^^^^^
-Matcher             ^^^^^^^^^^^^^^^^
-Variable                   ^^
-Variant                       ^^^^^^
-Text                          ^
+                    .match$a↵a * {{}}
+ComplexMessage      ^^^^^^^^^^^^^^^^^
+Matcher             ^^^^^^^^^^^^^^^^^
+Variable                  ^^
+Variant                      ^^^^^^^^
+Text                         ^
 Star                           ^
-QuotedPattern                   ^^^^
+QuotedPattern                    ^^^^
 Pattern             
 === diagnostics ===
-Matcher key is missing a leading space. (at @11..12)
-  .match $a↵a*{{}}
-             ^
+Matcher selector is missing a leading space. (at @6..8)
+  .match$a↵a * {{}}
+        ^^
 === ast ===
 ComplexMessage {
     declarations: [],
@@ -21,7 +21,7 @@ ComplexMessage {
         start: @0,
         selectors: [
             Variable {
-                span: @7..9,
+                span: @6..8,
                 name: "a",
             },
         ],
@@ -29,7 +29,7 @@ ComplexMessage {
             Variant {
                 keys: [
                     Text {
-                        start: @10,
+                        start: @9,
                         content: "a",
                     },
                     Star {
@@ -37,7 +37,7 @@ ComplexMessage {
                     },
                 ],
                 pattern: QuotedPattern {
-                    span: @12..16,
+                    span: @13..17,
                     pattern: Pattern {
                         parts: [],
                     },

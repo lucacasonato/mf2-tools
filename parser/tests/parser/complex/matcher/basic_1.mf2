@@ -1,18 +1,15 @@
-.match {$a :b}
+.match $a
 c {{d}}
 === spans ===
-                    .match {$a :b}↵c {{d}}
-ComplexMessage      ^^^^^^^^^^^^^^^^^^^^^^
-Matcher             ^^^^^^^^^^^^^^^^^^^^^^
-VariableExpression         ^^^^^^^
-Variable                    ^^
-Function                       ^^
-Identifier                      ^
-Variant                            ^^^^^^^
-Text                               ^
-QuotedPattern                        ^^^^^
-Pattern                                ^
-Text                                   ^
+                    .match $a↵c {{d}}
+ComplexMessage      ^^^^^^^^^^^^^^^^^
+Matcher             ^^^^^^^^^^^^^^^^^
+Variable                   ^^
+Variant                       ^^^^^^^
+Text                          ^
+QuotedPattern                   ^^^^^
+Pattern                           ^
+Text                              ^
 === diagnostics ===
 
 === ast ===
@@ -21,40 +18,25 @@ ComplexMessage {
     body: Matcher {
         start: @0,
         selectors: [
-            VariableExpression {
-                span: @7..14,
-                variable: Variable {
-                    span: @8..10,
-                    name: "a",
-                },
-                annotation: Some(
-                    Function {
-                        start: @11,
-                        id: Identifier {
-                            start: @12,
-                            namespace: None,
-                            name: "b",
-                        },
-                        options: [],
-                    },
-                ),
-                attributes: [],
+            Variable {
+                span: @7..9,
+                name: "a",
             },
         ],
         variants: [
             Variant {
                 keys: [
                     Text {
-                        start: @15,
+                        start: @10,
                         content: "c",
                     },
                 ],
                 pattern: QuotedPattern {
-                    span: @17..22,
+                    span: @12..17,
                     pattern: Pattern {
                         parts: [
                             Text {
-                                start: @19,
+                                start: @14,
                                 content: "d",
                             },
                         ],

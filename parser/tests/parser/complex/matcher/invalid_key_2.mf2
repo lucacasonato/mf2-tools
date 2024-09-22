@@ -1,72 +1,49 @@
-.match {1 :a}
+.match $a
 * {{Hello}}
 1+1 {{Hi}}
 === spans ===
-                    .match {1 :a}↵* {{Hello}}↵1+1 {{Hi}}
-ComplexMessage      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-Matcher             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-LiteralExpression          ^^^^^^
-Number                      ^
-Number.integral             ^
-Function                      ^^
-Identifier                     ^
-Variant                           ^^^^^^^^^^^
-Star                              ^
-QuotedPattern                       ^^^^^^^^^
-Pattern                               ^^^^^
-Text                                  ^^^^^
-Variant                                       ^^^^^^^^^^
-Text                                          ^^^
-QuotedPattern                                     ^^^^^^
-Pattern                                             ^^
-Text                                                ^^
+                    .match $a↵* {{Hello}}↵1+1 {{Hi}}
+ComplexMessage      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Matcher             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Variable                   ^^
+Variant                       ^^^^^^^^^^^
+Star                          ^
+QuotedPattern                   ^^^^^^^^^
+Pattern                           ^^^^^
+Text                              ^^^^^
+Variant                                   ^^^^^^^^^^
+Text                                      ^^^
+QuotedPattern                                 ^^^^^^
+Pattern                                         ^^
+Text                                            ^^
 === diagnostics ===
-Found an invalid matcher key (not a valid literal). Did you mean to quote the key to make it a literal? (at @26..29)
-  .match {1 :a}↵* {{Hello}}↵1+1 {{Hi}}
-                            ^^^
+Found an invalid matcher key (not a valid literal). Did you mean to quote the key to make it a literal? (at @22..25)
+  .match $a↵* {{Hello}}↵1+1 {{Hi}}
+                        ^^^
 === ast ===
 ComplexMessage {
     declarations: [],
     body: Matcher {
         start: @0,
         selectors: [
-            LiteralExpression {
-                span: @7..13,
-                literal: Number {
-                    start: @8,
-                    raw: "1",
-                    is_negative: false,
-                    integral_len: 1,
-                    fractional_len: None,
-                    exponent_len: None,
-                },
-                annotation: Some(
-                    Function {
-                        start: @10,
-                        id: Identifier {
-                            start: @11,
-                            namespace: None,
-                            name: "a",
-                        },
-                        options: [],
-                    },
-                ),
-                attributes: [],
+            Variable {
+                span: @7..9,
+                name: "a",
             },
         ],
         variants: [
             Variant {
                 keys: [
                     Star {
-                        start: @14,
+                        start: @10,
                     },
                 ],
                 pattern: QuotedPattern {
-                    span: @16..25,
+                    span: @12..21,
                     pattern: Pattern {
                         parts: [
                             Text {
-                                start: @18,
+                                start: @14,
                                 content: "Hello",
                             },
                         ],
@@ -76,16 +53,16 @@ ComplexMessage {
             Variant {
                 keys: [
                     Text {
-                        start: @26,
+                        start: @22,
                         content: "1+1",
                     },
                 ],
                 pattern: QuotedPattern {
-                    span: @30..36,
+                    span: @26..32,
                     pattern: Pattern {
                         parts: [
                             Text {
-                                start: @32,
+                                start: @28,
                                 content: "Hi",
                             },
                         ],

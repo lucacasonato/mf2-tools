@@ -1,76 +1,53 @@
-.match {1 :a}
+.match $a
 * {{Hello}}
 +yej%* {{Hi}}
 === spans ===
-                    .match {1 :a}↵* {{Hello}}↵+yej%* {{Hi}}
-ComplexMessage      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-Matcher             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-LiteralExpression          ^^^^^^
-Number                      ^
-Number.integral             ^
-Function                      ^^
-Identifier                     ^
-Variant                           ^^^^^^^^^^^
-Star                              ^
-QuotedPattern                       ^^^^^^^^^
-Pattern                               ^^^^^
-Text                                  ^^^^^
-Variant                                       ^^^^^^^^^^^^^
-Text                                          ^^^^^
-Star                                               ^
-QuotedPattern                                        ^^^^^^
-Pattern                                                ^^
-Text                                                   ^^
+                    .match $a↵* {{Hello}}↵+yej%* {{Hi}}
+ComplexMessage      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Matcher             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Variable                   ^^
+Variant                       ^^^^^^^^^^^
+Star                          ^
+QuotedPattern                   ^^^^^^^^^
+Pattern                           ^^^^^
+Text                              ^^^^^
+Variant                                   ^^^^^^^^^^^^^
+Text                                      ^^^^^
+Star                                           ^
+QuotedPattern                                    ^^^^^^
+Pattern                                            ^^
+Text                                               ^^
 === diagnostics ===
-Found an invalid matcher key (not a valid literal). Did you mean to quote the key to make it a literal? (at @26..31)
-  .match {1 :a}↵* {{Hello}}↵+yej%* {{Hi}}
-                            ^^^^^
-Matcher key is missing a leading space. (at @31..32)
-  .match {1 :a}↵* {{Hello}}↵+yej%* {{Hi}}
-                                 ^
+Found an invalid matcher key (not a valid literal). Did you mean to quote the key to make it a literal? (at @22..27)
+  .match $a↵* {{Hello}}↵+yej%* {{Hi}}
+                        ^^^^^
+Matcher key is missing a leading space. (at @27..28)
+  .match $a↵* {{Hello}}↵+yej%* {{Hi}}
+                             ^
 === ast ===
 ComplexMessage {
     declarations: [],
     body: Matcher {
         start: @0,
         selectors: [
-            LiteralExpression {
-                span: @7..13,
-                literal: Number {
-                    start: @8,
-                    raw: "1",
-                    is_negative: false,
-                    integral_len: 1,
-                    fractional_len: None,
-                    exponent_len: None,
-                },
-                annotation: Some(
-                    Function {
-                        start: @10,
-                        id: Identifier {
-                            start: @11,
-                            namespace: None,
-                            name: "a",
-                        },
-                        options: [],
-                    },
-                ),
-                attributes: [],
+            Variable {
+                span: @7..9,
+                name: "a",
             },
         ],
         variants: [
             Variant {
                 keys: [
                     Star {
-                        start: @14,
+                        start: @10,
                     },
                 ],
                 pattern: QuotedPattern {
-                    span: @16..25,
+                    span: @12..21,
                     pattern: Pattern {
                         parts: [
                             Text {
-                                start: @18,
+                                start: @14,
                                 content: "Hello",
                             },
                         ],
@@ -80,19 +57,19 @@ ComplexMessage {
             Variant {
                 keys: [
                     Text {
-                        start: @26,
+                        start: @22,
                         content: "+yej%",
                     },
                     Star {
-                        start: @31,
+                        start: @27,
                     },
                 ],
                 pattern: QuotedPattern {
-                    span: @33..39,
+                    span: @29..35,
                     pattern: Pattern {
                         parts: [
                             Text {
-                                start: @35,
+                                start: @31,
                                 content: "Hi",
                             },
                         ],

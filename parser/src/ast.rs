@@ -956,7 +956,7 @@ impl<'text> Visitable<'text> for QuotedPattern<'text> {
 #[derive(Debug, Clone)]
 pub struct Matcher<'text> {
   pub start: Location,
-  pub selectors: Vec<Expression<'text>>,
+  pub selectors: Vec<Variable<'text>>,
   pub variants: Vec<Variant<'text>>,
 }
 

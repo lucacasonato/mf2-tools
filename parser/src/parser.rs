@@ -1365,15 +1365,16 @@ impl<'text> Parser<'text> {
 
     let mut selectors = vec![];
 
-    self.skip_spaces();
-    while matches!(self.peek(), Some((_, '{')))
-      && !matches!(self.peek2(), Some((_, '{')))
-    {
-      let (open, _) = self.next().unwrap(); // consume '{'
-      self.skip_spaces();
-      let expression = self.parse_expression(open);
-      selectors.push(expression);
-      self.skip_spaces();
+    let mut had_space = self.skip_spaces();
+    while matches!(self.peek(), Some((_, '$'))) {
+      let variable = self.parse_variable();
+      if !had_space {
+        self.report(Diagnostic::MissingSpaceBeforeMatcherSelector {
+          span: variable.span(),
+        });
+      }
+      selectors.push(variable);
+      had_space = self.skip_spaces();
     }
 
     if selectors.is_empty() {
@@ -1385,19 +1386,18 @@ impl<'text> Parser<'text> {
     let mut variants = vec![];
     let mut current_variant_keys = vec![];
 
-    let mut had_space_or_closing_curly = true; // we had an expression
     while let Some((loc, c)) = self.peek() {
       match c {
         '*' => {
           self.next();
           let key = Key::Star(Star { start: loc });
-          if !had_space_or_closing_curly {
+          if !had_space {
             self.report(Diagnostic::MissingSpaceBeforeMatcherKey {
               span: key.span(),
             })
           }
           current_variant_keys.push(key);
-          had_space_or_closing_curly = self.skip_spaces();
+          had_space = self.skip_spaces();
         }
         '{' => {
           let pattern = if let Some((_, '{')) = self.peek2() {
@@ -1425,7 +1425,7 @@ impl<'text> Parser<'text> {
           }
           variants.push(variant);
           self.skip_spaces();
-          had_space_or_closing_curly = true;
+          had_space = true;
         }
         '.' => {
           break;
@@ -1492,13 +1492,13 @@ impl<'text> Parser<'text> {
               }))
             });
 
-          if !had_space_or_closing_curly {
+          if !had_space {
             self.report(Diagnostic::MissingSpaceBeforeMatcherKey {
               span: key.span(),
             })
           }
           current_variant_keys.push(key);
-          had_space_or_closing_curly = self.skip_spaces();
+          had_space = self.skip_spaces();
         }
       }
     }

@@ -1,45 +1,39 @@
-.match {a} a {{}}
-.match {a} a {{}}
+.match $a a {{}}
+.match $a a {{}}
 === spans ===
-                    .match {a} a {{}}↵.match {a} a {{}}
-ComplexMessage      ^^^^^^^^^^^^^^^^^
-Matcher             ^^^^^^^^^^^^^^^^^
-LiteralExpression          ^^^
-Text                        ^
-Variant                        ^^^^^^
-Text                           ^
-QuotedPattern                    ^^^^
+                    .match $a a {{}}↵.match $a a {{}}
+ComplexMessage      ^^^^^^^^^^^^^^^^
+Matcher             ^^^^^^^^^^^^^^^^
+Variable                   ^^
+Variant                       ^^^^^^
+Text                          ^
+QuotedPattern                   ^^^^
 Pattern             
 === diagnostics ===
-Message has multiple bodies, but only one is allowed. (at @18..35)
-  .match {a} a {{}}↵.match {a} a {{}}
-                    ^^^^^^^^^^^^^^^^^
+Message has multiple bodies, but only one is allowed. (at @17..33)
+  .match $a a {{}}↵.match $a a {{}}
+                   ^^^^^^^^^^^^^^^^
 === ast ===
 ComplexMessage {
     declarations: [],
     body: Matcher {
         start: @0,
         selectors: [
-            LiteralExpression {
-                span: @7..10,
-                literal: Text {
-                    start: @8,
-                    content: "a",
-                },
-                annotation: None,
-                attributes: [],
+            Variable {
+                span: @7..9,
+                name: "a",
             },
         ],
         variants: [
             Variant {
                 keys: [
                     Text {
-                        start: @11,
+                        start: @10,
                         content: "a",
                     },
                 ],
                 pattern: QuotedPattern {
-                    span: @13..17,
+                    span: @12..16,
                     pattern: Pattern {
                         parts: [],
                     },

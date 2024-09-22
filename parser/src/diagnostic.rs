@@ -187,6 +187,10 @@ diagnostics! {
       message: ("Variable is not prefixed with a dollar sign ('$')."),
       span: *span,
     },
+    MissingSpaceBeforeMatcherSelector { span: Span } => {
+      message: ("Matcher selector is missing a leading space."),
+      span: *span,
+    },
     MissingSpaceBeforeMatcherKey { span: Span } => {
       message: ("Matcher key is missing a leading space."),
       span: *span,

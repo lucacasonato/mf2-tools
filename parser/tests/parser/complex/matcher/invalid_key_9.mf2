@@ -1,81 +1,58 @@
-.match {1 :a}
+.match $a
 |abc|+yej% {{Hi}}
 === spans ===
-                    .match {1 :a}↵|abc|+yej% {{Hi}}
-ComplexMessage      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-Matcher             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-LiteralExpression          ^^^^^^
-Number                      ^
-Number.integral             ^
-Function                      ^^
-Identifier                     ^
-Variant                           ^^^^^^^^^^^^^^^^^
-Quoted                            ^^^^^
-Text                               ^^^
-Text                                   ^^^^^
-QuotedPattern                                ^^^^^^
-Pattern                                        ^^
-Text                                           ^^
+                    .match $a↵|abc|+yej% {{Hi}}
+ComplexMessage      ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Matcher             ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Variable                   ^^
+Variant                       ^^^^^^^^^^^^^^^^^
+Quoted                        ^^^^^
+Text                           ^^^
+Text                               ^^^^^
+QuotedPattern                            ^^^^^^
+Pattern                                    ^^
+Text                                       ^^
 === diagnostics ===
-Found an invalid matcher key (not a valid literal). Did you mean to quote the key to make it a literal? (at @19..24)
-  .match {1 :a}↵|abc|+yej% {{Hi}}
-                     ^^^^^
-Matcher key is missing a leading space. (at @19..24)
-  .match {1 :a}↵|abc|+yej% {{Hi}}
-                     ^^^^^
+Found an invalid matcher key (not a valid literal). Did you mean to quote the key to make it a literal? (at @15..20)
+  .match $a↵|abc|+yej% {{Hi}}
+                 ^^^^^
+Matcher key is missing a leading space. (at @15..20)
+  .match $a↵|abc|+yej% {{Hi}}
+                 ^^^^^
 === ast ===
 ComplexMessage {
     declarations: [],
     body: Matcher {
         start: @0,
         selectors: [
-            LiteralExpression {
-                span: @7..13,
-                literal: Number {
-                    start: @8,
-                    raw: "1",
-                    is_negative: false,
-                    integral_len: 1,
-                    fractional_len: None,
-                    exponent_len: None,
-                },
-                annotation: Some(
-                    Function {
-                        start: @10,
-                        id: Identifier {
-                            start: @11,
-                            namespace: None,
-                            name: "a",
-                        },
-                        options: [],
-                    },
-                ),
-                attributes: [],
+            Variable {
+                span: @7..9,
+                name: "a",
             },
         ],
         variants: [
             Variant {
                 keys: [
                     Quoted {
-                        span: @14..19,
+                        span: @10..15,
                         parts: [
                             Text {
-                                start: @15,
+                                start: @11,
                                 content: "abc",
                             },
                         ],
                     },
                     Text {
-                        start: @19,
+                        start: @15,
                         content: "+yej%",
                     },
                 ],
                 pattern: QuotedPattern {
-                    span: @25..31,
+                    span: @21..27,
                     pattern: Pattern {
                         parts: [
                             Text {
-                                start: @27,
+                                start: @23,
                                 content: "Hi",
                             },
                         ],
