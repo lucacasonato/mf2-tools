@@ -20,10 +20,10 @@ pub struct Document {
 }
 
 #[derive(Yokeable)]
-pub struct ParsedDocument<'a> {
-  pub ast: Message<'a>,
-  pub diagnostics: Vec<Diagnostic<'a>>,
-  pub info: SourceTextInfo<'a>,
+pub struct ParsedDocument<'text> {
+  pub ast: Message<'text>,
+  pub diagnostics: Vec<Diagnostic<'text>>,
+  pub info: SourceTextInfo<'text>,
 }
 
 impl Document {

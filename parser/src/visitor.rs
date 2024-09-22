@@ -3,97 +3,114 @@ use crate::ast::AnyNode;
 
 macro_rules! visit {
   ($fn:ident, $param:ident, $type:ident$(<$lt:lifetime>)?) => {
-    fn $fn(&mut self, $param: &'a ast::$type$(<$lt>)?) {
+    fn $fn(&mut self, $param: &'ast ast::$type$(<$lt>)?) {
       $param.apply_visitor_to_children(self);
     }
   };
 }
 
-pub trait Visit<'a> {
-  visit!(visit_message, message, Message<'a>);
-  visit!(visit_pattern, msg, Pattern<'a>);
-  visit!(visit_pattern_part, part, PatternPart<'a>);
-  visit!(visit_text, text, Text<'a>);
+pub trait Visit<'ast, 'text> {
+  visit!(visit_message, message, Message<'text>);
+  visit!(visit_pattern, msg, Pattern<'text>);
+  visit!(visit_pattern_part, part, PatternPart<'text>);
+  visit!(visit_text, text, Text<'text>);
   visit!(visit_escape, escape, Escape);
-  visit!(visit_expression, expr, Expression<'a>);
-  visit!(visit_literal_expression, expr, LiteralExpression<'a>);
-  visit!(visit_literal, literal, Literal<'a>);
-  visit!(visit_quoted, quoted, Quoted<'a>);
-  visit!(visit_quoted_part, part, QuotedPart<'a>);
-  visit!(visit_number, num, Number<'a>);
-  visit!(visit_annotation, ann, Annotation<'a>);
-  visit!(visit_function, func, Function<'a>);
-  visit!(visit_identifier, ident, Identifier<'a>);
-  visit!(visit_fn_or_markup_option, opt, FnOrMarkupOption<'a>);
-  visit!(visit_literal_or_variable, lit_or_var, LiteralOrVariable<'a>);
-  visit!(visit_variable, var, Variable<'a>);
-  visit!(visit_attribute, attr, Attribute<'a>);
-  visit!(visit_private_use_annotation, ann, PrivateUseAnnotation<'a>);
-  visit!(visit_reserved_body_part, part, ReservedBodyPart<'a>);
-  visit!(visit_reserved_annotation, ann, ReservedAnnotation<'a>);
-  visit!(visit_variable_expression, expr, VariableExpression<'a>);
-  visit!(visit_annotation_expression, expr, AnnotationExpression<'a>);
-  visit!(visit_markup, markup, Markup<'a>);
-  visit!(visit_complex_message, msg, ComplexMessage<'a>);
-  visit!(visit_declaration, decl, Declaration<'a>);
-  visit!(visit_input_declaration, decl, InputDeclaration<'a>);
-  visit!(visit_local_declaration, decl, LocalDeclaration<'a>);
-  visit!(visit_reserved_statement, stmt, ReservedStatement<'a>);
-  visit!(visit_complex_message_body, body, ComplexMessageBody<'a>);
-  visit!(visit_quoted_pattern, pattern, QuotedPattern<'a>);
-  visit!(visit_matcher, matcher, Matcher<'a>);
-  visit!(visit_variant, variant, Variant<'a>);
-  visit!(visit_key, key, Key<'a>);
+  visit!(visit_expression, expr, Expression<'text>);
+  visit!(visit_literal_expression, expr, LiteralExpression<'text>);
+  visit!(visit_literal, literal, Literal<'text>);
+  visit!(visit_quoted, quoted, Quoted<'text>);
+  visit!(visit_quoted_part, part, QuotedPart<'text>);
+  visit!(visit_number, num, Number<'text>);
+  visit!(visit_annotation, ann, Annotation<'text>);
+  visit!(visit_function, func, Function<'text>);
+  visit!(visit_identifier, ident, Identifier<'text>);
+  visit!(visit_fn_or_markup_option, opt, FnOrMarkupOption<'text>);
+  visit!(
+    visit_literal_or_variable,
+    lit_or_var,
+    LiteralOrVariable<'text>
+  );
+  visit!(visit_variable, var, Variable<'text>);
+  visit!(visit_attribute, attr, Attribute<'text>);
+  visit!(
+    visit_private_use_annotation,
+    ann,
+    PrivateUseAnnotation<'text>
+  );
+  visit!(visit_reserved_body_part, part, ReservedBodyPart<'text>);
+  visit!(visit_reserved_annotation, ann, ReservedAnnotation<'text>);
+  visit!(visit_variable_expression, expr, VariableExpression<'text>);
+  visit!(
+    visit_annotation_expression,
+    expr,
+    AnnotationExpression<'text>
+  );
+  visit!(visit_markup, markup, Markup<'text>);
+  visit!(visit_complex_message, msg, ComplexMessage<'text>);
+  visit!(visit_declaration, decl, Declaration<'text>);
+  visit!(visit_input_declaration, decl, InputDeclaration<'text>);
+  visit!(visit_local_declaration, decl, LocalDeclaration<'text>);
+  visit!(visit_reserved_statement, stmt, ReservedStatement<'text>);
+  visit!(visit_complex_message_body, body, ComplexMessageBody<'text>);
+  visit!(visit_quoted_pattern, pattern, QuotedPattern<'text>);
+  visit!(visit_matcher, matcher, Matcher<'text>);
+  visit!(visit_variant, variant, Variant<'text>);
+  visit!(visit_key, key, Key<'text>);
   visit!(visit_star, star, Star);
 }
 
-pub trait Visitable<'a> {
-  fn apply_visitor<V: Visit<'a> + ?Sized>(&'a self, visitor: &mut V);
+pub trait Visitable<'text> {
+  fn apply_visitor<'ast, V: Visit<'ast, 'text> + ?Sized>(
+    &'ast self,
+    visitor: &mut V,
+  );
 
-  fn apply_visitor_to_children<V: Visit<'a> + ?Sized>(
-    &'a self,
+  fn apply_visitor_to_children<'ast, V: Visit<'ast, 'text> + ?Sized>(
+    &'ast self,
     visitor: &mut V,
   );
 }
 
-pub struct AnyNodeVisitor<'a, F>
+pub struct AnyNodeVisitor<'ast, 'text: 'ast, F>
 where
-  F: FnMut(AnyNode<'a>),
+  F: FnMut(AnyNode<'ast, 'text>),
 {
   callback: F,
-  phantom: std::marker::PhantomData<&'a ()>,
+  phantom: std::marker::PhantomData<&'text ()>,
+  phantom2: std::marker::PhantomData<&'ast ()>,
 }
 
-impl<'a, F> AnyNodeVisitor<'a, F>
+impl<'ast, 'text, F> AnyNodeVisitor<'ast, 'text, F>
 where
-  F: FnMut(AnyNode<'a>),
+  F: FnMut(AnyNode<'ast, 'text>),
 {
   pub fn new(callback: F) -> Self {
     AnyNodeVisitor {
       callback,
       phantom: std::marker::PhantomData,
+      phantom2: std::marker::PhantomData,
     }
   }
 }
 
 macro_rules! any_visit {
   ($fn:ident, $param:ident, $type:ident) => {
-    fn $fn(&mut self, $param: &'a ast::$type<'a>) {
+    fn $fn(&mut self, $param: &'ast ast::$type<'text>) {
       (self.callback)(AnyNode::$type($param));
       $param.apply_visitor_to_children(self);
     }
   };
 }
 
-impl<'a, F> Visit<'a> for AnyNodeVisitor<'a, F>
+impl<'ast, 'text, F> Visit<'ast, 'text> for AnyNodeVisitor<'ast, 'text, F>
 where
-  F: FnMut(AnyNode<'a>),
+  F: FnMut(AnyNode<'ast, 'text>),
 {
   any_visit!(visit_message, message, Message);
   any_visit!(visit_pattern, msg, Pattern);
   any_visit!(visit_pattern_part, part, PatternPart);
   any_visit!(visit_text, text, Text);
-  fn visit_escape(&mut self, escape: &'a ast::Escape) {
+  fn visit_escape(&mut self, escape: &'ast ast::Escape) {
     (self.callback)(AnyNode::Escape(escape));
     escape.apply_visitor_to_children(self);
   }
@@ -126,7 +143,7 @@ where
   any_visit!(visit_matcher, matcher, Matcher);
   any_visit!(visit_variant, variant, Variant);
   any_visit!(visit_key, key, Key);
-  fn visit_star(&mut self, star: &'a ast::Star) {
+  fn visit_star(&mut self, star: &'ast ast::Star) {
     (self.callback)(AnyNode::Star(star));
     star.apply_visitor_to_children(self);
   }

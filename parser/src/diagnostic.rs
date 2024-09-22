@@ -46,20 +46,20 @@ macro_rules! diagnostics {
 }
 
 diagnostics! {
-  pub enum Diagnostic<'a> {
-    NumberMissingIntegralPart { number: Number<'a> } => {
+  pub enum Diagnostic<'text> {
+    NumberMissingIntegralPart { number: Number<'text> } => {
       message: ("Number is missing an integral part."),
       span: number.span(),
     },
-    NumberLeadingZeroIntegralPart { number: Number<'a> } => {
+    NumberLeadingZeroIntegralPart { number: Number<'text> } => {
       message: ("Number has leading zero in integral part, which is not allowed."),
       span: number.span(),
     },
-    NumberMissingFractionalPart { number: Number<'a> } => {
+    NumberMissingFractionalPart { number: Number<'text> } => {
       message: ("Number is missing a fractional part, which it must have because it has a decimal point."),
       span: number.span(),
     },
-    NumberMissingExponentPart { number: Number<'a> } => {
+    NumberMissingExponentPart { number: Number<'text> } => {
       message: ("Number is missing an exponent part, which it must have because it is written in scientific notation."),
       span: number.span(),
     },
@@ -79,7 +79,7 @@ diagnostics! {
       message: ("Markup tag is missing an identifier."),
       span: *span,
     },
-    MarkupInvalidSpaceBeforeIdentifier { id: Identifier<'a>, start_loc: Location } => {
+    MarkupInvalidSpaceBeforeIdentifier { id: Identifier<'text>, start_loc: Location } => {
       message: ("Identifier of the markup tag is preceeded by spaces, which is not allowed."),
       span: Span { start: *start_loc + '#', end: id.span().start },
     },
@@ -95,7 +95,7 @@ diagnostics! {
       message: ("Self-closing tag of a markup tag can not have trailing spaces before the closing brace."),
       span: *space,
     },
-    MarkupOptionAfterAttribute { previous_attribute: Attribute<'a>, option: FnOrMarkupOption<'a> } => {
+    MarkupOptionAfterAttribute { previous_attribute: Attribute<'text>, option: FnOrMarkupOption<'text> } => {
       message: ("Markup tag has an option after an attribute, which is not allowed. All options must come before any attribute."),
       span: option.span(),
     },
@@ -127,11 +127,11 @@ diagnostics! {
       message: ("Markup tag contains invalid content."),
       span: *span,
     },
-    MissingIdentifierName { identifier: Identifier<'a> } => {
+    MissingIdentifierName { identifier: Identifier<'text> } => {
       message: ("Namespaced identifier is missing a name, which is required after the colon following the namespace."),
       span: identifier.span(),
     },
-    MissingIdentifierNamespace { identifier: Identifier<'a> } => {
+    MissingIdentifierNamespace { identifier: Identifier<'text> } => {
       message: ("Identifiers with a colon before the name are namespaced identifiers, but this identifier is missing a namespace before the colon."),
       span: identifier.span(),
     },
@@ -239,7 +239,7 @@ diagnostics! {
       message: ("Input declaration is missing an expression."),
       span: *span,
     },
-    InputDeclarationWithInvalidExpression { span: Span, expression: Expression<'a> } => {
+    InputDeclarationWithInvalidExpression { span: Span, expression: Expression<'text> } => {
       message: ("Input declaration has a non-variable expression, which is invalid. Did you mean to use a local declaration instead of an input declaration?"),
       span: *span,
     },

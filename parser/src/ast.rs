@@ -35,12 +35,12 @@ macro_rules! ast_enum {
       }
     }
 
-    impl<'a> crate::visitor::Visitable<'a> for $name<'_> {
-      fn apply_visitor<V: crate::visitor::Visit<'a> + ?Sized>(&'a self, visitor: &mut V) {
+    impl<'text> crate::visitor::Visitable<'text> for $name<'text> {
+      fn apply_visitor<'ast, V: crate::visitor::Visit<'ast, 'text> + ?Sized>(&'ast self, visitor: &mut V) {
         visitor.$visit_method(self);
       }
 
-      fn apply_visitor_to_children<V: crate::visitor::Visit<'a> + ?Sized>(&'a self, visitor: &mut V) {
+      fn apply_visitor_to_children<'ast, V: crate::visitor::Visit<'ast, 'text> + ?Sized>(&'ast self, visitor: &mut V) {
         match self {
           $( $name::$item(item) => item.apply_visitor(visitor), )*
         }
@@ -50,9 +50,9 @@ macro_rules! ast_enum {
 }
 
 #[derive(Clone)]
-pub enum Message<'a> {
-  Simple(Pattern<'a>),
-  Complex(ComplexMessage<'a>),
+pub enum Message<'text> {
+  Simple(Pattern<'text>),
+  Complex(ComplexMessage<'text>),
 }
 
 impl Debug for Message<'_> {
@@ -73,16 +73,19 @@ impl Spanned for Message<'_> {
   }
 }
 
-impl<'a> Visitable<'a> for Message<'a> {
-  fn apply_visitor<V: Visit<'a> + ?Sized>(&'a self, visitor: &mut V) {
+impl<'text> Visitable<'text> for Message<'text> {
+  fn apply_visitor<'ast, V: Visit<'ast, 'text> + ?Sized>(
+    &'ast self,
+    visitor: &mut V,
+  ) {
     match self {
       Message::Simple(pattern) => pattern.apply_visitor(visitor),
       Message::Complex(complex) => complex.apply_visitor(visitor),
     }
   }
 
-  fn apply_visitor_to_children<V: Visit<'a> + ?Sized>(
-    &'a self,
+  fn apply_visitor_to_children<'ast, V: Visit<'ast, 'text> + ?Sized>(
+    &'ast self,
     visitor: &mut V,
   ) {
     match self {
@@ -93,8 +96,8 @@ impl<'a> Visitable<'a> for Message<'a> {
 }
 
 #[derive(Debug, Clone)]
-pub struct Pattern<'a> {
-  pub parts: Vec<PatternPart<'a>>,
+pub struct Pattern<'text> {
+  pub parts: Vec<PatternPart<'text>>,
 }
 
 impl Spanned for Pattern<'_> {
@@ -108,13 +111,16 @@ impl Spanned for Pattern<'_> {
   }
 }
 
-impl<'a> Visitable<'a> for Pattern<'a> {
-  fn apply_visitor<V: Visit<'a> + ?Sized>(&'a self, visitor: &mut V) {
+impl<'text> Visitable<'text> for Pattern<'text> {
+  fn apply_visitor<'ast, V: Visit<'ast, 'text> + ?Sized>(
+    &'ast self,
+    visitor: &mut V,
+  ) {
     visitor.visit_pattern(self);
   }
 
-  fn apply_visitor_to_children<V: Visit<'a> + ?Sized>(
-    &'a self,
+  fn apply_visitor_to_children<'ast, V: Visit<'ast, 'text> + ?Sized>(
+    &'ast self,
     visitor: &mut V,
   ) {
     for part in &self.parts {
@@ -125,18 +131,18 @@ impl<'a> Visitable<'a> for Pattern<'a> {
 
 ast_enum! {
   #[visit(visit_pattern_part)]
-  pub enum PatternPart<'a> {
-    Text<'a>,
+  pub enum PatternPart<'text> {
+    Text<'text>,
     Escape,
-    Expression<'a>,
-    Markup<'a>,
+    Expression<'text>,
+    Markup<'text>,
   }
 }
 
 #[derive(Debug, Clone)]
-pub struct Text<'a> {
+pub struct Text<'text> {
   pub start: Location,
-  pub content: &'a str,
+  pub content: &'text str,
 }
 
 impl Spanned for Text<'_> {
@@ -145,13 +151,16 @@ impl Spanned for Text<'_> {
   }
 }
 
-impl<'a> Visitable<'a> for Text<'a> {
-  fn apply_visitor<V: Visit<'a> + ?Sized>(&'a self, visitor: &mut V) {
+impl<'text> Visitable<'text> for Text<'text> {
+  fn apply_visitor<'ast, V: Visit<'ast, 'text> + ?Sized>(
+    &'ast self,
+    visitor: &mut V,
+  ) {
     visitor.visit_text(self);
   }
 
-  fn apply_visitor_to_children<V: Visit<'a> + ?Sized>(
-    &'a self,
+  fn apply_visitor_to_children<'ast, V: Visit<'ast, 'text> + ?Sized>(
+    &'ast self,
     _visitor: &mut V,
   ) {
   }
@@ -169,13 +178,16 @@ impl Spanned for Escape {
   }
 }
 
-impl<'a> Visitable<'a> for Escape {
-  fn apply_visitor<V: Visit<'a> + ?Sized>(&'a self, visitor: &mut V) {
+impl<'text> Visitable<'text> for Escape {
+  fn apply_visitor<'ast, V: Visit<'ast, 'text> + ?Sized>(
+    &'ast self,
+    visitor: &mut V,
+  ) {
     visitor.visit_escape(self);
   }
 
-  fn apply_visitor_to_children<V: Visit<'a> + ?Sized>(
-    &'a self,
+  fn apply_visitor_to_children<'ast, V: Visit<'ast, 'text> + ?Sized>(
+    &'ast self,
     _visitor: &mut V,
   ) {
   }
@@ -183,19 +195,19 @@ impl<'a> Visitable<'a> for Escape {
 
 ast_enum! {
   #[visit(visit_expression)]
-  pub enum Expression<'a> {
-    LiteralExpression<'a>,
-    VariableExpression<'a>,
-    AnnotationExpression<'a>,
+  pub enum Expression<'text> {
+    LiteralExpression<'text>,
+    VariableExpression<'text>,
+    AnnotationExpression<'text>,
   }
 }
 
 #[derive(Debug, Clone)]
-pub struct LiteralExpression<'a> {
+pub struct LiteralExpression<'text> {
   pub span: Span,
-  pub literal: Literal<'a>,
-  pub annotation: Option<Annotation<'a>>,
-  pub attributes: Vec<Attribute<'a>>,
+  pub literal: Literal<'text>,
+  pub annotation: Option<Annotation<'text>>,
+  pub attributes: Vec<Attribute<'text>>,
 }
 
 impl Spanned for LiteralExpression<'_> {
@@ -204,13 +216,16 @@ impl Spanned for LiteralExpression<'_> {
   }
 }
 
-impl<'a> Visitable<'a> for LiteralExpression<'a> {
-  fn apply_visitor<V: Visit<'a> + ?Sized>(&'a self, visitor: &mut V) {
+impl<'text> Visitable<'text> for LiteralExpression<'text> {
+  fn apply_visitor<'ast, V: Visit<'ast, 'text> + ?Sized>(
+    &'ast self,
+    visitor: &mut V,
+  ) {
     visitor.visit_literal_expression(self);
   }
 
-  fn apply_visitor_to_children<V: Visit<'a> + ?Sized>(
-    &'a self,
+  fn apply_visitor_to_children<'ast, V: Visit<'ast, 'text> + ?Sized>(
+    &'ast self,
     visitor: &mut V,
   ) {
     self.literal.apply_visitor(visitor);
@@ -224,11 +239,11 @@ impl<'a> Visitable<'a> for LiteralExpression<'a> {
 }
 
 #[derive(Debug, Clone)]
-pub struct VariableExpression<'a> {
+pub struct VariableExpression<'text> {
   pub span: Span,
-  pub variable: Variable<'a>,
-  pub annotation: Option<Annotation<'a>>,
-  pub attributes: Vec<Attribute<'a>>,
+  pub variable: Variable<'text>,
+  pub annotation: Option<Annotation<'text>>,
+  pub attributes: Vec<Attribute<'text>>,
 }
 
 impl Spanned for VariableExpression<'_> {
@@ -237,13 +252,16 @@ impl Spanned for VariableExpression<'_> {
   }
 }
 
-impl<'a> Visitable<'a> for VariableExpression<'a> {
-  fn apply_visitor<V: Visit<'a> + ?Sized>(&'a self, visitor: &mut V) {
+impl<'text> Visitable<'text> for VariableExpression<'text> {
+  fn apply_visitor<'ast, V: Visit<'ast, 'text> + ?Sized>(
+    &'ast self,
+    visitor: &mut V,
+  ) {
     visitor.visit_variable_expression(self);
   }
 
-  fn apply_visitor_to_children<V: Visit<'a> + ?Sized>(
-    &'a self,
+  fn apply_visitor_to_children<'ast, V: Visit<'ast, 'text> + ?Sized>(
+    &'ast self,
     visitor: &mut V,
   ) {
     self.variable.apply_visitor(visitor);
@@ -257,9 +275,9 @@ impl<'a> Visitable<'a> for VariableExpression<'a> {
 }
 
 #[derive(Debug, Clone)]
-pub struct Variable<'a> {
+pub struct Variable<'text> {
   pub span: Span,
-  pub name: &'a str,
+  pub name: &'text str,
 }
 
 impl Spanned for Variable<'_> {
@@ -268,23 +286,26 @@ impl Spanned for Variable<'_> {
   }
 }
 
-impl<'a> Visitable<'a> for Variable<'a> {
-  fn apply_visitor<V: Visit<'a> + ?Sized>(&'a self, visitor: &mut V) {
+impl<'text> Visitable<'text> for Variable<'text> {
+  fn apply_visitor<'ast, V: Visit<'ast, 'text> + ?Sized>(
+    &'ast self,
+    visitor: &mut V,
+  ) {
     visitor.visit_variable(self);
   }
 
-  fn apply_visitor_to_children<V: Visit<'a> + ?Sized>(
-    &'a self,
+  fn apply_visitor_to_children<'ast, V: Visit<'ast, 'text> + ?Sized>(
+    &'ast self,
     _visitor: &mut V,
   ) {
   }
 }
 
 #[derive(Debug, Clone)]
-pub struct AnnotationExpression<'a> {
+pub struct AnnotationExpression<'text> {
   pub span: Span,
-  pub annotation: Annotation<'a>,
-  pub attributes: Vec<Attribute<'a>>,
+  pub annotation: Annotation<'text>,
+  pub attributes: Vec<Attribute<'text>>,
 }
 
 impl Spanned for AnnotationExpression<'_> {
@@ -293,13 +314,16 @@ impl Spanned for AnnotationExpression<'_> {
   }
 }
 
-impl<'a> Visitable<'a> for AnnotationExpression<'a> {
-  fn apply_visitor<V: Visit<'a> + ?Sized>(&'a self, visitor: &mut V) {
+impl<'text> Visitable<'text> for AnnotationExpression<'text> {
+  fn apply_visitor<'ast, V: Visit<'ast, 'text> + ?Sized>(
+    &'ast self,
+    visitor: &mut V,
+  ) {
     visitor.visit_annotation_expression(self);
   }
 
-  fn apply_visitor_to_children<V: Visit<'a> + ?Sized>(
-    &'a self,
+  fn apply_visitor_to_children<'ast, V: Visit<'ast, 'text> + ?Sized>(
+    &'ast self,
     visitor: &mut V,
   ) {
     self.annotation.apply_visitor(visitor);
@@ -311,18 +335,18 @@ impl<'a> Visitable<'a> for AnnotationExpression<'a> {
 
 ast_enum! {
   #[visit(visit_annotation)]
-  pub enum Annotation<'a> {
-    Function<'a>,
-    PrivateUseAnnotation<'a>,
-    ReservedAnnotation<'a>,
+  pub enum Annotation<'text> {
+    Function<'text>,
+    PrivateUseAnnotation<'text>,
+    ReservedAnnotation<'text>,
   }
 }
 
 #[derive(Debug, Clone)]
-pub struct Identifier<'a> {
+pub struct Identifier<'text> {
   pub start: Location,
-  pub namespace: Option<&'a str>,
-  pub name: &'a str,
+  pub namespace: Option<&'text str>,
+  pub name: &'text str,
 }
 
 impl Spanned for Identifier<'_> {
@@ -337,23 +361,26 @@ impl Spanned for Identifier<'_> {
   }
 }
 
-impl<'a> Visitable<'a> for Identifier<'a> {
-  fn apply_visitor<V: Visit<'a> + ?Sized>(&'a self, visitor: &mut V) {
+impl<'text> Visitable<'text> for Identifier<'text> {
+  fn apply_visitor<'ast, V: Visit<'ast, 'text> + ?Sized>(
+    &'ast self,
+    visitor: &mut V,
+  ) {
     visitor.visit_identifier(self);
   }
 
-  fn apply_visitor_to_children<V: Visit<'a> + ?Sized>(
-    &'a self,
+  fn apply_visitor_to_children<'ast, V: Visit<'ast, 'text> + ?Sized>(
+    &'ast self,
     _visitor: &mut V,
   ) {
   }
 }
 
 #[derive(Debug, Clone)]
-pub struct Function<'a> {
+pub struct Function<'text> {
   pub start: Location,
-  pub id: Identifier<'a>,
-  pub options: Vec<FnOrMarkupOption<'a>>,
+  pub id: Identifier<'text>,
+  pub options: Vec<FnOrMarkupOption<'text>>,
 }
 
 impl Spanned for Function<'_> {
@@ -367,13 +394,16 @@ impl Spanned for Function<'_> {
   }
 }
 
-impl<'a> Visitable<'a> for Function<'a> {
-  fn apply_visitor<V: Visit<'a> + ?Sized>(&'a self, visitor: &mut V) {
+impl<'text> Visitable<'text> for Function<'text> {
+  fn apply_visitor<'ast, V: Visit<'ast, 'text> + ?Sized>(
+    &'ast self,
+    visitor: &mut V,
+  ) {
     visitor.visit_function(self);
   }
 
-  fn apply_visitor_to_children<V: Visit<'a> + ?Sized>(
-    &'a self,
+  fn apply_visitor_to_children<'ast, V: Visit<'ast, 'text> + ?Sized>(
+    &'ast self,
     visitor: &mut V,
   ) {
     self.id.apply_visitor(visitor);
@@ -384,9 +414,9 @@ impl<'a> Visitable<'a> for Function<'a> {
 }
 
 #[derive(Debug, Clone)]
-pub struct FnOrMarkupOption<'a> {
-  pub key: Identifier<'a>,
-  pub value: LiteralOrVariable<'a>,
+pub struct FnOrMarkupOption<'text> {
+  pub key: Identifier<'text>,
+  pub value: LiteralOrVariable<'text>,
 }
 
 impl Spanned for FnOrMarkupOption<'_> {
@@ -397,13 +427,16 @@ impl Spanned for FnOrMarkupOption<'_> {
   }
 }
 
-impl<'a> Visitable<'a> for FnOrMarkupOption<'a> {
-  fn apply_visitor<V: Visit<'a> + ?Sized>(&'a self, visitor: &mut V) {
+impl<'text> Visitable<'text> for FnOrMarkupOption<'text> {
+  fn apply_visitor<'ast, V: Visit<'ast, 'text> + ?Sized>(
+    &'ast self,
+    visitor: &mut V,
+  ) {
     visitor.visit_fn_or_markup_option(self);
   }
 
-  fn apply_visitor_to_children<V: Visit<'a> + ?Sized>(
-    &'a self,
+  fn apply_visitor_to_children<'ast, V: Visit<'ast, 'text> + ?Sized>(
+    &'ast self,
     visitor: &mut V,
   ) {
     self.key.apply_visitor(visitor);
@@ -412,10 +445,10 @@ impl<'a> Visitable<'a> for FnOrMarkupOption<'a> {
 }
 
 #[derive(Debug, Clone)]
-pub struct Attribute<'a> {
+pub struct Attribute<'text> {
   pub span: Span,
-  pub key: Identifier<'a>,
-  pub value: Option<LiteralOrVariable<'a>>,
+  pub key: Identifier<'text>,
+  pub value: Option<LiteralOrVariable<'text>>,
 }
 
 impl Spanned for Attribute<'_> {
@@ -424,13 +457,16 @@ impl Spanned for Attribute<'_> {
   }
 }
 
-impl<'a> Visitable<'a> for Attribute<'a> {
-  fn apply_visitor<V: Visit<'a> + ?Sized>(&'a self, visitor: &mut V) {
+impl<'text> Visitable<'text> for Attribute<'text> {
+  fn apply_visitor<'ast, V: Visit<'ast, 'text> + ?Sized>(
+    &'ast self,
+    visitor: &mut V,
+  ) {
     visitor.visit_attribute(self);
   }
 
-  fn apply_visitor_to_children<V: Visit<'a> + ?Sized>(
-    &'a self,
+  fn apply_visitor_to_children<'ast, V: Visit<'ast, 'text> + ?Sized>(
+    &'ast self,
     visitor: &mut V,
   ) {
     self.key.apply_visitor(visitor);
@@ -442,17 +478,17 @@ impl<'a> Visitable<'a> for Attribute<'a> {
 
 ast_enum! {
   #[visit(visit_literal_or_variable)]
-  pub enum LiteralOrVariable<'a> {
-    Literal<'a>,
-    Variable<'a>,
+  pub enum LiteralOrVariable<'text> {
+    Literal<'text>,
+    Variable<'text>,
   }
 }
 
 #[derive(Debug, Clone)]
-pub struct PrivateUseAnnotation<'a> {
+pub struct PrivateUseAnnotation<'text> {
   pub start: Location,
   pub sigil: char,
-  pub body: Vec<ReservedBodyPart<'a>>,
+  pub body: Vec<ReservedBodyPart<'text>>,
 }
 
 impl Spanned for PrivateUseAnnotation<'_> {
@@ -466,13 +502,16 @@ impl Spanned for PrivateUseAnnotation<'_> {
   }
 }
 
-impl<'a> Visitable<'a> for PrivateUseAnnotation<'a> {
-  fn apply_visitor<V: Visit<'a> + ?Sized>(&'a self, visitor: &mut V) {
+impl<'text> Visitable<'text> for PrivateUseAnnotation<'text> {
+  fn apply_visitor<'ast, V: Visit<'ast, 'text> + ?Sized>(
+    &'ast self,
+    visitor: &mut V,
+  ) {
     visitor.visit_private_use_annotation(self);
   }
 
-  fn apply_visitor_to_children<V: Visit<'a> + ?Sized>(
-    &'a self,
+  fn apply_visitor_to_children<'ast, V: Visit<'ast, 'text> + ?Sized>(
+    &'ast self,
     visitor: &mut V,
   ) {
     for part in &self.body {
@@ -482,10 +521,10 @@ impl<'a> Visitable<'a> for PrivateUseAnnotation<'a> {
 }
 
 #[derive(Debug, Clone)]
-pub struct ReservedAnnotation<'a> {
+pub struct ReservedAnnotation<'text> {
   pub start: Location,
   pub sigil: char,
-  pub body: Vec<ReservedBodyPart<'a>>,
+  pub body: Vec<ReservedBodyPart<'text>>,
 }
 
 impl Spanned for ReservedAnnotation<'_> {
@@ -499,13 +538,16 @@ impl Spanned for ReservedAnnotation<'_> {
   }
 }
 
-impl<'a> Visitable<'a> for ReservedAnnotation<'a> {
-  fn apply_visitor<V: Visit<'a> + ?Sized>(&'a self, visitor: &mut V) {
+impl<'text> Visitable<'text> for ReservedAnnotation<'text> {
+  fn apply_visitor<'ast, V: Visit<'ast, 'text> + ?Sized>(
+    &'ast self,
+    visitor: &mut V,
+  ) {
     visitor.visit_reserved_annotation(self);
   }
 
-  fn apply_visitor_to_children<V: Visit<'a> + ?Sized>(
-    &'a self,
+  fn apply_visitor_to_children<'ast, V: Visit<'ast, 'text> + ?Sized>(
+    &'ast self,
     visitor: &mut V,
   ) {
     for part in &self.body {
@@ -516,26 +558,26 @@ impl<'a> Visitable<'a> for ReservedAnnotation<'a> {
 
 ast_enum! {
   #[visit(visit_reserved_body_part)]
-  pub enum ReservedBodyPart<'a> {
-    Text<'a>,
+  pub enum ReservedBodyPart<'text> {
+    Text<'text>,
     Escape,
-    Quoted<'a>,
+    Quoted<'text>,
   }
 }
 
 ast_enum! {
   #[visit(visit_literal)]
-  pub enum Literal<'a> {
-    Quoted<'a>,
-    Text<'a>,
-    Number<'a>,
+  pub enum Literal<'text> {
+    Quoted<'text>,
+    Text<'text>,
+    Number<'text>,
   }
 }
 
 #[derive(Debug, Clone)]
-pub struct Quoted<'a> {
+pub struct Quoted<'text> {
   pub span: Span,
-  pub parts: Vec<QuotedPart<'a>>,
+  pub parts: Vec<QuotedPart<'text>>,
 }
 
 impl Spanned for Quoted<'_> {
@@ -544,13 +586,16 @@ impl Spanned for Quoted<'_> {
   }
 }
 
-impl<'a> Visitable<'a> for Quoted<'a> {
-  fn apply_visitor<V: Visit<'a> + ?Sized>(&'a self, visitor: &mut V) {
+impl<'text> Visitable<'text> for Quoted<'text> {
+  fn apply_visitor<'ast, V: Visit<'ast, 'text> + ?Sized>(
+    &'ast self,
+    visitor: &mut V,
+  ) {
     visitor.visit_quoted(self);
   }
 
-  fn apply_visitor_to_children<V: Visit<'a> + ?Sized>(
-    &'a self,
+  fn apply_visitor_to_children<'ast, V: Visit<'ast, 'text> + ?Sized>(
+    &'ast self,
     visitor: &mut V,
   ) {
     for part in &self.parts {
@@ -561,8 +606,8 @@ impl<'a> Visitable<'a> for Quoted<'a> {
 
 ast_enum! {
   #[visit(visit_quoted_part)]
-  pub enum QuotedPart<'a> {
-    Text<'a>,
+  pub enum QuotedPart<'text> {
+    Text<'text>,
     Escape,
   }
 }
@@ -575,9 +620,9 @@ pub enum ExponentSign {
 }
 
 #[derive(Debug, Clone)]
-pub struct Number<'a> {
+pub struct Number<'text> {
   pub start: Location,
-  pub raw: &'a str,
+  pub raw: &'text str,
   pub is_negative: bool,
   pub integral_len: LengthShort,
   pub fractional_len: Option<LengthShort>,
@@ -590,20 +635,23 @@ impl Spanned for Number<'_> {
   }
 }
 
-impl<'a> Visitable<'a> for Number<'a> {
-  fn apply_visitor<V: Visit<'a> + ?Sized>(&'a self, visitor: &mut V) {
+impl<'text> Visitable<'text> for Number<'text> {
+  fn apply_visitor<'ast, V: Visit<'ast, 'text> + ?Sized>(
+    &'ast self,
+    visitor: &mut V,
+  ) {
     visitor.visit_number(self);
   }
 
-  fn apply_visitor_to_children<V: Visit<'a> + ?Sized>(
-    &'a self,
+  fn apply_visitor_to_children<'ast, V: Visit<'ast, 'text> + ?Sized>(
+    &'ast self,
     _visitor: &mut V,
   ) {
   }
 }
 
-impl<'a> Number<'a> {
-  fn slice(&self, span: Span) -> &'a str {
+impl<'text> Number<'text> {
+  fn slice(&self, span: Span) -> &'text str {
     &self.raw[span.start.inner() as usize..span.end.inner() as usize]
   }
 
@@ -623,7 +671,7 @@ impl<'a> Number<'a> {
     Span::new(self.integral_start()..self.integral_end())
   }
 
-  pub fn integral_part(&self) -> &'a str {
+  pub fn integral_part(&self) -> &'text str {
     self.slice(self.integral_span())
   }
 
@@ -635,7 +683,7 @@ impl<'a> Number<'a> {
     })
   }
 
-  pub fn fractional_part(&self) -> Option<&'a str> {
+  pub fn fractional_part(&self) -> Option<&'text str> {
     self.fractional_span().map(|span| self.slice(span))
   }
 
@@ -659,7 +707,7 @@ impl<'a> Number<'a> {
     })
   }
 
-  pub fn exponent_part(&self) -> Option<(ExponentSign, &'a str)> {
+  pub fn exponent_part(&self) -> Option<(ExponentSign, &'text str)> {
     self
       .exponent_span()
       .map(|span| (self.exponent_len.as_ref().unwrap().0, self.slice(span)))
@@ -667,12 +715,12 @@ impl<'a> Number<'a> {
 }
 
 #[derive(Debug, Clone)]
-pub struct Markup<'a> {
+pub struct Markup<'text> {
   pub span: Span,
   pub kind: MarkupKind,
-  pub id: Identifier<'a>,
-  pub options: Vec<FnOrMarkupOption<'a>>,
-  pub attributes: Vec<Attribute<'a>>,
+  pub id: Identifier<'text>,
+  pub options: Vec<FnOrMarkupOption<'text>>,
+  pub attributes: Vec<Attribute<'text>>,
 }
 
 #[derive(Debug, Clone)]
@@ -688,13 +736,16 @@ impl Spanned for Markup<'_> {
   }
 }
 
-impl<'a> Visitable<'a> for Markup<'a> {
-  fn apply_visitor<V: Visit<'a> + ?Sized>(&'a self, visitor: &mut V) {
+impl<'text> Visitable<'text> for Markup<'text> {
+  fn apply_visitor<'ast, V: Visit<'ast, 'text> + ?Sized>(
+    &'ast self,
+    visitor: &mut V,
+  ) {
     visitor.visit_markup(self);
   }
 
-  fn apply_visitor_to_children<V: Visit<'a> + ?Sized>(
-    &'a self,
+  fn apply_visitor_to_children<'ast, V: Visit<'ast, 'text> + ?Sized>(
+    &'ast self,
     visitor: &mut V,
   ) {
     self.id.apply_visitor(visitor);
@@ -708,9 +759,9 @@ impl<'a> Visitable<'a> for Markup<'a> {
 }
 
 #[derive(Debug, Clone)]
-pub struct ComplexMessage<'a> {
-  pub declarations: Vec<Declaration<'a>>,
-  pub body: ComplexMessageBody<'a>,
+pub struct ComplexMessage<'text> {
+  pub declarations: Vec<Declaration<'text>>,
+  pub body: ComplexMessageBody<'text>,
 }
 
 impl Spanned for ComplexMessage<'_> {
@@ -729,13 +780,16 @@ impl Spanned for ComplexMessage<'_> {
   }
 }
 
-impl<'a> Visitable<'a> for ComplexMessage<'a> {
-  fn apply_visitor<V: Visit<'a> + ?Sized>(&'a self, visitor: &mut V) {
+impl<'text> Visitable<'text> for ComplexMessage<'text> {
+  fn apply_visitor<'ast, V: Visit<'ast, 'text> + ?Sized>(
+    &'ast self,
+    visitor: &mut V,
+  ) {
     visitor.visit_complex_message(self);
   }
 
-  fn apply_visitor_to_children<V: Visit<'a> + ?Sized>(
-    &'a self,
+  fn apply_visitor_to_children<'ast, V: Visit<'ast, 'text> + ?Sized>(
+    &'ast self,
     visitor: &mut V,
   ) {
     for declaration in &self.declarations {
@@ -747,17 +801,17 @@ impl<'a> Visitable<'a> for ComplexMessage<'a> {
 
 ast_enum! {
   #[visit(visit_declaration)]
-  pub enum Declaration<'a> {
-    InputDeclaration<'a>,
-    LocalDeclaration<'a>,
-    ReservedStatement<'a>,
+  pub enum Declaration<'text> {
+    InputDeclaration<'text>,
+    LocalDeclaration<'text>,
+    ReservedStatement<'text>,
   }
 }
 
 #[derive(Debug, Clone)]
-pub struct InputDeclaration<'a> {
+pub struct InputDeclaration<'text> {
   pub start: Location,
-  pub expression: VariableExpression<'a>,
+  pub expression: VariableExpression<'text>,
 }
 
 impl Spanned for InputDeclaration<'_> {
@@ -768,13 +822,16 @@ impl Spanned for InputDeclaration<'_> {
   }
 }
 
-impl<'a> Visitable<'a> for InputDeclaration<'a> {
-  fn apply_visitor<V: Visit<'a> + ?Sized>(&'a self, visitor: &mut V) {
+impl<'text> Visitable<'text> for InputDeclaration<'text> {
+  fn apply_visitor<'ast, V: Visit<'ast, 'text> + ?Sized>(
+    &'ast self,
+    visitor: &mut V,
+  ) {
     visitor.visit_input_declaration(self);
   }
 
-  fn apply_visitor_to_children<V: Visit<'a> + ?Sized>(
-    &'a self,
+  fn apply_visitor_to_children<'ast, V: Visit<'ast, 'text> + ?Sized>(
+    &'ast self,
     visitor: &mut V,
   ) {
     self.expression.apply_visitor(visitor);
@@ -782,10 +839,10 @@ impl<'a> Visitable<'a> for InputDeclaration<'a> {
 }
 
 #[derive(Debug, Clone)]
-pub struct LocalDeclaration<'a> {
+pub struct LocalDeclaration<'text> {
   pub start: Location,
-  pub variable: Variable<'a>,
-  pub expression: Expression<'a>,
+  pub variable: Variable<'text>,
+  pub expression: Expression<'text>,
 }
 
 impl Spanned for LocalDeclaration<'_> {
@@ -796,13 +853,16 @@ impl Spanned for LocalDeclaration<'_> {
   }
 }
 
-impl<'a> Visitable<'a> for LocalDeclaration<'a> {
-  fn apply_visitor<V: Visit<'a> + ?Sized>(&'a self, visitor: &mut V) {
+impl<'text> Visitable<'text> for LocalDeclaration<'text> {
+  fn apply_visitor<'ast, V: Visit<'ast, 'text> + ?Sized>(
+    &'ast self,
+    visitor: &mut V,
+  ) {
     visitor.visit_local_declaration(self);
   }
 
-  fn apply_visitor_to_children<V: Visit<'a> + ?Sized>(
-    &'a self,
+  fn apply_visitor_to_children<'ast, V: Visit<'ast, 'text> + ?Sized>(
+    &'ast self,
     visitor: &mut V,
   ) {
     self.variable.apply_visitor(visitor);
@@ -811,11 +871,11 @@ impl<'a> Visitable<'a> for LocalDeclaration<'a> {
 }
 
 #[derive(Debug, Clone)]
-pub struct ReservedStatement<'a> {
+pub struct ReservedStatement<'text> {
   pub start: Location,
-  pub name: &'a str,
-  pub body: Vec<ReservedBodyPart<'a>>,
-  pub expressions: Vec<Expression<'a>>,
+  pub name: &'text str,
+  pub body: Vec<ReservedBodyPart<'text>>,
+  pub expressions: Vec<Expression<'text>>,
 }
 
 impl Spanned for ReservedStatement<'_> {
@@ -836,13 +896,16 @@ impl Spanned for ReservedStatement<'_> {
   }
 }
 
-impl<'a> Visitable<'a> for ReservedStatement<'a> {
-  fn apply_visitor<V: Visit<'a> + ?Sized>(&'a self, visitor: &mut V) {
+impl<'text> Visitable<'text> for ReservedStatement<'text> {
+  fn apply_visitor<'ast, V: Visit<'ast, 'text> + ?Sized>(
+    &'ast self,
+    visitor: &mut V,
+  ) {
     visitor.visit_reserved_statement(self);
   }
 
-  fn apply_visitor_to_children<V: Visit<'a> + ?Sized>(
-    &'a self,
+  fn apply_visitor_to_children<'ast, V: Visit<'ast, 'text> + ?Sized>(
+    &'ast self,
     visitor: &mut V,
   ) {
     for part in &self.body {
@@ -856,16 +919,16 @@ impl<'a> Visitable<'a> for ReservedStatement<'a> {
 
 ast_enum! {
   #[visit(visit_complex_message_body)]
-  pub enum ComplexMessageBody<'a> {
-    QuotedPattern<'a>,
-    Matcher<'a>,
+  pub enum ComplexMessageBody<'text> {
+    QuotedPattern<'text>,
+    Matcher<'text>,
   }
 }
 
 #[derive(Debug, Clone)]
-pub struct QuotedPattern<'a> {
+pub struct QuotedPattern<'text> {
   pub span: Span,
-  pub pattern: Pattern<'a>,
+  pub pattern: Pattern<'text>,
 }
 
 impl Spanned for QuotedPattern<'_> {
@@ -874,13 +937,16 @@ impl Spanned for QuotedPattern<'_> {
   }
 }
 
-impl<'a> Visitable<'a> for QuotedPattern<'a> {
-  fn apply_visitor<V: Visit<'a> + ?Sized>(&'a self, visitor: &mut V) {
+impl<'text> Visitable<'text> for QuotedPattern<'text> {
+  fn apply_visitor<'ast, V: Visit<'ast, 'text> + ?Sized>(
+    &'ast self,
+    visitor: &mut V,
+  ) {
     visitor.visit_quoted_pattern(self);
   }
 
-  fn apply_visitor_to_children<V: Visit<'a> + ?Sized>(
-    &'a self,
+  fn apply_visitor_to_children<'ast, V: Visit<'ast, 'text> + ?Sized>(
+    &'ast self,
     visitor: &mut V,
   ) {
     self.pattern.apply_visitor(visitor);
@@ -888,10 +954,10 @@ impl<'a> Visitable<'a> for QuotedPattern<'a> {
 }
 
 #[derive(Debug, Clone)]
-pub struct Matcher<'a> {
+pub struct Matcher<'text> {
   pub start: Location,
-  pub selectors: Vec<Expression<'a>>,
-  pub variants: Vec<Variant<'a>>,
+  pub selectors: Vec<Expression<'text>>,
+  pub variants: Vec<Variant<'text>>,
 }
 
 impl Spanned for Matcher<'_> {
@@ -912,13 +978,16 @@ impl Spanned for Matcher<'_> {
   }
 }
 
-impl<'a> Visitable<'a> for Matcher<'a> {
-  fn apply_visitor<V: Visit<'a> + ?Sized>(&'a self, visitor: &mut V) {
+impl<'text> Visitable<'text> for Matcher<'text> {
+  fn apply_visitor<'ast, V: Visit<'ast, 'text> + ?Sized>(
+    &'ast self,
+    visitor: &mut V,
+  ) {
     visitor.visit_matcher(self);
   }
 
-  fn apply_visitor_to_children<V: Visit<'a> + ?Sized>(
-    &'a self,
+  fn apply_visitor_to_children<'ast, V: Visit<'ast, 'text> + ?Sized>(
+    &'ast self,
     visitor: &mut V,
   ) {
     for selector in &self.selectors {
@@ -931,9 +1000,9 @@ impl<'a> Visitable<'a> for Matcher<'a> {
 }
 
 #[derive(Debug, Clone)]
-pub struct Variant<'a> {
-  pub keys: Vec<Key<'a>>,
-  pub pattern: QuotedPattern<'a>,
+pub struct Variant<'text> {
+  pub keys: Vec<Key<'text>>,
+  pub pattern: QuotedPattern<'text>,
 }
 
 impl Spanned for Variant<'_> {
@@ -948,13 +1017,16 @@ impl Spanned for Variant<'_> {
   }
 }
 
-impl<'a> Visitable<'a> for Variant<'a> {
-  fn apply_visitor<V: Visit<'a> + ?Sized>(&'a self, visitor: &mut V) {
+impl<'text> Visitable<'text> for Variant<'text> {
+  fn apply_visitor<'ast, V: Visit<'ast, 'text> + ?Sized>(
+    &'ast self,
+    visitor: &mut V,
+  ) {
     visitor.visit_variant(self);
   }
 
-  fn apply_visitor_to_children<V: Visit<'a> + ?Sized>(
-    &'a self,
+  fn apply_visitor_to_children<'ast, V: Visit<'ast, 'text> + ?Sized>(
+    &'ast self,
     visitor: &mut V,
   ) {
     for key in &self.keys {
@@ -966,8 +1038,8 @@ impl<'a> Visitable<'a> for Variant<'a> {
 
 ast_enum! {
   #[visit(visit_key)]
-  pub enum Key<'a> {
-    Literal<'a>,
+  pub enum Key<'text> {
+    Literal<'text>,
     Star,
   }
 }
@@ -983,13 +1055,16 @@ impl Spanned for Star {
   }
 }
 
-impl<'a> Visitable<'a> for Star {
-  fn apply_visitor<V: Visit<'a> + ?Sized>(&'a self, visitor: &mut V) {
+impl<'text> Visitable<'text> for Star {
+  fn apply_visitor<'ast, V: Visit<'ast, 'text> + ?Sized>(
+    &'ast self,
+    visitor: &mut V,
+  ) {
     visitor.visit_star(self);
   }
 
-  fn apply_visitor_to_children<V: Visit<'a> + ?Sized>(
-    &'a self,
+  fn apply_visitor_to_children<'ast, V: Visit<'ast, 'text> + ?Sized>(
+    &'ast self,
     _visitor: &mut V,
   ) {
   }
@@ -997,16 +1072,16 @@ impl<'a> Visitable<'a> for Star {
 
 macro_rules! any_node {
     (
-      pub enum $name:ident<$lifetime:lifetime> {
+      pub enum $name:ident<$ast_lifetime:lifetime, $text_lifetime:lifetime> {
         $( $item:ident $(<$item_lifetime:lifetime>)? ),* $(,)?
       }
     ) => {
       #[derive(Clone)]
-      pub enum $name<$lifetime> {
-        $( $item ( & $lifetime $item$(<$item_lifetime>)? ), )*
+      pub enum $name<$ast_lifetime, $text_lifetime> {
+        $( $item ( &'ast $item$(<$item_lifetime>)? ), )*
       }
 
-      impl ::std::fmt::Debug for $name<'_> {
+      impl ::std::fmt::Debug for $name<'_, '_> {
         fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
           match self {
             $( $name::$item(item) => ::std::fmt::Debug::fmt(item, f), )*
@@ -1014,7 +1089,7 @@ macro_rules! any_node {
         }
       }
 
-      impl crate::util::Spanned for $name<'_> {
+      impl crate::util::Spanned for $name<'_, '_> {
         fn span(&self) -> Span {
           match self {
             $( $name::$item(item) => item.span(), )*
@@ -1022,8 +1097,8 @@ macro_rules! any_node {
         }
       }
 
-      impl<'a> $name<'a> {
-        pub fn apply_visitor<V: crate::visitor::Visit<'a> + ?Sized>(&self, visitor: &mut V) {
+      impl<'ast, 'text> $name<'ast, 'text> {
+        pub fn apply_visitor<V: crate::visitor::Visit<'ast, 'text> + ?Sized>(&self, visitor: &mut V) {
           match self {
             $( $name::$item(item) => item.apply_visitor(visitor), )*
           }
@@ -1033,41 +1108,41 @@ macro_rules! any_node {
 }
 
 any_node! {
-  pub enum AnyNode<'a> {
-    Message<'a>,
-    Pattern<'a>,
-    PatternPart<'a>,
-    Text<'a>,
+  pub enum AnyNode<'ast, 'text> {
+    Message<'text>,
+    Pattern<'text>,
+    PatternPart<'text>,
+    Text<'text>,
     Escape,
-    Expression<'a>,
-    LiteralExpression<'a>,
-    VariableExpression<'a>,
-    Variable<'a>,
-    AnnotationExpression<'a>,
-    Annotation<'a>,
-    Function<'a>,
-    FnOrMarkupOption<'a>,
-    Attribute<'a>,
-    LiteralOrVariable<'a>,
-    PrivateUseAnnotation<'a>,
-    ReservedAnnotation<'a>,
-    ReservedBodyPart<'a>,
-    Quoted<'a>,
-    QuotedPart<'a>,
-    Literal<'a>,
-    Number<'a>,
-    Markup<'a>,
-    Identifier<'a>,
-    ComplexMessage<'a>,
-    Declaration<'a>,
-    InputDeclaration<'a>,
-    LocalDeclaration<'a>,
-    ReservedStatement<'a>,
-    ComplexMessageBody<'a>,
-    QuotedPattern<'a>,
-    Matcher<'a>,
-    Variant<'a>,
-    Key<'a>,
+    Expression<'text>,
+    LiteralExpression<'text>,
+    VariableExpression<'text>,
+    Variable<'text>,
+    AnnotationExpression<'text>,
+    Annotation<'text>,
+    Function<'text>,
+    FnOrMarkupOption<'text>,
+    Attribute<'text>,
+    LiteralOrVariable<'text>,
+    PrivateUseAnnotation<'text>,
+    ReservedAnnotation<'text>,
+    ReservedBodyPart<'text>,
+    Quoted<'text>,
+    QuotedPart<'text>,
+    Literal<'text>,
+    Number<'text>,
+    Markup<'text>,
+    Identifier<'text>,
+    ComplexMessage<'text>,
+    Declaration<'text>,
+    InputDeclaration<'text>,
+    LocalDeclaration<'text>,
+    ReservedStatement<'text>,
+    ComplexMessageBody<'text>,
+    QuotedPattern<'text>,
+    Matcher<'text>,
+    Variant<'text>,
+    Key<'text>,
     Star,
   }
 }

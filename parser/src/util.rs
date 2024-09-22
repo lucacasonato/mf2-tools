@@ -18,18 +18,18 @@ enum Peeked {
 /// The source text maintains the offset of characters in the original string
 /// and provides methods to iterate over the characters. It provides a method
 /// to advance the iterator, and a method to peek the next character.
-pub struct SourceTextIterator<'a> {
-  original: &'a str,
+pub struct SourceTextIterator<'text> {
+  original: &'text str,
   front_loc: Location,
   str_index: u32,
-  iter: Chars<'a>,
+  iter: Chars<'text>,
   peeked: Peeked,
   utf8_line_starts: Vec<u32>,
   prev_char_was_cr: bool,
 }
 
-impl<'a> SourceTextIterator<'a> {
-  pub fn new(s: &'a str) -> Self {
+impl<'text> SourceTextIterator<'text> {
+  pub fn new(s: &'text str) -> Self {
     assert!(
       s.len() <= u32::MAX as usize,
       "source text is longer than u32::MAX"
@@ -148,11 +148,11 @@ impl<'a> SourceTextIterator<'a> {
     Location(self.original.len() as u32)
   }
 
-  pub fn slice(&self, range: Range<Location>) -> &'a str {
+  pub fn slice(&self, range: Range<Location>) -> &'text str {
     &self.original[range.start.0 as usize..range.end.0 as usize]
   }
 
-  pub fn into_info(mut self) -> SourceTextInfo<'a> {
+  pub fn into_info(mut self) -> SourceTextInfo<'text> {
     assert_eq!(self.str_index, self.original.len() as u32);
     if self.prev_char_was_cr
       && *self.utf8_line_starts.last().unwrap() < self.str_index
@@ -166,8 +166,8 @@ impl<'a> SourceTextIterator<'a> {
   }
 }
 
-pub struct SourceTextInfo<'a> {
-  text: &'a str,
+pub struct SourceTextInfo<'text> {
+  text: &'text str,
   utf8_line_starts: Vec<u32>,
 }
 
