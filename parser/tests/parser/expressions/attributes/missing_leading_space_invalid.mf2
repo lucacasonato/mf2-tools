@@ -1,31 +1,28 @@
-{!a@foo}
+{^a@foo}
 === spans ===
-                    {!a@foo}
+                    {^a@foo}
 Pattern             ^^^^^^^^
-AnnotationExpression^^^^^^^^
-ReservedAnnotation   ^^
-Text                  ^
+LiteralExpression   ^^^^^^^^
+Text                 ^^
 Attribute              ^^^^
 Identifier              ^^^
 === diagnostics ===
+Placeholder expression contains a literal that is not valid when unquoted. Did you mean to quote it? (at @1..3)
+  {^a@foo}
+   ^^
 Attribute is missing a leading space. (at @3..7)
-  {!a@foo}
+  {^a@foo}
      ^^^^
 === ast ===
 Pattern {
     parts: [
-        AnnotationExpression {
+        LiteralExpression {
             span: @0..8,
-            annotation: ReservedAnnotation {
+            literal: Text {
                 start: @1,
-                sigil: '!',
-                body: [
-                    Text {
-                        start: @2,
-                        content: "a",
-                    },
-                ],
+                content: "^a",
             },
+            annotation: None,
             attributes: [
                 Attribute {
                     span: @3..7,

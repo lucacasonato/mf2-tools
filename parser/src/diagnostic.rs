@@ -115,6 +115,10 @@ diagnostics! {
       message: ("Placeholder is empty, but should have at least a variable reference, literal, or annotation."),
       span: *span,
     },
+    PlaceholderInvalidLiteral { span: Span } => {
+      message: ("Placeholder expression contains a literal that is not valid when unquoted. Did you mean to quote it?"),
+      span: *span,
+    },
     PlaceholderInvalidContents { span: Span } => {
       message: ("Placeholder expression contains invalid content."),
       span: *span,

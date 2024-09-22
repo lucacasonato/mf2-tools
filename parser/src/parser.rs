@@ -25,11 +25,9 @@ use crate::ast::Message;
 use crate::ast::Number;
 use crate::ast::Pattern;
 use crate::ast::PatternPart;
-use crate::ast::PrivateUseAnnotation;
 use crate::ast::Quoted;
 use crate::ast::QuotedPart;
 use crate::ast::QuotedPattern;
-use crate::ast::ReservedAnnotation;
 use crate::ast::ReservedBodyPart;
 use crate::ast::ReservedStatement;
 use crate::ast::Star;
@@ -38,6 +36,7 @@ use crate::ast::Variable;
 use crate::ast::VariableExpression;
 use crate::ast::Variant;
 use crate::chars;
+use crate::chars::space;
 use crate::diagnostic::Diagnostic;
 use crate::util::LengthShort;
 use crate::util::Location;
@@ -273,10 +272,43 @@ impl<'text> Parser<'text> {
   // the location of the opening `{` as `start`. The caller must also consume
   // spaces after the opening `{` before calling this function.
   fn parse_expression(&mut self, start: Location) -> Expression<'text> {
-    let lit_or_var = self.parse_literal_or_variable();
+    let mut lit_or_var = self.parse_literal_or_variable();
 
-    let had_space_before_annotation =
-      lit_or_var.is_none() || self.skip_spaces();
+    let had_space_before_annotation = if lit_or_var.is_none() {
+      let start = self.current_location();
+      let mut end = start;
+      let mut had_space = false;
+      while let Some((_, ch)) = self.peek() {
+        match ch {
+          space!() => {
+            had_space = self.skip_spaces();
+          }
+          '\0' | '@' | ':' | '\\' | '{' | '}' | '|' => {
+            break;
+          }
+          _ => {
+            self.next();
+            had_space = false;
+            end = self.current_location();
+          }
+        }
+      }
+      if start != end {
+        lit_or_var = Some(LiteralOrVariable::Literal(Literal::Text(Text {
+          start,
+          content: self.text.slice(start..end),
+        })));
+        self.report(Diagnostic::PlaceholderInvalidLiteral {
+          span: Span::new(start..end),
+        });
+        had_space
+      } else {
+        true
+      }
+    } else {
+      self.skip_spaces()
+    };
+
     let mut had_space = false;
 
     let annotation = self.maybe_parse_annotation(&mut had_space);
@@ -616,33 +648,6 @@ impl<'text> Parser<'text> {
         }
 
         Some(Annotation::Function(function))
-      }
-      Some((start, sigil @ ('^' | '&'))) => {
-        // private-use-annotation
-        self.next(); // consume start
-
-        let reserved_body = self.parse_reserved_body(had_space, false);
-
-        Some(Annotation::PrivateUseAnnotation(PrivateUseAnnotation {
-          start,
-          sigil,
-          body: reserved_body,
-        }))
-      }
-      Some((
-        start,
-        sigil @ ('!' | '%' | '*' | '+' | '<' | '>' | '?' | '~'),
-      )) => {
-        // reserved annotation
-        self.next(); // consume start
-
-        let reserved_body = self.parse_reserved_body(had_space, false);
-
-        Some(Annotation::ReservedAnnotation(ReservedAnnotation {
-          start,
-          sigil,
-          body: reserved_body,
-        }))
       }
       _ => None,
     }
