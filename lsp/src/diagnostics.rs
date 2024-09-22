@@ -1,36 +1,79 @@
-use lsp_types::Diagnostic;
-
 use crate::document::Document;
+use lsp_types::Diagnostic as LspDiagnostic;
+use mf2_parser::Span;
+use std::fmt;
 
-pub fn mf2_diagnostic_to_lsp(
-  doc: &Document,
-  diagnostic: &mf2_parser::Diagnostic,
-) -> Diagnostic {
-  match diagnostic {
-    mf2_parser::Diagnostic::AnnotationMissingSpaceBefore { span } => {
-      Diagnostic {
-        range: doc.span_to_range(*span),
-        severity: Some(lsp_types::DiagnosticSeverity::ERROR),
-        code: Some(lsp_types::NumberOrString::String(
-          "annotation-missing-space-before".to_string(),
-        )),
-        source: Some("mf2".to_string()),
-        message: "Annotation is missing a leading space, which is required"
-          .to_string(),
-        code_description: None,
-        ..Diagnostic::default()
+pub enum Diagnostic<'t> {
+  Parser(mf2_parser::Diagnostic<'t>),
+  Linter(LintDiagnostic<'t>),
+}
+
+pub enum LintDiagnostic<'text> {
+  DuplicateDeclaration {
+    name: &'text str,
+    #[allow(dead_code)]
+    first_span: Span,
+    second_span: Span,
+  },
+}
+
+#[allow(unused_variables)]
+impl<'text> Diagnostic<'text> {
+  pub fn span(&self) -> Span {
+    use LintDiagnostic::*;
+
+    match self {
+      Self::Parser(d) => d.span(),
+      Self::Linter(DuplicateDeclaration { second_span, .. }) => *second_span,
+    }
+  }
+
+  pub fn message(&self) -> String {
+    use LintDiagnostic::*;
+
+    match self {
+      Self::Parser(d) => d.message(),
+      Self::Linter(DuplicateDeclaration { name, .. }) => {
+        format!("{name} has already been declared.")
       }
     }
-    _ => Diagnostic {
-      range: doc.span_to_range(diagnostic.span()),
-      severity: Some(lsp_types::DiagnosticSeverity::ERROR),
-      code: None,
-      code_description: None,
-      source: Some("mf2".to_string()),
-      message: diagnostic.message(),
-      related_information: None,
-      tags: None,
-      data: None,
-    },
+  }
+
+  pub fn to_lsp(&self, doc: &Document) -> LspDiagnostic {
+    use mf2_parser::Diagnostic::*;
+
+    match self {
+      Diagnostic::Parser(AnnotationMissingSpaceBefore { span }) => {
+        LspDiagnostic {
+          range: doc.span_to_range(*span),
+          severity: Some(lsp_types::DiagnosticSeverity::ERROR),
+          code: Some(lsp_types::NumberOrString::String(
+            "annotation-missing-space-before".to_string(),
+          )),
+          source: Some("mf2".to_string()),
+          message: "Annotation is missing a leading space, which is required"
+            .to_string(),
+          code_description: None,
+          ..LspDiagnostic::default()
+        }
+      }
+      _ => LspDiagnostic {
+        range: doc.span_to_range(self.span()),
+        severity: Some(lsp_types::DiagnosticSeverity::ERROR),
+        code: None,
+        code_description: None,
+        source: Some("mf2".to_string()),
+        message: self.message(),
+        related_information: None,
+        tags: None,
+        data: None,
+      },
+    }
+  }
+}
+
+impl fmt::Display for Diagnostic<'_> {
+  fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+    write!(f, "{} (at {:?})", self.message(), self.span())
   }
 }

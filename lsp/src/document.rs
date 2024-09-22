@@ -13,6 +13,8 @@ use mf2_parser::Visit;
 use yoke::Yoke;
 use yoke::Yokeable;
 
+use crate::diagnostics::Diagnostic;
+
 pub struct Document {
   pub uri: Uri,
   pub version: i32,
@@ -29,11 +31,17 @@ pub struct ParsedDocument<'text> {
 impl Document {
   pub fn new(uri: Uri, version: i32, text: Box<str>) -> Document {
     let parsed = Yoke::attach_to_cart(text, |text| {
-      let (ast, diagnostics, info) = mf2_parser::parse(text);
+      let (ast, parser_diagnostics, info) = mf2_parser::parse(text);
+
+      let diagnostics = parser_diagnostics
+        .into_iter()
+        .map(Diagnostic::Parser)
+        .collect();
+
       ParsedDocument {
         ast,
-        diagnostics,
         info,
+        diagnostics,
       }
     });
     Document {
