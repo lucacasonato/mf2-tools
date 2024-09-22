@@ -167,6 +167,10 @@ diagnostics! {
       message: ("Attribute is missing a value after the '=' sign."),
       span: *span,
     },
+    AttributeValueIsVariable { span: Span } => {
+      message: ("Attribute value can not be a variable, but must be a literal value."),
+      span: *span,
+    },
     VariableMissingName { span: Span } => {
       message: ("Variable is missing a name after the dollar sign ('$')."),
       span: *span,
