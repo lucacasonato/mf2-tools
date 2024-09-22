@@ -24,7 +24,7 @@ Deno.test("diagnostics", async () => {
     diagnostics: [
       {
         message:
-          "Escape sequence can only escape '}', '{', '|', and '\\' (found 'a' at @15)",
+          "The character 'a' can not be escaped as escape sequences can only escape '}', '{', '|', and '\\'.",
         range: {
           end: { character: 16, line: 0 },
           start: { character: 15, line: 0 },
@@ -61,7 +61,7 @@ Deno.test("diagnostics with emoji", async () => {
     diagnostics: [
       {
         message:
-          "Escape sequence can only escape '}', '{', '|', and '\\' (found 'a' at @84)",
+          "The character 'a' can not be escaped as escape sequences can only escape '}', '{', '|', and '\\'.",
         range: {
           end: { character: 41, line: 0 },
           start: { character: 40, line: 0 },

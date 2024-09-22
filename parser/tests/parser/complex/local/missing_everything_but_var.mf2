@@ -15,16 +15,16 @@ LiteralExpression                  ^^^^^
 Text                                ^^^
 Text                                    ^^^^^
 === diagnostics ===
-Local declaration variable must be followed by an equals sign (at @7..11)
+Local declaration is missing an equals sign after the variable. (at @7..11)
   .local $var #a {abc}↵{{}}
          ^^^^
-Local declaration is missing an expression (at @0..6)
+Local declaration is missing an expression as the value after the equals sign. (at @0..6)
   .local $var #a {abc}↵{{}}
   ^^^^^^
-Quoted pattern is not allowed inside of patterns (at @21..23)
+Quoted pattern is not allowed inside of a pattern. (at @21..23)
   .local $var #a {abc}↵{{}}
                        ^^
-Complex message body must be quoted (at @12..25)
+Using an unquoted pattern as the body is invalid, because the message contains declarations. Did you mean to quote the pattern?. (at @12..25)
   .local $var #a {abc}↵{{}}
               ^^^^^^^^^^^^^
 === ast ===

@@ -15,7 +15,7 @@ QuotedPattern
 Pattern                            
 Text                               
 === diagnostics ===
-Matcher variant is missing a body (at @14..15)
+Matcher variant is missing a body. (at @14..15)
   .match {1 :a}↵*
                 ^
 === ast ===

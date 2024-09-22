@@ -5,7 +5,7 @@ Pattern             ^^^^^^^^^^^^^
 Markup              ^^^^^^^^^^^^^
 Identifier            ^^^
 === diagnostics ===
-Unrecognized markup contents (at @6..10)
+Markup tag contains invalid content. (at @6..10)
   {#foo !abc /}
         ^^^^
 === ast ===

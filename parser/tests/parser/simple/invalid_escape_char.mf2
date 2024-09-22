@@ -6,7 +6,7 @@ Text                ^^^^^
 Escape                   ^^
 Text                       ^^^
 === diagnostics ===
-Escape sequence can only escape '}', '{', '|', and '\' (found 't' at @6)
+The character 't' can not be escaped as escape sequences can only escape '}', '{', '|', and '\'. (at @6..7)
   hello\tbar
         ^
 === ast ===

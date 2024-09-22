@@ -8,9 +8,9 @@ FnOrMarkupOption         ^^^^^^^
 Identifier               ^^^^^^
 Text                            
 === diagnostics ===
-Option is missing a value, which is required (at @5..12)
+Found an identifier followed by an equals sign, but not followed by a value. Did you forget to add a value to make this an option? (at @5..13)
   {#el option= }
-       ^^^^^^^
+       ^^^^^^^^
 === ast ===
 Pattern {
     parts: [

@@ -11,7 +11,7 @@ Number.integral             ^
 QuotedPattern                  ^^^^
 Pattern             
 === diagnostics ===
-Input declaration has a non-variable expression (at @7..10)
+Input declaration has a non-variable expression, which is invalid. Did you mean to use a local declaration instead of an input declaration? (at @0..10)
   .input {1}↵{{}}
   ^^^^^^^^^^
 === ast ===

@@ -8,10 +8,10 @@ Attribute             ^^^^^^^^^^
 Identifier             ^^^
 Text                         ^^^
 === diagnostics ===
-Attributes must be preceeded by a leading space (at @2..12)
+Attribute is missing a leading space. (at @2..12)
   {#@foo = bar }
     ^^^^^^^^^^
-Markup is missing an identifier (at @0..14)
+Markup tag is missing an identifier. (at @0..14)
   {#@foo = bar }
   ^^^^^^^^^^^^^^
 === ast ===

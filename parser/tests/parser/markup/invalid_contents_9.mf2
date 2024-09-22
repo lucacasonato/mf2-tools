@@ -7,7 +7,7 @@ Identifier
 Attribute              ^^^^^^
 Identifier              ^^^^^
 === diagnostics ===
-Markup is missing an identifier (at @0..12)
+Markup tag is missing an identifier. (at @0..12)
   {# @hello /}
   ^^^^^^^^^^^^
 === ast ===

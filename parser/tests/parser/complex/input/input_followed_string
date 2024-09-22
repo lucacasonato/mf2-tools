@@ -9,13 +9,13 @@ QuotedPattern              ^^^^^^^^^
 Pattern                    ^^^^^^^^^
 Text                       ^^^^^^^^^
 === diagnostics ===
-Input declaration is missing an expression (at @0..6)
+Input declaration is missing an expression. (at @0..6)
   .input $foo↵{{}}
   ^^^^^^
-Quoted pattern is not allowed inside of patterns (at @12..14)
+Quoted pattern is not allowed inside of a pattern. (at @12..14)
   .input $foo↵{{}}
               ^^
-Complex message body must be quoted (at @7..16)
+Using an unquoted pattern as the body is invalid, because the message contains declarations. Did you mean to quote the pattern?. (at @7..16)
   .input $foo↵{{}}
          ^^^^^^^^^
 === ast ===

@@ -11,7 +11,7 @@ Identifier                   ^^^
 QuotedPattern                     ^^^^
 Pattern             
 === diagnostics ===
-Input declaration has a non-variable expression (at @7..13)
+Input declaration has a non-variable expression, which is invalid. Did you mean to use a local declaration instead of an input declaration? (at @0..13)
   .input {:foo}↵{{}}
   ^^^^^^^^^^^^^
 === ast ===

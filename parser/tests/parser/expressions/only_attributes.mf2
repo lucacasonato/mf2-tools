@@ -7,7 +7,7 @@ Text
 Attribute            ^^^^
 Identifier            ^^^
 === diagnostics ===
-Placeholder is missing a variable reference, literal, or annotation (at @0..6)
+Placeholder is empty, but should have at least a variable reference, literal, or annotation. (at @0..6)
   {@foo}
   ^^^^^^
 === ast ===

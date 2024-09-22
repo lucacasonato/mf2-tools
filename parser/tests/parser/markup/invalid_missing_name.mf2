@@ -5,7 +5,7 @@ Pattern             ^^^^
 Markup              ^^^^
 Identifier            
 === diagnostics ===
-Markup is missing an identifier (at @0..4)
+Markup tag is missing an identifier. (at @0..4)
   {# }
   ^^^^
 === ast ===

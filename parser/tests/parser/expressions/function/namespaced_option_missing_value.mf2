@@ -13,10 +13,10 @@ FnOrMarkupOption                    ^^^^
 Identifier                          ^^
 Text                                   ^
 === diagnostics ===
-Option is missing a value, which is required (at @14..15)
+Found an identifier followed by an equals sign, but not followed by a value. Did you forget to add a value to make this an option? (at @14..15)
   {$var :number a :b=c}
                 ^
-Identifier is missing a namespace (at @16..18)
+Identifiers with a colon before the name are namespaced identifiers, but this identifier is missing a namespace before the colon. (at @16..18)
   {$var :number a :b=c}
                   ^^
 === ast ===

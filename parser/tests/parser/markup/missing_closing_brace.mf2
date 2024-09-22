@@ -5,7 +5,7 @@ Pattern             ^^^^^^
 Markup              ^^^^^^
 Identifier            ^^^
 === diagnostics ===
-Markup is missing a closing brace (at @0..6)
+Markup tag is not closed with a closing brace. (at @0..6)
   {#foo 
   ^^^^^^
 === ast ===

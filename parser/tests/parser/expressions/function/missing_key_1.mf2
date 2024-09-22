@@ -9,7 +9,7 @@ FnOrMarkupOption            ^^^^
 Identifier                  
 Text                         ^^^
 === diagnostics ===
-Option is missing a key (at @8..12)
+Found equals sign followed by value, but equals sign is not preceeded by a key. Did you forget to add a key to make this an option? (at @8..12)
   {:hello =foo}
           ^^^^
 === ast ===

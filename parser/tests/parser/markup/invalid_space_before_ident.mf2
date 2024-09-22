@@ -5,7 +5,7 @@ Pattern             ^^^^^^^
 Markup              ^^^^^^^
 Identifier             ^^^
 === diagnostics ===
-Markup has invalid spaces before the identifier (at @3..6)
+Identifier of the markup tag is preceeded by spaces, which is not allowed. (at @2..3)
   {# foo}
     ^
 === ast ===

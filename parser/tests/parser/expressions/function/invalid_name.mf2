@@ -7,7 +7,7 @@ Variable             ^^^^
 Function                  ^^^^^^^
 Identifier                 ^^^^^^
 === diagnostics ===
-Unrecognized placeholder contents (at @14..18)
+Placeholder expression contains invalid content. (at @14..18)
   {$var :number 1a=2}
                 ^^^^
 === ast ===

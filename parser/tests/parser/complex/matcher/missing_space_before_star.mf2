@@ -15,7 +15,7 @@ Star                               ^
 QuotedPattern                       ^^^^
 Pattern             
 === diagnostics ===
-Key is missing a leading space (at @15..16)
+Matcher key is missing a leading space. (at @15..16)
   .match {1 :a}↵a*{{}}
                  ^
 === ast ===

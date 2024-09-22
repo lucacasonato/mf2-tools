@@ -11,7 +11,7 @@ QuotedPattern
 Pattern                          
 Text                             
 === diagnostics ===
-Complex message is missing a body (at @13..13)
+Message is missing a body (a matcher or quoted pattern). (at @13..13)
   .local $a={b}
                
 === ast ===

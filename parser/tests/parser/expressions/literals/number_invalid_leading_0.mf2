@@ -7,7 +7,7 @@ LiteralExpression    ^^^^^^
 Number                 ^^
 Number.integral        ^^
 === diagnostics ===
-Number has a leading zero in the integral part (at @3..5)
+Number has leading zero in integral part, which is not allowed. (at @3..5)
   a{ 01 }
      ^^
 === ast ===

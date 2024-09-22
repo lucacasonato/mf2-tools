@@ -10,7 +10,7 @@ Identifier              ^^^^^
 Attribute                     ^^^^^^
 Identifier                     ^^^^^
 === diagnostics ===
-Unrecognized placeholder contents (at @17..20)
+Placeholder expression contains invalid content. (at @17..20)
   {1 :hello @world a=b}
                    ^^^
 === ast ===

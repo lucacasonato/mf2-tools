@@ -6,10 +6,10 @@ LiteralExpression   ^^^^^^^^^
 Number               ^
 Number.integral      ^
 === diagnostics ===
-Escape sequence can only escape '}', '{', '|', and '\' (found 'a' at @7)
+The character 'a' can not be escaped as escape sequences can only escape '}', '{', '|', and '\'. (at @7..8)
   {1 abc\a}
          ^
-Unrecognized placeholder contents (at @3..8)
+Placeholder expression contains invalid content. (at @3..8)
   {1 abc\a}
      ^^^^^
 === ast ===

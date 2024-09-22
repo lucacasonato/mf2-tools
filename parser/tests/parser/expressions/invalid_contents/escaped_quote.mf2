@@ -6,7 +6,7 @@ LiteralExpression   ^^^^^^^^^^^^^^
 Number               ^
 Number.integral      ^
 === diagnostics ===
-Unrecognized placeholder contents (at @3..13)
+Placeholder expression contains invalid content. (at @3..13)
   {1 a \| thing}
      ^^^^^^^^^^
 === ast ===

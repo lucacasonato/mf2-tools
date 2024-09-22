@@ -4,14 +4,19 @@
 Pattern             ^^^^^^^^^^^^^^^^
 Markup              ^^^^^^^^^^^^^^^^
 Identifier            ^^
-Attribute                ^^^^^^^^^^
+FnOrMarkupOption             ^^^^^^
 Identifier                   ^^^^
 Number                            ^
 Number.integral                   ^
+Attribute                ^
+Identifier                
 === diagnostics ===
-'@' must be immediately followed by an identifier, without spaces (at @6..9)
+Attribute is missing a key after the '@' sign. (at @5..6)
   {#el @   attr=1}
-        ^^^
+       ^
+Markup tag has an option after an attribute, which is not allowed. All options must come before any attribute. (at @9..15)
+  {#el @   attr=1}
+           ^^^^^^
 === ast ===
 Pattern {
     parts: [
@@ -23,25 +28,32 @@ Pattern {
                 namespace: None,
                 name: "el",
             },
-            options: [],
-            attributes: [
-                Attribute {
-                    span: @5..15,
+            options: [
+                FnOrMarkupOption {
                     key: Identifier {
                         start: @9,
                         namespace: None,
                         name: "attr",
                     },
-                    value: Some(
-                        Number {
-                            start: @14,
-                            raw: "1",
-                            is_negative: false,
-                            integral_len: 1,
-                            fractional_len: None,
-                            exponent_len: None,
-                        },
-                    ),
+                    value: Number {
+                        start: @14,
+                        raw: "1",
+                        is_negative: false,
+                        integral_len: 1,
+                        fractional_len: None,
+                        exponent_len: None,
+                    },
+                },
+            ],
+            attributes: [
+                Attribute {
+                    span: @5..6,
+                    key: Identifier {
+                        start: @6,
+                        namespace: None,
+                        name: "",
+                    },
+                    value: None,
                 },
             ],
         },

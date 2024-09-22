@@ -4,13 +4,13 @@ Hello {{}
 Pattern             ^^^^^^^^^
 Text                ^^^^^^^^^
 === diagnostics ===
-'}' in patterns must be escaped (at @8)
+The closing brace character ('}') is invalid inside of messages, and must be escaped as '\}'. (at @8..9)
   Hello {{}
           ^
-Quoted pattern is not allowed inside of patterns (at @6..8)
+Quoted pattern is not allowed inside of a pattern. (at @6..8)
   Hello {{}
         ^^
-Quoted string is missing a closing quote (at @6..9)
+Quoted string is missing the closing quote. (at @6..9)
   Hello {{}
         ^^^
 === ast ===

@@ -18,10 +18,10 @@ Text                           ^
 QuotedPattern                    ^^^^
 Pattern             
 === diagnostics ===
-Declarations must occur before the body, but was found after the body (at @18..33)
+Declarations are not valid after the message body. Did you mean to put the declaration before the body? (at @18..33)
   .match {a} a {{}}↵.local $a = {1}↵{{}}
                     ^^^^^^^^^^^^^^^
-Complex message can have only one body (at @34..38)
+Message has multiple bodies, but only one is allowed. (at @34..38)
   .match {a} a {{}}↵.local $a = {1}↵{{}}
                                     ^^^^
 === ast ===

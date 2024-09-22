@@ -5,7 +5,7 @@ Pattern             ^^^^^^^^
 Markup              ^^^^^^^^
 Identifier            ^^^^
 === diagnostics ===
-Identifier is missing a name (at @2..6)
+Namespaced identifier is missing a name, which is required after the colon following the namespace. (at @2..6)
   {#foo: }
     ^^^^
 === ast ===

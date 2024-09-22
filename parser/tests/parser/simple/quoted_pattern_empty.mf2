@@ -4,7 +4,7 @@ Hello {{}}
 Pattern             ^^^^^^^^^^
 Text                ^^^^^^^^^^
 === diagnostics ===
-Quoted pattern is not allowed inside of patterns (at @6..8)
+Quoted pattern is not allowed inside of a pattern. (at @6..8)
   Hello {{}}
         ^^
 === ast ===

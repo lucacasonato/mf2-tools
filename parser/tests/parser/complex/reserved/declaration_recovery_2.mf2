@@ -15,7 +15,7 @@ Text                                           ^^^^^
 QuotedPattern                                         ^^^^
 Pattern             
 === diagnostics ===
-Reserved statement is missing a mandatory expression (at @0..9)
+Reserved statement does not end with an expression, but it must. (at @0..9)
   .foo $var↵.local $hello = {world}↵{{}}
   ^^^^^^^^^
 === ast ===

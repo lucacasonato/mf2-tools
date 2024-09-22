@@ -4,7 +4,7 @@ hello\
 Pattern             ^^^^^
 Text                ^^^^^
 === diagnostics ===
-Escape sequence is missing a character to escape (at @5)
+Backslashes start an escape sequence, but no character to be escaped was found. A literal '\' must be written as '\\'. (at @5..6)
   hello\
        ^
 === ast ===
