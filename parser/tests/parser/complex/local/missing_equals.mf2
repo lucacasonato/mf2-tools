@@ -11,7 +11,7 @@ Text                             ^^^
 QuotedPattern                         ^^^^
 Pattern             
 === diagnostics ===
-Local declaration variable must be followed by an equals sign (at @7..11)
+Local declaration is missing an equals sign after the variable. (at @7..11)
   .local $var {abc}↵{{}}
          ^^^^
 === ast ===

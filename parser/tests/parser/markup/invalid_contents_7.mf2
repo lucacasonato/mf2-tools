@@ -8,10 +8,10 @@ FnOrMarkupOption               ^^^^
 Identifier                     ^^
 Text                              ^
 === diagnostics ===
-Unrecognized markup contents (at @6..10)
+Markup tag contains invalid content. (at @6..10)
   {#foo !abc :a=b /}
         ^^^^
-Identifier is missing a namespace (at @11..13)
+Identifiers with a colon before the name are namespaced identifiers, but this identifier is missing a namespace before the colon. (at @11..13)
   {#foo !abc :a=b /}
              ^^
 === ast ===

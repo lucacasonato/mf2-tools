@@ -10,7 +10,7 @@ Text                               ^^^
 Attribute                ^^^^^
 Identifier                ^^^^
 === diagnostics ===
-Markup has option after attribute (at @11..18)
+Markup tag has an option after an attribute, which is not allowed. All options must come before any attribute. (at @11..18)
   {#el @attr opt=val}
              ^^^^^^^
 === ast ===

@@ -8,7 +8,7 @@ ReservedStatement   ^^^^^^
 QuotedPattern              ^^^^
 Pattern             
 === diagnostics ===
-Input declaration is missing an expression (at @0..6)
+Input declaration is missing an expression. (at @0..6)
   .input↵{{}}
   ^^^^^^
 === ast ===

@@ -7,7 +7,7 @@ Variable             ^^
 Function               ^^
 Identifier              ^
 === diagnostics ===
-Annotations must be preceeded by a leading space (at @3..5)
+Annotation is missing a leading space. (at @3..5)
   {$a:b}
      ^^
 === ast ===

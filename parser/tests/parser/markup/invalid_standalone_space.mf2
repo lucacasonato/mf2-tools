@@ -5,7 +5,7 @@ Pattern             ^^^^^^^^
 Markup              ^^^^^^^^
 Identifier            ^^^
 === diagnostics ===
-Markup has invalid spaces between self-closing tag and closing brace (at @6..7)
+Self-closing tag of a markup tag can not have trailing spaces before the closing brace. (at @6..7)
   {#foo/ }
         ^
 === ast ===

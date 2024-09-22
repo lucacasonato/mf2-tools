@@ -14,7 +14,7 @@ Pattern                                   ^^^^^^^^
 VariableExpression                        ^^^^^^^^
 Variable                                   ^^^^^^
 === diagnostics ===
-Value of a local declaration must be wrapped in braces (at @16..19)
+Value of a local declaration is a literal or variable, but must be an expression. Did you mean to wrap the value in braces?. (at @16..19)
   .local $count = 123↵{{{$count}}}
                   ^^^
 === ast ===

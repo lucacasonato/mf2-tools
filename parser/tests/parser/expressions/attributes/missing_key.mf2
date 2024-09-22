@@ -8,7 +8,7 @@ Attribute                 ^^^^^
 Identifier                 
 Text                        ^^^
 === diagnostics ===
-Attribute is missing a key (at @6..11)
+Attribute is missing a key after the '@' sign. (at @6..11)
   {$var @=bar}
         ^^^^^
 === ast ===

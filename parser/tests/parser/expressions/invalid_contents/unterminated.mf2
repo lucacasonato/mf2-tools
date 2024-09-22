@@ -6,10 +6,10 @@ LiteralExpression   ^^^^^^
 Number               ^
 Number.integral      ^
 === diagnostics ===
-Placeholder is missing a closing brace (at @0..6)
+Placeholder is missing the closing brace. (at @0..6)
   {1 abc
   ^^^^^^
-Unrecognized placeholder contents (at @3..6)
+Placeholder expression contains invalid content. (at @3..6)
   {1 abc
      ^^^
 === ast ===

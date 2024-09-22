@@ -12,7 +12,7 @@ Text                               ^^^^^
 QuotedPattern                              ^^^^
 Pattern             
 === diagnostics ===
-'.local' keyword must be followed by a space (at @0..6)
+'.local' keyword is not followed by a space. (at @0..6)
   .local$var = {|hello|}↵{{}}
   ^^^^^^
 === ast ===

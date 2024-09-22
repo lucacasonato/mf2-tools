@@ -6,7 +6,7 @@ Text                ^
 LiteralExpression    ^^^^^^^^^
 Text                  ^^^
 === diagnostics ===
-Unrecognized placeholder contents (at @6..9)
+Placeholder expression contains invalid content. (at @6..9)
   a{abc def}
         ^^^
 === ast ===

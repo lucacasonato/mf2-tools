@@ -387,7 +387,8 @@ impl<'a> Parser<'a> {
         LiteralOrVariable::Literal(Literal::Text(self.parse_literal_name()))
       }
       // '.' is for error recovery of a fractional number literal that is missing the integral part
-      // fixme: only allow '.' if the character after is a digit
+      // fixme: '.' not followed by a digit should be treated as an invalid text literal `.` that needs to be quoted
+      // fixme: '-' not followed by a digit or `.` should be treated as an invalid text literal `-` that needs to be quoted
       Some((_, '-' | '.' | '0'..='9')) => {
         LiteralOrVariable::Literal(Literal::Number(self.parse_number()))
       }
@@ -419,12 +420,6 @@ impl<'a> Parser<'a> {
     debug_assert!(matches!(c, Some((_, '@'))));
 
     let report_missing_space_before_attribute = !*had_space;
-    if self.skip_spaces() {
-      self.report(Diagnostic::AttributeInvalidSpacesAfterAt {
-        span: Span::new((start + '@')..self.current_location()),
-      });
-    }
-
     let (key, is_key_empty) = self.parse_identifier();
 
     let mut end = self.current_location();
@@ -587,7 +582,9 @@ impl<'a> Parser<'a> {
             break;
           }
 
-          options.push(self.parse_option());
+          if let Some(option) = self.parse_option() {
+            options.push(option);
+          }
         }
 
         let function = Function { start, id, options };
@@ -631,21 +628,29 @@ impl<'a> Parser<'a> {
     }
   }
 
-  fn parse_option(&mut self) -> FnOrMarkupOption<'a> {
+  fn parse_option(&mut self) -> Option<FnOrMarkupOption<'a>> {
     let (key, is_key_empty) = self.parse_identifier();
     self.skip_spaces();
     let value = if let Some(equals_loc) = self.eat('=') {
       self.skip_spaces();
-      self.parse_literal_or_variable().unwrap_or_else(|| {
-        self.text.reset_to(equals_loc + '='); // un-eat the spaces after the equals
-        self.report(Diagnostic::OptionMissingValue {
-          span: Span::new(key.start..self.current_location()),
-        });
-        LiteralOrVariable::Literal(Literal::Text(Text {
-          start: self.current_location(),
-          content: "",
-        }))
-      })
+      match self.parse_literal_or_variable() {
+        Some(v) => v,
+        None if is_key_empty => {
+          self.report(Diagnostic::LoneEqualsSign { loc: equals_loc });
+          self.text.reset_to(equals_loc + '=');
+          return None;
+        }
+        None => {
+          self.report(Diagnostic::OptionMissingValue {
+            span: Span::new(key.start..self.current_location()),
+          });
+          self.text.reset_to(equals_loc + '=');
+          LiteralOrVariable::Literal(Literal::Text(Text {
+            start: self.current_location(),
+            content: "",
+          }))
+        }
+      }
     } else {
       self.text.reset_to(key.span().end); // un-eat the spaces after the identifier
       self.report(Diagnostic::OptionMissingValue {
@@ -665,7 +670,7 @@ impl<'a> Parser<'a> {
       })
     }
 
-    option
+    Some(option)
   }
 
   /// Parses a reserved body.
@@ -943,14 +948,15 @@ impl<'a> Parser<'a> {
         // also allow : as error recovery for `{#fn a:b=c :d=e}` (missing namespace on option)
         // also allow = as error recovery for {#fn a=b =c} (missing key on option)
         Some((_, chars::name_start!() | ':' | '=')) if had_space => {
-          let option = self.parse_option();
-          if let Some(previous_attribute) = attributes.last() {
-            self.report(Diagnostic::MarkupOptionAfterAttribute {
-              previous_attribute: previous_attribute.clone(),
-              option: option.clone(),
-            })
+          if let Some(option) = self.parse_option() {
+            if let Some(previous_attribute) = attributes.last() {
+              self.report(Diagnostic::MarkupOptionAfterAttribute {
+                previous_attribute: previous_attribute.clone(),
+                option: option.clone(),
+              })
+            }
+            options.push(option);
           }
-          options.push(option);
           had_space = self.skip_spaces();
         }
         Some((loc, _)) => {
@@ -1366,7 +1372,9 @@ impl<'a> Parser<'a> {
           self.next();
           let key = Key::Star(Star { start: loc });
           if !had_space_or_closing_curly {
-            self.report(Diagnostic::MissingSpaceBeforeKey { span: key.span() })
+            self.report(Diagnostic::MissingSpaceBeforeMatcherKey {
+              span: key.span(),
+            })
           }
           current_variant_keys.push(key);
           had_space_or_closing_curly = self.skip_spaces();
@@ -1465,7 +1473,9 @@ impl<'a> Parser<'a> {
             });
 
           if !had_space_or_closing_curly {
-            self.report(Diagnostic::MissingSpaceBeforeKey { span: key.span() })
+            self.report(Diagnostic::MissingSpaceBeforeMatcherKey {
+              span: key.span(),
+            })
           }
           current_variant_keys.push(key);
           had_space_or_closing_curly = self.skip_spaces();

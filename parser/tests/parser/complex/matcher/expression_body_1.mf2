@@ -17,7 +17,7 @@ LiteralExpression                   ^^^
 Number                               ^
 Number.integral                      ^
 === diagnostics ===
-Matcher variant has an expression as body that is not in a quoted pattern (at @16..19)
+Matcher variant has an expression as a body, but only quoted patterns are allowed. Did you mean to wrap the expression in a quoted pattern? (at @16..19)
   .match {1 :a}↵* {1}
                   ^^^
 === ast ===

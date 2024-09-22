@@ -9,7 +9,7 @@ Number.integral        ^
 Number.fractional        
 Number.exponent           ^
 === diagnostics ===
-Number is missing a fractional part (at @3..7)
+Number is missing a fractional part, which it must have because it has a decimal point. (at @3..7)
   a{ 1.e3 }
      ^^^^
 === ast ===

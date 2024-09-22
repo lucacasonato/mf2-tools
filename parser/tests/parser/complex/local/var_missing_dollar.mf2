@@ -12,7 +12,7 @@ Text                                ^^^^^
 QuotedPattern                                ^^^^
 Pattern             
 === diagnostics ===
-Variables must be prefixed with a dollar sign (at @7..10)
+Variable is not prefixed with a dollar sign ('$'). (at @7..10)
   .local var = { |hello| }↵{{}}
          ^^^
 === ast ===

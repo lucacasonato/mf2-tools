@@ -18,7 +18,7 @@ Star                                          ^
 QuotedPattern                                   ^^^^
 Pattern             
 === diagnostics ===
-Matcher key cannot be a variable (at @11..15)
+Matcher key is a variable, which is not allowed. Matcher keys must be literal values, or the wildcard ('*'). (at @11..15)
   .match {1}↵$var {{Hello}}↵* {{}}
              ^^^^
 === ast ===

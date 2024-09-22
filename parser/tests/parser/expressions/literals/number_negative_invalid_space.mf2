@@ -7,10 +7,10 @@ LiteralExpression    ^^^^^^^
 Number                 ^
 Number.integral         
 === diagnostics ===
-Number is missing an integral part (at @3..4)
+Number is missing an integral part. (at @3..4)
   a{ - 1 }
      ^
-Unrecognized placeholder contents (at @5..6)
+Placeholder expression contains invalid content. (at @5..6)
   a{ - 1 }
        ^
 === ast ===

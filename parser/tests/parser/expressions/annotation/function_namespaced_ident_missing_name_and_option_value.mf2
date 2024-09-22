@@ -9,10 +9,10 @@ FnOrMarkupOption         ^
 Identifier               ^
 Text                      
 === diagnostics ===
-Identifier is missing a name (at @2..4)
+Namespaced identifier is missing a name, which is required after the colon following the namespace. (at @2..4)
   {:a: b}
     ^^
-Option is missing a value, which is required (at @5..6)
+Found an identifier followed by an equals sign, but not followed by a value. Did you forget to add a value to make this an option? (at @5..6)
   {:a: b}
        ^
 === ast ===

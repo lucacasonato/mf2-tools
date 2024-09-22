@@ -5,10 +5,10 @@ Pattern             ^^^^^
 Markup              ^^^^^
 Identifier            ^
 === diagnostics ===
-Identifier is missing a name (at @2..3)
+Namespaced identifier is missing a name, which is required after the colon following the namespace. (at @2..3)
   {#: }
     ^
-Identifier is missing a namespace (at @2..3)
+Identifiers with a colon before the name are namespaced identifiers, but this identifier is missing a namespace before the colon. (at @2..3)
   {#: }
     ^
 === ast ===

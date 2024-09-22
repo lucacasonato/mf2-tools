@@ -26,7 +26,7 @@ Star                                               ^
 QuotedPattern                                        ^^^^
 Pattern             
 === diagnostics ===
-Declarations must occur before the body, but was found after the body (at @38..53)
+Declarations are not valid after the message body. Did you mean to put the declaration before the body? (at @38..53)
   .local $a = {1}↵.match {$a :a} * {{}}↵.local $b = {1}
                                         ^^^^^^^^^^^^^^^
 === ast ===

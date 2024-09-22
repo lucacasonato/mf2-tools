@@ -13,10 +13,10 @@ FnOrMarkupOption                    ^
 Identifier                          ^
 Text                                 
 === diagnostics ===
-Option is missing a value, which is required (at @14..15)
+Found an identifier followed by an equals sign, but not followed by a value. Did you forget to add a value to make this an option? (at @14..15)
   {$var :number a b}
                 ^
-Option is missing a value, which is required (at @16..17)
+Found an identifier followed by an equals sign, but not followed by a value. Did you forget to add a value to make this an option? (at @16..17)
   {$var :number a b}
                   ^
 === ast ===

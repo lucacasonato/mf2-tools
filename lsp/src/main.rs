@@ -1,6 +1,8 @@
+mod diagnostics;
 mod document;
 mod protocol;
 
+use diagnostics::mf2_diagnostic_to_lsp;
 use lsp_server::Connection;
 use lsp_server::Message;
 use lsp_types::CodeAction;
@@ -130,13 +132,7 @@ impl Server<'_> {
       version: Some(document.version),
       diagnostics: diagnostics
         .iter()
-        .map(|diag| Diagnostic {
-          range: document.span_to_range(diag.span()),
-          severity: Some(lsp_types::DiagnosticSeverity::ERROR),
-          message: diag.to_string(),
-          source: Some("mf2".to_string()),
-          ..Diagnostic::default()
-        })
+        .map(|diag| mf2_diagnostic_to_lsp(document, diag))
         .collect(),
     });
   }

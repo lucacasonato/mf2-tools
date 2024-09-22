@@ -18,7 +18,7 @@ VariableExpression                       ^^^^
 Variable                                  ^^
 Text                                         
 === diagnostics ===
-Complex message body must be quoted (at @17..25)
+Using an unquoted pattern as the body is invalid, because the message contains declarations. Did you mean to quote the pattern?. (at @17..25)
   .input {$a :b}↵  abc {$a}   ↵↵
                    ^^^^^^^^
 === ast ===

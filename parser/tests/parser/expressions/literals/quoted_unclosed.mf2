@@ -5,10 +5,10 @@ Pattern             ^^^^^^^^^
 LiteralExpression   ^^^^^^^^^
 Quoted               ^^^^^^^^
 === diagnostics ===
-Quoted string is missing a closing quote (at @1..9)
+Quoted string is missing the closing quote. (at @1..9)
   {|abc def
    ^^^^^^^^
-Placeholder is missing a closing brace (at @0..9)
+Placeholder is missing the closing brace. (at @0..9)
   {|abc def
   ^^^^^^^^^
 === ast ===

@@ -11,7 +11,7 @@ QuotedPattern                       ^^^^^^^^^
 Pattern                               ^^^^^
 Text                                  ^^^^^
 === diagnostics ===
-Matcher variant is missing key(s), at least one is required (at @16..25)
+Matcher variant is missing key(s), but at least one is required. (at @16..25)
   .match {$hello}↵{{hello}}
                   ^^^^^^^^^
 === ast ===

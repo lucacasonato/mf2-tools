@@ -8,7 +8,7 @@ Number.integral      ^
 Attribute              ^^^^
 Identifier              ^^^
 === diagnostics ===
-Unrecognized placeholder contents (at @8..12)
+Placeholder expression contains invalid content. (at @8..12)
   {1 @foo !bar}
           ^^^^
 === ast ===

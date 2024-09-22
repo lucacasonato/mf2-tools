@@ -8,10 +8,10 @@ FnOrMarkupOption               ^^^^
 Identifier                     
 Text                            ^^^
 === diagnostics ===
-Unrecognized markup contents (at @6..10)
+Markup tag contains invalid content. (at @6..10)
   {#foo !abc =asd /}
         ^^^^
-Option is missing a key (at @11..15)
+Found equals sign followed by value, but equals sign is not preceeded by a key. Did you forget to add a key to make this an option? (at @11..15)
   {#foo !abc =asd /}
              ^^^^
 === ast ===

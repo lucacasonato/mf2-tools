@@ -7,10 +7,10 @@ Identifier
 Attribute             ^^^^^^
 Identifier             ^^^^^
 === diagnostics ===
-Attributes must be preceeded by a leading space (at @2..8)
+Attribute is missing a leading space. (at @2..8)
   {#@hello /}
     ^^^^^^
-Markup is missing an identifier (at @0..11)
+Markup tag is missing an identifier. (at @0..11)
   {#@hello /}
   ^^^^^^^^^^^
 === ast ===

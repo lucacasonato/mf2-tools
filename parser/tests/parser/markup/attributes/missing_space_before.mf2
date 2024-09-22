@@ -9,7 +9,7 @@ Identifier               ^^^^
 Number                        ^
 Number.integral               ^
 === diagnostics ===
-Attributes must be preceeded by a leading space (at @4..11)
+Attribute is missing a leading space. (at @4..11)
   {#el@attr=1}
       ^^^^^^^
 === ast ===

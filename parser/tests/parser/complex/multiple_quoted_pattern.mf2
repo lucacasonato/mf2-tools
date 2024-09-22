@@ -6,7 +6,7 @@ QuotedPattern       ^^^^^
 Pattern               ^
 Text                  ^
 === diagnostics ===
-Complex message can have only one body (at @5..10)
+Message has multiple bodies, but only one is allowed. (at @5..10)
   {{a}}{{b}}
        ^^^^^
 === ast ===

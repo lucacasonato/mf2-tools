@@ -5,7 +5,7 @@ Pattern             ^^^^
 VariableExpression  ^^^^
 Variable             ^
 === diagnostics ===
-Variable is missing a name (at @1..2)
+Variable is missing a name after the dollar sign ('$'). (at @1..2)
   {$ }
    ^
 === ast ===

@@ -5,7 +5,7 @@ Pattern             ^^^^^^^^
 Markup              ^^^^^^^^
 Identifier            ^^^
 === diagnostics ===
-Markup has an invalid self-closing tag on a markup close (at @6)
+Markup tag can not be self-closing if it is a close tag. (at @6..7)
   {/foo /}
         ^
 === ast ===

@@ -5,7 +5,7 @@ Pattern             ^^^^^^^^
 Markup              ^^^^^^^^
 Identifier            ^^^^
 === diagnostics ===
-Identifier is missing a namespace (at @2..6)
+Identifiers with a colon before the name are namespaced identifiers, but this identifier is missing a namespace before the colon. (at @2..6)
   {#:foo }
     ^^^^
 === ast ===

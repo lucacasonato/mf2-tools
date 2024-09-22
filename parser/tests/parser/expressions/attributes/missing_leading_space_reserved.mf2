@@ -8,7 +8,7 @@ Text                  ^
 Attribute              ^^^^
 Identifier              ^^^
 === diagnostics ===
-Attributes must be preceeded by a leading space (at @3..7)
+Attribute is missing a leading space. (at @3..7)
   {!a@foo}
      ^^^^
 === ast ===

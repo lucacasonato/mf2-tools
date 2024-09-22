@@ -17,10 +17,10 @@ QuotedPattern                                ^^^^^^
 Pattern                                        ^^
 Text                                           ^^
 === diagnostics ===
-Invalid literal matcher key (at @19..24)
+Found an invalid matcher key (not a valid literal). Did you mean to quote the key to make it a literal? (at @19..24)
   .match {1 :a}↵|abc|+yej% {{Hi}}
                      ^^^^^
-Key is missing a leading space (at @19..24)
+Matcher key is missing a leading space. (at @19..24)
   .match {1 :a}↵|abc|+yej% {{Hi}}
                      ^^^^^
 === ast ===

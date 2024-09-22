@@ -7,7 +7,7 @@ Identifier            ^^
 Attribute                ^^^^^^^^
 Identifier                ^^^^^^
 === diagnostics ===
-Attribute is missing a value (at @5..13)
+Attribute is missing a value after the '=' sign. (at @5..13)
   {#el @option= }
        ^^^^^^^^
 === ast ===
