@@ -5,36 +5,46 @@ use std::fmt;
 
 pub enum Diagnostic<'t> {
   Parser(mf2_parser::Diagnostic<'t>),
-  Linter(LintDiagnostic<'t>),
+  Scope(ScopeDiagnostic<'t>),
 }
 
-pub enum LintDiagnostic<'text> {
+pub enum ScopeDiagnostic<'text> {
   DuplicateDeclaration {
     name: &'text str,
     #[allow(dead_code)]
     first_span: Span,
     second_span: Span,
   },
+  UsageBeforeDeclaration {
+    name: &'text str,
+    #[allow(dead_code)]
+    declaration_span: Span,
+    usage_span: Span,
+  }
 }
 
 #[allow(unused_variables)]
 impl<'text> Diagnostic<'text> {
   pub fn span(&self) -> Span {
-    use LintDiagnostic::*;
+    use ScopeDiagnostic::*;
 
     match self {
       Self::Parser(d) => d.span(),
-      Self::Linter(DuplicateDeclaration { second_span, .. }) => *second_span,
+      Self::Scope(DuplicateDeclaration { second_span, .. }) => *second_span,
+      Self::Scope(UsageBeforeDeclaration { usage_span, .. }) => *usage_span,
     }
   }
 
   pub fn message(&self) -> String {
-    use LintDiagnostic::*;
+    use ScopeDiagnostic::*;
 
     match self {
       Self::Parser(d) => d.message(),
-      Self::Linter(DuplicateDeclaration { name, .. }) => {
-        format!("{name} has already been declared.")
+      Self::Scope(DuplicateDeclaration { name, .. }) => {
+        format!("${name} has already been declared.")
+      }
+      Self::Scope(UsageBeforeDeclaration { name, .. }) => {
+        format!("${name} is used before it is declared.")
       }
     }
   }

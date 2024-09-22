@@ -4,7 +4,6 @@ use lsp_types::Uri;
 use mf2_parser::ast::AnyNode;
 use mf2_parser::ast::Message;
 use mf2_parser::AnyNodeVisitor;
-use mf2_parser::Diagnostic;
 use mf2_parser::LineColUtf16;
 use mf2_parser::SourceTextInfo;
 use mf2_parser::Span;
@@ -14,6 +13,7 @@ use yoke::Yoke;
 use yoke::Yokeable;
 
 use crate::diagnostics::Diagnostic;
+use crate::scope::ScopeVisitor;
 
 pub struct Document {
   pub uri: Uri,
@@ -37,6 +37,12 @@ impl Document {
         .into_iter()
         .map(Diagnostic::Parser)
         .collect();
+
+      let diagnostics = {
+        let mut scope_visitor = ScopeVisitor::new(diagnostics);
+        scope_visitor.visit_message(&ast);
+        scope_visitor.diagnostics
+      };
 
       ParsedDocument {
         ast,

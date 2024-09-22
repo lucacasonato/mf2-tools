@@ -1,6 +1,7 @@
 mod diagnostics;
 mod document;
 mod protocol;
+mod scope;
 
 use diagnostics::Diagnostic;
 use lsp_server::Connection;
