@@ -46,13 +46,13 @@ use crate::util::SourceTextIterator;
 use crate::Span;
 use crate::Spanned as _;
 
-pub struct Parser<'a> {
-  text: SourceTextIterator<'a>,
-  diagnostics: Vec<Diagnostic<'a>>,
+pub struct Parser<'text> {
+  text: SourceTextIterator<'text>,
+  diagnostics: Vec<Diagnostic<'text>>,
 }
 
-impl<'a> Parser<'a> {
-  pub fn new(input: &'a str) -> Self {
+impl<'text> Parser<'text> {
+  pub fn new(input: &'text str) -> Self {
     Self {
       text: SourceTextIterator::new(input),
       diagnostics: vec![],
@@ -61,7 +61,11 @@ impl<'a> Parser<'a> {
 
   pub fn parse(
     mut self,
-  ) -> (Message<'a>, Vec<Diagnostic<'a>>, SourceTextInfo<'a>) {
+  ) -> (
+    Message<'text>,
+    Vec<Diagnostic<'text>>,
+    SourceTextInfo<'text>,
+  ) {
     while let Some((_, c)) = self.peek() {
       match c {
         chars::space!() => {
@@ -124,13 +128,13 @@ impl<'a> Parser<'a> {
     self.text.current_location()
   }
 
-  fn slice_text(&self, range: Range<Location>) -> Text<'a> {
+  fn slice_text(&self, range: Range<Location>) -> Text<'text> {
     let start = range.start;
     let content = self.text.slice(range);
     Text { start, content }
   }
 
-  fn report(&mut self, diagnostic: Diagnostic<'a>) {
+  fn report(&mut self, diagnostic: Diagnostic<'text>) {
     self.diagnostics.push(diagnostic);
   }
 
@@ -138,7 +142,7 @@ impl<'a> Parser<'a> {
     &mut self,
     mut start: Location,
     inside_quoted: bool,
-  ) -> Pattern<'a> {
+  ) -> Pattern<'text> {
     let mut parts = vec![];
 
     let mut open_quoted_patterns = vec![];
@@ -242,7 +246,7 @@ impl<'a> Parser<'a> {
     })
   }
 
-  fn parse_placeholder(&mut self) -> PatternPart<'a> {
+  fn parse_placeholder(&mut self) -> PatternPart<'text> {
     let (start, c) = self.next().unwrap(); // consume '{'
     debug_assert_eq!(c, '{');
 
@@ -268,7 +272,7 @@ impl<'a> Parser<'a> {
   // Caller must consume the opening `{` before calling this function and pass
   // the location of the opening `{` as `start`. The caller must also consume
   // spaces after the opening `{` before calling this function.
-  fn parse_expression(&mut self, start: Location) -> Expression<'a> {
+  fn parse_expression(&mut self, start: Location) -> Expression<'text> {
     let lit_or_var = self.parse_literal_or_variable();
 
     let had_space_before_annotation =
@@ -377,7 +381,7 @@ impl<'a> Parser<'a> {
     }
   }
 
-  fn parse_literal_or_variable(&mut self) -> Option<LiteralOrVariable<'a>> {
+  fn parse_literal_or_variable(&mut self) -> Option<LiteralOrVariable<'text>> {
     let value = match self.peek() {
       Some((_, '$')) => LiteralOrVariable::Variable(self.parse_variable()),
       Some((_, '|')) => {
@@ -397,7 +401,7 @@ impl<'a> Parser<'a> {
     Some(value)
   }
 
-  fn parse_variable(&mut self) -> Variable<'a> {
+  fn parse_variable(&mut self) -> Variable<'text> {
     let (start, n) = self.next().unwrap(); // consume '$'
     debug_assert_eq!(n, '$');
 
@@ -415,7 +419,7 @@ impl<'a> Parser<'a> {
     &mut self,
     start: Location,
     had_space: &mut bool,
-  ) -> Attribute<'a> {
+  ) -> Attribute<'text> {
     let c = self.next();
     debug_assert!(matches!(c, Some((_, '@'))));
 
@@ -459,7 +463,7 @@ impl<'a> Parser<'a> {
 
   // Returns the identifier and a boolean indicating if the identifier is empty.
   // The caller should report an error if the identifier is empty.
-  fn parse_identifier(&mut self) -> (Identifier<'a>, bool) {
+  fn parse_identifier(&mut self) -> (Identifier<'text>, bool) {
     let start = self.current_location();
     let name_or_namespace = self.parse_name();
 
@@ -506,7 +510,7 @@ impl<'a> Parser<'a> {
   }
 
   // Caller must handle empty name
-  fn parse_name(&mut self) -> &'a str {
+  fn parse_name(&mut self) -> &'text str {
     let start = self.current_location();
     self.skip_name();
     let end = self.current_location();
@@ -514,7 +518,7 @@ impl<'a> Parser<'a> {
     self.text.slice(start..end)
   }
 
-  fn parse_literal_name(&mut self) -> Text<'a> {
+  fn parse_literal_name(&mut self) -> Text<'text> {
     let start = self.current_location();
     self.skip_name();
     let end = self.current_location();
@@ -556,7 +560,7 @@ impl<'a> Parser<'a> {
   fn maybe_parse_annotation(
     &mut self,
     had_space: &mut bool,
-  ) -> Option<Annotation<'a>> {
+  ) -> Option<Annotation<'text>> {
     match self.peek() {
       Some((start, ':')) => {
         // function
@@ -628,7 +632,7 @@ impl<'a> Parser<'a> {
     }
   }
 
-  fn parse_option(&mut self) -> Option<FnOrMarkupOption<'a>> {
+  fn parse_option(&mut self) -> Option<FnOrMarkupOption<'text>> {
     let (key, is_key_empty) = self.parse_identifier();
     self.skip_spaces();
     let value = if let Some(equals_loc) = self.eat('=') {
@@ -681,7 +685,7 @@ impl<'a> Parser<'a> {
     &mut self,
     had_space: &mut bool,
     bail_on_dot: bool,
-  ) -> Vec<ReservedBodyPart<'a>> {
+  ) -> Vec<ReservedBodyPart<'text>> {
     let mut parts = vec![];
 
     let mut start = self.current_location();
@@ -749,7 +753,7 @@ impl<'a> Parser<'a> {
     parts
   }
 
-  fn parse_quoted(&mut self) -> Quoted<'a> {
+  fn parse_quoted(&mut self) -> Quoted<'text> {
     let (open, c) = self.next().unwrap(); // consume '|'
     debug_assert_eq!(c, '|');
     let mut parts = vec![];
@@ -794,7 +798,7 @@ impl<'a> Parser<'a> {
     Quoted { span, parts }
   }
 
-  fn parse_number(&mut self) -> Number<'a> {
+  fn parse_number(&mut self) -> Number<'text> {
     let start = self.current_location();
     let is_negative = self.eat('-').is_some();
 
@@ -857,7 +861,7 @@ impl<'a> Parser<'a> {
   }
 
   // Caller must handle empty digits, and leading zero
-  fn parse_digits(&mut self) -> &'a str {
+  fn parse_digits(&mut self) -> &'text str {
     let start = self.current_location();
     while let Some((_, '0'..='9')) = self.peek() {
       self.next();
@@ -870,7 +874,7 @@ impl<'a> Parser<'a> {
     &mut self,
     open: Location,
     kind: MarkupStartKind,
-  ) -> Markup<'a> {
+  ) -> Markup<'text> {
     let c = self.next();
     debug_assert!(matches!(c, Some((_, '#' | '/'))));
 
@@ -1043,7 +1047,7 @@ impl<'a> Parser<'a> {
     }
   }
 
-  fn parse_complex_message(&mut self) -> ComplexMessage<'a> {
+  fn parse_complex_message(&mut self) -> ComplexMessage<'text> {
     let mut declarations = vec![];
     let mut body = None;
 
@@ -1144,7 +1148,7 @@ impl<'a> Parser<'a> {
     ComplexMessage { declarations, body }
   }
 
-  fn parse_local_declaration(&mut self, start: Location) -> Declaration<'a> {
+  fn parse_local_declaration(&mut self, start: Location) -> Declaration<'text> {
     // At this point, `.local` has already been consumed. `start` is the location of the `.`.
     let before_spaces = self.current_location();
     let has_space = self.skip_spaces();
@@ -1248,7 +1252,7 @@ impl<'a> Parser<'a> {
     })
   }
 
-  fn parse_input_declaration(&mut self, start: Location) -> Declaration<'a> {
+  fn parse_input_declaration(&mut self, start: Location) -> Declaration<'text> {
     // At this point, `.input` has already been consumed. `start` is the location of the `.`.
 
     let before_spaces = self.current_location();
@@ -1295,8 +1299,8 @@ impl<'a> Parser<'a> {
   fn parse_reserved_statement(
     &mut self,
     start: Location,
-    name: &'a str,
-  ) -> ReservedStatement<'a> {
+    name: &'text str,
+  ) -> ReservedStatement<'text> {
     // At this point, the keyword has already been consumed. `start` is the location of the `.`
     // preceding the keyword.
     let mut before_spaces = self.current_location();
@@ -1340,7 +1344,7 @@ impl<'a> Parser<'a> {
     }
   }
 
-  fn parse_matcher(&mut self, start: Location) -> Matcher<'a> {
+  fn parse_matcher(&mut self, start: Location) -> Matcher<'text> {
     // At this point, `.match` has already been consumed. `start` is the location of the `.`.
 
     let mut selectors = vec![];
@@ -1511,7 +1515,7 @@ impl<'a> Parser<'a> {
     }
   }
 
-  fn parse_quoted_pattern(&mut self, start: Location) -> QuotedPattern<'a> {
+  fn parse_quoted_pattern(&mut self, start: Location) -> QuotedPattern<'text> {
     // At this point we know we have {{
     self.eat('{').unwrap();
     self.eat('{').unwrap();

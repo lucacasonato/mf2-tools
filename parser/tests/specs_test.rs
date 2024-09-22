@@ -154,9 +154,9 @@ fn generate_actual_spans(
   normalized_message: &str,
 ) -> String {
   const SPAN_LABEL_WIDTH: usize = 20;
-  struct SpanDebuggerVisitor<'a> {
-    input_message: &'a str,
-    output: &'a mut String,
+  struct SpanDebuggerVisitor<'text> {
+    input_message: &'text str,
+    output: &'text mut String,
   }
 
   impl SpanDebuggerVisitor<'_> {

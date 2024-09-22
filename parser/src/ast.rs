@@ -50,9 +50,9 @@ macro_rules! ast_enum {
 }
 
 #[derive(Clone)]
-pub enum Message<'a> {
-  Simple(Pattern<'a>),
-  Complex(ComplexMessage<'a>),
+pub enum Message<'text> {
+  Simple(Pattern<'text>),
+  Complex(ComplexMessage<'text>),
 }
 
 impl Debug for Message<'_> {
@@ -96,8 +96,8 @@ impl<'text> Visitable<'text> for Message<'text> {
 }
 
 #[derive(Debug, Clone)]
-pub struct Pattern<'a> {
-  pub parts: Vec<PatternPart<'a>>,
+pub struct Pattern<'text> {
+  pub parts: Vec<PatternPart<'text>>,
 }
 
 impl Spanned for Pattern<'_> {
@@ -131,18 +131,18 @@ impl<'text> Visitable<'text> for Pattern<'text> {
 
 ast_enum! {
   #[visit(visit_pattern_part)]
-  pub enum PatternPart<'a> {
-    Text<'a>,
+  pub enum PatternPart<'text> {
+    Text<'text>,
     Escape,
-    Expression<'a>,
-    Markup<'a>,
+    Expression<'text>,
+    Markup<'text>,
   }
 }
 
 #[derive(Debug, Clone)]
-pub struct Text<'a> {
+pub struct Text<'text> {
   pub start: Location,
-  pub content: &'a str,
+  pub content: &'text str,
 }
 
 impl Spanned for Text<'_> {
@@ -195,19 +195,19 @@ impl<'text> Visitable<'text> for Escape {
 
 ast_enum! {
   #[visit(visit_expression)]
-  pub enum Expression<'a> {
-    LiteralExpression<'a>,
-    VariableExpression<'a>,
-    AnnotationExpression<'a>,
+  pub enum Expression<'text> {
+    LiteralExpression<'text>,
+    VariableExpression<'text>,
+    AnnotationExpression<'text>,
   }
 }
 
 #[derive(Debug, Clone)]
-pub struct LiteralExpression<'a> {
+pub struct LiteralExpression<'text> {
   pub span: Span,
-  pub literal: Literal<'a>,
-  pub annotation: Option<Annotation<'a>>,
-  pub attributes: Vec<Attribute<'a>>,
+  pub literal: Literal<'text>,
+  pub annotation: Option<Annotation<'text>>,
+  pub attributes: Vec<Attribute<'text>>,
 }
 
 impl Spanned for LiteralExpression<'_> {
@@ -239,11 +239,11 @@ impl<'text> Visitable<'text> for LiteralExpression<'text> {
 }
 
 #[derive(Debug, Clone)]
-pub struct VariableExpression<'a> {
+pub struct VariableExpression<'text> {
   pub span: Span,
-  pub variable: Variable<'a>,
-  pub annotation: Option<Annotation<'a>>,
-  pub attributes: Vec<Attribute<'a>>,
+  pub variable: Variable<'text>,
+  pub annotation: Option<Annotation<'text>>,
+  pub attributes: Vec<Attribute<'text>>,
 }
 
 impl Spanned for VariableExpression<'_> {
@@ -275,9 +275,9 @@ impl<'text> Visitable<'text> for VariableExpression<'text> {
 }
 
 #[derive(Debug, Clone)]
-pub struct Variable<'a> {
+pub struct Variable<'text> {
   pub span: Span,
-  pub name: &'a str,
+  pub name: &'text str,
 }
 
 impl Spanned for Variable<'_> {
@@ -302,10 +302,10 @@ impl<'text> Visitable<'text> for Variable<'text> {
 }
 
 #[derive(Debug, Clone)]
-pub struct AnnotationExpression<'a> {
+pub struct AnnotationExpression<'text> {
   pub span: Span,
-  pub annotation: Annotation<'a>,
-  pub attributes: Vec<Attribute<'a>>,
+  pub annotation: Annotation<'text>,
+  pub attributes: Vec<Attribute<'text>>,
 }
 
 impl Spanned for AnnotationExpression<'_> {
@@ -335,18 +335,18 @@ impl<'text> Visitable<'text> for AnnotationExpression<'text> {
 
 ast_enum! {
   #[visit(visit_annotation)]
-  pub enum Annotation<'a> {
-    Function<'a>,
-    PrivateUseAnnotation<'a>,
-    ReservedAnnotation<'a>,
+  pub enum Annotation<'text> {
+    Function<'text>,
+    PrivateUseAnnotation<'text>,
+    ReservedAnnotation<'text>,
   }
 }
 
 #[derive(Debug, Clone)]
-pub struct Identifier<'a> {
+pub struct Identifier<'text> {
   pub start: Location,
-  pub namespace: Option<&'a str>,
-  pub name: &'a str,
+  pub namespace: Option<&'text str>,
+  pub name: &'text str,
 }
 
 impl Spanned for Identifier<'_> {
@@ -377,10 +377,10 @@ impl<'text> Visitable<'text> for Identifier<'text> {
 }
 
 #[derive(Debug, Clone)]
-pub struct Function<'a> {
+pub struct Function<'text> {
   pub start: Location,
-  pub id: Identifier<'a>,
-  pub options: Vec<FnOrMarkupOption<'a>>,
+  pub id: Identifier<'text>,
+  pub options: Vec<FnOrMarkupOption<'text>>,
 }
 
 impl Spanned for Function<'_> {
@@ -414,9 +414,9 @@ impl<'text> Visitable<'text> for Function<'text> {
 }
 
 #[derive(Debug, Clone)]
-pub struct FnOrMarkupOption<'a> {
-  pub key: Identifier<'a>,
-  pub value: LiteralOrVariable<'a>,
+pub struct FnOrMarkupOption<'text> {
+  pub key: Identifier<'text>,
+  pub value: LiteralOrVariable<'text>,
 }
 
 impl Spanned for FnOrMarkupOption<'_> {
@@ -445,10 +445,10 @@ impl<'text> Visitable<'text> for FnOrMarkupOption<'text> {
 }
 
 #[derive(Debug, Clone)]
-pub struct Attribute<'a> {
+pub struct Attribute<'text> {
   pub span: Span,
-  pub key: Identifier<'a>,
-  pub value: Option<LiteralOrVariable<'a>>,
+  pub key: Identifier<'text>,
+  pub value: Option<LiteralOrVariable<'text>>,
 }
 
 impl Spanned for Attribute<'_> {
@@ -478,17 +478,17 @@ impl<'text> Visitable<'text> for Attribute<'text> {
 
 ast_enum! {
   #[visit(visit_literal_or_variable)]
-  pub enum LiteralOrVariable<'a> {
-    Literal<'a>,
-    Variable<'a>,
+  pub enum LiteralOrVariable<'text> {
+    Literal<'text>,
+    Variable<'text>,
   }
 }
 
 #[derive(Debug, Clone)]
-pub struct PrivateUseAnnotation<'a> {
+pub struct PrivateUseAnnotation<'text> {
   pub start: Location,
   pub sigil: char,
-  pub body: Vec<ReservedBodyPart<'a>>,
+  pub body: Vec<ReservedBodyPart<'text>>,
 }
 
 impl Spanned for PrivateUseAnnotation<'_> {
@@ -521,10 +521,10 @@ impl<'text> Visitable<'text> for PrivateUseAnnotation<'text> {
 }
 
 #[derive(Debug, Clone)]
-pub struct ReservedAnnotation<'a> {
+pub struct ReservedAnnotation<'text> {
   pub start: Location,
   pub sigil: char,
-  pub body: Vec<ReservedBodyPart<'a>>,
+  pub body: Vec<ReservedBodyPart<'text>>,
 }
 
 impl Spanned for ReservedAnnotation<'_> {
@@ -558,26 +558,26 @@ impl<'text> Visitable<'text> for ReservedAnnotation<'text> {
 
 ast_enum! {
   #[visit(visit_reserved_body_part)]
-  pub enum ReservedBodyPart<'a> {
-    Text<'a>,
+  pub enum ReservedBodyPart<'text> {
+    Text<'text>,
     Escape,
-    Quoted<'a>,
+    Quoted<'text>,
   }
 }
 
 ast_enum! {
   #[visit(visit_literal)]
-  pub enum Literal<'a> {
-    Quoted<'a>,
-    Text<'a>,
-    Number<'a>,
+  pub enum Literal<'text> {
+    Quoted<'text>,
+    Text<'text>,
+    Number<'text>,
   }
 }
 
 #[derive(Debug, Clone)]
-pub struct Quoted<'a> {
+pub struct Quoted<'text> {
   pub span: Span,
-  pub parts: Vec<QuotedPart<'a>>,
+  pub parts: Vec<QuotedPart<'text>>,
 }
 
 impl Spanned for Quoted<'_> {
@@ -606,8 +606,8 @@ impl<'text> Visitable<'text> for Quoted<'text> {
 
 ast_enum! {
   #[visit(visit_quoted_part)]
-  pub enum QuotedPart<'a> {
-    Text<'a>,
+  pub enum QuotedPart<'text> {
+    Text<'text>,
     Escape,
   }
 }
@@ -620,9 +620,9 @@ pub enum ExponentSign {
 }
 
 #[derive(Debug, Clone)]
-pub struct Number<'a> {
+pub struct Number<'text> {
   pub start: Location,
-  pub raw: &'a str,
+  pub raw: &'text str,
   pub is_negative: bool,
   pub integral_len: LengthShort,
   pub fractional_len: Option<LengthShort>,
@@ -650,8 +650,8 @@ impl<'text> Visitable<'text> for Number<'text> {
   }
 }
 
-impl<'a> Number<'a> {
-  fn slice(&self, span: Span) -> &'a str {
+impl<'text> Number<'text> {
+  fn slice(&self, span: Span) -> &'text str {
     &self.raw[span.start.inner() as usize..span.end.inner() as usize]
   }
 
@@ -671,7 +671,7 @@ impl<'a> Number<'a> {
     Span::new(self.integral_start()..self.integral_end())
   }
 
-  pub fn integral_part(&self) -> &'a str {
+  pub fn integral_part(&self) -> &'text str {
     self.slice(self.integral_span())
   }
 
@@ -683,7 +683,7 @@ impl<'a> Number<'a> {
     })
   }
 
-  pub fn fractional_part(&self) -> Option<&'a str> {
+  pub fn fractional_part(&self) -> Option<&'text str> {
     self.fractional_span().map(|span| self.slice(span))
   }
 
@@ -707,7 +707,7 @@ impl<'a> Number<'a> {
     })
   }
 
-  pub fn exponent_part(&self) -> Option<(ExponentSign, &'a str)> {
+  pub fn exponent_part(&self) -> Option<(ExponentSign, &'text str)> {
     self
       .exponent_span()
       .map(|span| (self.exponent_len.as_ref().unwrap().0, self.slice(span)))
@@ -715,12 +715,12 @@ impl<'a> Number<'a> {
 }
 
 #[derive(Debug, Clone)]
-pub struct Markup<'a> {
+pub struct Markup<'text> {
   pub span: Span,
   pub kind: MarkupKind,
-  pub id: Identifier<'a>,
-  pub options: Vec<FnOrMarkupOption<'a>>,
-  pub attributes: Vec<Attribute<'a>>,
+  pub id: Identifier<'text>,
+  pub options: Vec<FnOrMarkupOption<'text>>,
+  pub attributes: Vec<Attribute<'text>>,
 }
 
 #[derive(Debug, Clone)]
@@ -759,9 +759,9 @@ impl<'text> Visitable<'text> for Markup<'text> {
 }
 
 #[derive(Debug, Clone)]
-pub struct ComplexMessage<'a> {
-  pub declarations: Vec<Declaration<'a>>,
-  pub body: ComplexMessageBody<'a>,
+pub struct ComplexMessage<'text> {
+  pub declarations: Vec<Declaration<'text>>,
+  pub body: ComplexMessageBody<'text>,
 }
 
 impl Spanned for ComplexMessage<'_> {
@@ -801,17 +801,17 @@ impl<'text> Visitable<'text> for ComplexMessage<'text> {
 
 ast_enum! {
   #[visit(visit_declaration)]
-  pub enum Declaration<'a> {
-    InputDeclaration<'a>,
-    LocalDeclaration<'a>,
-    ReservedStatement<'a>,
+  pub enum Declaration<'text> {
+    InputDeclaration<'text>,
+    LocalDeclaration<'text>,
+    ReservedStatement<'text>,
   }
 }
 
 #[derive(Debug, Clone)]
-pub struct InputDeclaration<'a> {
+pub struct InputDeclaration<'text> {
   pub start: Location,
-  pub expression: VariableExpression<'a>,
+  pub expression: VariableExpression<'text>,
 }
 
 impl Spanned for InputDeclaration<'_> {
@@ -839,10 +839,10 @@ impl<'text> Visitable<'text> for InputDeclaration<'text> {
 }
 
 #[derive(Debug, Clone)]
-pub struct LocalDeclaration<'a> {
+pub struct LocalDeclaration<'text> {
   pub start: Location,
-  pub variable: Variable<'a>,
-  pub expression: Expression<'a>,
+  pub variable: Variable<'text>,
+  pub expression: Expression<'text>,
 }
 
 impl Spanned for LocalDeclaration<'_> {
@@ -871,11 +871,11 @@ impl<'text> Visitable<'text> for LocalDeclaration<'text> {
 }
 
 #[derive(Debug, Clone)]
-pub struct ReservedStatement<'a> {
+pub struct ReservedStatement<'text> {
   pub start: Location,
-  pub name: &'a str,
-  pub body: Vec<ReservedBodyPart<'a>>,
-  pub expressions: Vec<Expression<'a>>,
+  pub name: &'text str,
+  pub body: Vec<ReservedBodyPart<'text>>,
+  pub expressions: Vec<Expression<'text>>,
 }
 
 impl Spanned for ReservedStatement<'_> {
@@ -919,16 +919,16 @@ impl<'text> Visitable<'text> for ReservedStatement<'text> {
 
 ast_enum! {
   #[visit(visit_complex_message_body)]
-  pub enum ComplexMessageBody<'a> {
-    QuotedPattern<'a>,
-    Matcher<'a>,
+  pub enum ComplexMessageBody<'text> {
+    QuotedPattern<'text>,
+    Matcher<'text>,
   }
 }
 
 #[derive(Debug, Clone)]
-pub struct QuotedPattern<'a> {
+pub struct QuotedPattern<'text> {
   pub span: Span,
-  pub pattern: Pattern<'a>,
+  pub pattern: Pattern<'text>,
 }
 
 impl Spanned for QuotedPattern<'_> {
@@ -954,10 +954,10 @@ impl<'text> Visitable<'text> for QuotedPattern<'text> {
 }
 
 #[derive(Debug, Clone)]
-pub struct Matcher<'a> {
+pub struct Matcher<'text> {
   pub start: Location,
-  pub selectors: Vec<Expression<'a>>,
-  pub variants: Vec<Variant<'a>>,
+  pub selectors: Vec<Expression<'text>>,
+  pub variants: Vec<Variant<'text>>,
 }
 
 impl Spanned for Matcher<'_> {
@@ -1000,9 +1000,9 @@ impl<'text> Visitable<'text> for Matcher<'text> {
 }
 
 #[derive(Debug, Clone)]
-pub struct Variant<'a> {
-  pub keys: Vec<Key<'a>>,
-  pub pattern: QuotedPattern<'a>,
+pub struct Variant<'text> {
+  pub keys: Vec<Key<'text>>,
+  pub pattern: QuotedPattern<'text>,
 }
 
 impl Spanned for Variant<'_> {
@@ -1038,8 +1038,8 @@ impl<'text> Visitable<'text> for Variant<'text> {
 
 ast_enum! {
   #[visit(visit_key)]
-  pub enum Key<'a> {
-    Literal<'a>,
+  pub enum Key<'text> {
+    Literal<'text>,
     Star,
   }
 }
