@@ -25,14 +25,26 @@ pub trait Visit<'ast, 'text> {
   visit!(visit_function, func, Function<'text>);
   visit!(visit_identifier, ident, Identifier<'text>);
   visit!(visit_fn_or_markup_option, opt, FnOrMarkupOption<'text>);
-  visit!(visit_literal_or_variable, lit_or_var, LiteralOrVariable<'text>);
+  visit!(
+    visit_literal_or_variable,
+    lit_or_var,
+    LiteralOrVariable<'text>
+  );
   visit!(visit_variable, var, Variable<'text>);
   visit!(visit_attribute, attr, Attribute<'text>);
-  visit!(visit_private_use_annotation, ann, PrivateUseAnnotation<'text>);
+  visit!(
+    visit_private_use_annotation,
+    ann,
+    PrivateUseAnnotation<'text>
+  );
   visit!(visit_reserved_body_part, part, ReservedBodyPart<'text>);
   visit!(visit_reserved_annotation, ann, ReservedAnnotation<'text>);
   visit!(visit_variable_expression, expr, VariableExpression<'text>);
-  visit!(visit_annotation_expression, expr, AnnotationExpression<'text>);
+  visit!(
+    visit_annotation_expression,
+    expr,
+    AnnotationExpression<'text>
+  );
   visit!(visit_markup, markup, Markup<'text>);
   visit!(visit_complex_message, msg, ComplexMessage<'text>);
   visit!(visit_declaration, decl, Declaration<'text>);
@@ -48,7 +60,10 @@ pub trait Visit<'ast, 'text> {
 }
 
 pub trait Visitable<'text> {
-  fn apply_visitor<'ast, V: Visit<'ast, 'text> + ?Sized>(&'ast self, visitor: &mut V);
+  fn apply_visitor<'ast, V: Visit<'ast, 'text> + ?Sized>(
+    &'ast self,
+    visitor: &mut V,
+  );
 
   fn apply_visitor_to_children<'ast, V: Visit<'ast, 'text> + ?Sized>(
     &'ast self,
