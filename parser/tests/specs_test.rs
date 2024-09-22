@@ -191,7 +191,7 @@ fn generate_actual_spans(
         }
   }
 
-  impl Visit<'_> for SpanDebuggerVisitor<'_> {
+  impl Visit<'_, '_> for SpanDebuggerVisitor<'_> {
     impl_visit_mut_for_span_debugger! {
       Pattern: visit_pattern,
       Text: visit_text,
