@@ -448,7 +448,7 @@ impl<'text> Visitable<'text> for FnOrMarkupOption<'text> {
 pub struct Attribute<'text> {
   pub span: Span,
   pub key: Identifier<'text>,
-  pub value: Option<LiteralOrVariable<'text>>,
+  pub value: Option<Literal<'text>>,
 }
 
 impl Spanned for Attribute<'_> {

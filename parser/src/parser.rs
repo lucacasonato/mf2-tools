@@ -433,17 +433,33 @@ impl<'text> Parser<'text> {
       end = self.current_location();
       *had_space = self.skip_spaces();
 
-      match self.parse_literal_or_variable() {
-        Some(v) => {
-          end = self.current_location();
-          *had_space = self.skip_spaces();
-          Some(v)
-        }
-        None => {
-          self.report(Diagnostic::AttributeMissingValue {
-            span: Span::new(start..end),
-          });
-          None
+      if let Some(dollar) = self.eat('$') {
+        let _name = self.parse_name();
+        let literal = Literal::Text(Text {
+          start: dollar,
+          content: self.text.slice(dollar..self.current_location()),
+        });
+        self.report(Diagnostic::AttributeValueIsVariable {
+          span: literal.span(),
+        });
+        Some(literal)
+      } else {
+        match self.parse_literal_or_variable() {
+          Some(v) => {
+            end = self.current_location();
+            *had_space = self.skip_spaces();
+
+            match v {
+              LiteralOrVariable::Variable(_) => unreachable!("handled above"),
+              LiteralOrVariable::Literal(literal) => Some(literal),
+            }
+          }
+          None => {
+            self.report(Diagnostic::AttributeMissingValue {
+              span: Span::new(start..end),
+            });
+            None
+          }
         }
       }
     });
