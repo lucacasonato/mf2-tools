@@ -1,32 +1,26 @@
-.match {$a :c} {$b :d}
+.match $a $b
 e   1 {{f}}
 |g| * {{h}}
 === spans ===
-                    .match {$a :c} {$b :d}↵e   1 {{f}}↵|g| * {{h}}
-ComplexMessage      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-Matcher             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-VariableExpression         ^^^^^^^
-Variable                    ^^
-Function                       ^^
-Identifier                      ^
-VariableExpression                 ^^^^^^^
-Variable                            ^^
-Function                               ^^
-Identifier                              ^
-Variant                                    ^^^^^^^^^^^
-Text                                       ^
-Number                                         ^
-Number.integral                                ^
-QuotedPattern                                    ^^^^^
-Pattern                                            ^
-Text                                               ^
-Variant                                                ^^^^^^^^^^^
-Quoted                                                 ^^^
-Text                                                    ^
-Star                                                       ^
-QuotedPattern                                                ^^^^^
-Pattern                                                        ^
-Text                                                           ^
+                    .match $a $b↵e   1 {{f}}↵|g| * {{h}}
+ComplexMessage      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Matcher             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Variable                   ^^
+Variable                      ^^
+Variant                          ^^^^^^^^^^^
+Text                             ^
+Number                               ^
+Number.integral                      ^
+QuotedPattern                          ^^^^^
+Pattern                                  ^
+Text                                     ^
+Variant                                      ^^^^^^^^^^^
+Quoted                                       ^^^
+Text                                          ^
+Star                                             ^
+QuotedPattern                                      ^^^^^
+Pattern                                              ^
+Text                                                 ^
 === diagnostics ===
 
 === ast ===
@@ -35,54 +29,24 @@ ComplexMessage {
     body: Matcher {
         start: @0,
         selectors: [
-            VariableExpression {
-                span: @7..14,
-                variable: Variable {
-                    span: @8..10,
-                    name: "a",
-                },
-                annotation: Some(
-                    Function {
-                        start: @11,
-                        id: Identifier {
-                            start: @12,
-                            namespace: None,
-                            name: "c",
-                        },
-                        options: [],
-                    },
-                ),
-                attributes: [],
+            Variable {
+                span: @7..9,
+                name: "a",
             },
-            VariableExpression {
-                span: @15..22,
-                variable: Variable {
-                    span: @16..18,
-                    name: "b",
-                },
-                annotation: Some(
-                    Function {
-                        start: @19,
-                        id: Identifier {
-                            start: @20,
-                            namespace: None,
-                            name: "d",
-                        },
-                        options: [],
-                    },
-                ),
-                attributes: [],
+            Variable {
+                span: @10..12,
+                name: "b",
             },
         ],
         variants: [
             Variant {
                 keys: [
                     Text {
-                        start: @23,
+                        start: @13,
                         content: "e",
                     },
                     Number {
-                        start: @27,
+                        start: @17,
                         raw: "1",
                         is_negative: false,
                         integral_len: 1,
@@ -91,11 +55,11 @@ ComplexMessage {
                     },
                 ],
                 pattern: QuotedPattern {
-                    span: @29..34,
+                    span: @19..24,
                     pattern: Pattern {
                         parts: [
                             Text {
-                                start: @31,
+                                start: @21,
                                 content: "f",
                             },
                         ],
@@ -105,24 +69,24 @@ ComplexMessage {
             Variant {
                 keys: [
                     Quoted {
-                        span: @35..38,
+                        span: @25..28,
                         parts: [
                             Text {
-                                start: @36,
+                                start: @26,
                                 content: "g",
                             },
                         ],
                     },
                     Star {
-                        start: @39,
+                        start: @29,
                     },
                 ],
                 pattern: QuotedPattern {
-                    span: @41..46,
+                    span: @31..36,
                     pattern: Pattern {
                         parts: [
                             Text {
-                                start: @43,
+                                start: @33,
                                 content: "h",
                             },
                         ],

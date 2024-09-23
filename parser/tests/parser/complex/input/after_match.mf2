@@ -1,34 +1,31 @@
 .local $a = {1}
-.match {$a :a} * {{}}
+.match $a * {{}}
 .input {$b :a}
 === spans ===
-                    .local $a = {1}↵.match {$a :a} * {{}}↵.input {$b :a}
-ComplexMessage      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                    .local $a = {1}↵.match $a * {{}}↵.input {$b :a}
+ComplexMessage      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 Declaration         ^^^^^^^^^^^^^^^
 LocalDeclaration    ^^^^^^^^^^^^^^^
 Variable                   ^^
 LiteralExpression               ^^^
 Number                           ^
 Number.integral                  ^
-Declaration                                               ^^^^^^^^^^^^^^
-InputDeclaration                                          ^^^^^^^^^^^^^^
-VariableExpression                                               ^^^^^^^
-Variable                                                          ^^
-Function                                                             ^^
-Identifier                                                            ^
-Matcher                             ^^^^^^^^^^^^^^^^^^^^^
-VariableExpression                         ^^^^^^^
-Variable                                    ^^
-Function                                       ^^
-Identifier                                      ^
-Variant                                            ^^^^^^
-Star                                               ^
-QuotedPattern                                        ^^^^
+Declaration                                          ^^^^^^^^^^^^^^
+InputDeclaration                                     ^^^^^^^^^^^^^^
+VariableExpression                                          ^^^^^^^
+Variable                                                     ^^
+Function                                                        ^^
+Identifier                                                       ^
+Matcher                             ^^^^^^^^^^^^^^^^
+Variable                                   ^^
+Variant                                       ^^^^^^
+Star                                          ^
+QuotedPattern                                   ^^^^
 Pattern             
 === diagnostics ===
-Declarations are not valid after the message body. Did you mean to put the declaration before the body? (at @38..52)
-  .local $a = {1}↵.match {$a :a} * {{}}↵.input {$b :a}
-                                        ^^^^^^^^^^^^^^
+Declarations are not valid after the message body. Did you mean to put the declaration before the body? (at @33..47)
+  .local $a = {1}↵.match $a * {{}}↵.input {$b :a}
+                                   ^^^^^^^^^^^^^^
 === ast ===
 ComplexMessage {
     declarations: [
@@ -53,18 +50,18 @@ ComplexMessage {
             },
         },
         InputDeclaration {
-            start: @38,
+            start: @33,
             expression: VariableExpression {
-                span: @45..52,
+                span: @40..47,
                 variable: Variable {
-                    span: @46..48,
+                    span: @41..43,
                     name: "b",
                 },
                 annotation: Some(
                     Function {
-                        start: @49,
+                        start: @44,
                         id: Identifier {
-                            start: @50,
+                            start: @45,
                             namespace: None,
                             name: "a",
                         },
@@ -78,35 +75,20 @@ ComplexMessage {
     body: Matcher {
         start: @16,
         selectors: [
-            VariableExpression {
-                span: @23..30,
-                variable: Variable {
-                    span: @24..26,
-                    name: "a",
-                },
-                annotation: Some(
-                    Function {
-                        start: @27,
-                        id: Identifier {
-                            start: @28,
-                            namespace: None,
-                            name: "a",
-                        },
-                        options: [],
-                    },
-                ),
-                attributes: [],
+            Variable {
+                span: @23..25,
+                name: "a",
             },
         ],
         variants: [
             Variant {
                 keys: [
                     Star {
-                        start: @31,
+                        start: @26,
                     },
                 ],
                 pattern: QuotedPattern {
-                    span: @33..37,
+                    span: @28..32,
                     pattern: Pattern {
                         parts: [],
                     },

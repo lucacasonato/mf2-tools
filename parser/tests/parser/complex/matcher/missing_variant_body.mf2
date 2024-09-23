@@ -1,66 +1,43 @@
-.match {1 :a}
+.match $a
 *
 === spans ===
-                    .match {1 :a}↵*
-ComplexMessage      ^^^^^^^^^^^^^^^
-Matcher             ^^^^^^^^^^^^^^^
-LiteralExpression          ^^^^^^
-Number                      ^
-Number.integral             ^
-Function                      ^^
-Identifier                     ^
-Variant                           ^
-Star                              ^
-QuotedPattern                      
-Pattern                            
-Text                               
+                    .match $a↵*
+ComplexMessage      ^^^^^^^^^^^
+Matcher             ^^^^^^^^^^^
+Variable                   ^^
+Variant                       ^
+Star                          ^
+QuotedPattern                  
+Pattern                        
+Text                           
 === diagnostics ===
-Matcher variant is missing a body. (at @14..15)
-  .match {1 :a}↵*
-                ^
+Matcher variant is missing a body. (at @10..11)
+  .match $a↵*
+            ^
 === ast ===
 ComplexMessage {
     declarations: [],
     body: Matcher {
         start: @0,
         selectors: [
-            LiteralExpression {
-                span: @7..13,
-                literal: Number {
-                    start: @8,
-                    raw: "1",
-                    is_negative: false,
-                    integral_len: 1,
-                    fractional_len: None,
-                    exponent_len: None,
-                },
-                annotation: Some(
-                    Function {
-                        start: @10,
-                        id: Identifier {
-                            start: @11,
-                            namespace: None,
-                            name: "a",
-                        },
-                        options: [],
-                    },
-                ),
-                attributes: [],
+            Variable {
+                span: @7..9,
+                name: "a",
             },
         ],
         variants: [
             Variant {
                 keys: [
                     Star {
-                        start: @14,
+                        start: @10,
                     },
                 ],
                 pattern: QuotedPattern {
-                    span: @15..15,
+                    span: @11..11,
                     pattern: Pattern {
                         parts: [
                             Text {
-                                start: @15,
+                                start: @11,
                                 content: "",
                             },
                         ],

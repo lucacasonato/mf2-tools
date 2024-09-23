@@ -1,73 +1,50 @@
-.match {1 :a}
+.match $a
 a|b|{{}}
 === spans ===
-                    .match {1 :a}↵a|b|{{}}
-ComplexMessage      ^^^^^^^^^^^^^^^^^^^^^^
-Matcher             ^^^^^^^^^^^^^^^^^^^^^^
-LiteralExpression          ^^^^^^
-Number                      ^
-Number.integral             ^
-Function                      ^^
-Identifier                     ^
-Variant                           ^^^^^^^^
-Text                              ^
-Quoted                             ^^^
-Text                                ^
-QuotedPattern                         ^^^^
+                    .match $a↵a|b|{{}}
+ComplexMessage      ^^^^^^^^^^^^^^^^^^
+Matcher             ^^^^^^^^^^^^^^^^^^
+Variable                   ^^
+Variant                       ^^^^^^^^
+Text                          ^
+Quoted                         ^^^
+Text                            ^
+QuotedPattern                     ^^^^
 Pattern             
 === diagnostics ===
-Matcher key is missing a leading space. (at @15..18)
-  .match {1 :a}↵a|b|{{}}
-                 ^^^
+Matcher key is missing a leading space. (at @11..14)
+  .match $a↵a|b|{{}}
+             ^^^
 === ast ===
 ComplexMessage {
     declarations: [],
     body: Matcher {
         start: @0,
         selectors: [
-            LiteralExpression {
-                span: @7..13,
-                literal: Number {
-                    start: @8,
-                    raw: "1",
-                    is_negative: false,
-                    integral_len: 1,
-                    fractional_len: None,
-                    exponent_len: None,
-                },
-                annotation: Some(
-                    Function {
-                        start: @10,
-                        id: Identifier {
-                            start: @11,
-                            namespace: None,
-                            name: "a",
-                        },
-                        options: [],
-                    },
-                ),
-                attributes: [],
+            Variable {
+                span: @7..9,
+                name: "a",
             },
         ],
         variants: [
             Variant {
                 keys: [
                     Text {
-                        start: @14,
+                        start: @10,
                         content: "a",
                     },
                     Quoted {
-                        span: @15..18,
+                        span: @11..14,
                         parts: [
                             Text {
-                                start: @16,
+                                start: @12,
                                 content: "b",
                             },
                         ],
                     },
                 ],
                 pattern: QuotedPattern {
-                    span: @18..22,
+                    span: @14..18,
                     pattern: Pattern {
                         parts: [],
                     },

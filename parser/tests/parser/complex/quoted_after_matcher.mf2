@@ -1,42 +1,41 @@
-.match {a} a {{}}
+.match $a a {{}}
 .local $a = {1}
 {{}}
 === spans ===
-                    .match {a} a {{}}↵.local $a = {1}↵{{}}
-ComplexMessage      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-Declaration                           ^^^^^^^^^^^^^^^
-LocalDeclaration                      ^^^^^^^^^^^^^^^
-Variable                                     ^^
-LiteralExpression                                 ^^^
-Number                                             ^
-Number.integral                                    ^
-Matcher             ^^^^^^^^^^^^^^^^^
-LiteralExpression          ^^^
-Text                        ^
-Variant                        ^^^^^^
-Text                           ^
-QuotedPattern                    ^^^^
+                    .match $a a {{}}↵.local $a = {1}↵{{}}
+ComplexMessage      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Declaration                          ^^^^^^^^^^^^^^^
+LocalDeclaration                     ^^^^^^^^^^^^^^^
+Variable                                    ^^
+LiteralExpression                                ^^^
+Number                                            ^
+Number.integral                                   ^
+Matcher             ^^^^^^^^^^^^^^^^
+Variable                   ^^
+Variant                       ^^^^^^
+Text                          ^
+QuotedPattern                   ^^^^
 Pattern             
 === diagnostics ===
-Declarations are not valid after the message body. Did you mean to put the declaration before the body? (at @18..33)
-  .match {a} a {{}}↵.local $a = {1}↵{{}}
-                    ^^^^^^^^^^^^^^^
-Message has multiple bodies, but only one is allowed. (at @34..38)
-  .match {a} a {{}}↵.local $a = {1}↵{{}}
-                                    ^^^^
+Declarations are not valid after the message body. Did you mean to put the declaration before the body? (at @17..32)
+  .match $a a {{}}↵.local $a = {1}↵{{}}
+                   ^^^^^^^^^^^^^^^
+Message has multiple bodies, but only one is allowed. (at @33..37)
+  .match $a a {{}}↵.local $a = {1}↵{{}}
+                                   ^^^^
 === ast ===
 ComplexMessage {
     declarations: [
         LocalDeclaration {
-            start: @18,
+            start: @17,
             variable: Variable {
-                span: @25..27,
+                span: @24..26,
                 name: "a",
             },
             expression: LiteralExpression {
-                span: @30..33,
+                span: @29..32,
                 literal: Number {
-                    start: @31,
+                    start: @30,
                     raw: "1",
                     is_negative: false,
                     integral_len: 1,
@@ -51,26 +50,21 @@ ComplexMessage {
     body: Matcher {
         start: @0,
         selectors: [
-            LiteralExpression {
-                span: @7..10,
-                literal: Text {
-                    start: @8,
-                    content: "a",
-                },
-                annotation: None,
-                attributes: [],
+            Variable {
+                span: @7..9,
+                name: "a",
             },
         ],
         variants: [
             Variant {
                 keys: [
                     Text {
-                        start: @11,
+                        start: @10,
                         content: "a",
                     },
                 ],
                 pattern: QuotedPattern {
-                    span: @13..17,
+                    span: @12..16,
                     pattern: Pattern {
                         parts: [],
                     },
