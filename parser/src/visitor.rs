@@ -32,13 +32,6 @@ pub trait Visit<'ast, 'text> {
   );
   visit!(visit_variable, var, Variable<'text>);
   visit!(visit_attribute, attr, Attribute<'text>);
-  visit!(
-    visit_private_use_annotation,
-    ann,
-    PrivateUseAnnotation<'text>
-  );
-  visit!(visit_reserved_body_part, part, ReservedBodyPart<'text>);
-  visit!(visit_reserved_annotation, ann, ReservedAnnotation<'text>);
   visit!(visit_variable_expression, expr, VariableExpression<'text>);
   visit!(
     visit_annotation_expression,
@@ -50,6 +43,7 @@ pub trait Visit<'ast, 'text> {
   visit!(visit_declaration, decl, Declaration<'text>);
   visit!(visit_input_declaration, decl, InputDeclaration<'text>);
   visit!(visit_local_declaration, decl, LocalDeclaration<'text>);
+  visit!(visit_reserved_body_part, part, ReservedBodyPart<'text>);
   visit!(visit_reserved_statement, stmt, ReservedStatement<'text>);
   visit!(visit_complex_message_body, body, ComplexMessageBody<'text>);
   visit!(visit_quoted_pattern, pattern, QuotedPattern<'text>);
@@ -127,9 +121,6 @@ where
   any_visit!(visit_literal_or_variable, lit_or_var, LiteralOrVariable);
   any_visit!(visit_variable, var, Variable);
   any_visit!(visit_attribute, attr, Attribute);
-  any_visit!(visit_private_use_annotation, ann, PrivateUseAnnotation);
-  any_visit!(visit_reserved_body_part, part, ReservedBodyPart);
-  any_visit!(visit_reserved_annotation, ann, ReservedAnnotation);
   any_visit!(visit_variable_expression, expr, VariableExpression);
   any_visit!(visit_annotation_expression, expr, AnnotationExpression);
   any_visit!(visit_markup, markup, Markup);
@@ -137,6 +128,7 @@ where
   any_visit!(visit_declaration, decl, Declaration);
   any_visit!(visit_input_declaration, decl, InputDeclaration);
   any_visit!(visit_local_declaration, decl, LocalDeclaration);
+  any_visit!(visit_reserved_body_part, part, ReservedBodyPart);
   any_visit!(visit_reserved_statement, stmt, ReservedStatement);
   any_visit!(visit_complex_message_body, body, ComplexMessageBody);
   any_visit!(visit_quoted_pattern, pattern, QuotedPattern);

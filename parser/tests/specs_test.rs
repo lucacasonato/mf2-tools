@@ -203,8 +203,6 @@ fn generate_actual_spans(
       FnOrMarkupOption: visit_fn_or_markup_option,
       Variable: visit_variable,
       Attribute: visit_attribute,
-      PrivateUseAnnotation: visit_private_use_annotation,
-      ReservedAnnotation: visit_reserved_annotation,
       VariableExpression: visit_variable_expression,
       AnnotationExpression: visit_annotation_expression,
       Markup: visit_markup,

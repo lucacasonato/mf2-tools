@@ -1,0 +1,29 @@
+{1 !bar @foo}
+=== spans ===
+                    {1 !bar @foo}
+Pattern             ^^^^^^^^^^^^^
+LiteralExpression   ^^^^^^^^^^^^^
+Number               ^
+Number.integral      ^
+=== diagnostics ===
+Placeholder expression contains invalid content. (at @3..12)
+  {1 !bar @foo}
+     ^^^^^^^^^
+=== ast ===
+Pattern {
+    parts: [
+        LiteralExpression {
+            span: @0..13,
+            literal: Number {
+                start: @1,
+                raw: "1",
+                is_negative: false,
+                integral_len: 1,
+                fractional_len: None,
+                exponent_len: None,
+            },
+            annotation: None,
+            attributes: [],
+        },
+    ],
+}

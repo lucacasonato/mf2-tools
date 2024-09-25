@@ -337,8 +337,6 @@ ast_enum! {
   #[visit(visit_annotation)]
   pub enum Annotation<'text> {
     Function<'text>,
-    PrivateUseAnnotation<'text>,
-    ReservedAnnotation<'text>,
   }
 }
 
@@ -481,87 +479,6 @@ ast_enum! {
   pub enum LiteralOrVariable<'text> {
     Literal<'text>,
     Variable<'text>,
-  }
-}
-
-#[derive(Debug, Clone)]
-pub struct PrivateUseAnnotation<'text> {
-  pub start: Location,
-  pub sigil: char,
-  pub body: Vec<ReservedBodyPart<'text>>,
-}
-
-impl Spanned for PrivateUseAnnotation<'_> {
-  fn span(&self) -> Span {
-    let start = self.start;
-    let end = self
-      .body
-      .last()
-      .map_or(start + self.sigil, |last| last.span().end);
-    Span::new(start..end)
-  }
-}
-
-impl<'text> Visitable<'text> for PrivateUseAnnotation<'text> {
-  fn apply_visitor<'ast, V: Visit<'ast, 'text> + ?Sized>(
-    &'ast self,
-    visitor: &mut V,
-  ) {
-    visitor.visit_private_use_annotation(self);
-  }
-
-  fn apply_visitor_to_children<'ast, V: Visit<'ast, 'text> + ?Sized>(
-    &'ast self,
-    visitor: &mut V,
-  ) {
-    for part in &self.body {
-      part.apply_visitor(visitor);
-    }
-  }
-}
-
-#[derive(Debug, Clone)]
-pub struct ReservedAnnotation<'text> {
-  pub start: Location,
-  pub sigil: char,
-  pub body: Vec<ReservedBodyPart<'text>>,
-}
-
-impl Spanned for ReservedAnnotation<'_> {
-  fn span(&self) -> Span {
-    let start = self.start;
-    let end = self
-      .body
-      .last()
-      .map_or(start + self.sigil, |last| last.span().end);
-    Span::new(start..end)
-  }
-}
-
-impl<'text> Visitable<'text> for ReservedAnnotation<'text> {
-  fn apply_visitor<'ast, V: Visit<'ast, 'text> + ?Sized>(
-    &'ast self,
-    visitor: &mut V,
-  ) {
-    visitor.visit_reserved_annotation(self);
-  }
-
-  fn apply_visitor_to_children<'ast, V: Visit<'ast, 'text> + ?Sized>(
-    &'ast self,
-    visitor: &mut V,
-  ) {
-    for part in &self.body {
-      part.apply_visitor(visitor);
-    }
-  }
-}
-
-ast_enum! {
-  #[visit(visit_reserved_body_part)]
-  pub enum ReservedBodyPart<'text> {
-    Text<'text>,
-    Escape,
-    Quoted<'text>,
   }
 }
 
@@ -870,6 +787,15 @@ impl<'text> Visitable<'text> for LocalDeclaration<'text> {
   }
 }
 
+ast_enum! {
+  #[visit(visit_reserved_body_part)]
+  pub enum ReservedBodyPart<'text> {
+    Text<'text>,
+    Escape,
+    Quoted<'text>,
+  }
+}
+
 #[derive(Debug, Clone)]
 pub struct ReservedStatement<'text> {
   pub start: Location,
@@ -1124,8 +1050,6 @@ any_node! {
     FnOrMarkupOption<'text>,
     Attribute<'text>,
     LiteralOrVariable<'text>,
-    PrivateUseAnnotation<'text>,
-    ReservedAnnotation<'text>,
     ReservedBodyPart<'text>,
     Quoted<'text>,
     QuotedPart<'text>,

@@ -1,0 +1,38 @@
+{^a}{&b}
+=== spans ===
+                    {^a}{&b}
+Pattern             ^^^^^^^^
+LiteralExpression   ^^^^
+Text                 ^^
+LiteralExpression       ^^^^
+Text                     ^^
+=== diagnostics ===
+Placeholder expression contains a literal that is not valid when unquoted. Did you mean to quote it? (at @1..3)
+  {^a}{&b}
+   ^^
+Placeholder expression contains a literal that is not valid when unquoted. Did you mean to quote it? (at @5..7)
+  {^a}{&b}
+       ^^
+=== ast ===
+Pattern {
+    parts: [
+        LiteralExpression {
+            span: @0..4,
+            literal: Text {
+                start: @1,
+                content: "^a",
+            },
+            annotation: None,
+            attributes: [],
+        },
+        LiteralExpression {
+            span: @4..8,
+            literal: Text {
+                start: @5,
+                content: "&b",
+            },
+            annotation: None,
+            attributes: [],
+        },
+    ],
+}
