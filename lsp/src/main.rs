@@ -226,16 +226,25 @@ impl LanguageServer for Server<'_> {
 
     let maybe_document = self.documents.get(&text_document.uri);
     let Some(document) = maybe_document else {
-      return Ok(None);
+      return Err(anyhow::Error::msg("Document not found"));
     };
 
     let Some(AnyNode::Variable(node)) = document.find_node(position) else {
-      return Ok(None);
+      return Err(anyhow::Error::msg(
+        "No variable to rename at the given position",
+      ));
     };
 
-    let Some(usage) = document.parsed.get().scope.get(node.name) else {
+    if node.name == params.new_name {
       return Ok(None);
-    };
+    }
+
+    let usage = document
+      .parsed
+      .get()
+      .scope
+      .get(node.name)
+      .expect("Variable not found in scope");
 
     let mut changes = Vec::new();
 
