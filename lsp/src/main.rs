@@ -251,7 +251,7 @@ impl LanguageServer for Server<'_> {
       .expect("Variable not found in scope");
 
     if !is_valid_name(&params.new_name) {
-      return Err(anyhow::Error::msg("Invalid variable name"));
+      return Err(anyhow::anyhow!("Invalid variable name."));
     }
 
     let mut changes = Vec::new();

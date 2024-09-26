@@ -1,6 +1,5 @@
 import { assertEquals, assertRejects } from "@std/assert";
 import { LSPTest } from "./util/mod.ts";
-import { RequestResponse } from "./util/types.ts";
 
 Deno.test("diagnostics", async () => {
   await using lsp = new LSPTest();
@@ -99,8 +98,7 @@ Deno.test("scope diagnostics", async (t) => {
     assertEquals(diagnostic, {
       diagnostics: [
         {
-          message:
-            "$foo has already been declared.",
+          message: "$foo has already been declared.",
           range: {
             start: { character: 25, line: 0 },
             end: { character: 29, line: 0 },
@@ -133,8 +131,7 @@ Deno.test("scope diagnostics", async (t) => {
     assertEquals(diagnostic, {
       diagnostics: [
         {
-          message:
-            "$foo is used before it is declared.",
+          message: "$foo is used before it is declared.",
           range: {
             start: { character: 21, line: 0 },
             end: { character: 25, line: 0 },
@@ -167,8 +164,7 @@ Deno.test("scope diagnostics", async (t) => {
     assertEquals(diagnostic, {
       diagnostics: [
         {
-          message:
-            "$foo is used before it is declared.",
+          message: "$foo is used before it is declared.",
           range: {
             start: { character: 15, line: 0 },
             end: { character: 19, line: 0 },
@@ -177,8 +173,7 @@ Deno.test("scope diagnostics", async (t) => {
           source: "mf2",
         },
         {
-          message:
-            "$foo is used before it is declared.",
+          message: "$foo is used before it is declared.",
           range: {
             start: { character: 28, line: 0 },
             end: { character: 32, line: 0 },
@@ -213,7 +208,7 @@ Deno.test("variable rename", async (t) => {
     const response = await lsp.request("textDocument/prepareRename", {
       textDocument: { uri: "file:///src/main.mf2" },
       position: { line: 0, character: 10 },
-    }) as Omit<RequestResponse<"textDocument/prepareRename">, "placeholder">;
+    });
 
     assertEquals(response, {
       start: { character: 8, line: 0 },
@@ -225,7 +220,7 @@ Deno.test("variable rename", async (t) => {
     const response = await lsp.request("textDocument/prepareRename", {
       textDocument: { uri: "file:///src/main.mf2" },
       position: { line: 0, character: 7 },
-    }) as Omit<RequestResponse<"textDocument/prepareRename">, "placeholder">;
+    });
 
     assertEquals(response, {
       start: { character: 8, line: 0 },
@@ -237,7 +232,7 @@ Deno.test("variable rename", async (t) => {
     const response = await lsp.request("textDocument/prepareRename", {
       textDocument: { uri: "file:///src/main.mf2" },
       position: { line: 0, character: 6 },
-    }) as Omit<RequestResponse<"textDocument/prepareRename">, "placeholder">;
+    });
 
     assertEquals(response, null);
   });
@@ -246,7 +241,7 @@ Deno.test("variable rename", async (t) => {
     const response = await lsp.request("textDocument/prepareRename", {
       textDocument: { uri: "file:///src/main.mf2" },
       position: { line: 0, character: 2 },
-    }) as Omit<RequestResponse<"textDocument/prepareRename">, "placeholder">;
+    });
 
     assertEquals(response, null);
   });
@@ -288,28 +283,32 @@ Deno.test("variable rename", async (t) => {
   });
 
   await t.step("rename the .local to hello", async () => {
-    const error = await assertRejects(() => lsp.request("textDocument/rename", {
-      textDocument: { uri: "file:///src/main.mf2" },
-      position: { line: 0, character: 2 },
-      newName: "hello",
-    }));
+    const error = await assertRejects(() =>
+      lsp.request("textDocument/rename", {
+        textDocument: { uri: "file:///src/main.mf2" },
+        position: { line: 0, character: 2 },
+        newName: "hello",
+      })
+    );
 
     assertEquals(error, {
       code: -32803,
-      message: "No variable to rename at the given position",
+      message: "No variable to rename at the given position.",
     });
   });
 
   await t.step("rename foo to 123, from the middle of foo", async () => {
-    const error = await assertRejects(() => lsp.request("textDocument/rename", {
-      textDocument: { uri: "file:///src/main.mf2" },
-      position: { line: 0, character: 10 },
-      newName: "123",
-    }));
+    const error = await assertRejects(() =>
+      lsp.request("textDocument/rename", {
+        textDocument: { uri: "file:///src/main.mf2" },
+        position: { line: 0, character: 10 },
+        newName: "123",
+      })
+    );
 
     assertEquals(error, {
       code: -32803,
-      message: "Invalid variable name",
+      message: "Invalid variable name.",
     });
   });
 });
