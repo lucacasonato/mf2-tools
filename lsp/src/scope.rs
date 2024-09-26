@@ -1,3 +1,4 @@
+use std::collections::hash_map::Entry;
 use std::collections::HashMap;
 
 use mf2_parser::Span;
@@ -29,39 +30,40 @@ impl<'text> ScopeVisitor<'text> {
     &mut self,
     var: &'ast mf2_parser::ast::Variable<'text>,
   ) {
-    if let Some(existing) = self.variables.get_mut(var.name) {
-      if let Some(existing_span) = existing.declaration {
-        self.diagnostics.push(Diagnostic::Scope(
-          ScopeDiagnostic::DuplicateDeclaration {
-            name: var.name,
-            first_span: existing_span,
-            second_span: var.span(),
-          },
-        ));
-
-        existing.references.push(var.span());
-      } else {
-        for reference in &existing.references {
+    match self.variables.entry(var.name) {
+      Entry::Occupied(existing) => {
+        let existing = existing.into_mut();
+        if let Some(existing_span) = existing.declaration {
           self.diagnostics.push(Diagnostic::Scope(
-            ScopeDiagnostic::UsageBeforeDeclaration {
+            ScopeDiagnostic::DuplicateDeclaration {
               name: var.name,
-              declaration_span: var.span(),
-              usage_span: *reference,
+              first_span: existing_span,
+              second_span: var.span(),
             },
           ));
-        }
 
-        existing.declaration = Some(var.span());
+          existing.references.push(var.span());
+        } else {
+          for reference in &existing.references {
+            self.diagnostics.push(Diagnostic::Scope(
+              ScopeDiagnostic::UsageBeforeDeclaration {
+                name: var.name,
+                declaration_span: var.span(),
+                usage_span: *reference,
+              },
+            ));
+          }
+
+          existing.declaration = Some(var.span());
+        }
       }
-    } else {
-      self.variables.insert(
-        var.name,
-        VariableUsage {
+      Entry::Vacant(vacant) => {
+        vacant.insert(VariableUsage {
           declaration: Some(var.span()),
           references: Vec::new(),
-        },
-      );
-    }
+        });
+      }
+    };
   }
 
   fn push_variable_reference<'ast>(
