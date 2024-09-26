@@ -156,7 +156,7 @@ Deno.test("scope diagnostics", async (t) => {
         textDocument: {
           uri: "file:///src/main.mf2",
           languageId: "mf2",
-          version: 2,
+          version: 3,
           text: ".local $foo = {$foo :fn opt=$foo} {{}}",
         },
       },
@@ -187,7 +187,7 @@ Deno.test("scope diagnostics", async (t) => {
         },
       ],
       uri: "file:///src/main.mf2",
-      version: 2,
+      version: 3,
     });
   });
 })

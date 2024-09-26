@@ -17,7 +17,7 @@ import type {
 } from "./types.ts";
 
 const BINARY_URL = new URL(
-  `../../../target/${Deno.env.get("PROFILE" ?? "debug")}/mf2lsp`,
+  `../../../target/${Deno.env.get("PROFILE") ?? "debug"}/mf2lsp`,
   import.meta.url,
 );
 
@@ -172,7 +172,7 @@ class LSPDecoderStream extends TransformStream<
           const message = JSON.parse(body);
           controller.enqueue(message);
         } catch (e) {
-          e.message += " while parsing " + JSON.stringify(body);
+          (e as Error).message += " while parsing " + JSON.stringify(body);
           throw e;
         }
         const length = endOfHeaders + 4 + contentLength;
