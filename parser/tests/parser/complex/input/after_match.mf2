@@ -3,23 +3,23 @@
 .input {$b :a}
 === spans ===
                     .local $a = {1}↵.match $a * {{}}↵.input {$b :a}
-ComplexMessage      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-LocalDeclaration    ^^^^^^^^^^^^^^^
-Variable                   ^^
-LiteralExpression               ^^^
-Number                           ^
-Number.integral                  ^
-InputDeclaration                                     ^^^^^^^^^^^^^^
-VariableExpression                                          ^^^^^^^
-Variable                                                     ^^
-Function                                                        ^^
-Identifier                                                       ^
-Matcher                             ^^^^^^^^^^^^^^^^
-Variable                                   ^^
-Variant                                       ^^^^^^
-Star                                          ^
-QuotedPattern                                   ^^^^
-Pattern             
+ComplexMessage      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ 0:0-2:14
+LocalDeclaration    ^^^^^^^^^^^^^^^                                 0:0-0:15
+Variable                   ^^                                       0:7-0:9
+LiteralExpression               ^^^                                 0:12-0:15
+Number                           ^                                  0:13-0:14
+Number.integral                  ^                                  0:13-0:14
+InputDeclaration                                     ^^^^^^^^^^^^^^ 2:0-2:14
+VariableExpression                                          ^^^^^^^ 2:7-2:14
+Variable                                                     ^^     2:8-2:10
+Function                                                        ^^  2:11-2:13
+Identifier                                                       ^  2:12-2:13
+Matcher                             ^^^^^^^^^^^^^^^^                1:0-1:16
+Variable                                   ^^                       1:7-1:9
+Variant                                       ^^^^^^                1:10-1:16
+Star                                          ^                     1:10-1:11
+QuotedPattern                                   ^^^^                1:12-1:16
+Pattern                                                             0:0-0:0
 === diagnostics ===
 Declarations are not valid after the message body. Did you mean to put the declaration before the body? (at @33..47)
   .local $a = {1}↵.match $a * {{}}↵.input {$b :a}

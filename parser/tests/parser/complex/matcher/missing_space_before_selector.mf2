@@ -2,14 +2,14 @@
 a * {{}}
 === spans ===
                     .match$a↵a * {{}}
-ComplexMessage      ^^^^^^^^^^^^^^^^^
-Matcher             ^^^^^^^^^^^^^^^^^
-Variable                  ^^
-Variant                      ^^^^^^^^
-Text                         ^
-Star                           ^
-QuotedPattern                    ^^^^
-Pattern             
+ComplexMessage      ^^^^^^^^^^^^^^^^^ 0:0-1:8
+Matcher             ^^^^^^^^^^^^^^^^^ 0:0-1:8
+Variable                  ^^          0:6-0:8
+Variant                      ^^^^^^^^ 1:0-1:8
+Text                         ^        1:0-1:1
+Star                           ^      1:2-1:3
+QuotedPattern                    ^^^^ 1:4-1:8
+Pattern                               0:0-0:0
 === diagnostics ===
 Matcher selector is missing a leading space. (at @6..8)
   .match$a↵a * {{}}

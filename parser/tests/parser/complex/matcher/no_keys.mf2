@@ -2,13 +2,13 @@
 {{hello}}
 === spans ===
                     .match $a↵{{hello}}
-ComplexMessage      ^^^^^^^^^^^^^^^^^^^
-Matcher             ^^^^^^^^^^^^^^^^^^^
-Variable                   ^^
-Variant                       ^^^^^^^^^
-QuotedPattern                 ^^^^^^^^^
-Pattern                         ^^^^^
-Text                            ^^^^^
+ComplexMessage      ^^^^^^^^^^^^^^^^^^^ 0:0-1:9
+Matcher             ^^^^^^^^^^^^^^^^^^^ 0:0-1:9
+Variable                   ^^           0:7-0:9
+Variant                       ^^^^^^^^^ 1:0-1:9
+QuotedPattern                 ^^^^^^^^^ 1:0-1:9
+Pattern                         ^^^^^   1:2-1:7
+Text                            ^^^^^   1:2-1:7
 === diagnostics ===
 Matcher variant is missing key(s), but at least one is required. (at @10..19)
   .match $a↵{{hello}}

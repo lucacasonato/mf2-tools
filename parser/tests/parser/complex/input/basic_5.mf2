@@ -1,14 +1,14 @@
 .input {$var :number}{{}}
 === spans ===
                     .input {$var :number}{{}}
-ComplexMessage      ^^^^^^^^^^^^^^^^^^^^^^^^^
-InputDeclaration    ^^^^^^^^^^^^^^^^^^^^^
-VariableExpression         ^^^^^^^^^^^^^^
-Variable                    ^^^^
-Function                         ^^^^^^^
-Identifier                        ^^^^^^
-QuotedPattern                            ^^^^
-Pattern             
+ComplexMessage      ^^^^^^^^^^^^^^^^^^^^^^^^^ 0:0-0:25
+InputDeclaration    ^^^^^^^^^^^^^^^^^^^^^     0:0-0:21
+VariableExpression         ^^^^^^^^^^^^^^     0:7-0:21
+Variable                    ^^^^              0:8-0:12
+Function                         ^^^^^^^      0:13-0:20
+Identifier                        ^^^^^^      0:14-0:20
+QuotedPattern                            ^^^^ 0:21-0:25
+Pattern                                       0:0-0:0
 === diagnostics ===
 
 === ast ===

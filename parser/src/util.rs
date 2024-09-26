@@ -69,7 +69,7 @@ impl<'text> SourceTextIterator<'text> {
     self.iter.next().map(|ch| {
       match ch {
         '\n' => {
-          if *self.utf8_line_starts.last().unwrap() < self.str_index {
+          if *self.utf8_line_starts.last().unwrap() < self.str_index + 1 {
             self.utf8_line_starts.push(self.str_index + 1);
           }
           self.prev_char_was_cr = false;

@@ -1,12 +1,12 @@
 {1@foo}
 === spans ===
                     {1@foo}
-Pattern             ^^^^^^^
-LiteralExpression   ^^^^^^^
-Number               ^
-Number.integral      ^
-Attribute             ^^^^
-Identifier             ^^^
+Pattern             ^^^^^^^ 0:0-0:7
+LiteralExpression   ^^^^^^^ 0:0-0:7
+Number               ^      0:1-0:2
+Number.integral      ^      0:1-0:2
+Attribute             ^^^^  0:2-0:6
+Identifier             ^^^  0:3-0:6
 === diagnostics ===
 Attribute is missing a leading space. (at @2..6)
   {1@foo}

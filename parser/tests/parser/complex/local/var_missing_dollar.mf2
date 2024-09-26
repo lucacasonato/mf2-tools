@@ -2,14 +2,14 @@
 {{}}
 === spans ===
                     .local var = { |hello| }↵{{}}
-ComplexMessage      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-LocalDeclaration    ^^^^^^^^^^^^^^^^^^^^^^^^
-Variable                   ^^^
-LiteralExpression                ^^^^^^^^^^^
-Quoted                             ^^^^^^^
-Text                                ^^^^^
-QuotedPattern                                ^^^^
-Pattern             
+ComplexMessage      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ 0:0-1:4
+LocalDeclaration    ^^^^^^^^^^^^^^^^^^^^^^^^      0:0-0:24
+Variable                   ^^^                    0:7-0:10
+LiteralExpression                ^^^^^^^^^^^      0:13-0:24
+Quoted                             ^^^^^^^        0:15-0:22
+Text                                ^^^^^         0:16-0:21
+QuotedPattern                                ^^^^ 1:0-1:4
+Pattern                                           0:0-0:0
 === diagnostics ===
 Variable is not prefixed with a dollar sign ('$'). (at @7..10)
   .local var = { |hello| }↵{{}}

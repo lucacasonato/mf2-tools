@@ -3,24 +3,24 @@ e   1 {{f}}
 |g| * {{h}}
 === spans ===
                     .match $a $b↵e   1 {{f}}↵|g| * {{h}}
-ComplexMessage      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-Matcher             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-Variable                   ^^
-Variable                      ^^
-Variant                          ^^^^^^^^^^^
-Text                             ^
-Number                               ^
-Number.integral                      ^
-QuotedPattern                          ^^^^^
-Pattern                                  ^
-Text                                     ^
-Variant                                      ^^^^^^^^^^^
-Quoted                                       ^^^
-Text                                          ^
-Star                                             ^
-QuotedPattern                                      ^^^^^
-Pattern                                              ^
-Text                                                 ^
+ComplexMessage      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ 0:0-2:11
+Matcher             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ 0:0-2:11
+Variable                   ^^                            0:7-0:9
+Variable                      ^^                         0:10-0:12
+Variant                          ^^^^^^^^^^^             1:0-1:11
+Text                             ^                       1:0-1:1
+Number                               ^                   1:4-1:5
+Number.integral                      ^                   1:4-1:5
+QuotedPattern                          ^^^^^             1:6-1:11
+Pattern                                  ^               1:8-1:9
+Text                                     ^               1:8-1:9
+Variant                                      ^^^^^^^^^^^ 2:0-2:11
+Quoted                                       ^^^         2:0-2:3
+Text                                          ^          2:1-2:2
+Star                                             ^       2:4-2:5
+QuotedPattern                                      ^^^^^ 2:6-2:11
+Pattern                                              ^   2:8-2:9
+Text                                                 ^   2:8-2:9
 === diagnostics ===
 
 === ast ===

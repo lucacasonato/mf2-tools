@@ -1,9 +1,9 @@
 {#foo/ }
 === spans ===
                     {#foo/ }
-Pattern             ^^^^^^^^
-Markup              ^^^^^^^^
-Identifier            ^^^
+Pattern             ^^^^^^^^ 0:0-0:8
+Markup              ^^^^^^^^ 0:0-0:8
+Identifier            ^^^    0:2-0:5
 === diagnostics ===
 Self-closing tag of a markup tag can not have trailing spaces before the closing brace. (at @6..7)
   {#foo/ }

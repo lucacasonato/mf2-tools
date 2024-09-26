@@ -1,9 +1,9 @@
 {|abc def
 === spans ===
                     {|abc def
-Pattern             ^^^^^^^^^
-LiteralExpression   ^^^^^^^^^
-Quoted               ^^^^^^^^
+Pattern             ^^^^^^^^^ 0:0-0:9
+LiteralExpression   ^^^^^^^^^ 0:0-0:9
+Quoted               ^^^^^^^^ 0:1-0:9
 === diagnostics ===
 Quoted string is missing the closing quote. (at @1..9)
   {|abc def

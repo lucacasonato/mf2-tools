@@ -2,9 +2,9 @@
 {{}}
 === spans ===
                     .input↵{{}}
-ComplexMessage      ^^^^^^^^^^^
-QuotedPattern              ^^^^
-Pattern             
+ComplexMessage      ^^^^^^^^^^^ 0:0-1:4
+QuotedPattern              ^^^^ 1:0-1:4
+Pattern                         0:0-0:0
 === diagnostics ===
 Input declaration is missing an expression. (at @0..6)
   .input↵{{}}

@@ -1,10 +1,10 @@
 {{Hello, World!
 === spans ===
                     {{Hello, World!
-ComplexMessage      ^^^^^^^^^^^^^^^
-QuotedPattern       ^^^^^^^^^^^^^^^
-Pattern               ^^^^^^^^^^^^^
-Text                  ^^^^^^^^^^^^^
+ComplexMessage      ^^^^^^^^^^^^^^^ 0:0-0:15
+QuotedPattern       ^^^^^^^^^^^^^^^ 0:0-0:15
+Pattern               ^^^^^^^^^^^^^ 0:2-0:15
+Text                  ^^^^^^^^^^^^^ 0:2-0:15
 === diagnostics ===
 Quoted pattern is missing the closing braces ('}'). (at @0..15)
   {{Hello, World!

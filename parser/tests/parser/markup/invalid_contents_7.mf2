@@ -1,12 +1,12 @@
 {#foo !abc :a=b /}
 === spans ===
                     {#foo !abc :a=b /}
-Pattern             ^^^^^^^^^^^^^^^^^^
-Markup              ^^^^^^^^^^^^^^^^^^
-Identifier            ^^^
-FnOrMarkupOption               ^^^^
-Identifier                     ^^
-Text                              ^
+Pattern             ^^^^^^^^^^^^^^^^^^ 0:0-0:18
+Markup              ^^^^^^^^^^^^^^^^^^ 0:0-0:18
+Identifier            ^^^              0:2-0:5
+FnOrMarkupOption               ^^^^    0:11-0:15
+Identifier                     ^^      0:11-0:13
+Text                              ^    0:14-0:15
 === diagnostics ===
 Markup tag contains invalid content. (at @6..10)
   {#foo !abc :a=b /}

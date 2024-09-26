@@ -3,19 +3,19 @@
 {{}}
 === spans ===
                     .local $var = {|hello|}↵.local $var2 = {|hello|}↵{{}}
-ComplexMessage      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-LocalDeclaration    ^^^^^^^^^^^^^^^^^^^^^^^
-Variable                   ^^^^
-LiteralExpression                 ^^^^^^^^^
-Quoted                             ^^^^^^^
-Text                                ^^^^^
-LocalDeclaration                            ^^^^^^^^^^^^^^^^^^^^^^^^
-Variable                                           ^^^^^
-LiteralExpression                                          ^^^^^^^^^
-Quoted                                                      ^^^^^^^
-Text                                                         ^^^^^
-QuotedPattern                                                        ^^^^
-Pattern             
+ComplexMessage      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ 0:0-2:4
+LocalDeclaration    ^^^^^^^^^^^^^^^^^^^^^^^                               0:0-0:23
+Variable                   ^^^^                                           0:7-0:11
+LiteralExpression                 ^^^^^^^^^                               0:14-0:23
+Quoted                             ^^^^^^^                                0:15-0:22
+Text                                ^^^^^                                 0:16-0:21
+LocalDeclaration                            ^^^^^^^^^^^^^^^^^^^^^^^^      1:0-1:24
+Variable                                           ^^^^^                  1:7-1:12
+LiteralExpression                                          ^^^^^^^^^      1:15-1:24
+Quoted                                                      ^^^^^^^       1:16-1:23
+Text                                                         ^^^^^        1:17-1:22
+QuotedPattern                                                        ^^^^ 2:0-2:4
+Pattern                                                                   0:0-0:0
 === diagnostics ===
 
 === ast ===

@@ -1,15 +1,15 @@
 {#el @   attr=1}
 === spans ===
                     {#el @   attr=1}
-Pattern             ^^^^^^^^^^^^^^^^
-Markup              ^^^^^^^^^^^^^^^^
-Identifier            ^^
-FnOrMarkupOption             ^^^^^^
-Identifier                   ^^^^
-Number                            ^
-Number.integral                   ^
-Attribute                ^
-Identifier                
+Pattern             ^^^^^^^^^^^^^^^^ 0:0-0:16
+Markup              ^^^^^^^^^^^^^^^^ 0:0-0:16
+Identifier            ^^             0:2-0:4
+FnOrMarkupOption             ^^^^^^  0:9-0:15
+Identifier                   ^^^^    0:9-0:13
+Number                            ^  0:14-0:15
+Number.integral                   ^  0:14-0:15
+Attribute                ^           0:5-0:6
+Identifier                           0:6-0:6
 === diagnostics ===
 Attribute is missing a key after the '@' sign. (at @5..6)
   {#el @   attr=1}

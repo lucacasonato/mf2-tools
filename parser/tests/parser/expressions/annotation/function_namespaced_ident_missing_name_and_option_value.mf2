@@ -1,13 +1,13 @@
 {:a: b}
 === spans ===
                     {:a: b}
-Pattern             ^^^^^^^
-AnnotationExpression^^^^^^^
-Function             ^^^^^
-Identifier            ^^
-FnOrMarkupOption         ^
-Identifier               ^
-Text                      
+Pattern             ^^^^^^^ 0:0-0:7
+AnnotationExpression^^^^^^^ 0:0-0:7
+Function             ^^^^^  0:1-0:6
+Identifier            ^^    0:2-0:4
+FnOrMarkupOption         ^  0:5-0:6
+Identifier               ^  0:5-0:6
+Text                        0:6-0:6
 === diagnostics ===
 Namespaced identifier is missing a name, which is required after the colon following the namespace. (at @2..4)
   {:a: b}

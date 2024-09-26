@@ -1,13 +1,13 @@
 a{|abc\|def|}
 === spans ===
                     a{|abc\|def|}
-Pattern             ^^^^^^^^^^^^^
-Text                ^
-LiteralExpression    ^^^^^^^^^^^^
-Quoted                ^^^^^^^^^^
-Text                   ^^^
-Escape                    ^^
-Text                        ^^^
+Pattern             ^^^^^^^^^^^^^ 0:0-0:13
+Text                ^             0:0-0:1
+LiteralExpression    ^^^^^^^^^^^^ 0:1-0:13
+Quoted                ^^^^^^^^^^  0:2-0:12
+Text                   ^^^        0:3-0:6
+Escape                    ^^      0:6-0:8
+Text                        ^^^   0:8-0:11
 === diagnostics ===
 
 === ast ===

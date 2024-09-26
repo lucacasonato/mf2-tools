@@ -1,9 +1,9 @@
 {#standalone/}
 === spans ===
                     {#standalone/}
-Pattern             ^^^^^^^^^^^^^^
-Markup              ^^^^^^^^^^^^^^
-Identifier            ^^^^^^^^^^
+Pattern             ^^^^^^^^^^^^^^ 0:0-0:14
+Markup              ^^^^^^^^^^^^^^ 0:0-0:14
+Identifier            ^^^^^^^^^^   0:2-0:12
 === diagnostics ===
 
 === ast ===

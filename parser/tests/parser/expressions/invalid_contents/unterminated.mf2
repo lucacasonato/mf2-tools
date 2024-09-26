@@ -1,10 +1,10 @@
 {1 abc
 === spans ===
                     {1 abc
-Pattern             ^^^^^^
-LiteralExpression   ^^^^^^
-Number               ^
-Number.integral      ^
+Pattern             ^^^^^^ 0:0-0:6
+LiteralExpression   ^^^^^^ 0:0-0:6
+Number               ^     0:1-0:2
+Number.integral      ^     0:1-0:2
 === diagnostics ===
 Placeholder is missing the closing brace. (at @0..6)
   {1 abc

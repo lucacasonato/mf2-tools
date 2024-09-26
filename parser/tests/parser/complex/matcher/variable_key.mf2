@@ -4,23 +4,23 @@ $var {{Hello}}
 * {{}}
 === spans ===
                     .match $a↵a {{Hold it}}↵$var {{Hello}}↵* {{}}
-ComplexMessage      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-Matcher             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-Variable                   ^^
-Variant                       ^^^^^^^^^^^^^
-Text                          ^
-QuotedPattern                   ^^^^^^^^^^^
-Pattern                           ^^^^^^^
-Text                              ^^^^^^^
-Variant                                     ^^^^^^^^^^^^^^
-Text                                        ^^^^
-QuotedPattern                                    ^^^^^^^^^
-Pattern                                            ^^^^^
-Text                                               ^^^^^
-Variant                                                    ^^^^^^
-Star                                                       ^
-QuotedPattern                                                ^^^^
-Pattern             
+ComplexMessage      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ 0:0-3:6
+Matcher             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ 0:0-3:6
+Variable                   ^^                                     0:7-0:9
+Variant                       ^^^^^^^^^^^^^                       1:0-1:13
+Text                          ^                                   1:0-1:1
+QuotedPattern                   ^^^^^^^^^^^                       1:2-1:13
+Pattern                           ^^^^^^^                         1:4-1:11
+Text                              ^^^^^^^                         1:4-1:11
+Variant                                     ^^^^^^^^^^^^^^        2:0-2:14
+Text                                        ^^^^                  2:0-2:4
+QuotedPattern                                    ^^^^^^^^^        2:5-2:14
+Pattern                                            ^^^^^          2:7-2:12
+Text                                               ^^^^^          2:7-2:12
+Variant                                                    ^^^^^^ 3:0-3:6
+Star                                                       ^      3:0-3:1
+QuotedPattern                                                ^^^^ 3:2-3:6
+Pattern                                                           0:0-0:0
 === diagnostics ===
 Matcher key is a variable, which is not allowed. Matcher keys must be literal values, or the wildcard ('*'). (at @24..28)
   .match $a↵a {{Hold it}}↵$var {{Hello}}↵* {{}}

@@ -1,11 +1,11 @@
 {#@hello /}
 === spans ===
                     {#@hello /}
-Pattern             ^^^^^^^^^^^
-Markup              ^^^^^^^^^^^
-Identifier            
-Attribute             ^^^^^^
-Identifier             ^^^^^
+Pattern             ^^^^^^^^^^^ 0:0-0:11
+Markup              ^^^^^^^^^^^ 0:0-0:11
+Identifier                      0:2-0:2
+Attribute             ^^^^^^    0:2-0:8
+Identifier             ^^^^^    0:3-0:8
 === diagnostics ===
 Attribute is missing a leading space. (at @2..8)
   {#@hello /}

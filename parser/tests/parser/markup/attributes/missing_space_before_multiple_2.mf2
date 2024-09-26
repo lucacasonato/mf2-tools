@@ -1,14 +1,14 @@
 {#el @attr1 = val@attr2 }
 === spans ===
                     {#el @attr1 = val@attr2 }
-Pattern             ^^^^^^^^^^^^^^^^^^^^^^^^^
-Markup              ^^^^^^^^^^^^^^^^^^^^^^^^^
-Identifier            ^^
-Attribute                ^^^^^^^^^^^^
-Identifier                ^^^^^
-Text                              ^^^
-Attribute                            ^^^^^^
-Identifier                            ^^^^^
+Pattern             ^^^^^^^^^^^^^^^^^^^^^^^^^ 0:0-0:25
+Markup              ^^^^^^^^^^^^^^^^^^^^^^^^^ 0:0-0:25
+Identifier            ^^                      0:2-0:4
+Attribute                ^^^^^^^^^^^^         0:5-0:17
+Identifier                ^^^^^               0:6-0:11
+Text                              ^^^         0:14-0:17
+Attribute                            ^^^^^^   0:17-0:23
+Identifier                            ^^^^^   0:18-0:23
 === diagnostics ===
 Attribute is missing a leading space. (at @17..23)
   {#el @attr1 = val@attr2 }

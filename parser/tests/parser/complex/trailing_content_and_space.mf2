@@ -4,9 +4,9 @@
 
 === spans ===
                     {{}} asd↵↵↵
-ComplexMessage      ^^^^^^^^
-QuotedPattern       ^^^^
-Pattern             
+ComplexMessage      ^^^^^^^^    0:0-0:8
+QuotedPattern       ^^^^        0:0-0:4
+Pattern                         0:0-0:0
 === diagnostics ===
 Message has additional invalid content after the body. (at @5..8)
   {{}} asd↵↵↵

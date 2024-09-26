@@ -2,16 +2,16 @@
 * {1}
 === spans ===
                     .match $a↵* {1}
-ComplexMessage      ^^^^^^^^^^^^^^^
-Matcher             ^^^^^^^^^^^^^^^
-Variable                   ^^
-Variant                       ^^^^^
-Star                          ^
-QuotedPattern                   ^^^
-Pattern                         ^^^
-LiteralExpression               ^^^
-Number                           ^
-Number.integral                  ^
+ComplexMessage      ^^^^^^^^^^^^^^^ 0:0-1:5
+Matcher             ^^^^^^^^^^^^^^^ 0:0-1:5
+Variable                   ^^       0:7-0:9
+Variant                       ^^^^^ 1:0-1:5
+Star                          ^     1:0-1:1
+QuotedPattern                   ^^^ 1:2-1:5
+Pattern                         ^^^ 1:2-1:5
+LiteralExpression               ^^^ 1:2-1:5
+Number                           ^  1:3-1:4
+Number.integral                  ^  1:3-1:4
 === diagnostics ===
 Matcher variant has an expression as a body, but only quoted patterns are allowed. Did you mean to wrap the expression in a quoted pattern? (at @12..15)
   .match $a↵* {1}

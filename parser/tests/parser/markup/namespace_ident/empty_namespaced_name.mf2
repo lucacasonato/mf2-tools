@@ -1,9 +1,9 @@
 {#:foo }
 === spans ===
                     {#:foo }
-Pattern             ^^^^^^^^
-Markup              ^^^^^^^^
-Identifier            ^^^^
+Pattern             ^^^^^^^^ 0:0-0:8
+Markup              ^^^^^^^^ 0:0-0:8
+Identifier            ^^^^   0:2-0:6
 === diagnostics ===
 Identifiers with a colon before the name are namespaced identifiers, but this identifier is missing a namespace before the colon. (at @2..6)
   {#:foo }

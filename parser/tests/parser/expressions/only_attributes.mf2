@@ -1,11 +1,11 @@
 {@foo}
 === spans ===
                     {@foo}
-Pattern             ^^^^^^
-LiteralExpression   ^^^^^^
-Text                
-Attribute            ^^^^
-Identifier            ^^^
+Pattern             ^^^^^^ 0:0-0:6
+LiteralExpression   ^^^^^^ 0:0-0:6
+Text                       0:0-0:0
+Attribute            ^^^^  0:1-0:5
+Identifier            ^^^  0:2-0:5
 === diagnostics ===
 Placeholder is empty, but should have at least a variable reference, literal, or annotation. (at @0..6)
   {@foo}

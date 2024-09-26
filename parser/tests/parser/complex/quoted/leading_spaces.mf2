@@ -1,10 +1,10 @@
    {{ Hello, World! }}
 === spans ===
                        {{ Hello, World! }}
-ComplexMessage         ^^^^^^^^^^^^^^^^^^^
-QuotedPattern          ^^^^^^^^^^^^^^^^^^^
-Pattern                  ^^^^^^^^^^^^^^^
-Text                     ^^^^^^^^^^^^^^^
+ComplexMessage         ^^^^^^^^^^^^^^^^^^^ 0:3-0:22
+QuotedPattern          ^^^^^^^^^^^^^^^^^^^ 0:3-0:22
+Pattern                  ^^^^^^^^^^^^^^^   0:5-0:20
+Text                     ^^^^^^^^^^^^^^^   0:5-0:20
 === diagnostics ===
 
 === ast ===

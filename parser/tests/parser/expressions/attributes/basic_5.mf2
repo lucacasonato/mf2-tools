@@ -1,14 +1,14 @@
 {1 @hello = 2}
 === spans ===
                     {1 @hello = 2}
-Pattern             ^^^^^^^^^^^^^^
-LiteralExpression   ^^^^^^^^^^^^^^
-Number               ^
-Number.integral      ^
-Attribute              ^^^^^^^^^^
-Identifier              ^^^^^
-Number                          ^
-Number.integral                 ^
+Pattern             ^^^^^^^^^^^^^^ 0:0-0:14
+LiteralExpression   ^^^^^^^^^^^^^^ 0:0-0:14
+Number               ^             0:1-0:2
+Number.integral      ^             0:1-0:2
+Attribute              ^^^^^^^^^^  0:3-0:13
+Identifier              ^^^^^      0:4-0:9
+Number                          ^  0:12-0:13
+Number.integral                 ^  0:12-0:13
 === diagnostics ===
 
 === ast ===

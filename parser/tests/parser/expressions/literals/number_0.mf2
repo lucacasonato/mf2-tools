@@ -1,11 +1,11 @@
 a{ 0 }
 === spans ===
                     a{ 0 }
-Pattern             ^^^^^^
-Text                ^
-LiteralExpression    ^^^^^
-Number                 ^
-Number.integral        ^
+Pattern             ^^^^^^ 0:0-0:6
+Text                ^      0:0-0:1
+LiteralExpression    ^^^^^ 0:1-0:6
+Number                 ^   0:3-0:4
+Number.integral        ^   0:3-0:4
 === diagnostics ===
 
 === ast ===

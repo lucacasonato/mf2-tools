@@ -1,10 +1,10 @@
 {1 a |}
 === spans ===
                     {1 a |}
-Pattern             ^^^^^^^
-LiteralExpression   ^^^^^^^
-Number               ^
-Number.integral      ^
+Pattern             ^^^^^^^ 0:0-0:7
+LiteralExpression   ^^^^^^^ 0:0-0:7
+Number               ^      0:1-0:2
+Number.integral      ^      0:1-0:2
 === diagnostics ===
 Quoted string is missing the closing quote. (at @5..7)
   {1 a |}

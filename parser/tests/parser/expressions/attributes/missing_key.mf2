@@ -1,12 +1,12 @@
 {$var @=bar}
 === spans ===
                     {$var @=bar}
-Pattern             ^^^^^^^^^^^^
-VariableExpression  ^^^^^^^^^^^^
-Variable             ^^^^
-Attribute                 ^^^^^
-Identifier                 
-Text                        ^^^
+Pattern             ^^^^^^^^^^^^ 0:0-0:12
+VariableExpression  ^^^^^^^^^^^^ 0:0-0:12
+Variable             ^^^^        0:1-0:5
+Attribute                 ^^^^^  0:6-0:11
+Identifier                       0:7-0:7
+Text                        ^^^  0:8-0:11
 === diagnostics ===
 Attribute is missing a key after the '@' sign. (at @6..11)
   {$var @=bar}

@@ -2,14 +2,14 @@
 {{}}
 === spans ===
                      .input { $hello :space }↵{{}}
-ComplexMessage       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-InputDeclaration     ^^^^^^^^^^^^^^^^^^^^^^^^
-VariableExpression          ^^^^^^^^^^^^^^^^^
-Variable                      ^^^^^^
-Function                             ^^^^^^
-Identifier                            ^^^^^
-QuotedPattern                                 ^^^^
-Pattern             
+ComplexMessage       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ 0:1-1:4
+InputDeclaration     ^^^^^^^^^^^^^^^^^^^^^^^^      0:1-0:25
+VariableExpression          ^^^^^^^^^^^^^^^^^      0:8-0:25
+Variable                      ^^^^^^               0:10-0:16
+Function                             ^^^^^^        0:17-0:23
+Identifier                            ^^^^^        0:18-0:23
+QuotedPattern                                 ^^^^ 1:0-1:4
+Pattern                                            0:0-0:0
 === diagnostics ===
 
 === ast ===

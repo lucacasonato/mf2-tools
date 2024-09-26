@@ -1,12 +1,12 @@
 {1 @foo !bar}
 === spans ===
                     {1 @foo !bar}
-Pattern             ^^^^^^^^^^^^^
-LiteralExpression   ^^^^^^^^^^^^^
-Number               ^
-Number.integral      ^
-Attribute              ^^^^
-Identifier              ^^^
+Pattern             ^^^^^^^^^^^^^ 0:0-0:13
+LiteralExpression   ^^^^^^^^^^^^^ 0:0-0:13
+Number               ^            0:1-0:2
+Number.integral      ^            0:1-0:2
+Attribute              ^^^^       0:3-0:7
+Identifier              ^^^       0:4-0:7
 === diagnostics ===
 Placeholder expression contains invalid content. (at @8..12)
   {1 @foo !bar}

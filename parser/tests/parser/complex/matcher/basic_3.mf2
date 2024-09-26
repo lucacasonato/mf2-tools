@@ -1,24 +1,24 @@
 .match $a $b e 1{{f}}|g| *{{h}}
 === spans ===
                     .match $a $b e 1{{f}}|g| *{{h}}
-ComplexMessage      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-Matcher             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-Variable                   ^^
-Variable                      ^^
-Variant                          ^^^^^^^^
-Text                             ^
-Number                             ^
-Number.integral                    ^
-QuotedPattern                       ^^^^^
-Pattern                               ^
-Text                                  ^
-Variant                                  ^^^^^^^^^^
-Quoted                                   ^^^
-Text                                      ^
-Star                                         ^
-QuotedPattern                                 ^^^^^
-Pattern                                         ^
-Text                                            ^
+ComplexMessage      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ 0:0-0:31
+Matcher             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ 0:0-0:31
+Variable                   ^^                       0:7-0:9
+Variable                      ^^                    0:10-0:12
+Variant                          ^^^^^^^^           0:13-0:21
+Text                             ^                  0:13-0:14
+Number                             ^                0:15-0:16
+Number.integral                    ^                0:15-0:16
+QuotedPattern                       ^^^^^           0:16-0:21
+Pattern                               ^             0:18-0:19
+Text                                  ^             0:18-0:19
+Variant                                  ^^^^^^^^^^ 0:21-0:31
+Quoted                                   ^^^        0:21-0:24
+Text                                      ^         0:22-0:23
+Star                                         ^      0:25-0:26
+QuotedPattern                                 ^^^^^ 0:26-0:31
+Pattern                                         ^   0:28-0:29
+Text                                            ^   0:28-0:29
 === diagnostics ===
 
 === ast ===

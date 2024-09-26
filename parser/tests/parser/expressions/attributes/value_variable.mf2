@@ -1,13 +1,13 @@
 {1 @hello=$world}
 === spans ===
                     {1 @hello=$world}
-Pattern             ^^^^^^^^^^^^^^^^^
-LiteralExpression   ^^^^^^^^^^^^^^^^^
-Number               ^
-Number.integral      ^
-Attribute              ^^^^^^^
-Identifier              ^^^^^
-Text                          ^^^^^^
+Pattern             ^^^^^^^^^^^^^^^^^ 0:0-0:17
+LiteralExpression   ^^^^^^^^^^^^^^^^^ 0:0-0:17
+Number               ^                0:1-0:2
+Number.integral      ^                0:1-0:2
+Attribute              ^^^^^^^        0:3-0:10
+Identifier              ^^^^^         0:4-0:9
+Text                          ^^^^^^  0:10-0:16
 === diagnostics ===
 Attribute value can not be a variable, but must be a literal value. (at @10..16)
   {1 @hello=$world}

@@ -1,10 +1,10 @@
 a{abc def}
 === spans ===
                     a{abc def}
-Pattern             ^^^^^^^^^^
-Text                ^
-LiteralExpression    ^^^^^^^^^
-Text                  ^^^
+Pattern             ^^^^^^^^^^ 0:0-0:10
+Text                ^          0:0-0:1
+LiteralExpression    ^^^^^^^^^ 0:1-0:10
+Text                  ^^^      0:2-0:5
 === diagnostics ===
 Placeholder expression contains invalid content. (at @6..9)
   a{abc def}

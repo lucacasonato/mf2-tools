@@ -2,15 +2,15 @@
 a|b|{{}}
 === spans ===
                     .match $a↵a|b|{{}}
-ComplexMessage      ^^^^^^^^^^^^^^^^^^
-Matcher             ^^^^^^^^^^^^^^^^^^
-Variable                   ^^
-Variant                       ^^^^^^^^
-Text                          ^
-Quoted                         ^^^
-Text                            ^
-QuotedPattern                     ^^^^
-Pattern             
+ComplexMessage      ^^^^^^^^^^^^^^^^^^ 0:0-1:8
+Matcher             ^^^^^^^^^^^^^^^^^^ 0:0-1:8
+Variable                   ^^          0:7-0:9
+Variant                       ^^^^^^^^ 1:0-1:8
+Text                          ^        1:0-1:1
+Quoted                         ^^^     1:1-1:4
+Text                            ^      1:2-1:3
+QuotedPattern                     ^^^^ 1:4-1:8
+Pattern                                0:0-0:0
 === diagnostics ===
 Matcher key is missing a leading space. (at @11..14)
   .match $a↵a|b|{{}}

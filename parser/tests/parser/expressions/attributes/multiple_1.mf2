@@ -1,15 +1,15 @@
 {1 @hello=world @foo}
 === spans ===
                     {1 @hello=world @foo}
-Pattern             ^^^^^^^^^^^^^^^^^^^^^
-LiteralExpression   ^^^^^^^^^^^^^^^^^^^^^
-Number               ^
-Number.integral      ^
-Attribute              ^^^^^^^^^^^^
-Identifier              ^^^^^
-Text                          ^^^^^
-Attribute                           ^^^^
-Identifier                           ^^^
+Pattern             ^^^^^^^^^^^^^^^^^^^^^ 0:0-0:21
+LiteralExpression   ^^^^^^^^^^^^^^^^^^^^^ 0:0-0:21
+Number               ^                    0:1-0:2
+Number.integral      ^                    0:1-0:2
+Attribute              ^^^^^^^^^^^^       0:3-0:15
+Identifier              ^^^^^             0:4-0:9
+Text                          ^^^^^       0:10-0:15
+Attribute                           ^^^^  0:16-0:20
+Identifier                           ^^^  0:17-0:20
 === diagnostics ===
 
 === ast ===

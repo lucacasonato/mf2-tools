@@ -1,11 +1,11 @@
 {$var :number 1a=2}
 === spans ===
                     {$var :number 1a=2}
-Pattern             ^^^^^^^^^^^^^^^^^^^
-VariableExpression  ^^^^^^^^^^^^^^^^^^^
-Variable             ^^^^
-Function                  ^^^^^^^
-Identifier                 ^^^^^^
+Pattern             ^^^^^^^^^^^^^^^^^^^ 0:0-0:19
+VariableExpression  ^^^^^^^^^^^^^^^^^^^ 0:0-0:19
+Variable             ^^^^               0:1-0:5
+Function                  ^^^^^^^       0:6-0:13
+Identifier                 ^^^^^^       0:7-0:13
 === diagnostics ===
 Placeholder expression contains invalid content. (at @14..18)
   {$var :number 1a=2}

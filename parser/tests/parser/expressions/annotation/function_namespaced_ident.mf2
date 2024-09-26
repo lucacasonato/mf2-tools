@@ -1,10 +1,10 @@
 {:a:b}
 === spans ===
                     {:a:b}
-Pattern             ^^^^^^
-AnnotationExpression^^^^^^
-Function             ^^^^
-Identifier            ^^^
+Pattern             ^^^^^^ 0:0-0:6
+AnnotationExpression^^^^^^ 0:0-0:6
+Function             ^^^^  0:1-0:5
+Identifier            ^^^  0:2-0:5
 === diagnostics ===
 
 === ast ===

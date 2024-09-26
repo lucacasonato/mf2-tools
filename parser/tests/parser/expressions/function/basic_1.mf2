@@ -1,12 +1,12 @@
 Count: {$var :number}
 === spans ===
                     Count: {$var :number}
-Pattern             ^^^^^^^^^^^^^^^^^^^^^
-Text                ^^^^^^^
-VariableExpression         ^^^^^^^^^^^^^^
-Variable                    ^^^^
-Function                         ^^^^^^^
-Identifier                        ^^^^^^
+Pattern             ^^^^^^^^^^^^^^^^^^^^^ 0:0-0:21
+Text                ^^^^^^^               0:0-0:7
+VariableExpression         ^^^^^^^^^^^^^^ 0:7-0:21
+Variable                    ^^^^          0:8-0:12
+Function                         ^^^^^^^  0:13-0:20
+Identifier                        ^^^^^^  0:14-0:20
 === diagnostics ===
 
 === ast ===

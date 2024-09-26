@@ -1,10 +1,10 @@
 a{abc}
 === spans ===
                     a{abc}
-Pattern             ^^^^^^
-Text                ^
-LiteralExpression    ^^^^^
-Text                  ^^^
+Pattern             ^^^^^^ 0:0-0:6
+Text                ^      0:0-0:1
+LiteralExpression    ^^^^^ 0:1-0:6
+Text                  ^^^  0:2-0:5
 === diagnostics ===
 
 === ast ===

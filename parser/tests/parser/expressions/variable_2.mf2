@@ -1,9 +1,9 @@
 { $var}
 === spans ===
                     { $var}
-Pattern             ^^^^^^^
-VariableExpression  ^^^^^^^
-Variable              ^^^^
+Pattern             ^^^^^^^ 0:0-0:7
+VariableExpression  ^^^^^^^ 0:0-0:7
+Variable              ^^^^  0:2-0:6
 === diagnostics ===
 
 === ast ===

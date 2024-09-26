@@ -1,12 +1,12 @@
 {#@foo = bar }
 === spans ===
                     {#@foo = bar }
-Pattern             ^^^^^^^^^^^^^^
-Markup              ^^^^^^^^^^^^^^
-Identifier            
-Attribute             ^^^^^^^^^^
-Identifier             ^^^
-Text                         ^^^
+Pattern             ^^^^^^^^^^^^^^ 0:0-0:14
+Markup              ^^^^^^^^^^^^^^ 0:0-0:14
+Identifier                         0:2-0:2
+Attribute             ^^^^^^^^^^   0:2-0:12
+Identifier             ^^^         0:3-0:6
+Text                         ^^^   0:9-0:12
 === diagnostics ===
 Attribute is missing a leading space. (at @2..12)
   {#@foo = bar }

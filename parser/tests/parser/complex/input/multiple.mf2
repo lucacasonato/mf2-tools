@@ -3,19 +3,19 @@
 {{}}
 === spans ===
                     .input {$var :number}↵.input {$var2 :number}↵{{}}
-ComplexMessage      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-InputDeclaration    ^^^^^^^^^^^^^^^^^^^^^
-VariableExpression         ^^^^^^^^^^^^^^
-Variable                    ^^^^
-Function                         ^^^^^^^
-Identifier                        ^^^^^^
-InputDeclaration                          ^^^^^^^^^^^^^^^^^^^^^^
-VariableExpression                               ^^^^^^^^^^^^^^^
-Variable                                          ^^^^^
-Function                                                ^^^^^^^
-Identifier                                               ^^^^^^
-QuotedPattern                                                    ^^^^
-Pattern             
+ComplexMessage      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ 0:0-2:4
+InputDeclaration    ^^^^^^^^^^^^^^^^^^^^^                             0:0-0:21
+VariableExpression         ^^^^^^^^^^^^^^                             0:7-0:21
+Variable                    ^^^^                                      0:8-0:12
+Function                         ^^^^^^^                              0:13-0:20
+Identifier                        ^^^^^^                              0:14-0:20
+InputDeclaration                          ^^^^^^^^^^^^^^^^^^^^^^      1:0-1:22
+VariableExpression                               ^^^^^^^^^^^^^^^      1:7-1:22
+Variable                                          ^^^^^               1:8-1:13
+Function                                                ^^^^^^^       1:14-1:21
+Identifier                                               ^^^^^^       1:15-1:21
+QuotedPattern                                                    ^^^^ 2:0-2:4
+Pattern                                                               0:0-0:0
 === diagnostics ===
 
 === ast ===

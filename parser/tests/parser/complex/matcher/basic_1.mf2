@@ -2,14 +2,14 @@
 c {{d}}
 === spans ===
                     .match $a↵c {{d}}
-ComplexMessage      ^^^^^^^^^^^^^^^^^
-Matcher             ^^^^^^^^^^^^^^^^^
-Variable                   ^^
-Variant                       ^^^^^^^
-Text                          ^
-QuotedPattern                   ^^^^^
-Pattern                           ^
-Text                              ^
+ComplexMessage      ^^^^^^^^^^^^^^^^^ 0:0-1:7
+Matcher             ^^^^^^^^^^^^^^^^^ 0:0-1:7
+Variable                   ^^         0:7-0:9
+Variant                       ^^^^^^^ 1:0-1:7
+Text                          ^       1:0-1:1
+QuotedPattern                   ^^^^^ 1:2-1:7
+Pattern                           ^   1:4-1:5
+Text                              ^   1:4-1:5
 === diagnostics ===
 
 === ast ===

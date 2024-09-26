@@ -1,9 +1,9 @@
 {/foo /}
 === spans ===
                     {/foo /}
-Pattern             ^^^^^^^^
-Markup              ^^^^^^^^
-Identifier            ^^^
+Pattern             ^^^^^^^^ 0:0-0:8
+Markup              ^^^^^^^^ 0:0-0:8
+Identifier            ^^^    0:2-0:5
 === diagnostics ===
 Markup tag can not be self-closing if it is a close tag. (at @6..7)
   {/foo /}

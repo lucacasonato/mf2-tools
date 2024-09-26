@@ -14,6 +14,7 @@ use mf2_parser::ast;
 use mf2_parser::ast::Message;
 use mf2_parser::parse;
 use mf2_parser::Diagnostic;
+use mf2_parser::SourceTextInfo;
 use mf2_parser::Span;
 use mf2_parser::Spanned;
 use mf2_parser::Visit;
@@ -76,11 +77,11 @@ fn run_test(test: &CollectedTest) {
     })
     .collect::<String>();
 
-  let (actual_ast, diagnostics, _info) = parse(message);
+  let (actual_ast, diagnostics, info) = parse(message);
 
   let actual_ast_dbg = generated_actual_ast_dbg(&actual_ast);
   let actual_spans =
-    generate_actual_spans(&actual_ast, message, &normalized_message);
+    generate_actual_spans(&actual_ast, message, &normalized_message, &info);
   let actual_diags =
     generate_actual_diagnostics(&diagnostics, message, &normalized_message);
 
@@ -152,11 +153,13 @@ fn generate_actual_spans(
   actual_ast: &Message,
   input_message: &str,
   normalized_message: &str,
+  source_text_info: &SourceTextInfo<'_>,
 ) -> String {
   const SPAN_LABEL_WIDTH: usize = 20;
   struct SpanDebuggerVisitor<'text> {
     input_message: &'text str,
     output: &'text mut String,
+    source_text_info: &'text SourceTextInfo<'text>,
   }
 
   impl SpanDebuggerVisitor<'_> {
@@ -168,13 +171,20 @@ fn generate_actual_spans(
 
       let prefix = &self.input_message[0..span_start];
       let contents = &self.input_message[span_start..span_end];
+      let suffix = &self.input_message[span_end..];
+
+      let span_start_pos = self.source_text_info.utf8_line_col(span.start);
+      let span_end_pos = self.source_text_info.utf8_line_col(span.end);
 
       write!(
         self.output,
-        "\n{:<SPAN_LABEL_WIDTH$}{}{}",
+        "\n{:<SPAN_LABEL_WIDTH$}{}{}{} {:?}-{:?}",
         name,
         " ".repeat(prefix.width_cjk()),
-        "^".repeat(contents.width_cjk())
+        "^".repeat(contents.width_cjk()),
+        " ".repeat(suffix.width_cjk()),
+        span_start_pos,
+        span_end_pos
       )
       .unwrap();
     }
@@ -235,6 +245,7 @@ fn generate_actual_spans(
   actual_ast.apply_visitor(&mut SpanDebuggerVisitor {
     input_message,
     output: &mut output,
+    source_text_info,
   });
 
   output

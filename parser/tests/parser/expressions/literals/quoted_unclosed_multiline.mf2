@@ -2,9 +2,9 @@
 def
 === spans ===
                     { |abc↵def
-Pattern             ^^^^^^^^^^
-LiteralExpression   ^^^^^^^^^^
-Quoted                ^^^^^^^^
+Pattern             ^^^^^^^^^^ 0:0-1:3
+LiteralExpression   ^^^^^^^^^^ 0:0-1:3
+Quoted                ^^^^^^^^ 0:2-1:3
 === diagnostics ===
 Quoted string is missing the closing quote. (at @2..10)
   { |abc↵def

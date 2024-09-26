@@ -1,12 +1,12 @@
 {#el option }
 === spans ===
                     {#el option }
-Pattern             ^^^^^^^^^^^^^
-Markup              ^^^^^^^^^^^^^
-Identifier            ^^
-FnOrMarkupOption         ^^^^^^
-Identifier               ^^^^^^
-Text                           
+Pattern             ^^^^^^^^^^^^^ 0:0-0:13
+Markup              ^^^^^^^^^^^^^ 0:0-0:13
+Identifier            ^^          0:2-0:4
+FnOrMarkupOption         ^^^^^^   0:5-0:11
+Identifier               ^^^^^^   0:5-0:11
+Text                              0:11-0:11
 === diagnostics ===
 Found an identifier followed by an equals sign, but not followed by a value. Did you forget to add a value to make this an option? (at @5..11)
   {#el option }

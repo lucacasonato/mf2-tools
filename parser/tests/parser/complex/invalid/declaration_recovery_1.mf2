@@ -2,13 +2,13 @@
 {{}}
 === spans ===
                     .foo $var %.local $hello = {world}↵{{}}
-ComplexMessage      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-LocalDeclaration               ^^^^^^^^^^^^^^^^^^^^^^^
-Variable                              ^^^^^^
-LiteralExpression                              ^^^^^^^
-Text                                            ^^^^^
-QuotedPattern                                          ^^^^
-Pattern             
+ComplexMessage      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ 0:0-1:4
+LocalDeclaration               ^^^^^^^^^^^^^^^^^^^^^^^      0:11-0:34
+Variable                              ^^^^^^                0:18-0:24
+LiteralExpression                              ^^^^^^^      0:27-0:34
+Text                                            ^^^^^       0:28-0:33
+QuotedPattern                                          ^^^^ 1:0-1:4
+Pattern                                                     0:0-0:0
 === diagnostics ===
 Found a statement that is invalid because the keyword 'foo' is keyword. (at @0..11)
   .foo $var %.local $hello = {world}↵{{}}
