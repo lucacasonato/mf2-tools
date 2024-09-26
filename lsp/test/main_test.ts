@@ -190,4 +190,55 @@ Deno.test("scope diagnostics", async (t) => {
       version: 3,
     });
   });
-})
+});
+
+Deno.test("variable rename", async () => {
+  await using lsp = new LSPTest();
+  await lsp.initialize();
+
+  await lsp.notify(
+    "textDocument/didOpen",
+    {
+      textDocument: {
+        uri: "file:///src/main.mf2",
+        languageId: "mf2",
+        version: 1,
+        text: ".local $foo = {1} .local $bar = {$foo}\n\n.match $foo 1 {{}}",
+      },
+    },
+  );
+
+  const response = await lsp.request("textDocument/rename", {
+    textDocument: { uri: "file:///src/main.mf2" },
+    position: { line: 0, character: 8 },
+    newName: "hello",
+  });
+
+  assertEquals(response, {
+    changes: {
+      "file:///src/main.mf2": [
+        {
+          newText: "$hello",
+          range: {
+            start: { character: 7, line: 0 },
+            end: { character: 11, line: 0 },
+          },
+        },
+        {
+          newText: "$hello",
+          range: {
+            start: { character: 33, line: 0 },
+            end: { character: 37, line: 0 },
+          },
+        },
+        {
+          newText: "$hello",
+          range: {
+            start: { character: 7, line: 2 },
+            end: { character: 11, line: 2 },
+          },
+        },
+      ],
+    },
+  });
+});
