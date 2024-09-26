@@ -173,8 +173,8 @@ fn generate_actual_spans(
       let contents = &self.input_message[span_start..span_end];
       let suffix = &self.input_message[span_end..];
 
-      let span_start_pos = self.source_text_info.utf16_line_col(span.start);
-      let span_end_pos = self.source_text_info.utf16_line_col(span.end);
+      let span_start_pos = self.source_text_info.utf8_line_col(span.start);
+      let span_end_pos = self.source_text_info.utf8_line_col(span.end);
 
       write!(
         self.output,
