@@ -296,7 +296,7 @@ Deno.test("variable rename", async (t) => {
 
     assertEquals(error, {
       code: -32803,
-      message: "Error handling request textDocument/rename: No variable to rename at the given position",
+      message: "No variable to rename at the given position",
     });
   });
 
@@ -309,7 +309,7 @@ Deno.test("variable rename", async (t) => {
 
     assertEquals(error, {
       code: -32803,
-      message: "Error handling request textDocument/rename: Invalid variable name",
+      message: "Invalid variable name",
     });
   });
 });

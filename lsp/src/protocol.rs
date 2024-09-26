@@ -101,9 +101,8 @@ macro_rules! language_server {
                     }
                   },
                   Err(err) => {
-                    let message = format!("Error handling request {}: {:?}", <$request_typ as lsp_types::request::Request>::METHOD, err);
                     const REQUEST_FAILED_ERROR_CODE: i32 = -32803;
-                    lsp_server::Response::new_err(request.id, REQUEST_FAILED_ERROR_CODE, message)
+                    lsp_server::Response::new_err(request.id, REQUEST_FAILED_ERROR_CODE, err.to_string())
                   }
                 }
               }
