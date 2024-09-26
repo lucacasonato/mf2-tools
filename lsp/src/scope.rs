@@ -1,3 +1,5 @@
+use std::collections::HashMap;
+
 use mf2_parser::Span;
 use mf2_parser::Spanned as _;
 use mf2_parser::Visitable as _;
@@ -5,14 +7,13 @@ use mf2_parser::Visitable as _;
 use crate::diagnostics::Diagnostic;
 use crate::diagnostics::ScopeDiagnostic;
 
-pub struct Variable<'a> {
-  name: &'a str,
+pub struct VariableUsage {
   declaration: Option<Span>,
   references: Vec<Span>,
 }
 
 pub struct ScopeVisitor<'text> {
-  variables: Vec<Variable<'text>>,
+  variables: HashMap<&'text str, VariableUsage>,
   pub diagnostics: Vec<Diagnostic<'text>>,
 }
 
@@ -20,7 +21,7 @@ impl<'text> ScopeVisitor<'text> {
   pub fn new(diagnostics: Vec<Diagnostic<'text>>) -> ScopeVisitor<'text> {
     ScopeVisitor {
       diagnostics,
-      variables: Vec::new(),
+      variables: HashMap::new(),
     }
   }
 
@@ -28,9 +29,7 @@ impl<'text> ScopeVisitor<'text> {
     &mut self,
     var: &'ast mf2_parser::ast::Variable<'text>,
   ) {
-    if let Some(existing) =
-      self.variables.iter_mut().find(|v| v.name == var.name)
-    {
+    if let Some(existing) = self.variables.get_mut(var.name) {
       if let Some(existing_span) = existing.declaration {
         self.diagnostics.push(Diagnostic::Scope(
           ScopeDiagnostic::DuplicateDeclaration {
@@ -55,11 +54,13 @@ impl<'text> ScopeVisitor<'text> {
         existing.declaration = Some(var.span());
       }
     } else {
-      self.variables.push(Variable {
-        name: var.name,
-        declaration: Some(var.span()),
-        references: Vec::new(),
-      });
+      self.variables.insert(
+        var.name,
+        VariableUsage {
+          declaration: Some(var.span()),
+          references: Vec::new(),
+        },
+      );
     }
   }
 
@@ -67,16 +68,16 @@ impl<'text> ScopeVisitor<'text> {
     &mut self,
     var: &'ast mf2_parser::ast::Variable<'text>,
   ) {
-    if let Some(existing) =
-      self.variables.iter_mut().find(|v| v.name == var.name)
-    {
+    if let Some(existing) = self.variables.get_mut(var.name) {
       existing.references.push(var.span());
     } else {
-      self.variables.push(Variable {
-        name: var.name,
-        declaration: None,
-        references: vec![var.span()],
-      });
+      self.variables.insert(
+        var.name,
+        VariableUsage {
+          declaration: None,
+          references: vec![var.span()],
+        },
+      );
     }
   }
 }
@@ -97,9 +98,6 @@ impl<'ast, 'text> mf2_parser::Visit<'ast, 'text> for ScopeVisitor<'text> {
   ) {
     if let Some(annotation) = &decl.expression.annotation {
       annotation.apply_visitor(self);
-    }
-    for attribute in &decl.expression.attributes {
-      attribute.apply_visitor(self);
     }
 
     self.push_variable_declaration(&decl.expression.variable);
