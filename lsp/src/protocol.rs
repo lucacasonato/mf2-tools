@@ -150,6 +150,8 @@ language_server! {
     code_action: CodeActionRequest,
     rename: RenameRequest,
     prepare_rename: PrepareRenameRequest,
+    semantic_tokens_full: lsp_types::request::SemanticTokensFullRequest,
+    semantic_tokens_range: lsp_types::request::SemanticTokensRangeRequest,
   }
 }
 
