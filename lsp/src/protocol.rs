@@ -5,6 +5,7 @@ use lsp_types::notification::DidOpenTextDocument;
 use lsp_types::notification::PublishDiagnostics;
 use lsp_types::request::CodeActionRequest;
 use lsp_types::request::HoverRequest;
+use lsp_types::request::PrepareRenameRequest;
 use lsp_types::request::Rename as RenameRequest;
 
 pub struct LanguageClient<'a> {
@@ -149,6 +150,7 @@ language_server! {
     hover: HoverRequest,
     code_action: CodeActionRequest,
     rename: RenameRequest,
+    prepare_rename: PrepareRenameRequest,
   }
 }
 

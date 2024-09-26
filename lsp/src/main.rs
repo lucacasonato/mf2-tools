@@ -18,6 +18,7 @@ use lsp_types::TextDocumentSyncCapability;
 use lsp_types::TextDocumentSyncKind;
 use lsp_types::Uri;
 use mf2_parser::ast::AnyNode;
+use mf2_parser::is_valid_name;
 use mf2_parser::Spanned;
 
 use std::collections::hash_map::Entry;
@@ -53,7 +54,10 @@ fn main() -> Result<(), anyhow::Error> {
         },
       ),
     ),
-    rename_provider: Some(lsp_types::OneOf::Left(true)),
+    rename_provider: Some(lsp_types::OneOf::Right(lsp_types::RenameOptions {
+      prepare_provider: Some(true),
+      work_done_progress_options: lsp_types::WorkDoneProgressOptions::default(),
+    })),
     ..ServerCapabilities::default()
   };
 
@@ -246,6 +250,10 @@ impl LanguageServer for Server<'_> {
       .get(node.name)
       .expect("Variable not found in scope");
 
+    if !is_valid_name(&params.new_name) {
+      return Err(anyhow::Error::msg("Invalid variable name"));
+    }
+
     let mut changes = Vec::new();
 
     if let Some(declaration_span) = usage.declaration {
@@ -266,6 +274,25 @@ impl LanguageServer for Server<'_> {
       document_changes: None,
       change_annotations: None,
     }))
+  }
+
+  fn prepare_rename(
+    &mut self,
+    params: lsp_types::TextDocumentPositionParams,
+  ) -> Result<Option<lsp_types::PrepareRenameResponse>, anyhow::Error> {
+    let maybe_document = self.documents.get(&params.text_document.uri);
+    let Some(document) = maybe_document else {
+      return Ok(None);
+    };
+
+    let maybe_node = document.find_node(params.position);
+    let Some(AnyNode::Variable(node)) = maybe_node else {
+      return Ok(None);
+    };
+
+    Ok(Some(lsp_types::PrepareRenameResponse::Range(
+      document.span_to_range(node.name_span()),
+    )))
   }
 }
 
