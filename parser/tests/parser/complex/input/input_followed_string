@@ -3,8 +3,6 @@
 === spans ===
                     .input $foo↵{{}}
 ComplexMessage      ^^^^^^^^^^^^^^^^
-Declaration         ^^^^^^
-ReservedStatement   ^^^^^^
 QuotedPattern              ^^^^^^^^^
 Pattern                    ^^^^^^^^^
 Text                       ^^^^^^^^^
@@ -20,14 +18,8 @@ Using an unquoted pattern as the body is invalid, because the message contains d
          ^^^^^^^^^
 === ast ===
 ComplexMessage {
-    declarations: [
-        ReservedStatement {
-            start: @0,
-            name: "input",
-            body: [],
-            expressions: [],
-        },
-    ],
+    span: @0..16,
+    declarations: [],
     body: QuotedPattern {
         span: @7..16,
         pattern: Pattern {

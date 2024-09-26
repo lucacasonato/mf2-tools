@@ -2,7 +2,7 @@
 .match $a a {{}}
 === spans ===
                     {{}}↵.match $a a {{}}
-ComplexMessage      ^^^^
+ComplexMessage      ^^^^^^^^^^^^^^^^^^^^^
 QuotedPattern       ^^^^
 Pattern             
 === diagnostics ===
@@ -11,6 +11,7 @@ Message has multiple bodies, but only one is allowed. (at @5..21)
        ^^^^^^^^^^^^^^^^
 === ast ===
 ComplexMessage {
+    span: @0..21,
     declarations: [],
     body: QuotedPattern {
         span: @0..4,

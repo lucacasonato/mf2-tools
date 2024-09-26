@@ -3,10 +3,6 @@
 === spans ===
                     .foo $var %.local $hello = {world}↵{{}}
 ComplexMessage      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-Declaration         ^^^^^^^^^^^
-ReservedStatement   ^^^^^^^^^^^
-Text                     ^^^^^^
-Declaration                    ^^^^^^^^^^^^^^^^^^^^^^^
 LocalDeclaration               ^^^^^^^^^^^^^^^^^^^^^^^
 Variable                              ^^^^^^
 LiteralExpression                              ^^^^^^^
@@ -14,23 +10,13 @@ Text                                            ^^^^^
 QuotedPattern                                          ^^^^
 Pattern             
 === diagnostics ===
-Reserved statement does not end with an expression, but it must. (at @0..11)
+Found a statement that is invalid because the keyword 'foo' is keyword. (at @0..11)
   .foo $var %.local $hello = {world}↵{{}}
   ^^^^^^^^^^^
 === ast ===
 ComplexMessage {
+    span: @0..39,
     declarations: [
-        ReservedStatement {
-            start: @0,
-            name: "foo",
-            body: [
-                Text {
-                    start: @5,
-                    content: "$var %",
-                },
-            ],
-            expressions: [],
-        },
         LocalDeclaration {
             start: @11,
             variable: Variable {

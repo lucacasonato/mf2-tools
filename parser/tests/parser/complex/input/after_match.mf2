@@ -4,13 +4,11 @@
 === spans ===
                     .local $a = {1}↵.match $a * {{}}↵.input {$b :a}
 ComplexMessage      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-Declaration         ^^^^^^^^^^^^^^^
 LocalDeclaration    ^^^^^^^^^^^^^^^
 Variable                   ^^
 LiteralExpression               ^^^
 Number                           ^
 Number.integral                  ^
-Declaration                                          ^^^^^^^^^^^^^^
 InputDeclaration                                     ^^^^^^^^^^^^^^
 VariableExpression                                          ^^^^^^^
 Variable                                                     ^^
@@ -28,6 +26,7 @@ Declarations are not valid after the message body. Did you mean to put the decla
                                    ^^^^^^^^^^^^^^
 === ast ===
 ComplexMessage {
+    span: @0..47,
     declarations: [
         LocalDeclaration {
             start: @0,

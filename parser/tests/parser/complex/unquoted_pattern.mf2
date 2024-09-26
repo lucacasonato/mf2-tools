@@ -3,7 +3,6 @@ abc {$a}
 === spans ===
                     .input {$a :b}↵abc {$a}
 ComplexMessage      ^^^^^^^^^^^^^^^^^^^^^^^
-Declaration         ^^^^^^^^^^^^^^
 InputDeclaration    ^^^^^^^^^^^^^^
 VariableExpression         ^^^^^^^
 Variable                    ^^
@@ -20,6 +19,7 @@ Using an unquoted pattern as the body is invalid, because the message contains d
                  ^^^^^^^^
 === ast ===
 ComplexMessage {
+    span: @0..23,
     declarations: [
         InputDeclaration {
             start: @0,

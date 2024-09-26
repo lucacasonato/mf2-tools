@@ -3,7 +3,6 @@
 === spans ===
                     .local $var↵{{}}
 ComplexMessage      ^^^^^^^^^^^^^^^^
-Declaration         ^^^^^^^^^^^
 LocalDeclaration    ^^^^^^^^^^^
 Variable                   ^^^^
 LiteralExpression              
@@ -19,6 +18,7 @@ Local declaration is missing an expression as the value after the equals sign. (
   ^^^^^^
 === ast ===
 ComplexMessage {
+    span: @0..16,
     declarations: [
         LocalDeclaration {
             start: @0,

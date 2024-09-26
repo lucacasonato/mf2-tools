@@ -1,0 +1,16 @@
+  Hello
+=== spans ===
+                      Hello
+Pattern             ^^^^^^^
+Text                ^^^^^^^
+=== diagnostics ===
+
+=== ast ===
+Pattern {
+    parts: [
+        Text {
+            start: @0,
+            content: "  Hello",
+        },
+    ],
+}

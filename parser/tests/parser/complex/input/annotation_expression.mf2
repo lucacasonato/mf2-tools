@@ -3,11 +3,6 @@
 === spans ===
                     .input {:foo}↵{{}}
 ComplexMessage      ^^^^^^^^^^^^^^^^^^
-Declaration         ^^^^^^^^^^^^^
-ReservedStatement   ^^^^^^^^^^^^^
-AnnotationExpression       ^^^^^^
-Function                    ^^^^
-Identifier                   ^^^
 QuotedPattern                     ^^^^
 Pattern             
 === diagnostics ===
@@ -16,28 +11,8 @@ Input declaration has a non-variable expression, which is invalid. Did you mean 
   ^^^^^^^^^^^^^
 === ast ===
 ComplexMessage {
-    declarations: [
-        ReservedStatement {
-            start: @0,
-            name: "input",
-            body: [],
-            expressions: [
-                AnnotationExpression {
-                    span: @7..13,
-                    annotation: Function {
-                        start: @8,
-                        id: Identifier {
-                            start: @9,
-                            namespace: None,
-                            name: "foo",
-                        },
-                        options: [],
-                    },
-                    attributes: [],
-                },
-            ],
-        },
-    ],
+    span: @0..18,
+    declarations: [],
     body: QuotedPattern {
         span: @14..18,
         pattern: Pattern {

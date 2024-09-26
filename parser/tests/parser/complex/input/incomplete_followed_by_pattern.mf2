@@ -3,8 +3,6 @@
 === spans ===
                     .input↵{{}}
 ComplexMessage      ^^^^^^^^^^^
-Declaration         ^^^^^^
-ReservedStatement   ^^^^^^
 QuotedPattern              ^^^^
 Pattern             
 === diagnostics ===
@@ -13,14 +11,8 @@ Input declaration is missing an expression. (at @0..6)
   ^^^^^^
 === ast ===
 ComplexMessage {
-    declarations: [
-        ReservedStatement {
-            start: @0,
-            name: "input",
-            body: [],
-            expressions: [],
-        },
-    ],
+    span: @0..11,
+    declarations: [],
     body: QuotedPattern {
         span: @7..11,
         pattern: Pattern {

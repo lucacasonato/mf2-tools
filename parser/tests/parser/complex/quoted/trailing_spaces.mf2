@@ -9,6 +9,7 @@ Text                  ^^^^^^^^^^^^^^^
 
 === ast ===
 ComplexMessage {
+    span: @0..19,
     declarations: [],
     body: QuotedPattern {
         span: @0..19,

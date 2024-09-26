@@ -4,13 +4,11 @@
 === spans ===
                     .input {$var :number}↵.input {$var2 :number}↵{{}}
 ComplexMessage      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-Declaration         ^^^^^^^^^^^^^^^^^^^^^
 InputDeclaration    ^^^^^^^^^^^^^^^^^^^^^
 VariableExpression         ^^^^^^^^^^^^^^
 Variable                    ^^^^
 Function                         ^^^^^^^
 Identifier                        ^^^^^^
-Declaration                               ^^^^^^^^^^^^^^^^^^^^^^
 InputDeclaration                          ^^^^^^^^^^^^^^^^^^^^^^
 VariableExpression                               ^^^^^^^^^^^^^^^
 Variable                                          ^^^^^
@@ -22,6 +20,7 @@ Pattern
 
 === ast ===
 ComplexMessage {
+    span: @0..49,
     declarations: [
         InputDeclaration {
             start: @0,

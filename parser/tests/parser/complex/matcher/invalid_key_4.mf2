@@ -22,6 +22,7 @@ Found an invalid matcher key (not a valid literal). Did you mean to quote the ke
                         ^^^^
 === ast ===
 ComplexMessage {
+    span: @0..33,
     declarations: [],
     body: Matcher {
         start: @0,

@@ -2,7 +2,7 @@
 .match $a a {{}}
 === spans ===
                     .match $a a {{}}↵.match $a a {{}}
-ComplexMessage      ^^^^^^^^^^^^^^^^
+ComplexMessage      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 Matcher             ^^^^^^^^^^^^^^^^
 Variable                   ^^
 Variant                       ^^^^^^
@@ -15,6 +15,7 @@ Message has multiple bodies, but only one is allowed. (at @17..33)
                    ^^^^^^^^^^^^^^^^
 === ast ===
 ComplexMessage {
+    span: @0..33,
     declarations: [],
     body: Matcher {
         start: @0,

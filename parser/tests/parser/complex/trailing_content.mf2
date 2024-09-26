@@ -1,0 +1,21 @@
+{{}} asd
+=== spans ===
+                    {{}} asd
+ComplexMessage      ^^^^^^^^
+QuotedPattern       ^^^^
+Pattern             
+=== diagnostics ===
+Message has additional invalid content after the body. (at @5..8)
+  {{}} asd
+       ^^^
+=== ast ===
+ComplexMessage {
+    span: @0..8,
+    declarations: [],
+    body: QuotedPattern {
+        span: @0..4,
+        pattern: Pattern {
+            parts: [],
+        },
+    },
+}

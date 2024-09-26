@@ -11,6 +11,7 @@ Quoted pattern is missing the closing braces ('}'). (at @0..15)
   ^^^^^^^^^^^^^^^
 === ast ===
 ComplexMessage {
+    span: @0..15,
     declarations: [],
     body: QuotedPattern {
         span: @0..15,

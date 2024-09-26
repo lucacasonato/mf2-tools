@@ -3,11 +3,6 @@
 === spans ===
                     .input {1}↵{{}}
 ComplexMessage      ^^^^^^^^^^^^^^^
-Declaration         ^^^^^^^^^^
-ReservedStatement   ^^^^^^^^^^
-LiteralExpression          ^^^
-Number                      ^
-Number.integral             ^
 QuotedPattern                  ^^^^
 Pattern             
 === diagnostics ===
@@ -16,28 +11,8 @@ Input declaration has a non-variable expression, which is invalid. Did you mean 
   ^^^^^^^^^^
 === ast ===
 ComplexMessage {
-    declarations: [
-        ReservedStatement {
-            start: @0,
-            name: "input",
-            body: [],
-            expressions: [
-                LiteralExpression {
-                    span: @7..10,
-                    literal: Number {
-                        start: @8,
-                        raw: "1",
-                        is_negative: false,
-                        integral_len: 1,
-                        fractional_len: None,
-                        exponent_len: None,
-                    },
-                    annotation: None,
-                    attributes: [],
-                },
-            ],
-        },
-    ],
+    span: @0..15,
+    declarations: [],
     body: QuotedPattern {
         span: @11..15,
         pattern: Pattern {

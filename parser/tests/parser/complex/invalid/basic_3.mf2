@@ -1,0 +1,22 @@
+.foo {:hello} {foo} {bar}
+{{}}
+=== spans ===
+                    .foo {:hello} {foo} {bar}↵{{}}
+ComplexMessage      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+QuotedPattern                                 ^^^^
+Pattern             
+=== diagnostics ===
+Found a statement that is invalid because the keyword 'foo' is keyword. (at @0..25)
+  .foo {:hello} {foo} {bar}↵{{}}
+  ^^^^^^^^^^^^^^^^^^^^^^^^^
+=== ast ===
+ComplexMessage {
+    span: @0..30,
+    declarations: [],
+    body: QuotedPattern {
+        span: @26..30,
+        pattern: Pattern {
+            parts: [],
+        },
+    },
+}

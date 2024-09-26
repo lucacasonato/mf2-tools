@@ -3,7 +3,6 @@
 === spans ===
                     .local $count = 123↵{{{$count}}}
 ComplexMessage      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-Declaration         ^^^^^^^^^^^^^^^^^^^
 LocalDeclaration    ^^^^^^^^^^^^^^^^^^^
 Variable                   ^^^^^^
 LiteralExpression                   ^^^
@@ -19,6 +18,7 @@ Value of a local declaration is a literal or variable, but must be an expression
                   ^^^
 === ast ===
 ComplexMessage {
+    span: @0..32,
     declarations: [
         LocalDeclaration {
             start: @0,

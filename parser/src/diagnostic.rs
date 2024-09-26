@@ -227,12 +227,12 @@ diagnostics! {
       message: ("Found an invalid matcher key (not a valid literal). Did you mean to quote the key to make it a literal?"),
       span: *span,
     },
-    ReservedStatementMissingSpaceBeforeBody { span: Span } => {
-      message: ("Reserved statement is missing a space before the contents."),
+    InvalidStatement { span: Span, keyword: &'text str } => {
+      message: ("Found a statement that is invalid because the keyword '{keyword}' is keyword."),
       span: *span,
     },
-    ReservedStatementMissingExpression { span: Span } => {
-      message: ("Reserved statement does not end with an expression, but it must."),
+    LocalDeclarationMalformed { span: Span } => {
+      message: ("Found a local declaration that is missing or malformed name."),
       span: *span,
     },
     LocalDeclarationValueNotWrappedInBraces { span: Span } => {

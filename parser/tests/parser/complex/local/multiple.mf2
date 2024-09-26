@@ -4,13 +4,11 @@
 === spans ===
                     .local $var = {|hello|}↵.local $var2 = {|hello|}↵{{}}
 ComplexMessage      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-Declaration         ^^^^^^^^^^^^^^^^^^^^^^^
 LocalDeclaration    ^^^^^^^^^^^^^^^^^^^^^^^
 Variable                   ^^^^
 LiteralExpression                 ^^^^^^^^^
 Quoted                             ^^^^^^^
 Text                                ^^^^^
-Declaration                                 ^^^^^^^^^^^^^^^^^^^^^^^^
 LocalDeclaration                            ^^^^^^^^^^^^^^^^^^^^^^^^
 Variable                                           ^^^^^
 LiteralExpression                                          ^^^^^^^^^
@@ -22,6 +20,7 @@ Pattern
 
 === ast ===
 ComplexMessage {
+    span: @0..53,
     declarations: [
         LocalDeclaration {
             start: @0,

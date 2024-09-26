@@ -43,8 +43,6 @@ pub trait Visit<'ast, 'text> {
   visit!(visit_declaration, decl, Declaration<'text>);
   visit!(visit_input_declaration, decl, InputDeclaration<'text>);
   visit!(visit_local_declaration, decl, LocalDeclaration<'text>);
-  visit!(visit_reserved_body_part, part, ReservedBodyPart<'text>);
-  visit!(visit_reserved_statement, stmt, ReservedStatement<'text>);
   visit!(visit_complex_message_body, body, ComplexMessageBody<'text>);
   visit!(visit_quoted_pattern, pattern, QuotedPattern<'text>);
   visit!(visit_matcher, matcher, Matcher<'text>);
@@ -128,8 +126,6 @@ where
   any_visit!(visit_declaration, decl, Declaration);
   any_visit!(visit_input_declaration, decl, InputDeclaration);
   any_visit!(visit_local_declaration, decl, LocalDeclaration);
-  any_visit!(visit_reserved_body_part, part, ReservedBodyPart);
-  any_visit!(visit_reserved_statement, stmt, ReservedStatement);
   any_visit!(visit_complex_message_body, body, ComplexMessageBody);
   any_visit!(visit_quoted_pattern, pattern, QuotedPattern);
   any_visit!(visit_matcher, matcher, Matcher);

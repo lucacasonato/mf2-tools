@@ -16,6 +16,7 @@ Matcher variant is missing a body. (at @10..11)
             ^
 === ast ===
 ComplexMessage {
+    span: @0..11,
     declarations: [],
     body: Matcher {
         start: @0,
