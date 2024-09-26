@@ -5,7 +5,6 @@ use mf2_parser::Visitable as _;
 use crate::diagnostics::Diagnostic;
 use crate::diagnostics::ScopeDiagnostic;
 
-
 pub struct Variable<'a> {
   name: &'a str,
   declaration: Option<Span>,

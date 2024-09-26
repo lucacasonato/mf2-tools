@@ -20,7 +20,7 @@ pub enum ScopeDiagnostic<'text> {
     #[allow(dead_code)]
     declaration_span: Span,
     usage_span: Span,
-  }
+  },
 }
 
 #[allow(unused_variables)]
