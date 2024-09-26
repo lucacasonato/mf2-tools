@@ -1,13 +1,13 @@
 {#foo name:spaced=1}
 === spans ===
                     {#foo name:spaced=1}
-Pattern             ^^^^^^^^^^^^^^^^^^^^
-Markup              ^^^^^^^^^^^^^^^^^^^^
-Identifier            ^^^
-FnOrMarkupOption          ^^^^^^^^^^^^^
-Identifier                ^^^^^^^^^^^
-Number                                ^
-Number.integral                       ^
+Pattern             ^^^^^^^^^^^^^^^^^^^^ 0:0-0:20
+Markup              ^^^^^^^^^^^^^^^^^^^^ 0:0-0:20
+Identifier            ^^^                0:2-0:5
+FnOrMarkupOption          ^^^^^^^^^^^^^  0:6-0:19
+Identifier                ^^^^^^^^^^^    0:6-0:17
+Number                                ^  0:18-0:19
+Number.integral                       ^  0:18-0:19
 === diagnostics ===
 
 === ast ===

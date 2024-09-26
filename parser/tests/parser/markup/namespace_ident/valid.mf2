@@ -1,9 +1,9 @@
 {#foo:bar}
 === spans ===
                     {#foo:bar}
-Pattern             ^^^^^^^^^^
-Markup              ^^^^^^^^^^
-Identifier            ^^^^^^^
+Pattern             ^^^^^^^^^^ 0:0-0:10
+Markup              ^^^^^^^^^^ 0:0-0:10
+Identifier            ^^^^^^^  0:2-0:9
 === diagnostics ===
 
 === ast ===

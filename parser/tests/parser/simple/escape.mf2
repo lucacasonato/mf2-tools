@@ -5,20 +5,20 @@ Hello, \|World!
 a\|\|
 === spans ===
                     \{\|\}\\↵Hello,\|World!↵Hello,\| World!↵Hello, \|World!↵a\|\|
-Pattern             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-Escape              ^^
-Escape                ^^
-Escape                  ^^
-Escape                    ^^
-Text                        ^^^^^^^
-Escape                             ^^
-Text                                 ^^^^^^^^^^^^^
-Escape                                            ^^
-Text                                                ^^^^^^^^^^^^^^^
-Escape                                                             ^^
-Text                                                                 ^^^^^^^^
-Escape                                                                       ^^
-Escape                                                                         ^^
+Pattern             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ 0:0-4:5
+Escape              ^^                                                            0:0-0:2
+Escape                ^^                                                          0:2-0:4
+Escape                  ^^                                                        0:4-0:6
+Escape                    ^^                                                      0:6-0:8
+Text                        ^^^^^^^                                               0:8-1:6
+Escape                             ^^                                             1:6-1:8
+Text                                 ^^^^^^^^^^^^^                                1:8-2:6
+Escape                                            ^^                              2:6-2:8
+Text                                                ^^^^^^^^^^^^^^^               2:8-3:7
+Escape                                                             ^^             3:7-3:9
+Text                                                                 ^^^^^^^^     3:9-4:1
+Escape                                                                       ^^   4:1-4:3
+Escape                                                                         ^^ 4:3-4:5
 === diagnostics ===
 
 === ast ===

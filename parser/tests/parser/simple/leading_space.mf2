@@ -1,8 +1,8 @@
   Hello
 === spans ===
                       Hello
-Pattern             ^^^^^^^
-Text                ^^^^^^^
+Pattern             ^^^^^^^ 0:0-0:7
+Text                ^^^^^^^ 0:0-0:7
 === diagnostics ===
 
 === ast ===

@@ -1,9 +1,9 @@
 { /close}
 === spans ===
                     { /close}
-Pattern             ^^^^^^^^^
-Markup              ^^^^^^^^^
-Identifier             ^^^^^
+Pattern             ^^^^^^^^^ 0:0-0:9
+Markup              ^^^^^^^^^ 0:0-0:9
+Identifier             ^^^^^  0:3-0:8
 === diagnostics ===
 
 === ast ===

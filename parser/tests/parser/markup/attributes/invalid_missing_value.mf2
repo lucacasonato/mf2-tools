@@ -1,11 +1,11 @@
 {#el @option= }
 === spans ===
                     {#el @option= }
-Pattern             ^^^^^^^^^^^^^^^
-Markup              ^^^^^^^^^^^^^^^
-Identifier            ^^
-Attribute                ^^^^^^^^
-Identifier                ^^^^^^
+Pattern             ^^^^^^^^^^^^^^^ 0:0-0:15
+Markup              ^^^^^^^^^^^^^^^ 0:0-0:15
+Identifier            ^^            0:2-0:4
+Attribute                ^^^^^^^^   0:5-0:13
+Identifier                ^^^^^^    0:6-0:12
 === diagnostics ===
 Attribute is missing a value after the '=' sign. (at @5..13)
   {#el @option= }

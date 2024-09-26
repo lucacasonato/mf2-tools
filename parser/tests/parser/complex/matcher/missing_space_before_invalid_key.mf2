@@ -1,14 +1,14 @@
 .match $a+yej% {{Hi}}
 === spans ===
                     .match $a+yej% {{Hi}}
-ComplexMessage      ^^^^^^^^^^^^^^^^^^^^^
-Matcher             ^^^^^^^^^^^^^^^^^^^^^
-Variable                   ^^
-Variant                      ^^^^^^^^^^^^
-Text                         ^^^^^
-QuotedPattern                      ^^^^^^
-Pattern                              ^^
-Text                                 ^^
+ComplexMessage      ^^^^^^^^^^^^^^^^^^^^^ 0:0-0:21
+Matcher             ^^^^^^^^^^^^^^^^^^^^^ 0:0-0:21
+Variable                   ^^             0:7-0:9
+Variant                      ^^^^^^^^^^^^ 0:9-0:21
+Text                         ^^^^^        0:9-0:14
+QuotedPattern                      ^^^^^^ 0:15-0:21
+Pattern                              ^^   0:17-0:19
+Text                                 ^^   0:17-0:19
 === diagnostics ===
 Found an invalid matcher key (not a valid literal). Did you mean to quote the key to make it a literal? (at @9..14)
   .match $a+yej% {{Hi}}

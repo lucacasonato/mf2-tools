@@ -3,15 +3,15 @@
 {{hello}}
 === spans ===
                     .input↵.local $bar = {123}↵{{hello}}
-ComplexMessage      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-LocalDeclaration           ^^^^^^^^^^^^^^^^^^^
-Variable                          ^^^^
-LiteralExpression                        ^^^^^
-Number                                    ^^^
-Number.integral                           ^^^
-QuotedPattern                                  ^^^^^^^^^
-Pattern                                          ^^^^^
-Text                                             ^^^^^
+ComplexMessage      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ 0:0-2:9
+LocalDeclaration           ^^^^^^^^^^^^^^^^^^^           1:0-1:19
+Variable                          ^^^^                   1:7-1:11
+LiteralExpression                        ^^^^^           1:14-1:19
+Number                                    ^^^            1:15-1:18
+Number.integral                           ^^^            1:15-1:18
+QuotedPattern                                  ^^^^^^^^^ 2:0-2:9
+Pattern                                          ^^^^^   2:2-2:7
+Text                                             ^^^^^   2:2-2:7
 === diagnostics ===
 Input declaration is missing an expression. (at @0..6)
   .input↵.local $bar = {123}↵{{hello}}

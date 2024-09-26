@@ -1,12 +1,12 @@
 {1 @foo=}
 === spans ===
                     {1 @foo=}
-Pattern             ^^^^^^^^^
-LiteralExpression   ^^^^^^^^^
-Number               ^
-Number.integral      ^
-Attribute              ^^^^^
-Identifier              ^^^
+Pattern             ^^^^^^^^^ 0:0-0:9
+LiteralExpression   ^^^^^^^^^ 0:0-0:9
+Number               ^        0:1-0:2
+Number.integral      ^        0:1-0:2
+Attribute              ^^^^^  0:3-0:8
+Identifier              ^^^   0:4-0:7
 === diagnostics ===
 Attribute is missing a value after the '=' sign. (at @3..8)
   {1 @foo=}

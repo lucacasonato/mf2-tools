@@ -2,13 +2,13 @@
 .match $a a {{}}
 === spans ===
                     .match $a a {{}}↵.match $a a {{}}
-ComplexMessage      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-Matcher             ^^^^^^^^^^^^^^^^
-Variable                   ^^
-Variant                       ^^^^^^
-Text                          ^
-QuotedPattern                   ^^^^
-Pattern             
+ComplexMessage      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ 0:0-1:16
+Matcher             ^^^^^^^^^^^^^^^^                  0:0-0:16
+Variable                   ^^                         0:7-0:9
+Variant                       ^^^^^^                  0:10-0:16
+Text                          ^                       0:10-0:11
+QuotedPattern                   ^^^^                  0:12-0:16
+Pattern                                               0:0-0:0
 === diagnostics ===
 Message has multiple bodies, but only one is allowed. (at @17..33)
   .match $a a {{}}↵.match $a a {{}}

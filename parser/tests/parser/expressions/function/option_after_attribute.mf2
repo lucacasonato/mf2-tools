@@ -1,14 +1,14 @@
 {1 :hello @world a=b}
 === spans ===
                     {1 :hello @world a=b}
-Pattern             ^^^^^^^^^^^^^^^^^^^^^
-LiteralExpression   ^^^^^^^^^^^^^^^^^^^^^
-Number               ^
-Number.integral      ^
-Function               ^^^^^^
-Identifier              ^^^^^
-Attribute                     ^^^^^^
-Identifier                     ^^^^^
+Pattern             ^^^^^^^^^^^^^^^^^^^^^ 0:0-0:21
+LiteralExpression   ^^^^^^^^^^^^^^^^^^^^^ 0:0-0:21
+Number               ^                    0:1-0:2
+Number.integral      ^                    0:1-0:2
+Function               ^^^^^^             0:3-0:9
+Identifier              ^^^^^             0:4-0:9
+Attribute                     ^^^^^^      0:10-0:16
+Identifier                     ^^^^^      0:11-0:16
 === diagnostics ===
 Placeholder expression contains invalid content. (at @17..20)
   {1 :hello @world a=b}

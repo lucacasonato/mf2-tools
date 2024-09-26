@@ -1,8 +1,8 @@
 Hello {{abc
 === spans ===
                     Hello {{abc
-Pattern             ^^^^^^^^^^^
-Text                ^^^^^^^^^^^
+Pattern             ^^^^^^^^^^^ 0:0-0:11
+Text                ^^^^^^^^^^^ 0:0-0:11
 === diagnostics ===
 Quoted pattern is not allowed inside of a pattern. (at @6..8)
   Hello {{abc

@@ -2,14 +2,14 @@
 a*{{}}
 === spans ===
                     .match $a↵a*{{}}
-ComplexMessage      ^^^^^^^^^^^^^^^^
-Matcher             ^^^^^^^^^^^^^^^^
-Variable                   ^^
-Variant                       ^^^^^^
-Text                          ^
-Star                           ^
-QuotedPattern                   ^^^^
-Pattern             
+ComplexMessage      ^^^^^^^^^^^^^^^^ 0:0-1:6
+Matcher             ^^^^^^^^^^^^^^^^ 0:0-1:6
+Variable                   ^^        0:7-0:9
+Variant                       ^^^^^^ 1:0-1:6
+Text                          ^      1:0-1:1
+Star                           ^     1:1-1:2
+QuotedPattern                   ^^^^ 1:2-1:6
+Pattern                              0:0-0:0
 === diagnostics ===
 Matcher key is missing a leading space. (at @11..12)
   .match $a↵a*{{}}

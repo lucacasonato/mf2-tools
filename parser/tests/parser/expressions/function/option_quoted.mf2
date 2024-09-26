@@ -1,15 +1,15 @@
 {$var :number a=|foo|}
 === spans ===
                     {$var :number a=|foo|}
-Pattern             ^^^^^^^^^^^^^^^^^^^^^^
-VariableExpression  ^^^^^^^^^^^^^^^^^^^^^^
-Variable             ^^^^
-Function                  ^^^^^^^^^^^^^^^
-Identifier                 ^^^^^^
-FnOrMarkupOption                  ^^^^^^^
-Identifier                        ^
-Quoted                              ^^^^^
-Text                                 ^^^
+Pattern             ^^^^^^^^^^^^^^^^^^^^^^ 0:0-0:22
+VariableExpression  ^^^^^^^^^^^^^^^^^^^^^^ 0:0-0:22
+Variable             ^^^^                  0:1-0:5
+Function                  ^^^^^^^^^^^^^^^  0:6-0:21
+Identifier                 ^^^^^^          0:7-0:13
+FnOrMarkupOption                  ^^^^^^^  0:14-0:21
+Identifier                        ^        0:14-0:15
+Quoted                              ^^^^^  0:16-0:21
+Text                                 ^^^   0:17-0:20
 === diagnostics ===
 
 === ast ===

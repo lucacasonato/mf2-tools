@@ -1,10 +1,10 @@
 { :hello}
 === spans ===
                     { :hello}
-Pattern             ^^^^^^^^^
-AnnotationExpression^^^^^^^^^
-Function              ^^^^^^
-Identifier             ^^^^^
+Pattern             ^^^^^^^^^ 0:0-0:9
+AnnotationExpression^^^^^^^^^ 0:0-0:9
+Function              ^^^^^^  0:2-0:8
+Identifier             ^^^^^  0:3-0:8
 === diagnostics ===
 
 === ast ===

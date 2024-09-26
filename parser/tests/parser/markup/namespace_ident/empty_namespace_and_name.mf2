@@ -1,9 +1,9 @@
 {#: }
 === spans ===
                     {#: }
-Pattern             ^^^^^
-Markup              ^^^^^
-Identifier            ^
+Pattern             ^^^^^ 0:0-0:5
+Markup              ^^^^^ 0:0-0:5
+Identifier            ^   0:2-0:3
 === diagnostics ===
 Namespaced identifier is missing a name, which is required after the colon following the namespace. (at @2..3)
   {#: }

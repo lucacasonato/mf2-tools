@@ -1,8 +1,8 @@
 Hello}
 === spans ===
                     Hello}
-Pattern             ^^^^^^
-Text                ^^^^^^
+Pattern             ^^^^^^ 0:0-0:6
+Text                ^^^^^^ 0:0-0:6
 === diagnostics ===
 The closing brace character ('}') is invalid inside of messages, and must be escaped as '\}'. (at @5..6)
   Hello}

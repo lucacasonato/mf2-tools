@@ -2,13 +2,13 @@
 {{}}
 === spans ===
                     .local $var↵{{}}
-ComplexMessage      ^^^^^^^^^^^^^^^^
-LocalDeclaration    ^^^^^^^^^^^
-Variable                   ^^^^
-LiteralExpression              
-Text                           
-QuotedPattern                   ^^^^
-Pattern             
+ComplexMessage      ^^^^^^^^^^^^^^^^ 0:0-1:4
+LocalDeclaration    ^^^^^^^^^^^      0:0-0:11
+Variable                   ^^^^      0:7-0:11
+LiteralExpression                    0:11-0:11
+Text                                 0:11-0:11
+QuotedPattern                   ^^^^ 1:0-1:4
+Pattern                              0:0-0:0
 === diagnostics ===
 Local declaration is missing an equals sign after the variable. (at @7..11)
   .local $var↵{{}}

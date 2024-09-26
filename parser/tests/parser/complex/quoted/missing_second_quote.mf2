@@ -1,10 +1,10 @@
 {{Hello, World!}
 === spans ===
                     {{Hello, World!}
-ComplexMessage      ^^^^^^^^^^^^^^^^
-QuotedPattern       ^^^^^^^^^^^^^^^^
-Pattern               ^^^^^^^^^^^^^^
-Text                  ^^^^^^^^^^^^^^
+ComplexMessage      ^^^^^^^^^^^^^^^^ 0:0-0:16
+QuotedPattern       ^^^^^^^^^^^^^^^^ 0:0-0:16
+Pattern               ^^^^^^^^^^^^^^ 0:2-0:16
+Text                  ^^^^^^^^^^^^^^ 0:2-0:16
 === diagnostics ===
 The closing brace character ('}') is invalid inside of messages, and must be escaped as '\}'. (at @15..16)
   {{Hello, World!}

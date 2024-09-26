@@ -2,9 +2,9 @@
 {{}}
 === spans ===
                     .foo{:hello}{:bar}↵{{}}
-ComplexMessage      ^^^^^^^^^^^^^^^^^^^^^^^
-QuotedPattern                          ^^^^
-Pattern             
+ComplexMessage      ^^^^^^^^^^^^^^^^^^^^^^^ 0:0-1:4
+QuotedPattern                          ^^^^ 1:0-1:4
+Pattern                                     0:0-0:0
 === diagnostics ===
 Found a statement that is invalid because the keyword 'foo' is keyword. (at @0..18)
   .foo{:hello}{:bar}↵{{}}

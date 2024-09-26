@@ -8,13 +8,11 @@
 === spans ===
                     .local $foo = {1}↵↵↵.local $bar = {2}↵↵{{$foo $bar}}↵
 ComplexMessage      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^  0:0-5:13
-Declaration         ^^^^^^^^^^^^^^^^^                                     0:0-0:17
 LocalDeclaration    ^^^^^^^^^^^^^^^^^                                     0:0-0:17
 Variable                   ^^^^                                           0:7-0:11
 LiteralExpression                 ^^^                                     0:14-0:17
 Number                             ^                                      0:15-0:16
 Number.integral                    ^                                      0:15-0:16
-Declaration                             ^^^^^^^^^^^^^^^^^                 3:0-3:17
 LocalDeclaration                        ^^^^^^^^^^^^^^^^^                 3:0-3:17
 Variable                                       ^^^^                       3:7-3:11
 LiteralExpression                                     ^^^                 3:14-3:17
@@ -27,6 +25,7 @@ Text                                                         ^^^^^^^^^    5:2-5:
 
 === ast ===
 ComplexMessage {
+    span: @0..52,
     declarations: [
         LocalDeclaration {
             start: @0,

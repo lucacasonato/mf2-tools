@@ -1,16 +1,16 @@
 a{ 1e+3 }{ 1e-3 }
 === spans ===
                     a{ 1e+3 }{ 1e-3 }
-Pattern             ^^^^^^^^^^^^^^^^^
-Text                ^
-LiteralExpression    ^^^^^^^^
-Number                 ^^^^
-Number.integral        ^
-Number.exponent           ^
-LiteralExpression            ^^^^^^^^
-Number                         ^^^^
-Number.integral                ^
-Number.exponent                   ^
+Pattern             ^^^^^^^^^^^^^^^^^ 0:0-0:17
+Text                ^                 0:0-0:1
+LiteralExpression    ^^^^^^^^         0:1-0:9
+Number                 ^^^^           0:3-0:7
+Number.integral        ^              0:3-0:4
+Number.exponent           ^           0:6-0:7
+LiteralExpression            ^^^^^^^^ 0:9-0:17
+Number                         ^^^^   0:11-0:15
+Number.integral                ^      0:11-0:12
+Number.exponent                   ^   0:14-0:15
 === diagnostics ===
 
 === ast ===

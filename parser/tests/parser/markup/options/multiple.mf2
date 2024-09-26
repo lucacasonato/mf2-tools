@@ -1,15 +1,15 @@
 {#foo abc = val1 def=val2 }
 === spans ===
                     {#foo abc = val1 def=val2 }
-Pattern             ^^^^^^^^^^^^^^^^^^^^^^^^^^^
-Markup              ^^^^^^^^^^^^^^^^^^^^^^^^^^^
-Identifier            ^^^
-FnOrMarkupOption          ^^^^^^^^^^
-Identifier                ^^^
-Text                            ^^^^
-FnOrMarkupOption                     ^^^^^^^^
-Identifier                           ^^^
-Text                                     ^^^^
+Pattern             ^^^^^^^^^^^^^^^^^^^^^^^^^^^ 0:0-0:27
+Markup              ^^^^^^^^^^^^^^^^^^^^^^^^^^^ 0:0-0:27
+Identifier            ^^^                       0:2-0:5
+FnOrMarkupOption          ^^^^^^^^^^            0:6-0:16
+Identifier                ^^^                   0:6-0:9
+Text                            ^^^^            0:12-0:16
+FnOrMarkupOption                     ^^^^^^^^   0:17-0:25
+Identifier                           ^^^        0:17-0:20
+Text                                     ^^^^   0:21-0:25
 === diagnostics ===
 
 === ast ===

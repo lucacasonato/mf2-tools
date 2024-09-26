@@ -4,18 +4,18 @@
 
 === spans ===
                     .input {$a :b}↵  abc {$a}   ↵↵
-ComplexMessage      ^^^^^^^^^^^^^^^^^^^^^^^^^
-InputDeclaration    ^^^^^^^^^^^^^^
-VariableExpression         ^^^^^^^
-Variable                    ^^
-Function                       ^^
-Identifier                      ^
-QuotedPattern                        ^^^^^^^^
-Pattern                              ^^^^^^^^
-Text                                 ^^^^
-VariableExpression                       ^^^^
-Variable                                  ^^
-Text                                         
+ComplexMessage      ^^^^^^^^^^^^^^^^^^^^^^^^^      0:0-1:10
+InputDeclaration    ^^^^^^^^^^^^^^                 0:0-0:14
+VariableExpression         ^^^^^^^                 0:7-0:14
+Variable                    ^^                     0:8-0:10
+Function                       ^^                  0:11-0:13
+Identifier                      ^                  0:12-0:13
+QuotedPattern                        ^^^^^^^^      1:2-1:10
+Pattern                              ^^^^^^^^      1:2-1:10
+Text                                 ^^^^          1:2-1:6
+VariableExpression                       ^^^^      1:6-1:10
+Variable                                  ^^       1:7-1:9
+Text                                               1:10-1:10
 === diagnostics ===
 Using an unquoted pattern as the body is invalid, because the message contains declarations. Did you mean to quote the pattern?. (at @17..25)
   .input {$a :b}↵  abc {$a}   ↵↵

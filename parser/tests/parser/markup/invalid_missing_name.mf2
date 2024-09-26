@@ -1,9 +1,9 @@
 {# }
 === spans ===
                     {# }
-Pattern             ^^^^
-Markup              ^^^^
-Identifier            
+Pattern             ^^^^ 0:0-0:4
+Markup              ^^^^ 0:0-0:4
+Identifier               0:2-0:2
 === diagnostics ===
 Markup tag is missing an identifier. (at @0..4)
   {# }

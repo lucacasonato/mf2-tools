@@ -2,16 +2,16 @@
 {{{$count}}}
 === spans ===
                     .local $count 123↵{{{$count}}}
-ComplexMessage      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-LocalDeclaration    ^^^^^^^^^^^^^^^^^
-Variable                   ^^^^^^
-LiteralExpression                 ^^^
-Number                            ^^^
-Number.integral                   ^^^
-QuotedPattern                         ^^^^^^^^^^^^
-Pattern                                 ^^^^^^^^
-VariableExpression                      ^^^^^^^^
-Variable                                 ^^^^^^
+ComplexMessage      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ 0:0-1:12
+LocalDeclaration    ^^^^^^^^^^^^^^^^^              0:0-0:17
+Variable                   ^^^^^^                  0:7-0:13
+LiteralExpression                 ^^^              0:14-0:17
+Number                            ^^^              0:14-0:17
+Number.integral                   ^^^              0:14-0:17
+QuotedPattern                         ^^^^^^^^^^^^ 1:0-1:12
+Pattern                                 ^^^^^^^^   1:2-1:10
+VariableExpression                      ^^^^^^^^   1:2-1:10
+Variable                                 ^^^^^^    1:3-1:9
 === diagnostics ===
 Local declaration is missing an equals sign after the variable. (at @7..13)
   .local $count 123↵{{{$count}}}

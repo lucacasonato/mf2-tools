@@ -1,15 +1,15 @@
 {1 @foo@hello=world}
 === spans ===
                     {1 @foo@hello=world}
-Pattern             ^^^^^^^^^^^^^^^^^^^^
-LiteralExpression   ^^^^^^^^^^^^^^^^^^^^
-Number               ^
-Number.integral      ^
-Attribute              ^^^^
-Identifier              ^^^
-Attribute                  ^^^^^^^^^^^^
-Identifier                  ^^^^^
-Text                              ^^^^^
+Pattern             ^^^^^^^^^^^^^^^^^^^^ 0:0-0:20
+LiteralExpression   ^^^^^^^^^^^^^^^^^^^^ 0:0-0:20
+Number               ^                   0:1-0:2
+Number.integral      ^                   0:1-0:2
+Attribute              ^^^^              0:3-0:7
+Identifier              ^^^              0:4-0:7
+Attribute                  ^^^^^^^^^^^^  0:7-0:19
+Identifier                  ^^^^^        0:8-0:13
+Text                              ^^^^^  0:14-0:19
 === diagnostics ===
 Attribute is missing a leading space. (at @7..19)
   {1 @foo@hello=world}

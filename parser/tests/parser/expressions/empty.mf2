@@ -1,9 +1,9 @@
 {}
 === spans ===
                     {}
-Pattern             ^^
-LiteralExpression   ^^
-Text                
+Pattern             ^^ 0:0-0:2
+LiteralExpression   ^^ 0:0-0:2
+Text                   0:0-0:0
 === diagnostics ===
 Placeholder is empty, but should have at least a variable reference, literal, or annotation. (at @0..2)
   {}

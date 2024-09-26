@@ -1,10 +1,10 @@
 {1 abc\a}
 === spans ===
                     {1 abc\a}
-Pattern             ^^^^^^^^^
-LiteralExpression   ^^^^^^^^^
-Number               ^
-Number.integral      ^
+Pattern             ^^^^^^^^^ 0:0-0:9
+LiteralExpression   ^^^^^^^^^ 0:0-0:9
+Number               ^        0:1-0:2
+Number.integral      ^        0:1-0:2
 === diagnostics ===
 The character 'a' can not be escaped as escape sequences can only escape '}', '{', '|', and '\'. (at @7..8)
   {1 abc\a}

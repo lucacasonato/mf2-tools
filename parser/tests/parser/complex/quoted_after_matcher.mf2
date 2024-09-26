@@ -3,18 +3,18 @@
 {{}}
 === spans ===
                     .match $a a {{}}↵.local $a = {1}↵{{}}
-ComplexMessage      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-LocalDeclaration                     ^^^^^^^^^^^^^^^
-Variable                                    ^^
-LiteralExpression                                ^^^
-Number                                            ^
-Number.integral                                   ^
-Matcher             ^^^^^^^^^^^^^^^^
-Variable                   ^^
-Variant                       ^^^^^^
-Text                          ^
-QuotedPattern                   ^^^^
-Pattern             
+ComplexMessage      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ 0:0-2:4
+LocalDeclaration                     ^^^^^^^^^^^^^^^      1:0-1:15
+Variable                                    ^^            1:7-1:9
+LiteralExpression                                ^^^      1:12-1:15
+Number                                            ^       1:13-1:14
+Number.integral                                   ^       1:13-1:14
+Matcher             ^^^^^^^^^^^^^^^^                      0:0-0:16
+Variable                   ^^                             0:7-0:9
+Variant                       ^^^^^^                      0:10-0:16
+Text                          ^                           0:10-0:11
+QuotedPattern                   ^^^^                      0:12-0:16
+Pattern                                                   0:0-0:0
 === diagnostics ===
 Declarations are not valid after the message body. Did you mean to put the declaration before the body? (at @17..32)
   .match $a a {{}}↵.local $a = {1}↵{{}}

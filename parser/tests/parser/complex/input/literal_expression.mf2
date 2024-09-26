@@ -2,9 +2,9 @@
 {{}}
 === spans ===
                     .input {1}↵{{}}
-ComplexMessage      ^^^^^^^^^^^^^^^
-QuotedPattern                  ^^^^
-Pattern             
+ComplexMessage      ^^^^^^^^^^^^^^^ 0:0-1:4
+QuotedPattern                  ^^^^ 1:0-1:4
+Pattern                             0:0-0:0
 === diagnostics ===
 Input declaration has a non-variable expression, which is invalid. Did you mean to use a local declaration instead of an input declaration? (at @0..10)
   .input {1}↵{{}}

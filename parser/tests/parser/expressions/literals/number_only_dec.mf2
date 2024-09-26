@@ -1,12 +1,12 @@
 a{ .03 }
 === spans ===
                     a{ .03 }
-Pattern             ^^^^^^^^
-Text                ^
-LiteralExpression    ^^^^^^^
-Number                 ^^^
-Number.integral        
-Number.fractional       ^^
+Pattern             ^^^^^^^^ 0:0-0:8
+Text                ^        0:0-0:1
+LiteralExpression    ^^^^^^^ 0:1-0:8
+Number                 ^^^   0:3-0:6
+Number.integral              0:3-0:3
+Number.fractional       ^^   0:4-0:6
 === diagnostics ===
 Number is missing an integral part. (at @3..6)
   a{ .03 }

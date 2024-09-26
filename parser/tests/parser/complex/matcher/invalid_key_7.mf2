@@ -3,19 +3,19 @@
 +yej%
 === spans ===
                     .match $a↵* {{Hello}}↵+yej%
-ComplexMessage      ^^^^^^^^^^^^^^^^^^^^^^^^^^^
-Matcher             ^^^^^^^^^^^^^^^^^^^^^^^^^^^
-Variable                   ^^
-Variant                       ^^^^^^^^^^^
-Star                          ^
-QuotedPattern                   ^^^^^^^^^
-Pattern                           ^^^^^
-Text                              ^^^^^
-Variant                                   ^^^^^
-Text                                      ^^^^^
-QuotedPattern                                  
-Pattern                                        
-Text                                           
+ComplexMessage      ^^^^^^^^^^^^^^^^^^^^^^^^^^^ 0:0-2:5
+Matcher             ^^^^^^^^^^^^^^^^^^^^^^^^^^^ 0:0-2:5
+Variable                   ^^                   0:7-0:9
+Variant                       ^^^^^^^^^^^       1:0-1:11
+Star                          ^                 1:0-1:1
+QuotedPattern                   ^^^^^^^^^       1:2-1:11
+Pattern                           ^^^^^         1:4-1:9
+Text                              ^^^^^         1:4-1:9
+Variant                                   ^^^^^ 2:0-2:5
+Text                                      ^^^^^ 2:0-2:5
+QuotedPattern                                   2:5-2:5
+Pattern                                         2:5-2:5
+Text                                            2:5-2:5
 === diagnostics ===
 Found an invalid matcher key (not a valid literal). Did you mean to quote the key to make it a literal? (at @22..27)
   .match $a↵* {{Hello}}↵+yej%

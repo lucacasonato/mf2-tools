@@ -1,8 +1,8 @@
 Hello {{World}}
 === spans ===
                     Hello {{World}}
-Pattern             ^^^^^^^^^^^^^^^
-Text                ^^^^^^^^^^^^^^^
+Pattern             ^^^^^^^^^^^^^^^ 0:0-0:15
+Text                ^^^^^^^^^^^^^^^ 0:0-0:15
 === diagnostics ===
 Quoted pattern is not allowed inside of a pattern. (at @6..8)
   Hello {{World}}

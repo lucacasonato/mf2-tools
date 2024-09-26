@@ -1,9 +1,9 @@
 {#foo / hello}
 === spans ===
                     {#foo / hello}
-Pattern             ^^^^^^^^^^^^^^
-Markup              ^^^^^^^^^^^^^^
-Identifier            ^^^
+Pattern             ^^^^^^^^^^^^^^ 0:0-0:14
+Markup              ^^^^^^^^^^^^^^ 0:0-0:14
+Identifier            ^^^          0:2-0:5
 === diagnostics ===
 Markup tag contains invalid content. (at @6..13)
   {#foo / hello}

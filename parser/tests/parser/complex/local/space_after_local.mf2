@@ -2,14 +2,14 @@
 {{}}
 === spans ===
                     .local$var = {|hello|}↵{{}}
-ComplexMessage      ^^^^^^^^^^^^^^^^^^^^^^^^^^^
-LocalDeclaration    ^^^^^^^^^^^^^^^^^^^^^^
-Variable                  ^^^^
-LiteralExpression                ^^^^^^^^^
-Quoted                            ^^^^^^^
-Text                               ^^^^^
-QuotedPattern                              ^^^^
-Pattern             
+ComplexMessage      ^^^^^^^^^^^^^^^^^^^^^^^^^^^ 0:0-1:4
+LocalDeclaration    ^^^^^^^^^^^^^^^^^^^^^^      0:0-0:22
+Variable                  ^^^^                  0:6-0:10
+LiteralExpression                ^^^^^^^^^      0:13-0:22
+Quoted                            ^^^^^^^       0:14-0:21
+Text                               ^^^^^        0:15-0:20
+QuotedPattern                              ^^^^ 1:0-1:4
+Pattern                                         0:0-0:0
 === diagnostics ===
 '.local' keyword is not followed by a space. (at @0..6)
   .local$var = {|hello|}↵{{}}

@@ -1,12 +1,12 @@
 {#foo = bar }
 === spans ===
                     {#foo = bar }
-Pattern             ^^^^^^^^^^^^^
-Markup              ^^^^^^^^^^^^^
-Identifier            ^^^
-FnOrMarkupOption          ^^^^^
-Identifier                
-Text                        ^^^
+Pattern             ^^^^^^^^^^^^^ 0:0-0:13
+Markup              ^^^^^^^^^^^^^ 0:0-0:13
+Identifier            ^^^         0:2-0:5
+FnOrMarkupOption          ^^^^^   0:6-0:11
+Identifier                        0:6-0:6
+Text                        ^^^   0:8-0:11
 === diagnostics ===
 Found equals sign followed by value, but equals sign is not preceeded by a key. Did you forget to add a key to make this an option? (at @6..11)
   {#foo = bar }

@@ -1,9 +1,9 @@
 { ^a}
 === spans ===
                     { ^a}
-Pattern             ^^^^^
-LiteralExpression   ^^^^^
-Text                  ^^
+Pattern             ^^^^^ 0:0-0:5
+LiteralExpression   ^^^^^ 0:0-0:5
+Text                  ^^  0:2-0:4
 === diagnostics ===
 Placeholder expression contains a literal that is not valid when unquoted. Did you mean to quote it? (at @2..4)
   { ^a}

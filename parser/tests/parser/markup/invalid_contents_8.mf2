@@ -1,11 +1,11 @@
 {#foo !abc@hello /}
 === spans ===
                     {#foo !abc@hello /}
-Pattern             ^^^^^^^^^^^^^^^^^^^
-Markup              ^^^^^^^^^^^^^^^^^^^
-Identifier            ^^^
-Attribute                     ^^^^^^
-Identifier                     ^^^^^
+Pattern             ^^^^^^^^^^^^^^^^^^^ 0:0-0:19
+Markup              ^^^^^^^^^^^^^^^^^^^ 0:0-0:19
+Identifier            ^^^               0:2-0:5
+Attribute                     ^^^^^^    0:10-0:16
+Identifier                     ^^^^^    0:11-0:16
 === diagnostics ===
 Markup tag contains invalid content. (at @6..10)
   {#foo !abc@hello /}

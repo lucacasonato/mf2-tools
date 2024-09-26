@@ -1,13 +1,13 @@
 {: hello}
 === spans ===
                     {: hello}
-Pattern             ^^^^^^^^^
-AnnotationExpression^^^^^^^^^
-Function             ^^^^^^^
-Identifier            
-FnOrMarkupOption       ^^^^^
-Identifier             ^^^^^
-Text                        
+Pattern             ^^^^^^^^^ 0:0-0:9
+AnnotationExpression^^^^^^^^^ 0:0-0:9
+Function             ^^^^^^^  0:1-0:8
+Identifier                    0:2-0:2
+FnOrMarkupOption       ^^^^^  0:3-0:8
+Identifier             ^^^^^  0:3-0:8
+Text                          0:8-0:8
 === diagnostics ===
 Found an identifier followed by an equals sign, but not followed by a value. Did you forget to add a value to make this an option? (at @3..8)
   {: hello}

@@ -1,10 +1,10 @@
 {1 a |}| thing}
 === spans ===
                     {1 a |}| thing}
-Pattern             ^^^^^^^^^^^^^^^
-LiteralExpression   ^^^^^^^^^^^^^^^
-Number               ^
-Number.integral      ^
+Pattern             ^^^^^^^^^^^^^^^ 0:0-0:15
+LiteralExpression   ^^^^^^^^^^^^^^^ 0:0-0:15
+Number               ^              0:1-0:2
+Number.integral      ^              0:1-0:2
 === diagnostics ===
 Placeholder expression contains invalid content. (at @3..14)
   {1 a |}| thing}

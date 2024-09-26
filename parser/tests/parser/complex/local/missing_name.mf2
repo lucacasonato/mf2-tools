@@ -2,10 +2,10 @@
 {{hello}}
 === spans ===
                     .local↵{{hello}}
-ComplexMessage      ^^^^^^^^^^^^^^^^
-QuotedPattern              ^^^^^^^^^
-Pattern                      ^^^^^
-Text                         ^^^^^
+ComplexMessage      ^^^^^^^^^^^^^^^^ 0:0-1:9
+QuotedPattern              ^^^^^^^^^ 1:0-1:9
+Pattern                      ^^^^^   1:2-1:7
+Text                         ^^^^^   1:2-1:7
 === diagnostics ===
 Found a local declaration that is missing or malformed name. (at @0..7)
   .local↵{{hello}}

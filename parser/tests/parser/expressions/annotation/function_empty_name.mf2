@@ -1,10 +1,10 @@
 {:}
 === spans ===
                     {:}
-Pattern             ^^^
-AnnotationExpression^^^
-Function             ^
-Identifier            
+Pattern             ^^^ 0:0-0:3
+AnnotationExpression^^^ 0:0-0:3
+Function             ^  0:1-0:2
+Identifier              0:2-0:2
 === diagnostics ===
 Function is missing an identifier. (at @1..2)
   {:}

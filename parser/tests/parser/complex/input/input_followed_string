@@ -2,10 +2,10 @@
 {{}}
 === spans ===
                     .input $foo↵{{}}
-ComplexMessage      ^^^^^^^^^^^^^^^^
-QuotedPattern              ^^^^^^^^^
-Pattern                    ^^^^^^^^^
-Text                       ^^^^^^^^^
+ComplexMessage      ^^^^^^^^^^^^^^^^ 0:0-1:4
+QuotedPattern              ^^^^^^^^^ 0:7-1:4
+Pattern                    ^^^^^^^^^ 0:7-1:4
+Text                       ^^^^^^^^^ 0:7-1:4
 === diagnostics ===
 Input declaration is missing an expression. (at @0..6)
   .input $foo↵{{}}

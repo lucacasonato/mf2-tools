@@ -1,14 +1,14 @@
 {$var :number a:b=c}
 === spans ===
                     {$var :number a:b=c}
-Pattern             ^^^^^^^^^^^^^^^^^^^^
-VariableExpression  ^^^^^^^^^^^^^^^^^^^^
-Variable             ^^^^
-Function                  ^^^^^^^^^^^^^
-Identifier                 ^^^^^^
-FnOrMarkupOption                  ^^^^^
-Identifier                        ^^^
-Text                                  ^
+Pattern             ^^^^^^^^^^^^^^^^^^^^ 0:0-0:20
+VariableExpression  ^^^^^^^^^^^^^^^^^^^^ 0:0-0:20
+Variable             ^^^^                0:1-0:5
+Function                  ^^^^^^^^^^^^^  0:6-0:19
+Identifier                 ^^^^^^        0:7-0:13
+FnOrMarkupOption                  ^^^^^  0:14-0:19
+Identifier                        ^^^    0:14-0:17
+Text                                  ^  0:18-0:19
 === diagnostics ===
 
 === ast ===

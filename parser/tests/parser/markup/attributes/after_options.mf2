@@ -1,14 +1,14 @@
 {#el opt1=val1 @attr }
 === spans ===
                     {#el opt1=val1 @attr }
-Pattern             ^^^^^^^^^^^^^^^^^^^^^^
-Markup              ^^^^^^^^^^^^^^^^^^^^^^
-Identifier            ^^
-FnOrMarkupOption         ^^^^^^^^^
-Identifier               ^^^^
-Text                          ^^^^
-Attribute                          ^^^^^
-Identifier                          ^^^^
+Pattern             ^^^^^^^^^^^^^^^^^^^^^^ 0:0-0:22
+Markup              ^^^^^^^^^^^^^^^^^^^^^^ 0:0-0:22
+Identifier            ^^                   0:2-0:4
+FnOrMarkupOption         ^^^^^^^^^         0:5-0:14
+Identifier               ^^^^              0:5-0:9
+Text                          ^^^^         0:10-0:14
+Attribute                          ^^^^^   0:15-0:20
+Identifier                          ^^^^   0:16-0:20
 === diagnostics ===
 
 === ast ===

@@ -3,19 +3,19 @@
 .input {$b :a}
 === spans ===
                     .local $a = {1}↵{{}}↵.input {$b :a}
-ComplexMessage      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-LocalDeclaration    ^^^^^^^^^^^^^^^
-Variable                   ^^
-LiteralExpression               ^^^
-Number                           ^
-Number.integral                  ^
-InputDeclaration                         ^^^^^^^^^^^^^^
-VariableExpression                              ^^^^^^^
-Variable                                         ^^
-Function                                            ^^
-Identifier                                           ^
-QuotedPattern                       ^^^^
-Pattern             
+ComplexMessage      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ 0:0-2:14
+LocalDeclaration    ^^^^^^^^^^^^^^^                     0:0-0:15
+Variable                   ^^                           0:7-0:9
+LiteralExpression               ^^^                     0:12-0:15
+Number                           ^                      0:13-0:14
+Number.integral                  ^                      0:13-0:14
+InputDeclaration                         ^^^^^^^^^^^^^^ 2:0-2:14
+VariableExpression                              ^^^^^^^ 2:7-2:14
+Variable                                         ^^     2:8-2:10
+Function                                            ^^  2:11-2:13
+Identifier                                           ^  2:12-2:13
+QuotedPattern                       ^^^^                1:0-1:4
+Pattern                                                 0:0-0:0
 === diagnostics ===
 Declarations are not valid after the message body. Did you mean to put the declaration before the body? (at @21..35)
   .local $a = {1}↵{{}}↵.input {$b :a}
