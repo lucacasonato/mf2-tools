@@ -3,7 +3,6 @@
 === spans ===
                     .local $var #a {abc}↵{{}}
 ComplexMessage      ^^^^^^^^^^^^^^^^^^^^^^^^^
-Declaration         ^^^^^^^^^^^
 LocalDeclaration    ^^^^^^^^^^^
 Variable                   ^^^^
 LiteralExpression              
@@ -29,6 +28,7 @@ Using an unquoted pattern as the body is invalid, because the message contains d
               ^^^^^^^^^^^^^
 === ast ===
 ComplexMessage {
+    span: @0..25,
     declarations: [
         LocalDeclaration {
             start: @0,

@@ -16,6 +16,7 @@ Matcher selector is missing a leading space. (at @6..8)
         ^^
 === ast ===
 ComplexMessage {
+    span: @0..17,
     declarations: [],
     body: Matcher {
         start: @0,

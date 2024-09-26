@@ -25,6 +25,7 @@ Matcher variant is missing a body. (at @22..27)
                         ^^^^^
 === ast ===
 ComplexMessage {
+    span: @0..27,
     declarations: [],
     body: Matcher {
         start: @0,

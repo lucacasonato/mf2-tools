@@ -677,23 +677,14 @@ impl<'text> Visitable<'text> for Markup<'text> {
 
 #[derive(Debug, Clone)]
 pub struct ComplexMessage<'text> {
+  pub span: Span,
   pub declarations: Vec<Declaration<'text>>,
   pub body: ComplexMessageBody<'text>,
 }
 
 impl Spanned for ComplexMessage<'_> {
   fn span(&self) -> Span {
-    let start = self
-      .declarations
-      .first()
-      .map(|first| first.span().start.min(self.body.span().start))
-      .unwrap_or_else(|| self.body.span().start);
-    let end = self
-      .declarations
-      .last()
-      .map(|last| last.span().end.max(self.body.span().end))
-      .unwrap_or_else(|| self.body.span().end);
-    Span::new(start..end)
+    self.span
   }
 }
 
@@ -721,7 +712,6 @@ ast_enum! {
   pub enum Declaration<'text> {
     InputDeclaration<'text>,
     LocalDeclaration<'text>,
-    ReservedStatement<'text>,
   }
 }
 
@@ -784,62 +774,6 @@ impl<'text> Visitable<'text> for LocalDeclaration<'text> {
   ) {
     self.variable.apply_visitor(visitor);
     self.expression.apply_visitor(visitor);
-  }
-}
-
-ast_enum! {
-  #[visit(visit_reserved_body_part)]
-  pub enum ReservedBodyPart<'text> {
-    Text<'text>,
-    Escape,
-    Quoted<'text>,
-  }
-}
-
-#[derive(Debug, Clone)]
-pub struct ReservedStatement<'text> {
-  pub start: Location,
-  pub name: &'text str,
-  pub body: Vec<ReservedBodyPart<'text>>,
-  pub expressions: Vec<Expression<'text>>,
-}
-
-impl Spanned for ReservedStatement<'_> {
-  fn span(&self) -> Span {
-    let start = self.start;
-    let end = self
-      .expressions
-      .last()
-      .map(|last| last.span().end)
-      .unwrap_or_else(|| {
-        self
-          .body
-          .last()
-          .map(|last| last.span().end)
-          .unwrap_or_else(|| start + '.' + self.name)
-      });
-    Span::new(start..end)
-  }
-}
-
-impl<'text> Visitable<'text> for ReservedStatement<'text> {
-  fn apply_visitor<'ast, V: Visit<'ast, 'text> + ?Sized>(
-    &'ast self,
-    visitor: &mut V,
-  ) {
-    visitor.visit_reserved_statement(self);
-  }
-
-  fn apply_visitor_to_children<'ast, V: Visit<'ast, 'text> + ?Sized>(
-    &'ast self,
-    visitor: &mut V,
-  ) {
-    for part in &self.body {
-      part.apply_visitor(visitor);
-    }
-    for expression in &self.expressions {
-      expression.apply_visitor(visitor);
-    }
   }
 }
 
@@ -1050,7 +984,6 @@ any_node! {
     FnOrMarkupOption<'text>,
     Attribute<'text>,
     LiteralOrVariable<'text>,
-    ReservedBodyPart<'text>,
     Quoted<'text>,
     QuotedPart<'text>,
     Literal<'text>,
@@ -1061,7 +994,6 @@ any_node! {
     Declaration<'text>,
     InputDeclaration<'text>,
     LocalDeclaration<'text>,
-    ReservedStatement<'text>,
     ComplexMessageBody<'text>,
     QuotedPattern<'text>,
     Matcher<'text>,

@@ -20,6 +20,7 @@ Matcher key is missing a leading space. (at @11..16)
              ^^^^^
 === ast ===
 ComplexMessage {
+    span: @0..23,
     declarations: [],
     body: Matcher {
         start: @0,

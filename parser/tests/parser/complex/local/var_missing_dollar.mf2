@@ -3,7 +3,6 @@
 === spans ===
                     .local var = { |hello| }↵{{}}
 ComplexMessage      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-Declaration         ^^^^^^^^^^^^^^^^^^^^^^^^
 LocalDeclaration    ^^^^^^^^^^^^^^^^^^^^^^^^
 Variable                   ^^^
 LiteralExpression                ^^^^^^^^^^^
@@ -17,6 +16,7 @@ Variable is not prefixed with a dollar sign ('$'). (at @7..10)
          ^^^
 === ast ===
 ComplexMessage {
+    span: @0..29,
     declarations: [
         LocalDeclaration {
             start: @0,

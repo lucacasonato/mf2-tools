@@ -2,7 +2,6 @@
 === spans ===
                     .local $a={b}
 ComplexMessage      ^^^^^^^^^^^^^
-Declaration         ^^^^^^^^^^^^^
 LocalDeclaration    ^^^^^^^^^^^^^
 Variable                   ^^
 LiteralExpression             ^^^
@@ -16,6 +15,7 @@ Message is missing a body (a matcher or quoted pattern). (at @13..13)
                
 === ast ===
 ComplexMessage {
+    span: @0..13,
     declarations: [
         LocalDeclaration {
             start: @0,

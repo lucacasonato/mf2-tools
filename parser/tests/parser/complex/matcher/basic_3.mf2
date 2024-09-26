@@ -23,6 +23,7 @@ Text                                            ^
 
 === ast ===
 ComplexMessage {
+    span: @0..31,
     declarations: [],
     body: Matcher {
         start: @0,

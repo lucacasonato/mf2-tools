@@ -18,6 +18,7 @@ Matcher variant has an expression as a body, but only quoted patterns are allowe
               ^^^
 === ast ===
 ComplexMessage {
+    span: @0..15,
     declarations: [],
     body: Matcher {
         start: @0,

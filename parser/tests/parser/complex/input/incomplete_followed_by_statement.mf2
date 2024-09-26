@@ -4,9 +4,6 @@
 === spans ===
                     .input↵.local $bar = {123}↵{{hello}}
 ComplexMessage      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-Declaration         ^^^^^^
-ReservedStatement   ^^^^^^
-Declaration                ^^^^^^^^^^^^^^^^^^^
 LocalDeclaration           ^^^^^^^^^^^^^^^^^^^
 Variable                          ^^^^
 LiteralExpression                        ^^^^^
@@ -21,13 +18,8 @@ Input declaration is missing an expression. (at @0..6)
   ^^^^^^
 === ast ===
 ComplexMessage {
+    span: @0..36,
     declarations: [
-        ReservedStatement {
-            start: @0,
-            name: "input",
-            body: [],
-            expressions: [],
-        },
         LocalDeclaration {
             start: @7,
             variable: Variable {

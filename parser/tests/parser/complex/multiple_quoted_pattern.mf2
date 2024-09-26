@@ -1,7 +1,7 @@
 {{a}}{{b}}
 === spans ===
                     {{a}}{{b}}
-ComplexMessage      ^^^^^
+ComplexMessage      ^^^^^^^^^^
 QuotedPattern       ^^^^^
 Pattern               ^
 Text                  ^
@@ -11,6 +11,7 @@ Message has multiple bodies, but only one is allowed. (at @5..10)
        ^^^^^
 === ast ===
 ComplexMessage {
+    span: @0..10,
     declarations: [],
     body: QuotedPattern {
         span: @0..5,

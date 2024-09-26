@@ -28,8 +28,6 @@ use crate::ast::PatternPart;
 use crate::ast::Quoted;
 use crate::ast::QuotedPart;
 use crate::ast::QuotedPattern;
-use crate::ast::ReservedBodyPart;
-use crate::ast::ReservedStatement;
 use crate::ast::Star;
 use crate::ast::Text;
 use crate::ast::Variable;
@@ -698,25 +696,18 @@ impl<'text> Parser<'text> {
     Some(option)
   }
 
-  /// Parses a reserved body.
+  /// Parses a invalid body.
   ///
-  /// The `bail_on_dot` parameter is used to determine if the function should stop parsing when it
-  /// encounters a dot that is preceded by a non-name character.
-  fn parse_reserved_body(
-    &mut self,
-    had_space: &mut bool,
-    bail_on_dot: bool,
-  ) -> Vec<ReservedBodyPart<'text>> {
-    let mut parts = vec![];
-
-    let mut start = self.current_location();
+  /// The function stops parsing when it encounters a dot that is preceded by a
+  /// non-name character.
+  fn skip_invalid_body(&mut self, had_space: &mut bool) -> Location {
     let mut last_space_start = None;
     let mut had_name = false;
 
     while let Some((loc, c)) = self.peek() {
       match c {
         '.' => {
-          if bail_on_dot && !had_name {
+          if !had_name {
             break;
           }
           self.next();
@@ -736,23 +727,11 @@ impl<'text> Parser<'text> {
           }
         }
         '\\' => {
-          if loc != start {
-            parts.push(ReservedBodyPart::Text(self.slice_text(start..loc)));
-          }
-          let escape = self.parse_escape();
-          if let Some(escape) = escape {
-            parts.push(ReservedBodyPart::Escape(escape));
-          }
-          start = self.current_location();
+          self.parse_escape();
           last_space_start = None;
           had_name = false;
         }
         '|' => {
-          if loc != start {
-            parts.push(ReservedBodyPart::Text(self.slice_text(start..loc)));
-          }
-          parts.push(ReservedBodyPart::Quoted(self.parse_quoted()));
-          start = self.current_location();
           last_space_start = None;
           had_name = false;
         }
@@ -760,18 +739,12 @@ impl<'text> Parser<'text> {
       }
     }
 
-    let end = if let Some(start) = last_space_start {
+    if let Some(start) = last_space_start {
       *had_space = true;
       start
     } else {
       self.current_location()
-    };
-
-    if end != start {
-      parts.push(ReservedBodyPart::Text(self.slice_text(start..end)));
     }
-
-    parts
   }
 
   fn parse_quoted(&mut self) -> Quoted<'text> {
@@ -1069,6 +1042,8 @@ impl<'text> Parser<'text> {
   }
 
   fn parse_complex_message(&mut self) -> ComplexMessage<'text> {
+    let mut start = None;
+    let mut end = self.current_location();
     let mut declarations = vec![];
     let mut body = None;
 
@@ -1077,14 +1052,37 @@ impl<'text> Parser<'text> {
         Some((_, chars::space!())) => {
           self.next();
         }
-        Some((start, '.')) => {
+        Some((loc, '.')) => {
+          if start.is_none() {
+            start = Some(loc);
+          }
           self.next(); // consume '.'
           let name = self.parse_name();
-          let declaration = match name {
-            "input" => self.parse_input_declaration(start),
-            "local" => self.parse_local_declaration(start),
+          match name {
+            "input" => {
+              let input_decl = self.parse_input_declaration(loc);
+              if let Some(declaration) = input_decl {
+                if body.is_some() {
+                  self.report(Diagnostic::ComplexMessageDeclarationAfterBody {
+                    span: declaration.span(),
+                  });
+                }
+                declarations.push(Declaration::InputDeclaration(declaration));
+              }
+            }
+            "local" => {
+              let local_decl = self.parse_local_declaration(loc);
+              if let Some(declaration) = local_decl {
+                if body.is_some() {
+                  self.report(Diagnostic::ComplexMessageDeclarationAfterBody {
+                    span: declaration.span(),
+                  });
+                }
+                declarations.push(Declaration::LocalDeclaration(declaration));
+              }
+            }
             "match" => {
-              let matcher = self.parse_matcher(start);
+              let matcher = self.parse_matcher(loc);
               if body.is_some() {
                 self.report(Diagnostic::ComplexMessageMultipleBodies {
                   span: matcher.span(),
@@ -1092,21 +1090,21 @@ impl<'text> Parser<'text> {
               } else {
                 body = Some(ComplexMessageBody::Matcher(matcher));
               }
-              continue;
             }
             name => {
-              let reserved = self.parse_reserved_statement(start, name);
-              Declaration::ReservedStatement(reserved)
+              self.skip_invalid_statement();
+              self.report(Diagnostic::InvalidStatement {
+                span: Span::new(loc..self.current_location()),
+                keyword: name,
+              });
             }
           };
-          if body.is_some() {
-            self.report(Diagnostic::ComplexMessageDeclarationAfterBody {
-              span: declaration.span(),
-            });
-          }
-          declarations.push(declaration);
+          end = self.current_location();
         }
         Some((loc, '{')) => {
+          if start.is_none() {
+            start = Some(loc);
+          }
           // parse quoted pattern, or error recover for placeholder
           if let Some((_, '{')) = self.peek2() {
             let quoted = self.parse_quoted_pattern(loc);
@@ -1120,6 +1118,7 @@ impl<'text> Parser<'text> {
           } else {
             break;
           }
+          end = self.current_location();
         }
         _ => {
           break;
@@ -1129,10 +1128,25 @@ impl<'text> Parser<'text> {
 
     // error recovery for an unquoted pattern
     if self.peek().is_some() {
+      if start.is_none() {
+        start = Some(self.current_location());
+      }
       debug_assert!(!matches!(self.peek(), Some((_, chars::space!()))));
       if body.is_some() {
+        let start = self.current_location();
+        let mut first_space_char = None;
+        while let Some((loc, c)) = self.next() {
+          if matches!(c, chars::space!()) {
+            if first_space_char.is_none() {
+              first_space_char = Some(loc);
+            }
+          } else {
+            first_space_char = None;
+          }
+        }
+        end = first_space_char.unwrap_or(self.current_location());
         self.report(Diagnostic::ComplexMessageTrailingContent {
-          span: Span::new(self.current_location()..self.text.end_location()),
+          span: Span::new(start..end),
         });
       } else {
         let mut pattern = self.parse_pattern(self.current_location(), false);
@@ -1144,6 +1158,7 @@ impl<'text> Parser<'text> {
         self.report(Diagnostic::ComplexMessageBodyNotQuoted {
           span: pattern.span(),
         });
+        end = pattern.span().end;
         body = Some(ComplexMessageBody::QuotedPattern(QuotedPattern {
           span: pattern.span(),
           pattern,
@@ -1166,10 +1181,19 @@ impl<'text> Parser<'text> {
       })
     });
 
-    ComplexMessage { declarations, body }
+    let start = start.unwrap_or(end);
+
+    ComplexMessage {
+      span: Span::new(start..end),
+      declarations,
+      body,
+    }
   }
 
-  fn parse_local_declaration(&mut self, start: Location) -> Declaration<'text> {
+  fn parse_local_declaration(
+    &mut self,
+    start: Location,
+  ) -> Option<LocalDeclaration<'text>> {
     // At this point, `.local` has already been consumed. `start` is the location of the `.`.
     let before_spaces = self.current_location();
     let has_space = self.skip_spaces();
@@ -1185,10 +1209,12 @@ impl<'text> Parser<'text> {
       }
       _ => {
         self.text.reset_to(before_spaces);
-        // parse as reserved statement
-        return Declaration::ReservedStatement(
-          self.parse_reserved_statement(start, "local"),
-        );
+        // parse as invalid statement
+        self.skip_invalid_statement();
+        self.report(Diagnostic::LocalDeclarationMalformed {
+          span: Span::new(start..self.current_location()),
+        });
+        return None;
       }
     };
     if !has_space {
@@ -1266,14 +1292,17 @@ impl<'text> Parser<'text> {
       bail_and_report(self)
     };
 
-    Declaration::LocalDeclaration(LocalDeclaration {
+    Some(LocalDeclaration {
       start,
       variable,
       expression,
     })
   }
 
-  fn parse_input_declaration(&mut self, start: Location) -> Declaration<'text> {
+  fn parse_input_declaration(
+    &mut self,
+    start: Location,
+  ) -> Option<InputDeclaration<'text>> {
     // At this point, `.input` has already been consumed. `start` is the location of the `.`.
 
     let before_spaces = self.current_location();
@@ -1285,59 +1314,36 @@ impl<'text> Parser<'text> {
       self.next().unwrap() // consume '{'
     } else {
       self.text.reset_to(before_spaces);
-      let decl = Declaration::ReservedStatement(ReservedStatement {
-        name: "input",
-        start,
-        body: vec![],
-        expressions: vec![],
-      });
       self.report(Diagnostic::InputDeclarationMissingExpression {
-        span: decl.span(),
+        span: Span::new(start..self.current_location()),
       });
-      return decl;
+      return None;
     };
 
     self.skip_spaces();
 
+    let diagnostic_length = self.diagnostics.len();
     let expression = self.parse_expression(open);
     let Expression::VariableExpression(expression) = expression else {
-      let decl = Declaration::ReservedStatement(ReservedStatement {
-        name: "input",
-        start,
-        body: vec![],
-        expressions: vec![expression.clone()],
-      });
+      // remove any diagnostics stemming from the expression, we will report a more general error
+      self.diagnostics.truncate(diagnostic_length);
       self.report(Diagnostic::InputDeclarationWithInvalidExpression {
-        span: decl.span(),
+        span: Span::new(start..expression.span().end),
         expression,
       });
-      return decl;
+      return None;
     };
 
-    Declaration::InputDeclaration(InputDeclaration { start, expression })
+    Some(InputDeclaration { start, expression })
   }
 
-  fn parse_reserved_statement(
-    &mut self,
-    start: Location,
-    name: &'text str,
-  ) -> ReservedStatement<'text> {
-    // At this point, the keyword has already been consumed. `start` is the location of the `.`
-    // preceding the keyword.
-    let mut before_spaces = self.current_location();
+  fn skip_invalid_statement(&mut self) {
+    let diagnostic_length = self.diagnostics.len();
+
+    // At this point, the keyword has already been consumed.
     let mut had_space = self.skip_spaces();
-    if !matches!(self.peek(), Some((_, '{' | '.'))) && !had_space {
-      self.report(Diagnostic::ReservedStatementMissingSpaceBeforeBody {
-        span: Span::new(start..before_spaces),
-      });
-    }
 
-    let body = self.parse_reserved_body(&mut had_space, true);
-    if let Some(last) = body.last() {
-      before_spaces = last.span().end;
-    }
-
-    let mut expressions = vec![];
+    let mut end = self.skip_invalid_body(&mut had_space);
 
     while let Some((loc, '{')) = self.peek() {
       if matches!(self.peek2(), Some((_, '{'))) {
@@ -1345,24 +1351,20 @@ impl<'text> Parser<'text> {
       } else {
         self.next().unwrap(); // consume '{'
         self.skip_spaces();
-        expressions.push(self.parse_expression(loc));
-        before_spaces = self.current_location();
+        self.parse_expression(loc);
+        end = self.current_location();
         self.skip_spaces();
       }
     }
 
-    if expressions.is_empty() {
-      self.report(Diagnostic::ReservedStatementMissingExpression {
-        span: Span::new(start..before_spaces),
-      });
+    if end != self.current_location() {
+      self.text.reset_to(end);
     }
 
-    ReservedStatement {
-      start,
-      name,
-      body,
-      expressions,
-    }
+    // Remove any diagnostics that were added while parsing this invalid
+    // statement. They are not useful since we are going to report a more
+    // general error.
+    self.diagnostics.truncate(diagnostic_length);
   }
 
   fn parse_matcher(&mut self, start: Location) -> Matcher<'text> {

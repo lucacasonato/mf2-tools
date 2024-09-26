@@ -3,8 +3,7 @@
 {{}}
 === spans ===
                     .match $a a {{}}↵.local $a = {1}↵{{}}
-ComplexMessage      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-Declaration                          ^^^^^^^^^^^^^^^
+ComplexMessage      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 LocalDeclaration                     ^^^^^^^^^^^^^^^
 Variable                                    ^^
 LiteralExpression                                ^^^
@@ -25,6 +24,7 @@ Message has multiple bodies, but only one is allowed. (at @33..37)
                                    ^^^^
 === ast ===
 ComplexMessage {
+    span: @0..37,
     declarations: [
         LocalDeclaration {
             start: @17,
