@@ -1,12 +1,13 @@
 mod diagnostics;
 mod document;
 mod protocol;
+mod scope;
 
-use diagnostics::mf2_diagnostic_to_lsp;
+use diagnostics::Diagnostic;
 use lsp_server::Connection;
 use lsp_server::Message;
 use lsp_types::CodeAction;
-use lsp_types::Diagnostic;
+use lsp_types::Diagnostic as LspDiagnostic;
 use lsp_types::DidChangeTextDocumentParams;
 use lsp_types::DidCloseTextDocumentParams;
 use lsp_types::DidOpenTextDocumentParams;
@@ -132,7 +133,7 @@ impl Server<'_> {
       version: Some(document.version),
       diagnostics: diagnostics
         .iter()
-        .map(|diag| mf2_diagnostic_to_lsp(document, diag))
+        .map(|diag| diag.to_lsp(document))
         .collect(),
     });
   }
@@ -215,10 +216,12 @@ impl LanguageServer for Server<'_> {
 
 fn fix_for_diagnostic(
   document: &Document,
-  diag: &mf2_parser::Diagnostic,
+  diag: &Diagnostic,
 ) -> Option<lsp_types::CodeAction> {
+  use mf2_parser::Diagnostic::*;
+
   match diag {
-    mf2_parser::Diagnostic::MarkupInvalidSpaceBeforeIdentifier { .. } => {
+    Diagnostic::Parser(MarkupInvalidSpaceBeforeIdentifier { .. }) => {
       Some(CodeAction {
         title: "Remove space before identifier".to_string(),
         kind: Some(lsp_types::CodeActionKind::QUICKFIX),
@@ -238,12 +241,12 @@ fn fix_for_diagnostic(
           document_changes: None,
         }),
         command: None,
-        diagnostics: Some(vec![Diagnostic {
+        diagnostics: Some(vec![LspDiagnostic {
           range: document.span_to_range(diag.span()),
           severity: Some(lsp_types::DiagnosticSeverity::ERROR),
           message: diag.to_string(),
           source: Some("mf2".to_string()),
-          ..Diagnostic::default()
+          ..LspDiagnostic::default()
         }]),
         is_preferred: Some(true),
         disabled: None,
