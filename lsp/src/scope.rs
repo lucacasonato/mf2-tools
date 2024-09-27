@@ -49,6 +49,10 @@ impl Scope<'_> {
   pub fn get_spans(&self, name: &str) -> Option<&Vec<Span>> {
     self.variables.get(name).map(|u| &u.all)
   }
+
+  pub fn get_declaration_span(&self, name: &str) -> Option<Span> {
+    self.variables.get(name).and_then(|u| u.declaration)
+  }
 }
 
 struct ScopeVisitor<'text> {

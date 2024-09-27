@@ -353,3 +353,63 @@ Deno.test("semantic tokens", async () => {
     1, 0, 2, 4, 0, // c
   ]);
 });
+
+for (const def of ["definition", "declaration"] as const) {
+  Deno.test(`go to ${def}`, async (t) => {
+    await using lsp = new LSPTest();
+
+    await lsp.initialize();
+
+    await lsp.notify(
+      "textDocument/didOpen",
+      {
+        textDocument: {
+          uri: "file:///src/main.mf2",
+          languageId: "mf2",
+          version: 1,
+          text:
+            ".input {$bar} .local $foo = {$bar} .match $foo 1 {{}}",
+        },
+      },
+    );
+
+    await t.step("for .input", async () => {
+      const response = await lsp.request(`textDocument/${def}`, {
+        textDocument: { uri: "file:///src/main.mf2" },
+        position: { line: 0, character: 31 },
+      });
+
+      assertEquals(response, {
+        uri: "file:///src/main.mf2",
+        range: {
+          start: { line: 0, character: 8 },
+          end: { line: 0, character: 12 },
+        },
+      });
+    });
+
+    await t.step("for .local", async () => {
+      const response = await lsp.request(`textDocument/${def}`, {
+        textDocument: { uri: "file:///src/main.mf2" },
+        position: { line: 0, character: 38 },
+      });
+
+      assertEquals(response, null);
+    });
+
+    await t.step("somewhere else", async () => {
+      const response = await lsp.request(`textDocument/${def}`, {
+        textDocument: { uri: "file:///src/main.mf2" },
+        position: { line: 0, character: 44 },
+      });
+
+      assertEquals(response, {
+        uri: "file:///src/main.mf2",
+        range: {
+          start: { line: 0, character: 21 },
+          end: { line: 0, character: 25 },
+        },
+      });
+    });
+  });
+}
