@@ -5,6 +5,8 @@ use lsp_types::notification::DidOpenTextDocument;
 use lsp_types::notification::PublishDiagnostics;
 use lsp_types::request::CodeActionRequest;
 use lsp_types::request::HoverRequest;
+use lsp_types::request::PrepareRenameRequest;
+use lsp_types::request::Rename as RenameRequest;
 
 pub struct LanguageClient<'a> {
   connection: &'a Connection,
@@ -99,9 +101,8 @@ macro_rules! language_server {
                     }
                   },
                   Err(err) => {
-                    let message = format!("Error handling request {}: {:?}", <$request_typ as lsp_types::request::Request>::METHOD, err);
                     const REQUEST_FAILED_ERROR_CODE: i32 = -32803;
-                    lsp_server::Response::new_err(request.id, REQUEST_FAILED_ERROR_CODE, message)
+                    lsp_server::Response::new_err(request.id, REQUEST_FAILED_ERROR_CODE, err.to_string())
                   }
                 }
               }
@@ -147,6 +148,8 @@ language_server! {
   requests: {
     hover: HoverRequest,
     code_action: CodeActionRequest,
+    rename: RenameRequest,
+    prepare_rename: PrepareRenameRequest,
   }
 }
 

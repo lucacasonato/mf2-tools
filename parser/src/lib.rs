@@ -17,3 +17,10 @@ pub use visitor::{AnyNodeVisitor, Visit, Visitable};
 pub fn parse(message: &str) -> (Message, Vec<Diagnostic>, SourceTextInfo) {
   Parser::new(message).parse()
 }
+
+pub fn is_valid_name(name: &str) -> bool {
+  let mut ch_it = name.chars();
+
+  matches!(ch_it.next(), Some(chars::name_start!()))
+    && ch_it.all(|c| matches!(c, chars::name!()))
+}

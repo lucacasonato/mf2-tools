@@ -286,6 +286,12 @@ impl Spanned for Variable<'_> {
   }
 }
 
+impl Variable<'_> {
+  pub fn name_span(&self) -> Span {
+    Span::new(self.span.start + '$'..self.span.end)
+  }
+}
+
 impl<'text> Visitable<'text> for Variable<'text> {
   fn apply_visitor<'ast, V: Visit<'ast, 'text> + ?Sized>(
     &'ast self,

@@ -13,6 +13,7 @@ use yoke::Yoke;
 use yoke::Yokeable;
 
 use crate::diagnostics::Diagnostic;
+use crate::scope::Scope;
 use crate::scope::ScopeVisitor;
 
 pub struct Document {
@@ -26,6 +27,7 @@ pub struct ParsedDocument<'text> {
   pub ast: Message<'text>,
   pub diagnostics: Vec<Diagnostic<'text>>,
   pub info: SourceTextInfo<'text>,
+  pub scope: Scope<'text>,
 }
 
 impl Document {
@@ -38,15 +40,16 @@ impl Document {
         .map(Diagnostic::Parser)
         .collect();
 
-      let diagnostics = {
+      let (scope, diagnostics) = {
         let mut scope_visitor = ScopeVisitor::new(diagnostics);
         scope_visitor.visit_message(&ast);
-        scope_visitor.diagnostics
+        (scope_visitor.variables, scope_visitor.diagnostics)
       };
 
       ParsedDocument {
         ast,
         info,
+        scope,
         diagnostics,
       }
     });

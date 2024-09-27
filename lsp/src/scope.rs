@@ -9,12 +9,14 @@ use crate::diagnostics::Diagnostic;
 use crate::diagnostics::ScopeDiagnostic;
 
 pub struct VariableUsage {
-  declaration: Option<Span>,
-  references: Vec<Span>,
+  pub declaration: Option<Span>,
+  pub references: Vec<Span>,
 }
 
+pub type Scope<'text> = HashMap<&'text str, VariableUsage>;
+
 pub struct ScopeVisitor<'text> {
-  variables: HashMap<&'text str, VariableUsage>,
+  pub variables: Scope<'text>,
   pub diagnostics: Vec<Diagnostic<'text>>,
 }
 

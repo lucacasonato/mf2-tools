@@ -17,6 +17,8 @@ use lsp_types::ServerCapabilities;
 use lsp_types::TextDocumentSyncCapability;
 use lsp_types::TextDocumentSyncKind;
 use lsp_types::Uri;
+use mf2_parser::ast::AnyNode;
+use mf2_parser::is_valid_name;
 use mf2_parser::Spanned;
 
 use std::collections::hash_map::Entry;
@@ -52,6 +54,10 @@ fn main() -> Result<(), anyhow::Error> {
         },
       ),
     ),
+    rename_provider: Some(lsp_types::OneOf::Right(lsp_types::RenameOptions {
+      prepare_provider: Some(true),
+      work_done_progress_options: lsp_types::WorkDoneProgressOptions::default(),
+    })),
     ..ServerCapabilities::default()
   };
 
@@ -211,6 +217,82 @@ impl LanguageServer for Server<'_> {
       .collect::<Vec<_>>();
 
     Ok(Some(diagnostics))
+  }
+
+  fn rename(
+    &mut self,
+    params: lsp_types::RenameParams,
+  ) -> Result<Option<lsp_types::WorkspaceEdit>, anyhow::Error> {
+    let lsp_types::TextDocumentPositionParams {
+      text_document,
+      position,
+    } = params.text_document_position;
+
+    let maybe_document = self.documents.get(&text_document.uri);
+    let Some(document) = maybe_document else {
+      return Err(anyhow::anyhow!("Document not found."));
+    };
+
+    let Some(AnyNode::Variable(node)) = document.find_node(position) else {
+      return Err(anyhow::anyhow!(
+        "No variable to rename at the given position.",
+      ));
+    };
+
+    if node.name == params.new_name {
+      return Ok(None);
+    }
+
+    let usage = document
+      .parsed
+      .get()
+      .scope
+      .get(node.name)
+      .expect("Variable not found in scope");
+
+    if !is_valid_name(&params.new_name) {
+      return Err(anyhow::anyhow!("Invalid variable name."));
+    }
+
+    let mut changes = Vec::new();
+
+    if let Some(declaration_span) = usage.declaration {
+      changes.push(lsp_types::TextEdit {
+        range: document.span_to_range(declaration_span),
+        new_text: format!("${}", params.new_name),
+      });
+    }
+    for reference_span in &usage.references {
+      changes.push(lsp_types::TextEdit {
+        range: document.span_to_range(*reference_span),
+        new_text: format!("${}", params.new_name),
+      });
+    }
+
+    Ok(Some(lsp_types::WorkspaceEdit {
+      changes: Some([(text_document.uri, changes)].into()),
+      document_changes: None,
+      change_annotations: None,
+    }))
+  }
+
+  fn prepare_rename(
+    &mut self,
+    params: lsp_types::TextDocumentPositionParams,
+  ) -> Result<Option<lsp_types::PrepareRenameResponse>, anyhow::Error> {
+    let maybe_document = self.documents.get(&params.text_document.uri);
+    let Some(document) = maybe_document else {
+      return Ok(None);
+    };
+
+    let maybe_node = document.find_node(params.position);
+    let Some(AnyNode::Variable(node)) = maybe_node else {
+      return Ok(None);
+    };
+
+    Ok(Some(lsp_types::PrepareRenameResponse::Range(
+      document.span_to_range(node.name_span()),
+    )))
   }
 }
 
