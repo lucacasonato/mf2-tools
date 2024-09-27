@@ -352,7 +352,7 @@
     "match-statement-contents": {
       "patterns": [
         {
-          "include": "#quoted-pattern"
+          "include": "#variable"
         },
         {
           "match": "\\*",
@@ -362,7 +362,7 @@
           "include": "#literal"
         },
         {
-          "include": "#expression"
+          "include": "#quoted-pattern"
         }
       ]
     }

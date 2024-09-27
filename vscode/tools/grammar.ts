@@ -277,10 +277,10 @@ export const standalone = {
     },
     "match-statement-contents": {
       patterns: [
-        { include: "#quoted-pattern" },
+        { include: "#variable" },
         { match: re`\*`, name: "punctuation.star.mf2" },
         { include: "#literal" },
-        { include: "#expression" },
+        { include: "#quoted-pattern" },
       ],
     },
   },
