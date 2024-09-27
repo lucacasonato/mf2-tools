@@ -947,6 +947,15 @@ macro_rules! any_node {
         $( $item ( &'ast $item$(<$item_lifetime>)? ), )*
       }
 
+      impl $name<'_, '_> {
+        pub fn same(&self, other: &Self) -> bool {
+          match (self, other) {
+            $( ($name::$item(a), $name::$item(b)) => ::std::ptr::eq(a as *const _, b as *const _), )*
+            _ => false,
+          }
+        }
+      }
+
       impl ::std::fmt::Debug for $name<'_, '_> {
         fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
           match self {

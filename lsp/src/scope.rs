@@ -53,6 +53,10 @@ impl Scope<'_> {
   pub fn get_declaration_span(&self, name: &str) -> Option<Span> {
     self.variables.get(name).and_then(|u| u.declaration)
   }
+
+  pub fn get_names(&self) -> impl Iterator<Item = &str> {
+    self.variables.keys().copied()
+  }
 }
 
 struct ScopeVisitor<'text> {

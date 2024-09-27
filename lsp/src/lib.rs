@@ -1,4 +1,5 @@
 mod ast_utils;
+mod completions;
 mod diagnostics;
 mod document;
 mod protocol;
