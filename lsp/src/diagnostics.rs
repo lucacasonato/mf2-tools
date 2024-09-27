@@ -1,4 +1,5 @@
 use crate::document::Document;
+use crate::scope::ScopeDiagnostic;
 use lsp_types::Diagnostic as LspDiagnostic;
 use mf2_parser::Span;
 use std::fmt;
@@ -6,21 +7,6 @@ use std::fmt;
 pub enum Diagnostic<'t> {
   Parser(mf2_parser::Diagnostic<'t>),
   Scope(ScopeDiagnostic<'t>),
-}
-
-pub enum ScopeDiagnostic<'text> {
-  DuplicateDeclaration {
-    name: &'text str,
-    #[allow(dead_code)]
-    first_span: Span,
-    second_span: Span,
-  },
-  UsageBeforeDeclaration {
-    name: &'text str,
-    #[allow(dead_code)]
-    declaration_span: Span,
-    usage_span: Span,
-  },
 }
 
 #[allow(unused_variables)]

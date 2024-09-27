@@ -1,20 +1,17 @@
-use lsp_types::Position;
 use lsp_types::Range;
 use lsp_types::Uri;
-use mf2_parser::ast::AnyNode;
+use mf2_parser::ast;
 use mf2_parser::ast::Message;
-use mf2_parser::AnyNodeVisitor;
 use mf2_parser::LineColUtf16;
+use mf2_parser::Location;
 use mf2_parser::SourceTextInfo;
 use mf2_parser::Span;
-use mf2_parser::Spanned;
-use mf2_parser::Visit;
 use yoke::Yoke;
 use yoke::Yokeable;
 
+use crate::ast_utils::find_node;
 use crate::diagnostics::Diagnostic;
 use crate::scope::Scope;
-use crate::scope::ScopeVisitor;
 
 pub struct Document {
   pub uri: Uri,
@@ -34,17 +31,12 @@ impl Document {
   pub fn new(uri: Uri, version: i32, text: Box<str>) -> Document {
     let parsed = Yoke::attach_to_cart(text, |text| {
       let (ast, parser_diagnostics, info) = mf2_parser::parse(text);
+      let (scope, scope_diagnostics) = Scope::analyse(&ast);
 
-      let diagnostics = parser_diagnostics
-        .into_iter()
-        .map(Diagnostic::Parser)
+      let diagnostics = std::iter::empty()
+        .chain(parser_diagnostics.into_iter().map(Diagnostic::Parser))
+        .chain(scope_diagnostics.into_iter().map(Diagnostic::Scope))
         .collect();
-
-      let (scope, diagnostics) = {
-        let mut scope_visitor = ScopeVisitor::new(diagnostics);
-        scope_visitor.visit_message(&ast);
-        (scope_visitor.variables, scope_visitor.diagnostics)
-      };
 
       ParsedDocument {
         ast,
@@ -93,20 +85,18 @@ impl Document {
     self.parsed.get().info.utf16_len(span)
   }
 
-  pub fn find_node(&self, pos: Position) -> Option<AnyNode> {
-    let location = self.pos_to_loc(pos);
-    let ast = &self.parsed.get().ast;
+  pub fn ast(&self) -> &Message {
+    &self.parsed.get().ast
+  }
 
-    let mut result = None;
+  pub fn scope(&self) -> &Scope {
+    &self.parsed.get().scope
+  }
 
-    let mut visitor = AnyNodeVisitor::new(|node| {
-      if node.span().contains_loc(location) {
-        result = Some(node);
-      }
-    });
-
-    visitor.visit_message(ast);
-
-    result
+  pub fn find_variable_at(&self, loc: Location) -> Option<&str> {
+    match find_node(self.ast(), loc) {
+      Some(ast::AnyNode::Variable(node)) => Some(node.name),
+      _ => None,
+    }
   }
 }

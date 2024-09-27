@@ -1,9 +1,11 @@
+mod ast_utils;
 mod diagnostics;
 mod document;
 mod protocol;
 mod scope;
 mod semantic_tokens;
 
+use ast_utils::find_node;
 use diagnostics::Diagnostic;
 use lsp_server::Connection;
 use lsp_server::Message;
@@ -201,9 +203,10 @@ impl LanguageServer for Server<'_> {
       return Ok(None);
     };
 
-    let maybe_node =
-      document.find_node(params.text_document_position_params.position);
-    let Some(node) = maybe_node else {
+    let Some(node) = find_node(
+      document.ast(),
+      document.pos_to_loc(params.text_document_position_params.position),
+    ) else {
       return Ok(None);
     };
 
@@ -243,51 +246,40 @@ impl LanguageServer for Server<'_> {
     &mut self,
     params: lsp_types::RenameParams,
   ) -> Result<Option<lsp_types::WorkspaceEdit>, anyhow::Error> {
+    if !is_valid_name(&params.new_name) {
+      return Err(anyhow::anyhow!("Invalid variable name."));
+    }
+
     let lsp_types::TextDocumentPositionParams {
       text_document,
       position,
     } = params.text_document_position;
 
-    let maybe_document = self.documents.get(&text_document.uri);
-    let Some(document) = maybe_document else {
-      return Err(anyhow::anyhow!("Document not found."));
-    };
+    let document = self
+      .documents
+      .get(&text_document.uri)
+      .ok_or(anyhow::anyhow!("Document not found."))?;
 
-    let Some(AnyNode::Variable(node)) = document.find_node(position) else {
-      return Err(anyhow::anyhow!(
-        "No variable to rename at the given position.",
-      ));
-    };
+    let old_name = document
+      .find_variable_at(document.pos_to_loc(position))
+      .ok_or(anyhow::anyhow!(
+        "No variable to rename at the given position."
+      ))?;
 
-    if node.name == params.new_name {
+    if old_name == params.new_name {
       return Ok(None);
     }
 
-    let usage = document
-      .parsed
-      .get()
-      .scope
-      .get(node.name)
-      .expect("Variable not found in scope");
-
-    if !is_valid_name(&params.new_name) {
-      return Err(anyhow::anyhow!("Invalid variable name."));
-    }
-
-    let mut changes = Vec::new();
-
-    if let Some(declaration_span) = usage.declaration {
-      changes.push(lsp_types::TextEdit {
-        range: document.span_to_range(declaration_span),
+    let changes = document
+      .scope()
+      .get_spans(old_name)
+      .expect("Variable is in scope")
+      .iter()
+      .map(|span| lsp_types::TextEdit {
+        range: document.span_to_range(*span),
         new_text: format!("${}", params.new_name),
-      });
-    }
-    for reference_span in &usage.references {
-      changes.push(lsp_types::TextEdit {
-        range: document.span_to_range(*reference_span),
-        new_text: format!("${}", params.new_name),
-      });
-    }
+      })
+      .collect();
 
     Ok(Some(lsp_types::WorkspaceEdit {
       changes: Some([(text_document.uri, changes)].into()),
@@ -305,8 +297,9 @@ impl LanguageServer for Server<'_> {
       return Ok(None);
     };
 
-    let maybe_node = document.find_node(params.position);
-    let Some(AnyNode::Variable(node)) = maybe_node else {
+    let Some(AnyNode::Variable(node)) =
+      find_node(document.ast(), document.pos_to_loc(params.position))
+    else {
       return Ok(None);
     };
 
