@@ -3,6 +3,10 @@ name = "mf2lsp"
 version = "0.1.0-alpha.2"
 edition = "2021"
 
+[[bin]]
+name = "mf2lsp"
+path = "src/main.rs"
+
 [dependencies]
 anyhow = "1.0.86"
 lsp-server = "0.7.6"
