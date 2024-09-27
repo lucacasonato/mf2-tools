@@ -138,53 +138,56 @@ class LSPDecoderStream extends TransformStream<
   constructor() {
     super({
       transform: (chunk, controller) => {
-        if (this.#message === null) {
-          this.#message = chunk;
-        } else {
-          this.#message = concat([this.#message, chunk]);
-        }
-        const endOfHeaders = indexOfNeedle(
-          this.#message,
-          new Uint8Array([0x0d, 0x0a, 0x0d, 0x0a]),
-        );
-        if (endOfHeaders === -1) return;
-        const headers = new TextDecoder().decode(
-          this.#message.subarray(0, endOfHeaders),
-        );
-        const lines = headers.split("\r\n");
-        let index: number = 0;
-        let contentLength: number | undefined;
-        for (const line of lines) {
-          const [key, value] = line.split(": ");
-          if (key.toLowerCase() === "content-length") {
-            contentLength = parseInt(value, 10);
+        while (true) {
+          if (this.#message === null) {
+            if (chunk.length === 0) return;
+            this.#message = chunk;
+          } else if (chunk.length > 0) {
+            this.#message = concat([this.#message, chunk]);
           }
-          index += line.length + 2;
+          const endOfHeaders = indexOfNeedle(
+            this.#message,
+            new Uint8Array([0x0d, 0x0a, 0x0d, 0x0a]),
+          );
+          if (endOfHeaders === -1) return;
+          const headers = new TextDecoder().decode(
+            this.#message.subarray(0, endOfHeaders),
+          );
+          const lines = headers.split("\r\n");
+          let index: number = 0;
+          let contentLength: number | undefined;
+          for (const line of lines) {
+            const [key, value] = line.split(": ");
+            if (key.toLowerCase() === "content-length") {
+              contentLength = parseInt(value, 10);
+            }
+            index += line.length + 2;
+          }
+          assert(contentLength !== undefined);
+          const bodyBytes = this.#message.subarray(
+            endOfHeaders + 4,
+            endOfHeaders + 4 + contentLength,
+          );
+          if (bodyBytes.length < contentLength) return;
+          const body = new TextDecoder().decode(bodyBytes);
+          try {
+            const message = JSON.parse(body);
+            controller.enqueue(message);
+          } catch (e) {
+            (e as Error).message += " while parsing " + JSON.stringify(body);
+            throw e;
+          }
+          const length = endOfHeaders + 4 + contentLength;
+          if (this.#message.length === length) {
+            this.#message = null;
+          } else {
+            this.#message = this.#message.subarray(length);
+          }
+          chunk = new Uint8Array();
         }
-        assert(contentLength !== undefined);
-        const bodyBytes = this.#message.subarray(
-          endOfHeaders + 4,
-          endOfHeaders + 4 + contentLength,
-        );
-        if (bodyBytes.length < contentLength) return;
-        const body = new TextDecoder().decode(bodyBytes);
-        try {
-          const message = JSON.parse(body);
-          controller.enqueue(message);
-        } catch (e) {
-          (e as Error).message += " while parsing " + JSON.stringify(body);
-          throw e;
-        }
-        const length = endOfHeaders + 4 + contentLength;
-        if (this.#message.length === length) {
-          this.#message = null;
-        } else {
-          this.#message = this.#message.subarray(length);
-        }
-        return;
       },
       flush: () => {
-        if (this.#message?.length !== undefined) {
+        if (this.#message !== null) {
           throw new TypeError(
             "Incomplete message to decode.\n" +
               new TextDecoder().decode(this.#message),
