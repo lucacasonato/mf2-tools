@@ -4,5 +4,6 @@
   ],
   "tasks": {
     "test": "cd lsp/test && deno test -A"
-  }
+  },
+  "exclude": ["target/"]
 }

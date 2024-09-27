@@ -1,4 +1,4 @@
-import { assertEquals, assertRejects } from "@std/assert";
+import { assert, assertEquals, assertRejects } from "@std/assert";
 import { LSPTest } from "./util/mod.ts";
 
 Deno.test("diagnostics", async () => {
@@ -311,4 +311,45 @@ Deno.test("variable rename", async (t) => {
       message: "Invalid variable name.",
     });
   });
+});
+
+Deno.test("semantic tokens", async () => {
+  await using lsp = new LSPTest();
+
+  await lsp.initialize();
+
+  await lsp.notify(
+    "textDocument/didOpen",
+    {
+      textDocument: {
+        uri: "file:///src/main.mf2",
+        languageId: "mf2",
+        version: 1,
+        text:
+          ".local $a = {:x c=1}\n.local $b = {2}\n.match $a\n* {{ {|a\nb\r\nc| } }}",
+      },
+    },
+  );
+
+  const semanticTokens = await lsp.request("textDocument/semanticTokens/full", {
+    textDocument: {
+      uri: "file:///src/main.mf2",
+    },
+  });
+
+  assert(semanticTokens);
+  // deno-fmt-ignore
+  assertEquals(semanticTokens.data, [
+    0, 7, 2, 0, 0, // $a
+    0, 7, 1, 2, 0, // :x
+    0, 2, 1, 1, 0, // c
+    0, 2, 1, 5, 0, // 1
+    1, 7, 2, 0, 0, // $b
+    0, 6, 1, 5, 0, // 2
+    1, 0, 6, 3, 0, // .match
+    0, 7, 2, 0, 0, // $a
+    1, 6, 3, 4, 0, // |a\n
+    1, 0, 3, 4, 0, // b\r\n
+    1, 0, 2, 4, 0, // c
+  ]);
 });

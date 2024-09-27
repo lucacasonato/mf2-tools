@@ -212,6 +212,19 @@ impl SourceTextInfo<'_> {
     }
   }
 
+  /// Returns the length of the given span in UTF-8 bytes.
+  pub fn utf8_len(&self, span: Span) -> u32 {
+    span.end.0 - span.start.0
+  }
+
+  /// Returns the length of the given span in UTF-16 code units.
+  pub fn utf16_len(&self, span: Span) -> u32 {
+    let line_text = &self.text[span.start.0 as usize..span.end.0 as usize];
+    line_text
+      .chars()
+      .fold(0, |acc, c| acc + c.len_utf16() as u32)
+  }
+
   /// Returns the location of the given UTF-8 line and column index pair.
   ///
   /// If the line index is out of bounds, returns a location pointing to the end
@@ -620,5 +633,47 @@ mod tests {
     assert_eq!(source_text.next(), None);
     let info = source_text.into_info();
     assert_eq!(info.utf8_line_starts, vec![0, 2]);
+  }
+
+  #[test]
+  fn source_text_span_len() {
+    let source = "a\nbc\r\nf\r🍊😅🎃\r\nasd🍊a";
+    let mut source_text = super::SourceTextIterator::new(source);
+    while source_text.next().is_some() {}
+
+    let info = source_text.into_info();
+    assert_eq!(
+      info.utf8_len(super::Span::new(super::Location(0)..super::Location(0))),
+      0
+    );
+    assert_eq!(
+      info.utf8_len(super::Span::new(super::Location(0)..super::Location(1))),
+      1
+    );
+    assert_eq!(
+      info.utf8_len(super::Span::new(super::Location(0)..super::Location(2))),
+      2
+    );
+    assert_eq!(
+      info.utf8_len(super::Span::new(super::Location(8)..super::Location(12))),
+      4
+    );
+
+    assert_eq!(
+      info.utf16_len(super::Span::new(super::Location(0)..super::Location(0))),
+      0
+    );
+    assert_eq!(
+      info.utf16_len(super::Span::new(super::Location(0)..super::Location(1))),
+      1
+    );
+    assert_eq!(
+      info.utf16_len(super::Span::new(super::Location(0)..super::Location(2))),
+      2
+    );
+    assert_eq!(
+      info.utf16_len(super::Span::new(super::Location(8)..super::Location(12))),
+      2
+    );
   }
 }

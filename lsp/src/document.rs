@@ -89,6 +89,10 @@ impl Document {
     }
   }
 
+  pub fn span_len(&self, span: Span) -> u32 {
+    self.parsed.get().info.utf16_len(span)
+  }
+
   pub fn find_node(&self, pos: Position) -> Option<AnyNode> {
     let location = self.pos_to_loc(pos);
     let ast = &self.parsed.get().ast;

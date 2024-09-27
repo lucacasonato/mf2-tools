@@ -2,6 +2,7 @@ mod diagnostics;
 mod document;
 mod protocol;
 mod scope;
+mod semantic_tokens;
 
 use diagnostics::Diagnostic;
 use lsp_server::Connection;
@@ -13,6 +14,12 @@ use lsp_types::DidCloseTextDocumentParams;
 use lsp_types::DidOpenTextDocumentParams;
 use lsp_types::InitializeParams;
 use lsp_types::PublishDiagnosticsParams;
+use lsp_types::SemanticTokens;
+use lsp_types::SemanticTokensOptions;
+use lsp_types::SemanticTokensParams;
+use lsp_types::SemanticTokensRangeParams;
+use lsp_types::SemanticTokensRangeResult;
+use lsp_types::SemanticTokensResult;
 use lsp_types::ServerCapabilities;
 use lsp_types::TextDocumentSyncCapability;
 use lsp_types::TextDocumentSyncKind;
@@ -20,6 +27,8 @@ use lsp_types::Uri;
 use mf2_parser::ast::AnyNode;
 use mf2_parser::is_valid_name;
 use mf2_parser::Spanned;
+use mf2_parser::Visitable;
+use semantic_tokens::SemanticTokenVisitor;
 
 use std::collections::hash_map::Entry;
 use std::collections::HashMap;
@@ -41,6 +50,11 @@ fn main() -> Result<(), anyhow::Error> {
 
   let (connection, _threads) = Connection::stdio();
 
+  let (initialize_id, initialize_params) = connection.initialize_start()?;
+
+  let initialize_params: InitializeParams =
+    serde_json::from_value(initialize_params)?;
+
   let capabilities = ServerCapabilities {
     text_document_sync: Some(TextDocumentSyncCapability::Kind(
       TextDocumentSyncKind::FULL,
@@ -58,11 +72,20 @@ fn main() -> Result<(), anyhow::Error> {
       prepare_provider: Some(true),
       work_done_progress_options: lsp_types::WorkDoneProgressOptions::default(),
     })),
+    semantic_tokens_provider: Some(
+      lsp_types::SemanticTokensServerCapabilities::SemanticTokensOptions(
+        SemanticTokensOptions {
+          legend: semantic_tokens::legend(),
+          full: Some(lsp_types::SemanticTokensFullOptions::Bool(true)),
+          range: Some(true),
+          ..Default::default()
+        },
+      ),
+    ),
     ..ServerCapabilities::default()
   };
 
   let server_capabilities = serde_json::to_value(capabilities).unwrap();
-  let (initialize_id, initialize_params) = connection.initialize_start()?;
 
   let initialize_result = serde_json::json!({
     "capabilities": server_capabilities,
@@ -72,9 +95,6 @@ fn main() -> Result<(), anyhow::Error> {
     },
   });
   connection.initialize_finish(initialize_id, initialize_result)?;
-
-  let initialize_params =
-    serde_json::from_value::<InitializeParams>(initialize_params)?;
 
   eprint!("Server initialized.");
   if let Some(client_info) = initialize_params.client_info {
@@ -293,6 +313,58 @@ impl LanguageServer for Server<'_> {
     Ok(Some(lsp_types::PrepareRenameResponse::Range(
       document.span_to_range(node.name_span()),
     )))
+  }
+
+  fn semantic_tokens_full(
+    &mut self,
+    params: SemanticTokensParams,
+  ) -> Result<Option<SemanticTokensResult>, anyhow::Error> {
+    let maybe_document = self.documents.get(&params.text_document.uri);
+    let Some(document) = maybe_document else {
+      return Ok(None);
+    };
+
+    let mut visitor = SemanticTokenVisitor {
+      document,
+      tokens: Vec::new(),
+      last_start: lsp_types::Position {
+        line: 0,
+        character: 0,
+      },
+    };
+    document.parsed.get().ast.apply_visitor(&mut visitor);
+
+    Ok(Some(SemanticTokensResult::Tokens(SemanticTokens {
+      result_id: None,
+      data: visitor.tokens,
+    })))
+  }
+
+  fn semantic_tokens_range(
+    &mut self,
+    params: SemanticTokensRangeParams,
+  ) -> Result<Option<SemanticTokensRangeResult>, anyhow::Error> {
+    let maybe_document = self.documents.get(&params.text_document.uri);
+    let Some(document) = maybe_document else {
+      return Ok(None);
+    };
+
+    // TODO: only compute tokens for the range
+
+    let mut visitor = SemanticTokenVisitor {
+      document,
+      tokens: Vec::new(),
+      last_start: lsp_types::Position {
+        line: 0,
+        character: 0,
+      },
+    };
+    document.parsed.get().ast.apply_visitor(&mut visitor);
+
+    Ok(Some(SemanticTokensRangeResult::Tokens(SemanticTokens {
+      result_id: None,
+      data: visitor.tokens,
+    })))
   }
 }
 
