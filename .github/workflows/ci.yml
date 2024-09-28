@@ -84,3 +84,33 @@ jobs:
         with:
           draft: true
           files: mf2lsp-*.zip
+
+  wasm:
+    name: "ci-wasm"
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+
+    steps:
+      - name: Configure Git
+        run: git config --global core.autocrlf false
+
+      - uses: actions/checkout@v4
+
+      - uses: denoland/setup-deno@v1
+
+      - uses: dsherret/rust-toolchain-file@v1
+
+      - name: Install wasm32 target
+        run: rustup target add wasm32-unknown-unknown
+
+      - uses: Swatinem/rust-cache@v2
+
+      - name: Build
+        run: deno task wasm:release
+
+      - name: Run e2e tests
+        run: deno task test
+        env:
+          PROFILE: release
+          MODE: wasm

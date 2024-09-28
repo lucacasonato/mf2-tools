@@ -1,8 +1,15 @@
 import { assert, assertEquals, assertRejects } from "@std/assert";
-import { LSPTest } from "./util/mod.ts";
+import type { LSPTest } from "./util/mod.ts";
+
+let AutoLSPTest: typeof LSPTest;
+if (Deno.env.get("MODE") === "wasm") {
+  AutoLSPTest = (await import("./util/wasm.ts")).WasmLSPTest;
+} else {
+  AutoLSPTest = (await import("./util/native.ts")).NativeLSPTest;
+}
 
 Deno.test("diagnostics", async () => {
-  await using lsp = new LSPTest();
+  await using lsp = new AutoLSPTest();
   await lsp.initialize();
 
   const diagnosticPromise = lsp.waitNotify("textDocument/publishDiagnostics");
@@ -39,7 +46,7 @@ Deno.test("diagnostics", async () => {
 });
 
 Deno.test("diagnostics with emoji", async () => {
-  await using lsp = new LSPTest();
+  await using lsp = new AutoLSPTest();
   await lsp.initialize();
 
   const diagnosticPromise = lsp.waitNotify("textDocument/publishDiagnostics");
@@ -76,7 +83,7 @@ Deno.test("diagnostics with emoji", async () => {
 });
 
 Deno.test("scope diagnostics", async (t) => {
-  await using lsp = new LSPTest();
+  await using lsp = new AutoLSPTest();
   await lsp.initialize();
 
   await t.step("duplicate declaration", async () => {
@@ -189,7 +196,7 @@ Deno.test("scope diagnostics", async (t) => {
 });
 
 Deno.test("variable rename", async (t) => {
-  await using lsp = new LSPTest();
+  await using lsp = new AutoLSPTest();
   await lsp.initialize();
 
   await lsp.notify(
@@ -314,7 +321,7 @@ Deno.test("variable rename", async (t) => {
 });
 
 Deno.test("semantic tokens", async () => {
-  await using lsp = new LSPTest();
+  await using lsp = new AutoLSPTest();
 
   await lsp.initialize();
 
@@ -356,7 +363,7 @@ Deno.test("semantic tokens", async () => {
 
 for (const def of ["definition", "declaration"] as const) {
   Deno.test(`go to ${def}`, async (t) => {
-    await using lsp = new LSPTest();
+    await using lsp = new AutoLSPTest();
 
     await lsp.initialize();
 
@@ -367,8 +374,7 @@ for (const def of ["definition", "declaration"] as const) {
           uri: "file:///src/main.mf2",
           languageId: "mf2",
           version: 1,
-          text:
-            ".input {$bar} .local $foo = {$bar} .match $foo 1 {{}}",
+          text: ".input {$bar} .local $foo = {$bar} .match $foo 1 {{}}",
         },
       },
     );

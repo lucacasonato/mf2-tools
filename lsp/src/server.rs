@@ -1,11 +1,12 @@
 use lsp_server::Connection;
-use lsp_server::Message;
 use lsp_types::CodeAction;
 use lsp_types::Diagnostic as LspDiagnostic;
 use lsp_types::DidChangeTextDocumentParams;
 use lsp_types::DidCloseTextDocumentParams;
 use lsp_types::DidOpenTextDocumentParams;
 use lsp_types::InitializeParams;
+use lsp_types::InitializeResult;
+use lsp_types::InitializedParams;
 use lsp_types::PublishDiagnosticsParams;
 use lsp_types::SemanticTokens;
 use lsp_types::SemanticTokensOptions;
@@ -14,6 +15,7 @@ use lsp_types::SemanticTokensRangeParams;
 use lsp_types::SemanticTokensRangeResult;
 use lsp_types::SemanticTokensResult;
 use lsp_types::ServerCapabilities;
+use lsp_types::ServerInfo;
 use lsp_types::TextDocumentSyncCapability;
 use lsp_types::TextDocumentSyncKind;
 use lsp_types::Uri;
@@ -35,11 +37,12 @@ use crate::semantic_tokens::SemanticTokenVisitor;
 
 pub struct Server<'a> {
   client: LanguageClient<'a>,
+  initialize_params: Option<InitializeParams>,
   documents: HashMap<Uri, Document>,
 }
 
 impl Server<'_> {
-  pub fn run(connection: Connection) -> Result<(), anyhow::Error> {
+  pub fn start(connection: &Connection) -> Server {
     eprintln!(
       "Starting server... mflsp {}{}",
       env!("CARGO_PKG_VERSION"),
@@ -50,10 +53,46 @@ impl Server<'_> {
       }
     );
 
-    let (initialize_id, initialize_params) = connection.initialize_start()?;
+    Server {
+      client: LanguageClient::new(connection),
+      initialize_params: None,
+      documents: HashMap::new(),
+    }
+  }
 
-    let initialize_params: InitializeParams =
-      serde_json::from_value(initialize_params)?;
+  fn on_document_change(&mut self, uri: Uri, version: i32, text: String) {
+    let document = Document::new(uri.clone(), version, text.into_boxed_str());
+    let entry = self.documents.entry(uri.clone());
+    let document = match entry {
+      Entry::Occupied(mut entry) => {
+        assert!(entry.get().version < document.version);
+        entry.insert(document);
+        entry.into_mut()
+      }
+      Entry::Vacant(entry) => entry.insert(document),
+    };
+
+    let parsed = document.parsed.get();
+
+    let diagnostics = &parsed.diagnostics;
+
+    self.client.publish_diagnostics(PublishDiagnosticsParams {
+      uri,
+      version: Some(document.version),
+      diagnostics: diagnostics
+        .iter()
+        .map(|diag| diag.to_lsp(document))
+        .collect(),
+    });
+  }
+}
+
+impl LanguageServer for Server<'_> {
+  fn initialize(
+    &mut self,
+    params: InitializeParams,
+  ) -> Result<InitializeResult, anyhow::Error> {
+    self.initialize_params = Some(params);
 
     let capabilities = ServerCapabilities {
       text_document_sync: Some(TextDocumentSyncCapability::Kind(
@@ -97,81 +136,30 @@ impl Server<'_> {
       ..ServerCapabilities::default()
     };
 
-    let server_capabilities = serde_json::to_value(capabilities).unwrap();
+    Ok(InitializeResult {
+      capabilities,
+      server_info: Some(ServerInfo {
+        name: "mf2lsp".to_string(),
+        version: Some(env!("CARGO_PKG_VERSION").to_string()),
+      }),
+    })
+  }
 
-    let initialize_result = serde_json::json!({
-      "capabilities": server_capabilities,
-      "serverInfo": {
-        "name": "mf2lsp",
-        "version": env!("CARGO_PKG_VERSION"),
-      },
-    });
-    connection.initialize_finish(initialize_id, initialize_result)?;
-
-    let client = LanguageClient::new(&connection);
-    let mut server = Server {
-      client,
-      documents: HashMap::new(),
-    };
-
+  fn initialized(&mut self, _params: InitializedParams) {
+    let initialize_params = self
+      .initialize_params
+      .as_ref()
+      .expect("Initialized before initialize");
     eprint!("Server initialized.");
-    if let Some(client_info) = initialize_params.client_info {
+    if let Some(client_info) = &initialize_params.client_info {
       eprint!(" Connected to: {}", client_info.name);
-      if let Some(version) = client_info.version {
+      if let Some(version) = &client_info.version {
         eprint!(" {}", version);
       }
     }
     eprintln!();
-
-    loop {
-      match connection.receiver.recv()? {
-        Message::Request(request) => {
-          if connection.handle_shutdown(&request).unwrap_or(true) {
-            break;
-          }
-
-          let response = server.handle_request(request);
-          connection.sender.send(Message::Response(response))?;
-        }
-        Message::Response(_) => todo!(),
-        Message::Notification(notification) => {
-          server.handle_notification(notification);
-        }
-      }
-    }
-
-    eprintln!("Shutting down.");
-    Ok(())
   }
 
-  fn on_document_change(&mut self, uri: Uri, version: i32, text: String) {
-    let document = Document::new(uri.clone(), version, text.into_boxed_str());
-    let entry = self.documents.entry(uri.clone());
-    let document = match entry {
-      Entry::Occupied(mut entry) => {
-        assert!(entry.get().version < document.version);
-        entry.insert(document);
-        entry.into_mut()
-      }
-      Entry::Vacant(entry) => entry.insert(document),
-    };
-
-    let parsed = document.parsed.get();
-
-    let diagnostics = &parsed.diagnostics;
-
-    self.client.publish_diagnostics(PublishDiagnosticsParams {
-      uri,
-      version: Some(document.version),
-      diagnostics: diagnostics
-        .iter()
-        .map(|diag| diag.to_lsp(document))
-        .collect(),
-    });
-  }
-}
-
-impl LanguageServer for Server<'_> {
   fn on_open_text_document(&mut self, params: DidOpenTextDocumentParams) {
     self.on_document_change(
       params.text_document.uri.clone(),
