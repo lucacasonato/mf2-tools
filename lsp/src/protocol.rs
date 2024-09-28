@@ -152,6 +152,8 @@ language_server! {
     prepare_rename: PrepareRenameRequest,
     semantic_tokens_full: lsp_types::request::SemanticTokensFullRequest,
     semantic_tokens_range: lsp_types::request::SemanticTokensRangeRequest,
+    go_to_definition: lsp_types::request::GotoDefinition,
+    go_to_declaration: lsp_types::request::GotoDeclaration,
   }
 }
 

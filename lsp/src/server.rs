@@ -75,6 +75,15 @@ impl Server<'_> {
             lsp_types::WorkDoneProgressOptions::default(),
         },
       )),
+      declaration_provider: Some(lsp_types::DeclarationCapability::Simple(
+        true,
+      )),
+      definition_provider: Some(lsp_types::OneOf::Right(
+        lsp_types::DefinitionOptions {
+          work_done_progress_options:
+            lsp_types::WorkDoneProgressOptions::default(),
+        },
+      )),
       semantic_tokens_provider: Some(
         lsp_types::SemanticTokensServerCapabilities::SemanticTokensOptions(
           SemanticTokensOptions {
@@ -212,6 +221,40 @@ impl LanguageServer for Server<'_> {
       }),
       range: Some(document.span_to_range(node.span())),
     }))
+  }
+
+  fn go_to_declaration(
+    &mut self,
+    params: lsp_types::GotoDefinitionParams,
+  ) -> Result<Option<lsp_types::GotoDefinitionResponse>, anyhow::Error> {
+    let lsp_types::TextDocumentPositionParams {
+      text_document,
+      position,
+    } = params.text_document_position_params;
+
+    let document = self
+      .documents
+      .get(&text_document.uri)
+      .ok_or(anyhow::anyhow!("Document not found."))?;
+
+    Ok(
+      document
+        .find_variable_at(document.pos_to_loc(position))
+        .and_then(|name| document.scope().get_declaration_span(name))
+        .map(|span| {
+          lsp_types::GotoDefinitionResponse::Scalar(lsp_types::Location {
+            uri: text_document.uri,
+            range: document.span_to_range(span),
+          })
+        }),
+    )
+  }
+
+  fn go_to_definition(
+    &mut self,
+    params: lsp_types::GotoDefinitionParams,
+  ) -> Result<Option<lsp_types::GotoDefinitionResponse>, anyhow::Error> {
+    self.go_to_declaration(params)
   }
 
   fn code_action(
