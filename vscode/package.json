@@ -1,0 +1,107 @@
+{
+  "name": "vscode-mf2",
+  "displayName": "MessageFormat 2",
+  "description": "",
+  "version": "0.0.3",
+  "scripts": {
+    "build:grammar": "deno run --allow-write ./tools/build.ts",
+    "watch:grammar": "deno run --allow-write --watch ./tools/build.ts",
+    "publish": "npx @vscode/vsce publish",
+    "check": "tsc"
+  },
+  "engines": {
+    "vscode": "^1.90.0"
+  },
+  "categories": [
+    "Programming Languages"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nicolo-ribaudo/vscode-mf2"
+  },
+  "publisher": "nicolo-ribaudo",
+  "type": "module",
+  "main": "./src/main.cjs",
+  "dependencies": {
+    "vscode-languageclient": "^9.0.1"
+  },
+  "devDependencies": {
+    "@types/vscode": "1.90.0",
+    "@types/node": "^20.14.9",
+    "typescript": "^5.5",
+    "regenerate": "^1.4.2",
+    "@types/regenerate": "^1.4.3"
+  },
+  "contributes": {
+    "languages": [
+      {
+        "id": "mf2",
+        "aliases": [
+          "MessageFormat 2",
+          "mf2"
+        ],
+        "extensions": [
+          ".mf2"
+        ],
+        "configuration": "./language-configuration.json"
+      }
+    ],
+    "grammars": [
+      {
+        "language": "mf2",
+        "scopeName": "source.mf2",
+        "path": "./syntaxes/mf2.tmLanguage.json"
+      },
+      {
+        "injectTo": [
+          "source.js",
+          "source.ts",
+          "source.js.jsx",
+          "source.tsx",
+          "source.vue",
+          "source.svelte",
+          "source.astro",
+          "text.html.markdown",
+          "text.html.derivative"
+        ],
+        "scopeName": "inline.mf2",
+        "path": "./syntaxes/mf2.js.json",
+        "embeddedLanguages": {
+          "meta.embedded.block.mf2": "mf2"
+        }
+      }
+    ],
+    "commands": [
+      {
+        "command": "mf2.restart",
+        "title": "Restart Language Server",
+        "category": "MessageFormat 2"
+      }
+    ],
+    "configuration": {
+      "title": "MessageFormat 2",
+      "properties": {
+        "mf2.server.path": {
+          "title": "Path",
+          "type": "string",
+          "description": "The path to the MessageFormat 2 language server",
+          "scope": "machine-overridable"
+        },
+        "mf2.server.download.enabled": {
+          "title": "Enable download",
+          "type": "boolean",
+          "description": "Whether to download the MessageFormat 2 language server from GitHub. Defaults to true.",
+          "default": true,
+          "scope": "machine-overridable"
+        },
+        "mf2.server.download.version": {
+          "title": "Version to download",
+          "type": "string",
+          "description": "The version of the MessageFormat 2 language server to download from GitHub. Defaults to the latest version.",
+          "default": "latest",
+          "scope": "machine-overridable"
+        }
+      }
+    }
+  }
+}

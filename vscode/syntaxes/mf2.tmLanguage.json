@@ -1,0 +1,371 @@
+{
+  "__": "THIS FILE IS AUTO-GENERATED. DO NOT MODIFY MANUALLY. Run `node --run build:grammar` to regenerate it from ../tools/grammar.ts",
+  "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+  "name": "MessageFormat 2",
+  "patterns": [
+    {
+      "begin": "^",
+      "end": "(?=file)end",
+      "patterns": [
+        {
+          "name": "simple-message.mf2",
+          "begin": "(?=(?:[\\x{01}-\\x{08}\\x{0B}\\f\\x{0E}-\\x{1F}!-\\x{2D}\\/-\\[\\]-z\\|~-\\x{2FFF}\\x{3001}-\\x{D7FF}\\x{E000}-\\x{10FFFF}]))",
+          "end": "(?=file)end",
+          "patterns": [
+            {
+              "include": "source.mf2#simple-message-inner"
+            }
+          ]
+        },
+        {
+          "name": "complex-message.mf2",
+          "begin": "(?=.)(?!(?:[\\t\\r \\x{3000}]))",
+          "end": "(?=file)end",
+          "patterns": [
+            {
+              "include": "source.mf2#complex-message-inner"
+            },
+            {
+              "begin": "(\\.match)",
+              "captures": {
+                "1": {
+                  "name": "keyword.declaration.match.mf2"
+                }
+              },
+              "patterns": [
+                {
+                  "include": "source.mf2#match-statement-contents"
+                }
+              ],
+              "end": "(?=file)end"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "fileTypes": [
+    "mf2"
+  ],
+  "repository": {
+    "simple-message-inner": {
+      "patterns": [
+        {
+          "include": "#escaped-char"
+        },
+        {
+          "include": "#placeholder"
+        }
+      ]
+    },
+    "complex-message-inner": {
+      "patterns": [
+        {
+          "include": "#declaration"
+        },
+        {
+          "include": "#quoted-pattern"
+        }
+      ]
+    },
+    "escaped-char": {
+      "name": "constant.character.escape.mf2",
+      "match": "\\\\[\\\\{|}]"
+    },
+    "placeholder": {
+      "patterns": [
+        {
+          "include": "#expression"
+        },
+        {
+          "include": "#markup"
+        }
+      ]
+    },
+    "expression": {
+      "name": "expression.mf2",
+      "begin": "\\{(?!(?:[\\t\\r \\x{3000}])?[#/])",
+      "patterns": [
+        {
+          "include": "#variable"
+        },
+        {
+          "include": "#annotation"
+        },
+        {
+          "include": "#attribute"
+        },
+        {
+          "include": "#literal"
+        }
+      ],
+      "end": "\\}"
+    },
+    "variable": {
+      "name": "variable.other.mf2",
+      "match": "\\$((?:(?:[A-Z_a-z\\x{C0}-\\x{D6}\\x{D8}-\\x{F6}\\x{F8}-\\x{02FF}\\x{0370}-\\x{037D}\\x{037F}-\\x{1FFF}\\x{200C}\\x{200D}\\x{2070}-\\x{218F}\\x{2C00}-\\x{2FEF}\\x{3001}-\\x{D7FF}\\x{F900}-\\x{FDCF}\\x{FDF0}-\\x{FFFC}\\x{10000}-\\x{EFFFF}])(?:[\\x{2D}\\.0-9A-Z_a-z\\x{B7}\\x{C0}-\\x{D6}\\x{D8}-\\x{F6}\\x{F8}-\\x{037D}\\x{037F}-\\x{1FFF}\\x{200C}\\x{200D}\\x{203F}\\x{2040}\\x{2070}-\\x{218F}\\x{2C00}-\\x{2FEF}\\x{3001}-\\x{D7FF}\\x{F900}-\\x{FDCF}\\x{FDF0}-\\x{FFFC}\\x{10000}-\\x{EFFFF}])*:)?(?:[A-Z_a-z\\x{C0}-\\x{D6}\\x{D8}-\\x{F6}\\x{F8}-\\x{02FF}\\x{0370}-\\x{037D}\\x{037F}-\\x{1FFF}\\x{200C}\\x{200D}\\x{2070}-\\x{218F}\\x{2C00}-\\x{2FEF}\\x{3001}-\\x{D7FF}\\x{F900}-\\x{FDCF}\\x{FDF0}-\\x{FFFC}\\x{10000}-\\x{EFFFF}])(?:[\\x{2D}\\.0-9A-Z_a-z\\x{B7}\\x{C0}-\\x{D6}\\x{D8}-\\x{F6}\\x{F8}-\\x{037D}\\x{037F}-\\x{1FFF}\\x{200C}\\x{200D}\\x{203F}\\x{2040}\\x{2070}-\\x{218F}\\x{2C00}-\\x{2FEF}\\x{3001}-\\x{D7FF}\\x{F900}-\\x{FDCF}\\x{FDF0}-\\x{FFFC}\\x{10000}-\\x{EFFFF}])*)"
+    },
+    "literal": {
+      "patterns": [
+        {
+          "include": "#quoted"
+        },
+        {
+          "include": "#unquoted"
+        },
+        {
+          "include": "#number-literal"
+        }
+      ]
+    },
+    "unquoted": {
+      "name": "string.unquoted.mf2",
+      "match": "(?:[A-Z_a-z\\x{C0}-\\x{D6}\\x{D8}-\\x{F6}\\x{F8}-\\x{02FF}\\x{0370}-\\x{037D}\\x{037F}-\\x{1FFF}\\x{200C}\\x{200D}\\x{2070}-\\x{218F}\\x{2C00}-\\x{2FEF}\\x{3001}-\\x{D7FF}\\x{F900}-\\x{FDCF}\\x{FDF0}-\\x{FFFC}\\x{10000}-\\x{EFFFF}])(?:[\\x{2D}\\.0-9A-Z_a-z\\x{B7}\\x{C0}-\\x{D6}\\x{D8}-\\x{F6}\\x{F8}-\\x{037D}\\x{037F}-\\x{1FFF}\\x{200C}\\x{200D}\\x{203F}\\x{2040}\\x{2070}-\\x{218F}\\x{2C00}-\\x{2FEF}\\x{3001}-\\x{D7FF}\\x{F900}-\\x{FDCF}\\x{FDF0}-\\x{FFFC}\\x{10000}-\\x{EFFFF}])*"
+    },
+    "quoted": {
+      "name": "string.quoted.mf2",
+      "begin": "\\|",
+      "patterns": [
+        {
+          "match": "(?:[\\x{01}-\\t\\x{0B}-\\[\\]-\\{\\}-\\x{D7FF}\\x{E000}-\\x{10FFFF}])"
+        },
+        {
+          "include": "#escaped-char"
+        }
+      ],
+      "end": "\\|"
+    },
+    "number-literal": {
+      "name": "constant.numeric.mf2",
+      "match": "\\b\\-?(0|[1-9](?:[0-9])*)(\\.(?:[0-9])+)?([eE][-+]?(?:[0-9])+)?\\b"
+    },
+    "attribute": {
+      "match": "(@)((?:(?:[A-Z_a-z\\x{C0}-\\x{D6}\\x{D8}-\\x{F6}\\x{F8}-\\x{02FF}\\x{0370}-\\x{037D}\\x{037F}-\\x{1FFF}\\x{200C}\\x{200D}\\x{2070}-\\x{218F}\\x{2C00}-\\x{2FEF}\\x{3001}-\\x{D7FF}\\x{F900}-\\x{FDCF}\\x{FDF0}-\\x{FFFC}\\x{10000}-\\x{EFFFF}])(?:[\\x{2D}\\.0-9A-Z_a-z\\x{B7}\\x{C0}-\\x{D6}\\x{D8}-\\x{F6}\\x{F8}-\\x{037D}\\x{037F}-\\x{1FFF}\\x{200C}\\x{200D}\\x{203F}\\x{2040}\\x{2070}-\\x{218F}\\x{2C00}-\\x{2FEF}\\x{3001}-\\x{D7FF}\\x{F900}-\\x{FDCF}\\x{FDF0}-\\x{FFFC}\\x{10000}-\\x{EFFFF}])*:)?(?:[A-Z_a-z\\x{C0}-\\x{D6}\\x{D8}-\\x{F6}\\x{F8}-\\x{02FF}\\x{0370}-\\x{037D}\\x{037F}-\\x{1FFF}\\x{200C}\\x{200D}\\x{2070}-\\x{218F}\\x{2C00}-\\x{2FEF}\\x{3001}-\\x{D7FF}\\x{F900}-\\x{FDCF}\\x{FDF0}-\\x{FFFC}\\x{10000}-\\x{EFFFF}])(?:[\\x{2D}\\.0-9A-Z_a-z\\x{B7}\\x{C0}-\\x{D6}\\x{D8}-\\x{F6}\\x{F8}-\\x{037D}\\x{037F}-\\x{1FFF}\\x{200C}\\x{200D}\\x{203F}\\x{2040}\\x{2070}-\\x{218F}\\x{2C00}-\\x{2FEF}\\x{3001}-\\x{D7FF}\\x{F900}-\\x{FDCF}\\x{FDF0}-\\x{FFFC}\\x{10000}-\\x{EFFFF}])*)(?:(?:[\\t\\r \\x{3000}])?(=))?",
+      "captures": {
+        "1": {
+          "name": "punctuation.definition.attribute.mf2"
+        },
+        "2": {
+          "name": "entity.other.attribute-name.mf2"
+        },
+        "3": {
+          "name": "punctuation.separator.key-value.mf2"
+        }
+      }
+    },
+    "annotation": {
+      "patterns": [
+        {
+          "include": "#function"
+        },
+        {
+          "include": "#option"
+        },
+        {
+          "include": "#private-use-annotation"
+        }
+      ]
+    },
+    "function": {
+      "match": "(:)((?:(?:[A-Z_a-z\\x{C0}-\\x{D6}\\x{D8}-\\x{F6}\\x{F8}-\\x{02FF}\\x{0370}-\\x{037D}\\x{037F}-\\x{1FFF}\\x{200C}\\x{200D}\\x{2070}-\\x{218F}\\x{2C00}-\\x{2FEF}\\x{3001}-\\x{D7FF}\\x{F900}-\\x{FDCF}\\x{FDF0}-\\x{FFFC}\\x{10000}-\\x{EFFFF}])(?:[\\x{2D}\\.0-9A-Z_a-z\\x{B7}\\x{C0}-\\x{D6}\\x{D8}-\\x{F6}\\x{F8}-\\x{037D}\\x{037F}-\\x{1FFF}\\x{200C}\\x{200D}\\x{203F}\\x{2040}\\x{2070}-\\x{218F}\\x{2C00}-\\x{2FEF}\\x{3001}-\\x{D7FF}\\x{F900}-\\x{FDCF}\\x{FDF0}-\\x{FFFC}\\x{10000}-\\x{EFFFF}])*:)?(?:[A-Z_a-z\\x{C0}-\\x{D6}\\x{D8}-\\x{F6}\\x{F8}-\\x{02FF}\\x{0370}-\\x{037D}\\x{037F}-\\x{1FFF}\\x{200C}\\x{200D}\\x{2070}-\\x{218F}\\x{2C00}-\\x{2FEF}\\x{3001}-\\x{D7FF}\\x{F900}-\\x{FDCF}\\x{FDF0}-\\x{FFFC}\\x{10000}-\\x{EFFFF}])(?:[\\x{2D}\\.0-9A-Z_a-z\\x{B7}\\x{C0}-\\x{D6}\\x{D8}-\\x{F6}\\x{F8}-\\x{037D}\\x{037F}-\\x{1FFF}\\x{200C}\\x{200D}\\x{203F}\\x{2040}\\x{2070}-\\x{218F}\\x{2C00}-\\x{2FEF}\\x{3001}-\\x{D7FF}\\x{F900}-\\x{FDCF}\\x{FDF0}-\\x{FFFC}\\x{10000}-\\x{EFFFF}])*)",
+      "captures": {
+        "1": {
+          "name": "punctuation.definition.function.mf2"
+        },
+        "2": {
+          "name": "entity.name.function.mf2"
+        }
+      }
+    },
+    "option": {
+      "match": "((?:(?:[A-Z_a-z\\x{C0}-\\x{D6}\\x{D8}-\\x{F6}\\x{F8}-\\x{02FF}\\x{0370}-\\x{037D}\\x{037F}-\\x{1FFF}\\x{200C}\\x{200D}\\x{2070}-\\x{218F}\\x{2C00}-\\x{2FEF}\\x{3001}-\\x{D7FF}\\x{F900}-\\x{FDCF}\\x{FDF0}-\\x{FFFC}\\x{10000}-\\x{EFFFF}])(?:[\\x{2D}\\.0-9A-Z_a-z\\x{B7}\\x{C0}-\\x{D6}\\x{D8}-\\x{F6}\\x{F8}-\\x{037D}\\x{037F}-\\x{1FFF}\\x{200C}\\x{200D}\\x{203F}\\x{2040}\\x{2070}-\\x{218F}\\x{2C00}-\\x{2FEF}\\x{3001}-\\x{D7FF}\\x{F900}-\\x{FDCF}\\x{FDF0}-\\x{FFFC}\\x{10000}-\\x{EFFFF}])*:)?(?:[A-Z_a-z\\x{C0}-\\x{D6}\\x{D8}-\\x{F6}\\x{F8}-\\x{02FF}\\x{0370}-\\x{037D}\\x{037F}-\\x{1FFF}\\x{200C}\\x{200D}\\x{2070}-\\x{218F}\\x{2C00}-\\x{2FEF}\\x{3001}-\\x{D7FF}\\x{F900}-\\x{FDCF}\\x{FDF0}-\\x{FFFC}\\x{10000}-\\x{EFFFF}])(?:[\\x{2D}\\.0-9A-Z_a-z\\x{B7}\\x{C0}-\\x{D6}\\x{D8}-\\x{F6}\\x{F8}-\\x{037D}\\x{037F}-\\x{1FFF}\\x{200C}\\x{200D}\\x{203F}\\x{2040}\\x{2070}-\\x{218F}\\x{2C00}-\\x{2FEF}\\x{3001}-\\x{D7FF}\\x{F900}-\\x{FDCF}\\x{FDF0}-\\x{FFFC}\\x{10000}-\\x{EFFFF}])*)(?:[\\t\\r \\x{3000}])?(=)",
+      "captures": {
+        "1": {
+          "name": "variable.parameter.function-call.mf2"
+        },
+        "2": {
+          "name": "punctuation.separator.key-value.mf2"
+        }
+      }
+    },
+    "private-use-annotation": {
+      "match": "[&^]",
+      "name": "punctuation.definition.private-use-annotation.mf2"
+    },
+    "markup": {
+      "patterns": [
+        {
+          "begin": "(\\{(?:[\\t\\r \\x{3000}])?#)((?:(?:[A-Z_a-z\\x{C0}-\\x{D6}\\x{D8}-\\x{F6}\\x{F8}-\\x{02FF}\\x{0370}-\\x{037D}\\x{037F}-\\x{1FFF}\\x{200C}\\x{200D}\\x{2070}-\\x{218F}\\x{2C00}-\\x{2FEF}\\x{3001}-\\x{D7FF}\\x{F900}-\\x{FDCF}\\x{FDF0}-\\x{FFFC}\\x{10000}-\\x{EFFFF}])(?:[\\x{2D}\\.0-9A-Z_a-z\\x{B7}\\x{C0}-\\x{D6}\\x{D8}-\\x{F6}\\x{F8}-\\x{037D}\\x{037F}-\\x{1FFF}\\x{200C}\\x{200D}\\x{203F}\\x{2040}\\x{2070}-\\x{218F}\\x{2C00}-\\x{2FEF}\\x{3001}-\\x{D7FF}\\x{F900}-\\x{FDCF}\\x{FDF0}-\\x{FFFC}\\x{10000}-\\x{EFFFF}])*:)?(?:[A-Z_a-z\\x{C0}-\\x{D6}\\x{D8}-\\x{F6}\\x{F8}-\\x{02FF}\\x{0370}-\\x{037D}\\x{037F}-\\x{1FFF}\\x{200C}\\x{200D}\\x{2070}-\\x{218F}\\x{2C00}-\\x{2FEF}\\x{3001}-\\x{D7FF}\\x{F900}-\\x{FDCF}\\x{FDF0}-\\x{FFFC}\\x{10000}-\\x{EFFFF}])(?:[\\x{2D}\\.0-9A-Z_a-z\\x{B7}\\x{C0}-\\x{D6}\\x{D8}-\\x{F6}\\x{F8}-\\x{037D}\\x{037F}-\\x{1FFF}\\x{200C}\\x{200D}\\x{203F}\\x{2040}\\x{2070}-\\x{218F}\\x{2C00}-\\x{2FEF}\\x{3001}-\\x{D7FF}\\x{F900}-\\x{FDCF}\\x{FDF0}-\\x{FFFC}\\x{10000}-\\x{EFFFF}])*)",
+          "beginCaptures": {
+            "1": {
+              "name": "punctuation.definition.markup.open.mf2"
+            },
+            "2": {
+              "name": "entity.name.tag.mf2"
+            }
+          },
+          "end": "/?\\}",
+          "endCaptures": {
+            "0": {
+              "name": "punctuation.definition.markup.close.mf2"
+            }
+          },
+          "patterns": [
+            {
+              "include": "#option"
+            },
+            {
+              "include": "#attribute"
+            },
+            {
+              "include": "#literal"
+            },
+            {
+              "include": "#variable"
+            }
+          ]
+        },
+        {
+          "begin": "(\\{(?:[\\t\\r \\x{3000}])?/)((?:(?:[A-Z_a-z\\x{C0}-\\x{D6}\\x{D8}-\\x{F6}\\x{F8}-\\x{02FF}\\x{0370}-\\x{037D}\\x{037F}-\\x{1FFF}\\x{200C}\\x{200D}\\x{2070}-\\x{218F}\\x{2C00}-\\x{2FEF}\\x{3001}-\\x{D7FF}\\x{F900}-\\x{FDCF}\\x{FDF0}-\\x{FFFC}\\x{10000}-\\x{EFFFF}])(?:[\\x{2D}\\.0-9A-Z_a-z\\x{B7}\\x{C0}-\\x{D6}\\x{D8}-\\x{F6}\\x{F8}-\\x{037D}\\x{037F}-\\x{1FFF}\\x{200C}\\x{200D}\\x{203F}\\x{2040}\\x{2070}-\\x{218F}\\x{2C00}-\\x{2FEF}\\x{3001}-\\x{D7FF}\\x{F900}-\\x{FDCF}\\x{FDF0}-\\x{FFFC}\\x{10000}-\\x{EFFFF}])*:)?(?:[A-Z_a-z\\x{C0}-\\x{D6}\\x{D8}-\\x{F6}\\x{F8}-\\x{02FF}\\x{0370}-\\x{037D}\\x{037F}-\\x{1FFF}\\x{200C}\\x{200D}\\x{2070}-\\x{218F}\\x{2C00}-\\x{2FEF}\\x{3001}-\\x{D7FF}\\x{F900}-\\x{FDCF}\\x{FDF0}-\\x{FFFC}\\x{10000}-\\x{EFFFF}])(?:[\\x{2D}\\.0-9A-Z_a-z\\x{B7}\\x{C0}-\\x{D6}\\x{D8}-\\x{F6}\\x{F8}-\\x{037D}\\x{037F}-\\x{1FFF}\\x{200C}\\x{200D}\\x{203F}\\x{2040}\\x{2070}-\\x{218F}\\x{2C00}-\\x{2FEF}\\x{3001}-\\x{D7FF}\\x{F900}-\\x{FDCF}\\x{FDF0}-\\x{FFFC}\\x{10000}-\\x{EFFFF}])*)",
+          "beginCaptures": {
+            "1": {
+              "name": "punctuation.definition.markup.open.mf2"
+            },
+            "2": {
+              "name": "entity.name.tag.mf2"
+            }
+          },
+          "end": "\\}",
+          "endCaptures": {
+            "0": {
+              "name": "punctuation.definition.markup.close.mf2"
+            }
+          },
+          "patterns": [
+            {
+              "include": "#option"
+            },
+            {
+              "include": "#attribute"
+            },
+            {
+              "include": "#literal"
+            },
+            {
+              "include": "#variable"
+            }
+          ]
+        }
+      ]
+    },
+    "declaration": {
+      "patterns": [
+        {
+          "include": "#input-declaration"
+        },
+        {
+          "include": "#local-declaration"
+        }
+      ]
+    },
+    "input-declaration": {
+      "begin": "(\\.input)(?:[\\t\\r \\x{3000}])?({)",
+      "beginCaptures": {
+        "1": {
+          "name": "keyword.declaration.input.mf2"
+        },
+        "2": {
+          "name": "punctuation.definition.declaration.open.mf2"
+        }
+      },
+      "end": "\\}",
+      "endCaptures": {
+        "0": {
+          "name": "punctuation.definition.declaration.close.mf2"
+        }
+      },
+      "patterns": [
+        {
+          "include": "#variable"
+        },
+        {
+          "include": "#annotation"
+        },
+        {
+          "include": "#attribute"
+        },
+        {
+          "include": "#literal"
+        }
+      ]
+    },
+    "local-declaration": {
+      "begin": "(\\.local)(?:[\\t\\r \\x{3000}])(\\$(?:[A-Z_a-z\\x{C0}-\\x{D6}\\x{D8}-\\x{F6}\\x{F8}-\\x{02FF}\\x{0370}-\\x{037D}\\x{037F}-\\x{1FFF}\\x{200C}\\x{200D}\\x{2070}-\\x{218F}\\x{2C00}-\\x{2FEF}\\x{3001}-\\x{D7FF}\\x{F900}-\\x{FDCF}\\x{FDF0}-\\x{FFFC}\\x{10000}-\\x{EFFFF}])(?:[\\x{2D}\\.0-9A-Z_a-z\\x{B7}\\x{C0}-\\x{D6}\\x{D8}-\\x{F6}\\x{F8}-\\x{037D}\\x{037F}-\\x{1FFF}\\x{200C}\\x{200D}\\x{203F}\\x{2040}\\x{2070}-\\x{218F}\\x{2C00}-\\x{2FEF}\\x{3001}-\\x{D7FF}\\x{F900}-\\x{FDCF}\\x{FDF0}-\\x{FFFC}\\x{10000}-\\x{EFFFF}])*)(?:[\\t\\r \\x{3000}])?=(?:[\\t\\r \\x{3000}])?({)",
+      "beginCaptures": {
+        "1": {
+          "name": "keyword.declaration.local.mf2"
+        },
+        "2": {
+          "name": "variable.other.mf2"
+        },
+        "3": {
+          "name": "punctuation.definition.declaration.open.mf2"
+        }
+      },
+      "end": "\\}",
+      "endCaptures": {
+        "0": {
+          "name": "punctuation.definition.declaration.close.mf2"
+        }
+      },
+      "patterns": [
+        {
+          "include": "#variable"
+        },
+        {
+          "include": "#annotation"
+        },
+        {
+          "include": "#attribute"
+        },
+        {
+          "include": "#literal"
+        }
+      ]
+    },
+    "quoted-pattern": {
+      "name": "quoted-pattern.mf2",
+      "begin": "\\{\\{",
+      "patterns": [
+        {
+          "match": "(?:[\\x{01}-\\t\\x{0B}-\\[\\]-z\\|~-\\x{D7FF}\\x{E000}-\\x{10FFFF}])"
+        },
+        {
+          "include": "#escaped-char"
+        },
+        {
+          "include": "#placeholder"
+        }
+      ],
+      "end": "\\}\\}"
+    },
+    "match-statement-contents": {
+      "patterns": [
+        {
+          "include": "#variable"
+        },
+        {
+          "match": "\\*",
+          "name": "punctuation.star.mf2"
+        },
+        {
+          "include": "#literal"
+        },
+        {
+          "include": "#quoted-pattern"
+        }
+      ]
+    }
+  },
+  "scopeName": "source.mf2"
+}
