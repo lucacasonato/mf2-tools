@@ -117,6 +117,7 @@ jobs:
 
   vscode:
     name: "ci-vscode"
+    runs-on: ubuntu-24.04
 
     steps:
       - uses: actions/checkout@v4
@@ -137,13 +138,12 @@ jobs:
   lint:
     name: "lint"
     runs-on: ubuntu-24.04
-    permissions:
-      contents: write
 
     steps:
-      - name: Configure Git
-        run: git config --global core.autocrlf false
       - uses: actions/checkout@v4
+
       - uses: denoland/setup-deno@v1
+
       - run: deno lint
+
       - run: deno fmt --check
