@@ -229,6 +229,7 @@ mod tests {
     assert_completion_type!("{ ┋1}", AllowedCompletionType::None);
     assert_completion_type!("{:fn ┋}", AllowedCompletionType::None);
     assert_completion_type!("{:fn param=┋}", AllowedCompletionType::Variable(None));
+    assert_completion_type!("{:fn param= ┋}", AllowedCompletionType::Variable(None));
     assert_completion_type!("{:fn param=$f┋}", AllowedCompletionType::Variable(Some((_, "f"))));
     assert_completion_type!("{:fn param=f┋}", AllowedCompletionType::None);
     assert_completion_type!("{:fn param=┋f}", AllowedCompletionType::None);
