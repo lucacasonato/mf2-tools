@@ -1,5 +1,6 @@
 import { assert, assertEquals, assertRejects } from "@std/assert";
 import type { LSPTest } from "./util/mod.ts";
+import { CompletionItem, CompletionList } from "vscode-languageserver-types";
 
 let AutoLSPTest: typeof LSPTest;
 if (Deno.env.get("MODE") === "wasm") {
@@ -419,3 +420,96 @@ for (const def of ["definition", "declaration"] as const) {
     });
   });
 }
+
+Deno.test("completins", async (t) => {
+  await using lsp = new AutoLSPTest();
+
+  await lsp.initialize();
+
+  await lsp.notify(
+    "textDocument/didOpen",
+    {
+      textDocument: {
+        uri: "file:///src/main.mf2",
+        languageId: "mf2",
+        version: 1,
+        text: ".local $foo = {1} .input {$bar}\n{{ {$f} {} }}",
+      },
+    },
+  );
+
+  function sort(response: CompletionList | CompletionItem[] | null) {
+    if (Array.isArray(response)) {
+      response.sort((a: { label: string }, b: { label: string }) =>
+        a.label.localeCompare(b.label)
+      );
+    }
+  }
+
+  await t.step("completions for $f", async () => {
+    const response = await lsp.request("textDocument/completion", {
+      textDocument: { uri: "file:///src/main.mf2" },
+      position: { line: 1, character: 6 },
+    });
+
+    sort(response);
+
+    assertEquals(response, [
+      {
+        kind: 6,
+        label: "$bar",
+        textEdit: {
+          newText: "$bar",
+          range: {
+            start: { line: 1, character: 4 },
+            end: { line: 1, character: 6 },
+          },
+        },
+      },
+      {
+        kind: 6,
+        label: "$foo",
+        textEdit: {
+          newText: "$foo",
+          range: {
+            start: { line: 1, character: 4 },
+            end: { line: 1, character: 6 },
+          },
+        },
+      },
+    ]);
+  });
+
+  await t.step("completions for empty variable location", async () => {
+    const response = await lsp.request("textDocument/completion", {
+      textDocument: { uri: "file:///src/main.mf2" },
+      position: { line: 1, character: 9 },
+    });
+
+    sort(response);
+
+    assertEquals(response, [
+      {
+        kind: 6,
+        label: "$bar",
+      },
+      {
+        kind: 6,
+        label: "$f",
+      },
+      {
+        kind: 6,
+        label: "$foo",
+      },
+    ]);
+  });
+
+  await t.step("completions where no variable is allowed", async () => {
+    const response = await lsp.request("textDocument/completion", {
+      textDocument: { uri: "file:///src/main.mf2" },
+      position: { line: 0, character: 15 },
+    });
+
+    assertEquals(response, null);
+  });
+});

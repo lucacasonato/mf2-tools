@@ -10,6 +10,7 @@ use lsp_types::notification::DidOpenTextDocument;
 use lsp_types::notification::Initialized;
 use lsp_types::notification::PublishDiagnostics;
 use lsp_types::request::CodeActionRequest;
+use lsp_types::request::Completion as CompletionRequest;
 use lsp_types::request::GotoDeclaration;
 use lsp_types::request::GotoDefinition;
 use lsp_types::request::HoverRequest;
@@ -291,6 +292,7 @@ language_server! {
     code_action: CodeActionRequest,
     rename: RenameRequest,
     prepare_rename: PrepareRenameRequest,
+    completion: CompletionRequest,
     semantic_tokens_full: SemanticTokensFullRequest,
     semantic_tokens_range: SemanticTokensRangeRequest,
   }

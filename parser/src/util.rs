@@ -306,6 +306,11 @@ impl Location {
     Location(0)
   }
 
+  #[doc(hidden)]
+  pub fn new_for_test(byte: u32) -> Location {
+    Location(byte)
+  }
+
   pub fn inner_byte_index_for_test(&self) -> u32 {
     self.0
   }
@@ -365,6 +370,10 @@ impl Span {
 
   pub fn contains(&self, other: &Span) -> bool {
     self.start.0 <= other.start.0 && self.end.0 >= other.end.0
+  }
+
+  pub fn is_empty(&self) -> bool {
+    self.start == self.end
   }
 }
 

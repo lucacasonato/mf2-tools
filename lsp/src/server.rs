@@ -28,6 +28,8 @@ use std::collections::hash_map::Entry;
 use std::collections::HashMap;
 
 use crate::ast_utils::find_node;
+use crate::completions::CompletionAction;
+use crate::completions::CompletionsProvider;
 use crate::diagnostics::Diagnostic;
 use crate::document::Document;
 use crate::protocol::LanguageClient;
@@ -123,6 +125,14 @@ impl LanguageServer for Server<'_> {
             lsp_types::WorkDoneProgressOptions::default(),
         },
       )),
+      completion_provider: Some(lsp_types::CompletionOptions {
+        all_commit_characters: None,
+        completion_item: None,
+        resolve_provider: Some(false),
+        trigger_characters: Some(vec!["$".to_string()]),
+        work_done_progress_options: lsp_types::WorkDoneProgressOptions::default(
+        ),
+      }),
       semantic_tokens_provider: Some(
         lsp_types::SemanticTokensServerCapabilities::SemanticTokensOptions(
           SemanticTokensOptions {
@@ -331,6 +341,56 @@ impl LanguageServer for Server<'_> {
 
     Ok(Some(lsp_types::PrepareRenameResponse::Range(
       document.span_to_range(node.name_span()),
+    )))
+  }
+
+  fn completion(
+    &mut self,
+    params: lsp_types::CompletionParams,
+  ) -> Result<Option<lsp_types::CompletionResponse>, anyhow::Error> {
+    let lsp_types::TextDocumentPositionParams {
+      text_document,
+      position,
+    } = params.text_document_position;
+
+    let document = self
+      .documents
+      .get(&text_document.uri)
+      .ok_or(anyhow::anyhow!("Document not found."))?;
+
+    let provider = CompletionsProvider::new(
+      document.ast(),
+      document.pos_to_loc(position),
+      document.scope(),
+    );
+
+    if !provider.has_completions() {
+      return Ok(None);
+    }
+
+    Ok(Some(lsp_types::CompletionResponse::Array(
+      provider
+        .get_completions()
+        .into_iter()
+        .map(|completion| match completion.action {
+          CompletionAction::Insert => lsp_types::CompletionItem {
+            label: completion.text,
+            kind: Some(lsp_types::CompletionItemKind::VARIABLE),
+            ..lsp_types::CompletionItem::default()
+          },
+          CompletionAction::Replace(span) => lsp_types::CompletionItem {
+            label: completion.text.clone(),
+            kind: Some(lsp_types::CompletionItemKind::VARIABLE),
+            text_edit: Some(lsp_types::CompletionTextEdit::Edit(
+              lsp_types::TextEdit {
+                range: document.span_to_range(span),
+                new_text: completion.text,
+              },
+            )),
+            ..lsp_types::CompletionItem::default()
+          },
+        })
+        .collect(),
     )))
   }
 

@@ -12,7 +12,7 @@ pub use diagnostic::Diagnostic;
 pub use util::{
   LineColUtf16, LineColUtf8, Location, SourceTextInfo, Span, Spanned,
 };
-pub use visitor::{AnyNodeVisitor, Visit, Visitable};
+pub use visitor::{Visit, VisitAny, Visitable};
 
 pub fn parse(message: &str) -> (Message, Vec<Diagnostic>, SourceTextInfo) {
   Parser::new(message).parse()
