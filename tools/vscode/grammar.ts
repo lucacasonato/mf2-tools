@@ -1,5 +1,5 @@
-// @deno-types="npm:@types/regenerate"
-import regenerate from "npm:regenerate";
+// @deno-types="@types/regenerate"
+import regenerate from "regenerate";
 
 const s = regenerate(" ", "\r", "\t", 0x3000); // \n
 const content_char = regenerate()

@@ -5,6 +5,15 @@
   "version": "0.2.0",
   "configurations": [
     {
+      "name": "VSCode Extension",
+      "type": "extensionHost",
+      "request": "launch",
+      "args": [
+        "--extensionDevelopmentPath=${cwd}"
+      ],
+      "cwd": "${workspaceFolder}/vscode"
+    },
+    {
       "type": "lldb",
       "request": "launch",
       "name": "Debug unit tests in library 'mf2_parser'",
@@ -18,43 +27,6 @@
         "filter": {
           "name": "mf2_parser",
           "kind": "lib"
-        }
-      },
-      "args": [],
-      "cwd": "${workspaceFolder}"
-    },
-    {
-      "type": "lldb",
-      "request": "launch",
-      "name": "Debug example 'test'",
-      "cargo": {
-        "args": [
-          "build",
-          "--example=test",
-          "--package=mf2-parser"
-        ],
-        "filter": {
-          "name": "test",
-          "kind": "example"
-        }
-      },
-      "args": [],
-      "cwd": "${workspaceFolder}"
-    },
-    {
-      "type": "lldb",
-      "request": "launch",
-      "name": "Debug unit tests in example 'test'",
-      "cargo": {
-        "args": [
-          "test",
-          "--no-run",
-          "--example=test",
-          "--package=mf2-parser"
-        ],
-        "filter": {
-          "name": "test",
-          "kind": "example"
         }
       },
       "args": [],
