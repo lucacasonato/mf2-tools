@@ -1,0 +1,6 @@
+{
+  "imports": {
+    "@types/regenerate": "npm:@types/regenerate@^1.4.3",
+    "regenerate": "npm:regenerate@^1.4.2"
+  }
+}

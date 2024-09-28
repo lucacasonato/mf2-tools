@@ -1,6 +1,7 @@
 {
   "workspace": [
-    "./lsp/test/"
+    "./lsp/test/",
+    "./tools/"
   ],
   "tasks": {
     "test": "cd lsp/test && deno test -A",
@@ -8,5 +9,5 @@
     "wasm:debug": "deno task wasmbuild --debug --skip-opt --out ./target/wasm/debug",
     "wasmbuild": "deno run -A jsr:@deno/wasmbuild@0.17.2"
   },
-  "exclude": ["target/"]
+  "exclude": ["target/", "vscode/node_modules/"]
 }

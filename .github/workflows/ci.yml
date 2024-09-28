@@ -114,3 +114,36 @@ jobs:
         env:
           PROFILE: release
           MODE: wasm
+
+  vscode:
+    name: "ci-vscode"
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: "22"
+
+      - name: Install dependencies
+        run: npm install
+        working-directory: vscode
+
+      - name: Build
+        run: npm run check
+        working-directory: vscode
+
+  lint:
+    name: "lint"
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+
+    steps:
+      - name: Configure Git
+        run: git config --global core.autocrlf false
+      - uses: actions/checkout@v4
+      - uses: denoland/setup-deno@v1
+      - run: deno lint
+      - run: deno fmt --check
