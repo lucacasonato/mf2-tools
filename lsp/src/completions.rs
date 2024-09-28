@@ -38,14 +38,6 @@ impl<'scope, 'text> CompletionsProvider<'scope, 'text> {
     loc: Location,
     scope: &'scope Scope<'text>,
   ) -> Self {
-    let mut visitor = CompletionLocationVisitor {
-      loc,
-      current_node: AnyNode::Message(ast),
-      parent_node: AnyNode::Message(ast),
-      previous_node: None,
-    };
-    visitor.visit_message(ast);
-
     Self {
       scope,
       completion_type: get_completion_type(ast, loc),
@@ -57,7 +49,6 @@ impl<'scope, 'text> CompletionsProvider<'scope, 'text> {
   }
 
   pub fn get_completions(&self) -> Vec<Completion> {
-    dbg!(&self.completion_type);
     match self.completion_type {
       AllowedCompletionType::None => vec![],
       AllowedCompletionType::Variable(None) => self
@@ -99,9 +90,7 @@ impl<'ast, 'text> VisitAny<'ast, 'text>
 {
   fn before(&mut self, node: AnyNode<'ast, 'text>) {
     let span = node.span();
-    if (span.start < self.loc && self.loc <= span.end)
-      || (span.start == self.loc && span.is_empty())
-    {
+    if span.start < self.loc && self.loc <= span.end {
       self.parent_node = std::mem::replace(&mut self.current_node, node);
       assert!(!self.parent_node.same(&self.current_node));
       self.previous_node = None;
@@ -142,24 +131,27 @@ fn get_completion_type<'text>(
       // $f|
       AllowedCompletionType::Variable(Some((var.span(), var.name)))
     }
-    (X::LiteralExpression(literal_expression), _, None) => {
-      if literal_expression.literal.span().is_empty() {
-        // { | }
-        AllowedCompletionType::Variable(None)
-      } else {
-        // { | 1 }
-        // { 1 | }
-        AllowedCompletionType::None
-      }
+    (X::LiteralExpression(literal_expression), _, None)
+      if literal_expression.literal.span().is_empty() =>
+    {
+      // { | }
+      AllowedCompletionType::Variable(None)
+
+      // if excludes:
+      //  { | 1 }
+      //  { 1 | }
     }
-    (X::Text(text), X::FnOrMarkupOption(_), _) => {
-      if text.span().is_empty() {
-        // :fn param=|
-        AllowedCompletionType::Variable(None)
-      } else {
-        // :fn param=f|
-        AllowedCompletionType::None
-      }
+    (
+      X::FnOrMarkupOption(FnOrMarkupOption { value, .. }),
+      _,
+      Some(X::Identifier(_)),
+    ) if value.span().is_empty() && value.span().start == loc => {
+      // :fn param=|
+      AllowedCompletionType::Variable(None)
+
+      // if excludes:
+      //  :fn param=f|
+      //  :fn param |=
     }
     (
       X::VariableExpression(_)
@@ -169,9 +161,9 @@ fn get_completion_type<'text>(
       Some(X::Function(fun)),
     ) => {
       #[allow(clippy::collapsible_match)]
-      if let Some(FnOrMarkupOption { value, .. }) = fun.options.last() {
+      if let Some(FnOrMarkupOption { key, value }) = fun.options.last() {
         if let LiteralOrVariable::Literal(Literal::Text(text)) = &value {
-          if text.span().is_empty() {
+          if text.span().is_empty() && text.span().start != key.span().end {
             // { $a :fn param= | }
             return AllowedCompletionType::Variable(None);
           }
@@ -229,6 +221,10 @@ mod tests {
     assert_completion_type!("{ ┋1}", AllowedCompletionType::None);
     assert_completion_type!("{:fn ┋}", AllowedCompletionType::None);
     assert_completion_type!("{:fn param=┋}", AllowedCompletionType::Variable(None));
+    assert_completion_type!("{:fn param┋=}", AllowedCompletionType::None);
+    assert_completion_type!("{:fn param┋}", AllowedCompletionType::None);
+    assert_completion_type!("{:fn param ┋}", AllowedCompletionType::None);
+    assert_completion_type!("{:fn param ┋=}", AllowedCompletionType::None);
     assert_completion_type!("{:fn param= ┋}", AllowedCompletionType::Variable(None));
     assert_completion_type!("{:fn param=$f┋}", AllowedCompletionType::Variable(Some((_, "f"))));
     assert_completion_type!("{:fn param=f┋}", AllowedCompletionType::None);
