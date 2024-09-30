@@ -244,7 +244,7 @@ impl<'ast, 'text> Printer<'ast, 'text> {
       self.push('\n');
     }
 
-    if !is_input.is_none() {
+    if is_input.is_some() {
       self.push('\n');
     }
 
@@ -310,7 +310,7 @@ impl<'ast, 'text> Printer<'ast, 'text> {
 
       for i in 0..selectors_count {
         let printed_key = &printed_keys[j * selectors_count + i];
-        self.push_str(&printed_key);
+        self.push_str(printed_key);
         self.push_n(' ', max_lengths[i] - printed_key.len());
         self.push(' ');
       }
@@ -325,10 +325,10 @@ impl<'ast, 'text> Printer<'ast, 'text> {
       return "*".to_string();
     };
 
-    let backup = std::mem::replace(&mut self.out, String::new());
+    let backup = std::mem::take(&mut self.out);
 
-    self.print_literal(&key);
+    self.print_literal(key);
 
-    return std::mem::replace(&mut self.out, backup);
+    std::mem::replace(&mut self.out, backup)
   }
 }
