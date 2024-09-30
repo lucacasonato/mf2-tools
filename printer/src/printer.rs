@@ -195,8 +195,28 @@ impl<'ast, 'text> Printer<'ast, 'text> {
     }
   }
 
-  fn print_markup(&mut self, _markup: &Markup) {
-    todo!()
+  fn print_markup(&mut self, markup: &Markup) {
+    self.push('{');
+    if let MarkupKind::Close = markup.kind {
+      self.push('/');
+    } else {
+      self.push('#');
+    }
+
+    self.print_identifier(&markup.id);
+
+    for option in &markup.options {
+      self.print_option(option);
+    }
+    for attr in &markup.attributes {
+      self.print_attribute(attr);
+    }
+
+    self.push(' ');
+    if let MarkupKind::Standalone = markup.kind {
+      self.push('/');
+    }
+    self.push('}');
   }
 
   fn print_complex_message(&mut self, _message: &ComplexMessage) {
