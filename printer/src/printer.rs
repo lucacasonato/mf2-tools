@@ -7,7 +7,9 @@ pub struct Printer<'ast, 'text> {
 
 macro_rules! dispatch_print {
     (
-      $self:expr, $expr:expr, $enum:ident { $( $member:ident => $fun:ident ),* $(,)? }
+      $self:expr, $expr:expr, $enum:ident {
+        $( $member:ident => $fun:ident ),* $(,)?
+      }
     ) => {
       match $expr {
         $( $enum::$member(x) => { Self::$fun($self, x) }, )*
@@ -30,6 +32,12 @@ impl<'ast, 'text> Printer<'ast, 'text> {
 
   fn push(&mut self, ch: char) {
     self.out.push(ch);
+  }
+
+  fn push_n(&mut self, ch: char, count: usize) {
+    for _ in 0..count {
+      self.push(ch);
+    }
   }
 
   fn push_str(&mut self, str: &str) {
@@ -266,7 +274,61 @@ impl<'ast, 'text> Printer<'ast, 'text> {
     self.push_str("}}");
   }
 
-  fn print_matcher(&mut self, _matcher: &Matcher) {
-    todo!();
+  fn print_matcher(&mut self, matcher: &Matcher) {
+    self.push_str(".match");
+
+    let selectors_count = matcher.selectors.len();
+    let mut max_lengths = vec![0; selectors_count];
+
+    for (i, selector) in matcher.selectors.iter().enumerate() {
+      max_lengths[i] = selector.name.len() + 1;
+    }
+
+    let mut printed_keys =
+      Vec::with_capacity(selectors_count * matcher.variants.len());
+
+    for variant in &matcher.variants {
+      assert_eq!(variant.keys.len(), selectors_count);
+
+      for (i, key) in variant.keys.iter().enumerate() {
+        let printed = self.try_print_match_key(key);
+        max_lengths[i] = max_lengths[i].max(printed.len());
+        printed_keys.push(printed);
+      }
+    }
+    assert_eq!(printed_keys.len(), printed_keys.capacity());
+
+    for (i, selector) in matcher.selectors.iter().enumerate() {
+      self.push(' ');
+      self.print_variable(selector);
+      self.push_n(' ', max_lengths[i] - selector.name.len() - 1);
+    }
+
+    for (j, variant) in matcher.variants.iter().enumerate() {
+      //            "\n.match "
+      self.push_str("\n       ");
+
+      for i in 0..selectors_count {
+        let printed_key = &printed_keys[j * selectors_count + i];
+        self.push_str(&printed_key);
+        self.push_n(' ', max_lengths[i] - printed_key.len());
+        self.push(' ');
+      }
+
+      self.print_quoted_pattern(&variant.pattern);
+    }
+  }
+
+  fn try_print_match_key(&mut self, key: &Key) -> String {
+    let Key::Literal(key) = key else {
+      assert!(matches!(key, Key::Star(_)));
+      return "*".to_string();
+    };
+
+    let backup = std::mem::replace(&mut self.out, String::new());
+
+    self.print_literal(&key);
+
+    return std::mem::replace(&mut self.out, backup);
   }
 }
