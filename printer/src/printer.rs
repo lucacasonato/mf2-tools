@@ -219,7 +219,54 @@ impl<'ast, 'text> Printer<'ast, 'text> {
     self.push('}');
   }
 
-  fn print_complex_message(&mut self, _message: &ComplexMessage) {
-    todo!()
+  fn print_complex_message(&mut self, message: &ComplexMessage) {
+    let mut is_input = None;
+
+    for decl in &message.declarations {
+      let prev_is_input =
+        is_input.replace(matches!(decl, Declaration::InputDeclaration(_)));
+      if prev_is_input.is_some() && prev_is_input != is_input {
+        self.push('\n');
+      }
+
+      dispatch_print!(self, decl, Declaration {
+        InputDeclaration => print_input_declaration,
+        LocalDeclaration => print_local_declaration,
+      });
+      self.push('\n');
+    }
+
+    if !is_input.is_none() {
+      self.push('\n');
+    }
+
+    dispatch_print!(self, &message.body, ComplexMessageBody {
+      QuotedPattern => print_quoted_pattern,
+      Matcher => print_matcher,
+    });
+
+    self.push('\n');
+  }
+
+  fn print_input_declaration(&mut self, decl: &InputDeclaration) {
+    self.push_str(".input ");
+    self.print_variable_expression(&decl.expression);
+  }
+
+  fn print_local_declaration(&mut self, decl: &LocalDeclaration) {
+    self.push_str(".local ");
+    self.print_variable(&decl.variable);
+    self.push_str(" = ");
+    self.print_expression(&decl.expression);
+  }
+
+  fn print_quoted_pattern(&mut self, pattern: &QuotedPattern) {
+    self.push_str("{{");
+    self.print_pattern(&pattern.pattern);
+    self.push_str("}}");
+  }
+
+  fn print_matcher(&mut self, _matcher: &Matcher) {
+    todo!();
   }
 }

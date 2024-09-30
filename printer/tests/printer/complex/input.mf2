@@ -1,0 +1,5 @@
+.input {$foo :fn opt=1 @attr} {{}}
+=== output ===
+.input { $foo :fn opt=1 @attr }
+
+{{}}
