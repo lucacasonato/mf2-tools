@@ -1,5 +1,5 @@
 [package]
-name = "mf2-parser"
+name = "mf2-printer"
 version = "0.1.0"
 edition = "2021"
 
@@ -13,4 +13,4 @@ file_test_runner = "0.7.2"
 pretty_assertions = "1.4.0"
 
 [dependencies]
-unicode-width = "0.1.13"
+mf2-parser = { path = "../parser" }

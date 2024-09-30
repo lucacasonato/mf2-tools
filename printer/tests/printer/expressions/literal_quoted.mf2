@@ -1,0 +1,7 @@
+{|hi\|hi|}
+{|hi\|hi| :fn}
+{|hi\|hi| @attr}
+=== output ===
+{ |hi\|hi| }
+{ |hi\|hi| :fn }
+{ |hi\|hi| @attr }
