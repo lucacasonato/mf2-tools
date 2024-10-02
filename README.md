@@ -8,9 +8,8 @@ Also contained in this repo is a Rust parser for the Message Format 2 syntax.
 This parser has error recovery, and can parse any sequence of Unicode scalar
 values (valid UTF-8) into an AST representing the Message Format 2 syntax.
 
-> **Note**: This project is still in the early stages of development. The
-> language server is still very basic, and the parser is not yet feature
-> complete. For example, the parser can not parse complex messages yet.
+> **Note**: This project is still in the early stages of development and the
+> language server is still missing many features.
 
 ## Usage
 
@@ -38,7 +37,7 @@ at `<path-to-this-repo>/target/debug/mf2lsp`.
 You can run tests by running:
 
 ```sh
-cargo test
+cargo test && deno task test
 ```
 
 To regenerate expected test output after modifying the parser / ast, run:
