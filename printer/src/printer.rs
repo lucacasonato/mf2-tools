@@ -189,19 +189,12 @@ impl<'ast, 'text> Visit<'ast, 'text> for Printer<'ast, 'text> {
   }
 
   fn visit_complex_message(&mut self, message: &'ast ComplexMessage<'text>) {
-    let mut is_input = None;
-
     for decl in &message.declarations {
-      let prev_is_input =
-        is_input.replace(matches!(decl, Declaration::InputDeclaration(_)));
-      if prev_is_input.is_some() && prev_is_input != is_input {
-        self.push('\n');
-      }
       self.visit_declaration(decl);
       self.push('\n');
     }
 
-    if is_input.is_some() {
+    if message.declarations.len() > 0 {
       self.push('\n');
     }
 
@@ -229,7 +222,7 @@ impl<'ast, 'text> Visit<'ast, 'text> for Printer<'ast, 'text> {
   }
 
   fn visit_matcher(&mut self, matcher: &'ast Matcher<'text>) {
-    self.push_str(".match");
+    self.push_str(".match\n");
 
     let selectors_count = matcher.selectors.len();
     let mut max_lengths = vec![0; selectors_count];
@@ -253,14 +246,14 @@ impl<'ast, 'text> Visit<'ast, 'text> for Printer<'ast, 'text> {
     assert_eq!(printed_keys.len(), printed_keys.capacity());
 
     for (i, selector) in matcher.selectors.iter().enumerate() {
-      self.push(' ');
       self.visit_variable(selector);
-      self.push_n(' ', max_lengths[i] - selector.name.len() - 1);
+      if i < selectors_count - 1 {
+        self.push_n(' ', max_lengths[i] - selector.name.len());
+      }
     }
 
     for (j, variant) in matcher.variants.iter().enumerate() {
-      //            "\n.match "
-      self.push_str("\n       ");
+      self.push('\n');
 
       for i in 0..selectors_count {
         let printed_key = &printed_keys[j * selectors_count + i];
