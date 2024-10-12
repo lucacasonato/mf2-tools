@@ -1,20 +1,10 @@
 use mf2_parser::ast::*;
+use mf2_parser::Visit;
+use mf2_parser::Visitable;
 
 pub struct Printer<'ast, 'text> {
   ast: &'ast Message<'text>,
   out: String,
-}
-
-macro_rules! dispatch_print {
-    (
-      $self:expr, $expr:expr, $enum:ident {
-        $( $member:ident => $fun:ident ),* $(,)?
-      }
-    ) => {
-      match $expr {
-        $( $enum::$member(x) => { Self::$fun($self, x) }, )*
-      }
-    };
 }
 
 impl<'ast, 'text> Printer<'ast, 'text> {
@@ -26,7 +16,7 @@ impl<'ast, 'text> Printer<'ast, 'text> {
   }
 
   pub fn print(mut self) -> String {
-    self.print_message(self.ast);
+    self.visit_message(self.ast);
     self.out
   }
 
@@ -44,73 +34,11 @@ impl<'ast, 'text> Printer<'ast, 'text> {
     self.out.push_str(str);
   }
 
-  fn print_message(&mut self, message: &Message) {
-    dispatch_print!(self, message, Message {
-      Simple => print_pattern,
-      Complex => print_complex_message,
-    });
-  }
-
-  fn print_pattern(&mut self, pattern: &Pattern) {
-    for part in &pattern.parts {
-      dispatch_print!(self, part, PatternPart {
-        Text => print_text,
-        Escape => print_escape,
-        Expression => print_expression,
-        Markup => print_markup,
-      });
-    }
-  }
-
-  fn print_text(&mut self, text: &Text) {
-    self.push_str(text.content);
-  }
-
-  fn print_escape(&mut self, escape: &Escape) {
-    self.push('\\');
-    self.push(escape.escaped_char);
-  }
-
-  fn print_expression(&mut self, expr: &Expression) {
-    dispatch_print!(self, expr, Expression {
-      AnnotationExpression => print_annotation_expression,
-      LiteralExpression => print_literal_expression,
-      VariableExpression => print_variable_expression,
-    });
-  }
-
-  fn print_annotation_expression(&mut self, expr: &AnnotationExpression) {
-    self.helper_print_expression(
-      None::<()>,
-      Some(&expr.annotation),
-      &expr.attributes,
-      |_, _| {},
-    );
-  }
-
-  fn print_literal_expression(&mut self, expr: &LiteralExpression) {
-    self.helper_print_expression(
-      &expr.literal,
-      expr.annotation.as_ref(),
-      &expr.attributes,
-      Self::print_literal,
-    );
-  }
-
-  fn print_variable_expression(&mut self, expr: &VariableExpression) {
-    self.helper_print_expression(
-      &expr.variable,
-      expr.annotation.as_ref(),
-      &expr.attributes,
-      Self::print_variable,
-    );
-  }
-
-  fn helper_print_expression<T, F>(
+  fn helper_visit_expression<T, F>(
     &mut self,
     body: T,
-    annotation: Option<&Annotation>,
-    attributes: &Vec<Attribute>,
+    annotation: Option<&'ast Annotation<'text>>,
+    attributes: &'ast Vec<Attribute<'text>>,
     cb: F,
   ) where
     F: FnOnce(&mut Self, T),
@@ -126,27 +54,80 @@ impl<'ast, 'text> Printer<'ast, 'text> {
       }
 
       let Annotation::Function(fun) = annotation;
-      self.print_function(fun);
+      self.visit_function(fun);
     }
 
     for attr in attributes {
-      self.print_attribute(attr);
+      self.visit_attribute(attr);
     }
 
     self.push(' ');
     self.push('}');
   }
 
-  fn print_function(&mut self, fun: &Function) {
-    self.push(':');
-    self.print_identifier(&fun.id);
+  fn try_visit_match_key(&mut self, key: &'ast Key<'text>) -> String {
+    let Key::Literal(key) = key else {
+      assert!(matches!(key, Key::Star(_)));
+      return "*".to_string();
+    };
 
-    for option in &fun.options {
-      self.print_option(option);
-    }
+    let backup = std::mem::take(&mut self.out);
+
+    self.visit_literal(key);
+
+    std::mem::replace(&mut self.out, backup)
+  }
+}
+
+impl<'ast, 'text> Visit<'ast, 'text> for Printer<'ast, 'text> {
+  fn visit_text(&mut self, text: &Text) {
+    self.push_str(text.content);
   }
 
-  fn print_identifier(&mut self, id: &Identifier) {
+  fn visit_escape(&mut self, escape: &Escape) {
+    self.push('\\');
+    self.push(escape.escaped_char);
+  }
+
+  fn visit_annotation_expression(
+    &mut self,
+    expr: &'ast AnnotationExpression<'text>,
+  ) {
+    self.helper_visit_expression(
+      None::<()>,
+      Some(&expr.annotation),
+      &expr.attributes,
+      |_, _| {},
+    );
+  }
+
+  fn visit_literal_expression(&mut self, expr: &'ast LiteralExpression<'text>) {
+    self.helper_visit_expression(
+      &expr.literal,
+      expr.annotation.as_ref(),
+      &expr.attributes,
+      Self::visit_literal,
+    );
+  }
+
+  fn visit_variable_expression(
+    &mut self,
+    expr: &'ast VariableExpression<'text>,
+  ) {
+    self.helper_visit_expression(
+      &expr.variable,
+      expr.annotation.as_ref(),
+      &expr.attributes,
+      Self::visit_variable,
+    );
+  }
+
+  fn visit_function(&mut self, fun: &'ast Function<'text>) {
+    self.push(':');
+    fun.apply_visitor_to_children(self);
+  }
+
+  fn visit_identifier(&mut self, id: &Identifier) {
     if let Some(namespace) = id.namespace {
       self.push_str(namespace);
       self.push(':');
@@ -154,56 +135,43 @@ impl<'ast, 'text> Printer<'ast, 'text> {
     self.push_str(id.name);
   }
 
-  fn print_option(&mut self, option: &FnOrMarkupOption) {
+  fn visit_fn_or_markup_option(
+    &mut self,
+    option: &'ast FnOrMarkupOption<'text>,
+  ) {
     self.push(' ');
-    self.print_identifier(&option.key);
+    self.visit_identifier(&option.key);
     self.push('=');
-    dispatch_print!(self, &option.value, LiteralOrVariable {
-      Literal => print_literal,
-      Variable => print_variable,
-    })
+    self.visit_literal_or_variable(&option.value);
   }
 
-  fn print_literal(&mut self, lit: &Literal) {
-    dispatch_print!(self, lit, Literal {
-      Text => print_text,
-      Quoted => print_quoted,
-      Number => print_number,
-    });
-  }
-
-  fn print_quoted(&mut self, quoted: &Quoted) {
+  fn visit_quoted(&mut self, quoted: &'ast Quoted<'text>) {
     self.push('|');
-    for part in &quoted.parts {
-      dispatch_print!(self, part, QuotedPart {
-        Text => print_text,
-        Escape => print_escape,
-      });
-    }
+    quoted.apply_visitor_to_children(self);
     self.push('|');
   }
 
-  fn print_number(&mut self, num: &Number) {
+  fn visit_number(&mut self, num: &Number) {
     self.push_str(num.raw);
   }
 
-  fn print_variable(&mut self, var: &Variable) {
+  fn visit_variable(&mut self, var: &Variable) {
     self.push('$');
     self.push_str(var.name);
   }
 
-  fn print_attribute(&mut self, attr: &Attribute) {
+  fn visit_attribute(&mut self, attr: &'ast Attribute<'text>) {
     self.push(' ');
     self.push('@');
-    self.print_identifier(&attr.key);
+    self.visit_identifier(&attr.key);
 
     if let Some(value) = &attr.value {
       self.push('=');
-      self.print_literal(value);
+      self.visit_literal(value);
     }
   }
 
-  fn print_markup(&mut self, markup: &Markup) {
+  fn visit_markup(&mut self, markup: &'ast Markup<'text>) {
     self.push('{');
     if let MarkupKind::Close = markup.kind {
       self.push('/');
@@ -211,14 +179,7 @@ impl<'ast, 'text> Printer<'ast, 'text> {
       self.push('#');
     }
 
-    self.print_identifier(&markup.id);
-
-    for option in &markup.options {
-      self.print_option(option);
-    }
-    for attr in &markup.attributes {
-      self.print_attribute(attr);
-    }
+    markup.apply_visitor_to_children(self);
 
     self.push(' ');
     if let MarkupKind::Standalone = markup.kind {
@@ -227,7 +188,7 @@ impl<'ast, 'text> Printer<'ast, 'text> {
     self.push('}');
   }
 
-  fn print_complex_message(&mut self, message: &ComplexMessage) {
+  fn visit_complex_message(&mut self, message: &'ast ComplexMessage<'text>) {
     let mut is_input = None;
 
     for decl in &message.declarations {
@@ -236,11 +197,7 @@ impl<'ast, 'text> Printer<'ast, 'text> {
       if prev_is_input.is_some() && prev_is_input != is_input {
         self.push('\n');
       }
-
-      dispatch_print!(self, decl, Declaration {
-        InputDeclaration => print_input_declaration,
-        LocalDeclaration => print_local_declaration,
-      });
+      self.visit_declaration(decl);
       self.push('\n');
     }
 
@@ -248,33 +205,30 @@ impl<'ast, 'text> Printer<'ast, 'text> {
       self.push('\n');
     }
 
-    dispatch_print!(self, &message.body, ComplexMessageBody {
-      QuotedPattern => print_quoted_pattern,
-      Matcher => print_matcher,
-    });
+    self.visit_complex_message_body(&message.body);
 
     self.push('\n');
   }
 
-  fn print_input_declaration(&mut self, decl: &InputDeclaration) {
+  fn visit_input_declaration(&mut self, decl: &'ast InputDeclaration<'text>) {
     self.push_str(".input ");
-    self.print_variable_expression(&decl.expression);
+    self.visit_variable_expression(&decl.expression);
   }
 
-  fn print_local_declaration(&mut self, decl: &LocalDeclaration) {
+  fn visit_local_declaration(&mut self, decl: &'ast LocalDeclaration<'text>) {
     self.push_str(".local ");
-    self.print_variable(&decl.variable);
+    self.visit_variable(&decl.variable);
     self.push_str(" = ");
-    self.print_expression(&decl.expression);
+    self.visit_expression(&decl.expression);
   }
 
-  fn print_quoted_pattern(&mut self, pattern: &QuotedPattern) {
+  fn visit_quoted_pattern(&mut self, pattern: &'ast QuotedPattern<'text>) {
     self.push_str("{{");
-    self.print_pattern(&pattern.pattern);
+    self.visit_pattern(&pattern.pattern);
     self.push_str("}}");
   }
 
-  fn print_matcher(&mut self, matcher: &Matcher) {
+  fn visit_matcher(&mut self, matcher: &'ast Matcher<'text>) {
     self.push_str(".match");
 
     let selectors_count = matcher.selectors.len();
@@ -291,7 +245,7 @@ impl<'ast, 'text> Printer<'ast, 'text> {
       assert_eq!(variant.keys.len(), selectors_count);
 
       for (i, key) in variant.keys.iter().enumerate() {
-        let printed = self.try_print_match_key(key);
+        let printed = self.try_visit_match_key(key);
         max_lengths[i] = max_lengths[i].max(printed.len());
         printed_keys.push(printed);
       }
@@ -300,7 +254,7 @@ impl<'ast, 'text> Printer<'ast, 'text> {
 
     for (i, selector) in matcher.selectors.iter().enumerate() {
       self.push(' ');
-      self.print_variable(selector);
+      self.visit_variable(selector);
       self.push_n(' ', max_lengths[i] - selector.name.len() - 1);
     }
 
@@ -315,20 +269,7 @@ impl<'ast, 'text> Printer<'ast, 'text> {
         self.push(' ');
       }
 
-      self.print_quoted_pattern(&variant.pattern);
+      self.visit_quoted_pattern(&variant.pattern);
     }
-  }
-
-  fn try_print_match_key(&mut self, key: &Key) -> String {
-    let Key::Literal(key) = key else {
-      assert!(matches!(key, Key::Star(_)));
-      return "*".to_string();
-    };
-
-    let backup = std::mem::take(&mut self.out);
-
-    self.print_literal(key);
-
-    std::mem::replace(&mut self.out, backup)
   }
 }
