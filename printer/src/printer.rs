@@ -194,7 +194,7 @@ impl<'ast, 'text> Visit<'ast, 'text> for Printer<'ast, 'text> {
       self.push('\n');
     }
 
-    if message.declarations.len() > 0 {
+    if !message.declarations.is_empty() {
       self.push('\n');
     }
 
