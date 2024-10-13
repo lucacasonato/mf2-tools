@@ -9,7 +9,8 @@ LiteralExpression                ^^^^^^^^^^^      0:13-0:24
 Quoted                             ^^^^^^^        0:15-0:22
 Text                                ^^^^^         0:16-0:21
 QuotedPattern                                ^^^^ 1:0-1:4
-Pattern                                           0:0-0:0
+Pattern                                           1:2-1:2
+Text                                              1:2-1:2
 === diagnostics ===
 Variable is not prefixed with a dollar sign ('$'). (at @7..10)
   .local var = { |hello| }↵{{}}
@@ -43,7 +44,12 @@ ComplexMessage {
     body: QuotedPattern {
         span: @25..29,
         pattern: Pattern {
-            parts: [],
+            parts: [
+                Text {
+                    start: @27,
+                    content: "",
+                },
+            ],
         },
     },
 }

@@ -14,6 +14,7 @@ use mf2_parser::ast;
 use mf2_parser::ast::Message;
 use mf2_parser::parse;
 use mf2_parser::Diagnostic;
+use mf2_parser::Location;
 use mf2_parser::SourceTextInfo;
 use mf2_parser::Span;
 use mf2_parser::Spanned;
@@ -160,11 +161,20 @@ fn generate_actual_spans(
     input_message: &'text str,
     output: &'text mut String,
     source_text_info: &'text SourceTextInfo<'text>,
+    last_start: Location,
   }
 
   impl SpanDebuggerVisitor<'_> {
     fn print(&mut self, name: &str, span: Span) {
       assert!(name.len() <= SPAN_LABEL_WIDTH);
+
+      if span.start < self.last_start {
+        panic!(
+          "Item {} starting at {:?} is before the last span start {:?} - the visitor did not visit in source text order!",
+          name, span.start, self.last_start
+        );
+      }
+      self.last_start = span.start;
 
       let span_start = span.start.inner_byte_index_for_test() as usize;
       let span_end = span.end.inner_byte_index_for_test() as usize;
@@ -246,6 +256,7 @@ fn generate_actual_spans(
     input_message,
     output: &mut output,
     source_text_info,
+    last_start: Location::new_for_test(0),
   });
 
   output

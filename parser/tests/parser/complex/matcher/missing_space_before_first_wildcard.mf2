@@ -7,7 +7,8 @@ Variable                   ^^      0:7-0:9
 Variant                      ^^^^^ 0:9-0:14
 Star                         ^     0:9-0:10
 QuotedPattern                 ^^^^ 0:10-0:14
-Pattern                            0:0-0:0
+Pattern                            0:12-0:12
+Text                               0:12-0:12
 === diagnostics ===
 Matcher key is missing a leading space. (at @9..10)
   .match $a*{{}}
@@ -34,7 +35,12 @@ ComplexMessage {
                 pattern: QuotedPattern {
                     span: @10..14,
                     pattern: Pattern {
-                        parts: [],
+                        parts: [
+                            Text {
+                                start: @12,
+                                content: "",
+                            },
+                        ],
                     },
                 },
             },

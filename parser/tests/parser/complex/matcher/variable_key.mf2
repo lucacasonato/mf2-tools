@@ -20,7 +20,8 @@ Text                                               ^^^^^          2:7-2:12
 Variant                                                    ^^^^^^ 3:0-3:6
 Star                                                       ^      3:0-3:1
 QuotedPattern                                                ^^^^ 3:2-3:6
-Pattern                                                           0:0-0:0
+Pattern                                                           3:4-3:4
+Text                                                              3:4-3:4
 === diagnostics ===
 Matcher key is a variable, which is not allowed. Matcher keys must be literal values, or the wildcard ('*'). (at @24..28)
   .match $a↵a {{Hold it}}↵$var {{Hello}}↵* {{}}
@@ -85,7 +86,12 @@ ComplexMessage {
                 pattern: QuotedPattern {
                     span: @41..45,
                     pattern: Pattern {
-                        parts: [],
+                        parts: [
+                            Text {
+                                start: @43,
+                                content: "",
+                            },
+                        ],
                     },
                 },
             },

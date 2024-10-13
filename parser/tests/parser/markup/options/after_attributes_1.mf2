@@ -4,12 +4,12 @@
 Pattern             ^^^^^^^^^^^^^^^^^^^^^^^ 0:0-0:23
 Markup              ^^^^^^^^^^^^^^^^^^^^^^^ 0:0-0:23
 Identifier            ^^                    0:2-0:4
-FnOrMarkupOption                   ^^^^^^^  0:15-0:22
-Identifier                         ^^^      0:15-0:18
-Text                                   ^^^  0:19-0:22
 Attribute                ^^^^^^^^^          0:5-0:14
 Identifier                ^^^^              0:6-0:10
 Text                           ^^^          0:11-0:14
+FnOrMarkupOption                   ^^^^^^^  0:15-0:22
+Identifier                         ^^^      0:15-0:18
+Text                                   ^^^  0:19-0:22
 === diagnostics ===
 Markup tag has an option after an attribute, which is not allowed. All options must come before any attribute. (at @15..22)
   {#el @attr=val opt=val}

@@ -8,7 +8,8 @@ Variable                   ^^^^      0:7-0:11
 LiteralExpression                    0:11-0:11
 Text                                 0:11-0:11
 QuotedPattern                   ^^^^ 1:0-1:4
-Pattern                              0:0-0:0
+Pattern                              1:2-1:2
+Text                                 1:2-1:2
 === diagnostics ===
 Local declaration is missing an equals sign after the variable. (at @7..11)
   .local $var↵{{}}
@@ -40,7 +41,12 @@ ComplexMessage {
     body: QuotedPattern {
         span: @12..16,
         pattern: Pattern {
-            parts: [],
+            parts: [
+                Text {
+                    start: @14,
+                    content: "",
+                },
+            ],
         },
     },
 }

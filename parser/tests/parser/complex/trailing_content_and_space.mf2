@@ -6,7 +6,8 @@
                     {{}} asd↵↵↵
 ComplexMessage      ^^^^^^^^    0:0-0:8
 QuotedPattern       ^^^^        0:0-0:4
-Pattern                         0:0-0:0
+Pattern                         0:2-0:2
+Text                            0:2-0:2
 === diagnostics ===
 Message has additional invalid content after the body. (at @5..8)
   {{}} asd↵↵↵
@@ -18,7 +19,12 @@ ComplexMessage {
     body: QuotedPattern {
         span: @0..4,
         pattern: Pattern {
-            parts: [],
+            parts: [
+                Text {
+                    start: @2,
+                    content: "",
+                },
+            ],
         },
     },
 }

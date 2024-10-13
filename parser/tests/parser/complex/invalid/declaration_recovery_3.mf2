@@ -8,7 +8,8 @@ Variable                        ^^^^^^                0:12-0:18
 LiteralExpression                        ^^^^^^^      0:21-0:28
 Text                                      ^^^^^       0:22-0:27
 QuotedPattern                                    ^^^^ 1:0-1:4
-Pattern                                               0:0-0:0
+Pattern                                               1:2-1:2
+Text                                                  1:2-1:2
 === diagnostics ===
 Found a statement that is invalid because the keyword 'foo' is keyword. (at @0..5)
   .foo .local $hello = {world}↵{{}}
@@ -37,7 +38,12 @@ ComplexMessage {
     body: QuotedPattern {
         span: @29..33,
         pattern: Pattern {
-            parts: [],
+            parts: [
+                Text {
+                    start: @31,
+                    content: "",
+                },
+            ],
         },
     },
 }
