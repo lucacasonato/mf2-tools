@@ -1,3 +1,5 @@
+// deno-lint-ignore-file no-explicit-any
+
 export interface InstantiateResult {
   instance: WebAssembly.Instance;
   exports: {

@@ -70,7 +70,7 @@ exports.Mf2Extension = class Mf2Extension {
   async #startLanguageServer() {
     if (this.#ls) return;
 
-    let path = this.#configuration.server.path ||
+    const path = this.#configuration.server.path ||
       "../dist/mf2lsp.generated.mjs";
     /** @type {import("vscode-languageclient/node").ServerOptions} */
     let serverOptions;
@@ -80,6 +80,7 @@ exports.Mf2Extension = class Mf2Extension {
       const { instantiate } = await import(path);
       const { WasmServer } = await instantiate();
 
+      // deno-lint-ignore require-await
       serverOptions = async () => {
         const io = new WasmIO(WasmServer);
         /** @type {import("vscode-languageclient/node").MessageTransports} */
@@ -176,6 +177,7 @@ class WasmMessageWriter extends AbstractMessageWriter {
     this.#io = io;
   }
   /** @param {any} msg */
+  // deno-lint-ignore require-await
   async write(msg) {
     this.#io.send(msg);
   }
