@@ -131,7 +131,7 @@ diagnostics! {
     MarkupOptionAfterAttribute { previous_attribute: Attribute<'text>, option: FnOrMarkupOption<'text> } => {
       message: ("Markup tag has an option after an attribute, which is not allowed. All options must come before any attribute."),
       span: option.span(),
-      fatal: true,
+      fatal: false,
     },
     FunctionMissingIdentifier { span: Span } => {
       message: ("Function is missing an identifier."),
