@@ -5,6 +5,7 @@
   "license": "GPL-3.0-or-later",
   "version": "0.0.3",
   "scripts": {
+    "vscode:prepublish": "rm -rf ./dist && cp -r ../target/wasm/release ./dist && mv ./dist/mf2lsp.generated.js ./dist/mf2lsp.generated.mjs",
     "publish": "npx @vscode/vsce publish",
     "check": "tsc"
   },
@@ -22,7 +23,8 @@
   "type": "module",
   "main": "./src/main.cjs",
   "dependencies": {
-    "vscode-languageclient": "^9.0.1"
+    "vscode-languageclient": "^9.0.1",
+    "@deno/shim-deno": "0.19.2"
   },
   "devDependencies": {
     "@types/vscode": "1.90.0",
@@ -81,21 +83,7 @@
         "mf2.server.path": {
           "title": "Path",
           "type": "string",
-          "description": "The path to the MessageFormat 2 language server",
-          "scope": "machine-overridable"
-        },
-        "mf2.server.download.enabled": {
-          "title": "Enable download",
-          "type": "boolean",
-          "description": "Whether to download the MessageFormat 2 language server from GitHub. Defaults to true.",
-          "default": true,
-          "scope": "machine-overridable"
-        },
-        "mf2.server.download.version": {
-          "title": "Version to download",
-          "type": "string",
-          "description": "The version of the MessageFormat 2 language server to download from GitHub. Defaults to the latest version.",
-          "default": "latest",
+          "description": "The path to the MessageFormat 2 language server. Can either be a path to a binary (native build), or a .mjs file (Wasm build).",
           "scope": "machine-overridable"
         }
       }

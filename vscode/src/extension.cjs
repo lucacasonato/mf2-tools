@@ -1,5 +1,8 @@
 const vscode = require("vscode");
-const { LanguageClient } = require("vscode-languageclient/node");
+const { LanguageClient, AbstractMessageReader, AbstractMessageWriter } =
+  require("vscode-languageclient/node");
+
+({ Deno: globalThis.Deno } = require("@deno/shim-deno"));
 
 /**
  * @typedef Configuration
@@ -9,7 +12,6 @@ const { LanguageClient } = require("vscode-languageclient/node");
 /**
  * @typedef ServerConfiguration
  * @property {string} path
- * @property {{ enabled: boolean, version: string }} update
  */
 
 exports.Mf2Extension = class Mf2Extension {
@@ -68,24 +70,30 @@ exports.Mf2Extension = class Mf2Extension {
   async #startLanguageServer() {
     if (this.#ls) return;
 
-    if (!this.#configuration.server.path) {
-      vscode.window.showErrorMessage(
-        "MessageFormat 2 Language Server could not start up because no path to the language server binary was set, and automatic downloading is disabled.",
-      );
-      return;
-    }
-
+    let path = this.#configuration.server.path ||
+      "../dist/mf2lsp.generated.mjs";
     /** @type {import("vscode-languageclient/node").ServerOptions} */
-    const serverOptions = {
-      run: {
-        command: this.#configuration.server.path,
+    let serverOptions;
+
+    if (path.endsWith(".mjs")) {
+      /** @type {import("./mf2lsp.generated.cjs")} */
+      const { instantiate } = await import(path);
+      const { WasmServer } = await instantiate();
+
+      serverOptions = async () => {
+        const io = new WasmIO(WasmServer);
+        /** @type {import("vscode-languageclient/node").MessageTransports} */
+        return {
+          reader: new WasmMessageReader(io),
+          writer: new WasmMessageWriter(io),
+        };
+      };
+    } else {
+      serverOptions = {
+        command: path,
         args: [],
-      },
-      debug: {
-        command: this.#configuration.server.path,
-        args: [],
-      },
-    };
+      };
+    }
 
     /** @type {import("vscode-languageclient").LanguageClientOptions} */
     const clientOptions = {
@@ -108,3 +116,69 @@ exports.Mf2Extension = class Mf2Extension {
     this.#ls = null;
   }
 };
+
+class WasmIO {
+  /** @type {import("./mf2lsp.generated.d.cts").WasmServer} */
+  #server;
+  /** @type {import("vscode-languageclient/node").DataCallback | null} */
+  #cb;
+  /** @param {typeof import("./mf2lsp.generated.cjs").WasmServer} server */
+  constructor(server) {
+    this.#server = new server();
+  }
+  /**
+   * @param {import("vscode-languageclient/node").DataCallback} callback
+   * @returns {import("vscode-languageclient/node").Disposable}
+   */
+  listen(callback) {
+    this.#cb = callback;
+    return {
+      dispose: () => {
+        this.#cb = null;
+      },
+    };
+  }
+  /** @param {any} msg */
+  send(msg) {
+    const done = this.#server.write(msg);
+    if (done) return;
+    let message;
+    while ((message = this.#server.read()) !== null) {
+      this.#cb?.(message);
+    }
+  }
+  dispose() {
+    this.#server.free();
+  }
+}
+class WasmMessageReader extends AbstractMessageReader {
+  /** @type {WasmIO} */
+  #io;
+  /** @param {WasmIO} io */
+  constructor(io) {
+    super();
+    this.#io = io;
+  }
+  /**
+   * @param {import("vscode-languageclient/node").DataCallback} callback
+   * @returns {import("vscode-languageclient/node").Disposable}
+   */
+  listen(callback) {
+    return this.#io.listen(callback);
+  }
+}
+class WasmMessageWriter extends AbstractMessageWriter {
+  /** @type {WasmIO} */
+  #io;
+  /** @param {WasmIO} io */
+  constructor(io) {
+    super();
+    this.#io = io;
+  }
+  /** @param {any} msg */
+  async write(msg) {
+    this.#io.send(msg);
+  }
+  end() {
+  }
+}

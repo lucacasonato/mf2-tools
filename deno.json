@@ -8,8 +8,8 @@
     "wasm:release": "deno task wasmbuild --out ./target/wasm/release",
     "wasm:debug": "deno task wasmbuild --debug --skip-opt --out ./target/wasm/debug",
     "wasmbuild": "deno run -A jsr:@deno/wasmbuild@0.17.2",
-    "ext:build": "deno run -A tools/vscode/build.ts",
-    "ext:install": "cd vscode && npm ci"
+    "vscode:build": "deno run -A tools/vscode/build.ts",
+    "vscode:install": "cd vscode && npm ci"
   },
   "exclude": ["target/", "vscode/node_modules/"]
 }
