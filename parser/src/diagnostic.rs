@@ -106,7 +106,7 @@ diagnostics! {
     MarkupMissingIdentifier { span: Span } => {
       message: ("Markup tag is missing an identifier."),
       span: *span,
-      fatal: true,
+      fatal: false,
     },
     MarkupInvalidSpaceBeforeIdentifier { id: Identifier<'text>, start_loc: Location } => {
       message: ("Identifier of the markup tag is preceeded by spaces, which is not allowed."),
