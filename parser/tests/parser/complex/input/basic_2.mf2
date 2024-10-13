@@ -9,7 +9,8 @@ Variable                   ^^^^               0:7-0:11
 Function                        ^^^^^^^       0:12-0:19
 Identifier                       ^^^^^^       0:13-0:19
 QuotedPattern                            ^^^^ 1:0-1:4
-Pattern                                       0:0-0:0
+Pattern                                       1:2-1:2
+Text                                          1:2-1:2
 === diagnostics ===
 
 === ast ===
@@ -42,7 +43,12 @@ ComplexMessage {
     body: QuotedPattern {
         span: @21..25,
         pattern: Pattern {
-            parts: [],
+            parts: [
+                Text {
+                    start: @23,
+                    content: "",
+                },
+            ],
         },
     },
 }

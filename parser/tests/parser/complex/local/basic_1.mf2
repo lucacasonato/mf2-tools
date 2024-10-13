@@ -9,7 +9,8 @@ LiteralExpression                 ^^^^^^^^^      0:14-0:23
 Quoted                             ^^^^^^^       0:15-0:22
 Text                                ^^^^^        0:16-0:21
 QuotedPattern                               ^^^^ 1:0-1:4
-Pattern                                          0:0-0:0
+Pattern                                          1:2-1:2
+Text                                             1:2-1:2
 === diagnostics ===
 
 === ast ===
@@ -41,7 +42,12 @@ ComplexMessage {
     body: QuotedPattern {
         span: @24..28,
         pattern: Pattern {
-            parts: [],
+            parts: [
+                Text {
+                    start: @26,
+                    content: "",
+                },
+            ],
         },
     },
 }

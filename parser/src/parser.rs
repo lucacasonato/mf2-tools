@@ -211,7 +211,7 @@ impl<'text> Parser<'text> {
     }
 
     let end = self.current_location();
-    if end != start {
+    if end != start || parts.is_empty() {
       parts.push(PatternPart::Text(self.slice_text(start..end)));
     }
 

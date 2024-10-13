@@ -9,13 +9,14 @@ Variable                   ^^                            0:7-0:9
 LiteralExpression               ^^^                      0:12-0:15
 Number                           ^                       0:13-0:14
 Number.integral                  ^                       0:13-0:14
+QuotedPattern                       ^^^^                 1:0-1:4
+Pattern                                                  1:2-1:2
+Text                                                     1:2-1:2
 LocalDeclaration                         ^^^^^^^^^^^^^^^ 2:0-2:15
 Variable                                        ^^       2:7-2:9
 LiteralExpression                                    ^^^ 2:12-2:15
 Number                                                ^  2:13-2:14
 Number.integral                                       ^  2:13-2:14
-QuotedPattern                       ^^^^                 1:0-1:4
-Pattern                                                  0:0-0:0
 === diagnostics ===
 Declarations are not valid after the message body. Did you mean to put the declaration before the body? (at @21..36)
   .local $a = {1}↵{{}}↵.local $b = {1}
@@ -68,7 +69,12 @@ ComplexMessage {
     body: QuotedPattern {
         span: @16..20,
         pattern: Pattern {
-            parts: [],
+            parts: [
+                Text {
+                    start: @18,
+                    content: "",
+                },
+            ],
         },
     },
 }

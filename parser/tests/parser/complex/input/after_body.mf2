@@ -9,13 +9,14 @@ Variable                   ^^                           0:7-0:9
 LiteralExpression               ^^^                     0:12-0:15
 Number                           ^                      0:13-0:14
 Number.integral                  ^                      0:13-0:14
+QuotedPattern                       ^^^^                1:0-1:4
+Pattern                                                 1:2-1:2
+Text                                                    1:2-1:2
 InputDeclaration                         ^^^^^^^^^^^^^^ 2:0-2:14
 VariableExpression                              ^^^^^^^ 2:7-2:14
 Variable                                         ^^     2:8-2:10
 Function                                            ^^  2:11-2:13
 Identifier                                           ^  2:12-2:13
-QuotedPattern                       ^^^^                1:0-1:4
-Pattern                                                 0:0-0:0
 === diagnostics ===
 Declarations are not valid after the message body. Did you mean to put the declaration before the body? (at @21..35)
   .local $a = {1}↵{{}}↵.input {$b :a}
@@ -70,7 +71,12 @@ ComplexMessage {
     body: QuotedPattern {
         span: @16..20,
         pattern: Pattern {
-            parts: [],
+            parts: [
+                Text {
+                    start: @18,
+                    content: "",
+                },
+            ],
         },
     },
 }

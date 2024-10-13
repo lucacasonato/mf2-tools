@@ -94,6 +94,8 @@ impl<'text> Visitable<'text> for Message<'text> {
 
 #[derive(Debug, Clone)]
 pub struct Pattern<'text> {
+  /// Must be non-empty. Instead of an empty parts list, add a
+  /// [PatternPart::Text] with an empty string.
   pub parts: Vec<PatternPart<'text>>,
 }
 
@@ -103,7 +105,7 @@ impl Spanned for Pattern<'_> {
       (Some(first), Some(last)) => {
         Span::new(first.span().start..last.span().end)
       }
-      _ => Span::new(Location::dummy()..Location::dummy()),
+      _ => unreachable!("Pattern must have at least one part"),
     }
   }
 }
@@ -669,11 +671,29 @@ impl<'text> Visitable<'text> for Markup<'text> {
     visitor: &mut V,
   ) {
     self.id.apply_visitor(visitor);
-    for option in &self.options {
-      option.apply_visitor(visitor);
-    }
-    for attribute in &self.attributes {
-      attribute.apply_visitor(visitor);
+    let mut options = self.options.iter().peekable();
+    let mut attributes = self.attributes.iter().peekable();
+    loop {
+      match (options.peek(), attributes.peek()) {
+        (Some(option), Some(attribute)) => {
+          if option.span().end <= attribute.span().start {
+            option.apply_visitor(visitor);
+            options.next();
+          } else {
+            attribute.apply_visitor(visitor);
+            attributes.next();
+          }
+        }
+        (Some(option), None) => {
+          option.apply_visitor(visitor);
+          options.next();
+        }
+        (None, Some(attribute)) => {
+          attribute.apply_visitor(visitor);
+          attributes.next();
+        }
+        (None, None) => break,
+      }
     }
   }
 }
@@ -703,10 +723,17 @@ impl<'text> Visitable<'text> for ComplexMessage<'text> {
     &'ast self,
     visitor: &mut V,
   ) {
+    let mut visited_body = false;
     for declaration in &self.declarations {
+      if !visited_body && declaration.span().start >= self.body.span().end {
+        visited_body = true;
+        self.body.apply_visitor(visitor);
+      }
       declaration.apply_visitor(visitor);
     }
-    self.body.apply_visitor(visitor);
+    if !visited_body {
+      self.body.apply_visitor(visitor);
+    }
   }
 }
 

@@ -302,10 +302,6 @@ impl SourceTextInfo<'_> {
 pub struct Location(u32);
 
 impl Location {
-  pub(crate) fn dummy() -> Location {
-    Location(0)
-  }
-
   #[doc(hidden)]
   pub fn new_for_test(byte: u32) -> Location {
     Location(byte)
