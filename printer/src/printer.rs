@@ -1,16 +1,25 @@
 use mf2_parser::ast::*;
+use mf2_parser::LineColUtf8;
+use mf2_parser::Location;
+use mf2_parser::SourceTextInfo;
+use mf2_parser::Spanned;
 use mf2_parser::Visit;
 use mf2_parser::Visitable;
 
 pub struct Printer<'ast, 'text> {
   ast: &'ast Message<'text>,
+  info: Option<&'text SourceTextInfo<'text>>,
   out: String,
 }
 
 impl<'ast, 'text> Printer<'ast, 'text> {
-  pub fn new(ast: &'ast Message<'text>) -> Self {
+  pub fn new(
+    ast: &'ast Message<'text>,
+    info: Option<&'text SourceTextInfo<'text>>,
+  ) -> Self {
     Self {
       ast,
+      info,
       out: String::new(),
     }
   }
@@ -76,6 +85,24 @@ impl<'ast, 'text> Printer<'ast, 'text> {
     self.visit_literal(key);
 
     std::mem::replace(&mut self.out, backup)
+  }
+
+  fn had_empty_line(
+    &self,
+    start: Location,
+    end: Location,
+    default: bool,
+  ) -> bool {
+    let Some(info) = self.info else {
+      return default;
+    };
+
+    let LineColUtf8 {
+      line: start_line, ..
+    } = info.utf8_line_col(start);
+    let LineColUtf8 { line: end_line, .. } = info.utf8_line_col(end);
+
+    end_line - start_line > 1
   }
 }
 
@@ -189,13 +216,20 @@ impl<'ast, 'text> Visit<'ast, 'text> for Printer<'ast, 'text> {
   }
 
   fn visit_complex_message(&mut self, message: &'ast ComplexMessage<'text>) {
-    for decl in &message.declarations {
+    for (i, decl) in message.declarations.iter().enumerate() {
       self.visit_declaration(decl);
       self.push('\n');
-    }
 
-    if !message.declarations.is_empty() {
-      self.push('\n');
+      let next_decl =
+        message.declarations.get(i + 1).map(|x| x as &dyn Spanned);
+      let next_start = next_decl
+        .unwrap_or(&message.body as &dyn Spanned)
+        .span()
+        .start;
+
+      if self.had_empty_line(decl.span().end, next_start, next_decl.is_none()) {
+        self.push('\n');
+      }
     }
 
     self.visit_complex_message_body(&message.body);

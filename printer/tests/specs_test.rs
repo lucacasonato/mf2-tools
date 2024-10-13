@@ -36,7 +36,7 @@ fn run_test(test: &CollectedTest) {
     .split_once(output_marker)
     .unwrap_or((&*file_text, ""));
 
-  let (ast, diag, ..) = parse(input);
+  let (ast, diag, info) = parse(input);
   pretty_assertions::assert_eq!(diag.len(), 0);
 
   if test
@@ -46,14 +46,14 @@ fn run_test(test: &CollectedTest) {
     .map(|s| s.ends_with(".panic"))
     .unwrap_or(false)
   {
-    let result = panic::catch_unwind(|| print(&ast));
+    let result = panic::catch_unwind(|| print(&ast, Some(&info)));
     if result.is_ok() {
       panic!("expected panic, but printing didn't");
     }
     return;
   }
 
-  let actual = print(&ast);
+  let actual = print(&ast, Some(&info));
 
   let mut need_update = std::env::var("UPDATE").is_ok();
   if !need_update {
