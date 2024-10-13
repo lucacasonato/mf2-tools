@@ -201,7 +201,7 @@ diagnostics! {
     InvalidClosingBrace { brace_loc: Location } => {
       message: ("The closing brace character ('}}') is invalid inside of messages, and must be escaped as '\\}}'."),
       span: Span::new(*brace_loc..(*brace_loc + '}')),
-      fatal: true,
+      fatal: false,
     },
     AnnotationMissingSpaceBefore { span: Span } => {
       message: ("Annotation is missing a leading space."),
