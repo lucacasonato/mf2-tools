@@ -166,7 +166,7 @@ diagnostics! {
     QuotedPatternInsidePattern { open_span: Span, close_span: Option<Span> } => {
       message: ("Quoted pattern is not allowed inside of a pattern."),
       span: *open_span,
-      fatal: true,
+      fatal: false,
     },
     MarkupInvalidContents { span: Span } => {
       message: ("Markup tag contains invalid content."),
