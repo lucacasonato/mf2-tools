@@ -331,7 +331,7 @@ diagnostics! {
     MatcherMissingSelectors { span: Span } => {
       message: ("Matcher is missing a selector, but at least one is required."),
       span: *span,
-      fatal: true,
+      fatal: false,
     },
     MatcherVariantMissingKeys { span: Span } => {
       message: ("Matcher variant is missing key(s), but at least one is required."),
