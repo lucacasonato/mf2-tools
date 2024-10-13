@@ -2,6 +2,3 @@
 name = "mf2-parser"
 version = "0.1.0"
 edition = "2021"
-
-[dependencies]
-unicode-width = "0.1.13"
