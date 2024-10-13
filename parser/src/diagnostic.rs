@@ -91,7 +91,7 @@ diagnostics! {
     OptionMissingKey { span: Span } => {
       message: ("Found equals sign followed by value, but equals sign is not preceeded by a key. Did you forget to add a key to make this an option?"),
       span: *span,
-      fatal: true,
+      fatal: false,
     },
     OptionMissingValue { span: Span } => {
       message: ("Found an identifier followed by an equals sign, but not followed by a value. Did you forget to add a value to make this an option?"),
