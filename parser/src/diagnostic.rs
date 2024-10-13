@@ -286,12 +286,12 @@ diagnostics! {
     MatcherKeyIsVariable { span: Span } => {
       message: ("Matcher key is a variable, which is not allowed. Matcher keys must be literal values, or the wildcard ('*')."),
       span: *span,
-      fatal: true,
+      fatal: false,
     },
     InvalidMatcherLiteralKey { span: Span } => {
       message: ("Found an invalid matcher key (not a valid literal). Did you mean to quote the key to make it a literal?"),
       span: *span,
-      fatal: true,
+      fatal: false,
     },
     InvalidStatement { span: Span, keyword: &'text str } => {
       message: ("Found a statement that is invalid because the keyword '{keyword}' is keyword."),

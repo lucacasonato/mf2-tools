@@ -27,7 +27,12 @@ Matcher key is a variable, which is not allowed. Matcher keys must be literal va
   .match $a↵a {{Hold it}}↵$var {{Hello}}↵* {{}}
                           ^^^^
 === formatted ===
-(cannot format due to fatal errors)
+.match
+$a
+a    {{Hold it}}
+$var {{Hello}}
+*    {{}}
+
 === ast ===
 ComplexMessage {
     span: @0..45,
