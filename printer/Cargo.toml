@@ -8,4 +8,4 @@ license.workspace = true
 repository.workspace = true
 
 [dependencies]
-mf2_parser = { path = "../parser" }
+mf2_parser = { path = "../parser", version = "0.1.1" }
