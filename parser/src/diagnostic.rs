@@ -336,7 +336,7 @@ diagnostics! {
     MatcherVariantMissingKeys { span: Span } => {
       message: ("Matcher variant is missing key(s), but at least one is required."),
       span: *span,
-      fatal: true,
+      fatal: false,
     },
     MatcherVariantExpressionBodyNotQuoted { span: Span } => {
       message: ("Matcher variant has an expression as a body, but only quoted patterns are allowed. Did you mean to wrap the expression in a quoted pattern?"),
