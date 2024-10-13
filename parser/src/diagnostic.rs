@@ -156,7 +156,7 @@ diagnostics! {
     PlaceholderInvalidLiteral { span: Span } => {
       message: ("Placeholder expression contains a literal that is not valid when unquoted. Did you mean to quote it?"),
       span: *span,
-      fatal: true,
+      fatal: false,
     },
     PlaceholderInvalidContents { span: Span } => {
       message: ("Placeholder expression contains invalid content."),
