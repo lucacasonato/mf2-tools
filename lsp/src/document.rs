@@ -93,6 +93,14 @@ impl Document {
     &self.parsed.get().scope
   }
 
+  pub fn info(&self) -> &SourceTextInfo {
+    &self.parsed.get().info
+  }
+
+  pub fn diagnostics(&self) -> &Vec<Diagnostic> {
+    &self.parsed.get().diagnostics
+  }
+
   pub fn find_variable_at(&self, loc: Location) -> Option<&str> {
     match find_node(self.ast(), loc) {
       Some(ast::AnyNode::Variable(node)) => Some(node.name),
