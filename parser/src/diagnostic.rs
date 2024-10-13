@@ -196,7 +196,7 @@ diagnostics! {
     InvalidNullCharacter { char_loc: Location } => {
       message: ("The NULL character (0x00) is invalid anywhere inside of messages."),
       span: Span::new(*char_loc..(*char_loc + '\0')),
-      fatal: true,
+      fatal: false,
     },
     InvalidClosingBrace { brace_loc: Location } => {
       message: ("The closing brace character ('}}') is invalid inside of messages, and must be escaped as '\\}}'."),
