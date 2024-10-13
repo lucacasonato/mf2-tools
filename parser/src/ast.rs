@@ -78,10 +78,7 @@ impl<'text> Visitable<'text> for Message<'text> {
     &'ast self,
     visitor: &mut V,
   ) {
-    match self {
-      Message::Simple(pattern) => pattern.apply_visitor(visitor),
-      Message::Complex(complex) => complex.apply_visitor(visitor),
-    }
+    visitor.visit_message(self);
   }
 
   fn apply_visitor_to_children<'ast, V: Visit<'ast, 'text> + ?Sized>(
@@ -89,8 +86,8 @@ impl<'text> Visitable<'text> for Message<'text> {
     visitor: &mut V,
   ) {
     match self {
-      Message::Simple(pattern) => pattern.apply_visitor_to_children(visitor),
-      Message::Complex(complex) => complex.apply_visitor_to_children(visitor),
+      Message::Simple(pattern) => pattern.apply_visitor(visitor),
+      Message::Complex(complex) => complex.apply_visitor(visitor),
     }
   }
 }

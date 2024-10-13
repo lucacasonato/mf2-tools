@@ -1,0 +1,11 @@
+{#foo}
+{#foo opt=val}
+{#foo @attr}
+{#foo @attr = val}
+{#foo opt= val @attr = val}
+=== output ===
+{#foo }
+{#foo opt=val }
+{#foo @attr }
+{#foo @attr=val }
+{#foo opt=val @attr=val }

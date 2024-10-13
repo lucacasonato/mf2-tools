@@ -1,0 +1,11 @@
+{ $foo }
+{ $foo :fn }
+{ $foo :fn p = 1 }
+{ $foo @attr }
+{ $foo :fn @attr }
+=== output ===
+{ $foo }
+{ $foo :fn }
+{ $foo :fn p=1 }
+{ $foo @attr }
+{ $foo :fn @attr }

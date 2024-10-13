@@ -1,0 +1,7 @@
+{hello}
+{hello :fn}
+{hello @attr}
+=== output ===
+{ hello }
+{ hello :fn }
+{ hello @attr }

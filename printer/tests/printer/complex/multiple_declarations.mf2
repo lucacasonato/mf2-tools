@@ -1,0 +1,23 @@
+.local $var1 = {1}
+
+
+
+.local $var2 = {2}
+.input {$var3}
+.local $var4 = {4}
+.input {$var5}
+
+.input {$var6}
+
+{{}}
+=== output ===
+.local $var1 = { 1 }
+
+.local $var2 = { 2 }
+.input { $var3 }
+.local $var4 = { 4 }
+.input { $var5 }
+
+.input { $var6 }
+
+{{}}

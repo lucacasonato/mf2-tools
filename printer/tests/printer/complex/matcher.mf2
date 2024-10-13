@@ -1,0 +1,14 @@
+.input {$var}
+
+.match $var $var2 $var3
+1 a |2| {{hi}}
+* |q\|a| hello {{hi2}}
+1.3e2 * * {{hi3}}
+=== output ===
+.input { $var }
+
+.match
+$var  $var2  $var3
+1     a      |2|   {{hi}}
+*     |q\|a| hello {{hi2}}
+1.3e2 *      *     {{hi3}}

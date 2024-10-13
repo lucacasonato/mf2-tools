@@ -179,6 +179,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "mf2-printer"
+version = "0.1.0"
+dependencies = [
+ "file_test_runner",
+ "mf2-parser",
+ "pretty_assertions",
+]
+
+[[package]]
 name = "mf2lsp"
 version = "0.1.0-alpha.2"
 dependencies = [
