@@ -34,14 +34,12 @@ pub use visitor::{Visit, VisitAny, Visitable};
 /// ```rust
 /// use mf2_parser::parse;
 ///
-/// #fn main() {
 /// let (ast, diagnostics, source_text_info) = parse("Hello, {$name}!");
 /// if !diagnostics.is_empty() {
 ///   panic!("Failed to parse message: {:?}", diagnostics);
 /// }
 ///
 /// println!("AST: {:?}", ast);
-/// #}
 /// ```
 pub fn parse(message: &str) -> (Message, Vec<Diagnostic>, SourceTextInfo) {
   Parser::new(message).parse()
