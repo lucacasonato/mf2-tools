@@ -21,10 +21,10 @@ feature set:
 - Semantic highlighting
 - Diagnostics (syntax errors, early errors)
 - Variable completion
+- Variable rename
+- Go to definition for variables
 - Quick fixes for some errors
 - Formatting
-- Hover information
-- Go to definition for variables
 
 To use `mf2lsp` in VS Code, you can install the [vscode-mf2](#vscode-mf2)
 extension.
@@ -42,6 +42,9 @@ highlighting and bracket matching.
 
 You can install the extension from the Visual Studio Code marketplace:
 https://marketplace.visualstudio.com/items?itemName=nicolo-ribaudo.vscode-mf2.
+
+To install, you can also press `Ctrl+P` and then run the
+`ext install nicolo-ribaudo.vscode-mf2` command.
 
 ## Rust Crates
 
