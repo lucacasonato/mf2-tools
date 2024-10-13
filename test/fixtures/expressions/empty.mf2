@@ -9,7 +9,7 @@ Placeholder is empty, but should have at least a variable reference, literal, or
   {}
   ^^
 === formatted ===
-(cannot format due to fatal errors)
+{  }
 === ast ===
 Pattern {
     parts: [

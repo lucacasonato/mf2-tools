@@ -11,7 +11,7 @@ Placeholder is empty, but should have at least a variable reference, literal, or
   {@foo}
   ^^^^^^
 === formatted ===
-(cannot format due to fatal errors)
+{  @foo }
 === ast ===
 Pattern {
     parts: [
