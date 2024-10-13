@@ -231,7 +231,7 @@ diagnostics! {
     VariableMissingName { span: Span } => {
       message: ("Variable is missing a name after the dollar sign ('$')."),
       span: *span,
-      fatal: true,
+      fatal: false,
     },
     UnterminatedQuotedPattern { span: Span } => {
       message: ("Quoted pattern is missing the closing braces ('}}')."),
