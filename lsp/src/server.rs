@@ -4,6 +4,7 @@ use lsp_types::Diagnostic as LspDiagnostic;
 use lsp_types::DidChangeTextDocumentParams;
 use lsp_types::DidCloseTextDocumentParams;
 use lsp_types::DidOpenTextDocumentParams;
+use lsp_types::DocumentFormattingParams;
 use lsp_types::InitializeParams;
 use lsp_types::InitializeResult;
 use lsp_types::InitializedParams;
@@ -18,6 +19,7 @@ use lsp_types::ServerCapabilities;
 use lsp_types::ServerInfo;
 use lsp_types::TextDocumentSyncCapability;
 use lsp_types::TextDocumentSyncKind;
+use lsp_types::TextEdit;
 use lsp_types::Uri;
 use mf2_parser::ast::AnyNode;
 use mf2_parser::is_valid_name;
@@ -143,6 +145,7 @@ impl LanguageServer for Server<'_> {
           },
         ),
       ),
+      document_formatting_provider: Some(lsp_types::OneOf::Left(true)),
       ..ServerCapabilities::default()
     };
 
@@ -444,6 +447,34 @@ impl LanguageServer for Server<'_> {
       result_id: None,
       data: visitor.tokens,
     })))
+  }
+
+  fn formatting(
+    &mut self,
+    params: DocumentFormattingParams,
+  ) -> Result<Option<Vec<TextEdit>>, anyhow::Error> {
+    let maybe_document = self.documents.get(&params.text_document.uri);
+    let Some(document) = maybe_document else {
+      return Ok(None);
+    };
+
+    let abort_formatting = document.diagnostics().iter().any(|diag| {
+      if let Diagnostic::Parser(diag) = diag {
+        diag.fatal()
+      } else {
+        false
+      }
+    });
+    if abort_formatting {
+      return Ok(None);
+    }
+
+    let formatted = mf2_printer::print(document.ast(), Some(document.info()));
+
+    Ok(Some(vec![lsp_types::TextEdit {
+      range: document.span_to_range(document.ast().span()),
+      new_text: formatted,
+    }]))
   }
 }
 

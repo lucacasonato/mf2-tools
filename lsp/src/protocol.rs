@@ -11,6 +11,7 @@ use lsp_types::notification::Initialized;
 use lsp_types::notification::PublishDiagnostics;
 use lsp_types::request::CodeActionRequest;
 use lsp_types::request::Completion as CompletionRequest;
+use lsp_types::request::Formatting as FormattingRequest;
 use lsp_types::request::GotoDeclaration;
 use lsp_types::request::GotoDefinition;
 use lsp_types::request::HoverRequest;
@@ -295,6 +296,7 @@ language_server! {
     completion: CompletionRequest,
     semantic_tokens_full: SemanticTokensFullRequest,
     semantic_tokens_range: SemanticTokensRangeRequest,
+    formatting: FormattingRequest,
   }
 }
 

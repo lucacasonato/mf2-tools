@@ -195,6 +195,7 @@ dependencies = [
  "lsp-server",
  "lsp-types",
  "mf2-parser",
+ "mf2-printer",
  "serde",
  "serde-wasm-bindgen",
  "serde_json",

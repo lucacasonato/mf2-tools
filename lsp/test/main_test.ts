@@ -421,7 +421,7 @@ for (const def of ["definition", "declaration"] as const) {
   });
 }
 
-Deno.test("completins", async (t) => {
+Deno.test("completions", async (t) => {
   await using lsp = new AutoLSPTest();
 
   await lsp.initialize();
@@ -512,4 +512,134 @@ Deno.test("completins", async (t) => {
 
     assertEquals(response, null);
   });
+});
+
+Deno.test("formatting", async (t) => {
+  await using lsp = new AutoLSPTest();
+
+  await lsp.initialize();
+
+  await t.step("formats valid code", async () => {
+    const uri = "file:///src/test-1.mf2";
+
+    await lsp.notify(
+      "textDocument/didOpen",
+      {
+        textDocument: {
+          uri,
+          languageId: "mf2",
+          version: 1,
+          text: ".local $foo = {1} .input {$bar}\n{{Hello {$foo} and {$bar}!}}",
+        },
+      },
+    );
+
+    const res = await lsp.request("textDocument/formatting", {
+      textDocument: { uri },
+      options: { tabSize: 2, insertSpaces: true },
+    });
+
+    assertEquals(res, [
+      {
+        newText:
+          ".local $foo = { 1 }\n.input { $bar }\n{{Hello { $foo } and { $bar }!}}\n",
+        range: {
+          start: { line: 0, character: 0 },
+          end: { line: 1, character: 28 },
+        },
+      },
+    ]);
+  });
+
+  await t.step("formats code with scope errors", async () => {
+    const uri = "file:///src/test-2.mf2";
+
+    await lsp.notify(
+      "textDocument/didOpen",
+      {
+        textDocument: {
+          uri,
+          languageId: "mf2",
+          version: 1,
+          text: ".local $foo = {$bar} .input {$bar}\n{{}}",
+        },
+      },
+    );
+
+    const res = await lsp.request("textDocument/formatting", {
+      textDocument: { uri },
+      options: { tabSize: 2, insertSpaces: true },
+    });
+
+    assertEquals(res, [
+      {
+        newText: ".local $foo = { $bar }\n.input { $bar }\n{{}}\n",
+        range: {
+          start: { line: 0, character: 0 },
+          end: { line: 1, character: 4 },
+        },
+      },
+    ]);
+  });
+
+  await t.step({
+    name: "formats code with recoverable syntax errors",
+    ignore: true,
+    fn: async () => {
+      const uri = "file:///src/test-3.mf2";
+
+      await lsp.notify(
+        "textDocument/didOpen",
+        {
+          textDocument: {
+            uri,
+            languageId: "mf2",
+            version: 1,
+            text: "{.2}",
+          },
+        },
+      );
+
+      const res = await lsp.request("textDocument/formatting", {
+        textDocument: { uri },
+        options: { tabSize: 2, insertSpaces: true },
+      });
+
+      assertEquals(res, [
+        {
+          newText: "{ .2 }\n",
+          range: {
+            start: { line: 0, character: 0 },
+            end: { line: 0, character: 4 },
+          },
+        },
+      ]);
+    },
+  });
+
+  await t.step(
+    "does not format code with unrecoverable syntax errors",
+    async () => {
+      const uri = "file:///src/test-4.mf2";
+
+      await lsp.notify(
+        "textDocument/didOpen",
+        {
+          textDocument: {
+            uri,
+            languageId: "mf2",
+            version: 1,
+            text: ".hello world {    .4 }}",
+          },
+        },
+      );
+
+      const res = await lsp.request("textDocument/formatting", {
+        textDocument: { uri },
+        options: { tabSize: 2, insertSpaces: true },
+      });
+
+      assertEquals(res, null);
+    },
+  );
 });
