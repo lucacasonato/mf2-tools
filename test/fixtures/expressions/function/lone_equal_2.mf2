@@ -1,0 +1,51 @@
+{:fn a=1 =}
+=== spans ===
+                    {:fn a=1 =}
+Pattern             ^^^^^^^^^^^ 0:0-0:11
+AnnotationExpression^^^^^^^^^^^ 0:0-0:11
+Function             ^^^^^^^    0:1-0:8
+Identifier            ^^        0:2-0:4
+FnOrMarkupOption         ^^^    0:5-0:8
+Identifier               ^      0:5-0:6
+Number                     ^    0:7-0:8
+Number.integral            ^    0:7-0:8
+=== diagnostics ===
+Found an equals sign without a key or value. Did you mean to add a key and value to make this an option? (at @9..10)
+  {:fn a=1 =}
+           ^
+=== formatted ===
+(cannot format due to fatal errors)
+=== ast ===
+Pattern {
+    parts: [
+        AnnotationExpression {
+            span: @0..11,
+            annotation: Function {
+                start: @1,
+                id: Identifier {
+                    start: @2,
+                    namespace: None,
+                    name: "fn",
+                },
+                options: [
+                    FnOrMarkupOption {
+                        key: Identifier {
+                            start: @5,
+                            namespace: None,
+                            name: "a",
+                        },
+                        value: Number {
+                            start: @7,
+                            raw: "1",
+                            is_negative: false,
+                            integral_len: 1,
+                            fractional_len: None,
+                            exponent_len: None,
+                        },
+                    },
+                ],
+            },
+            attributes: [],
+        },
+    ],
+}
