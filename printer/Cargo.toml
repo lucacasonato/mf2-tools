@@ -1,7 +1,7 @@
 [package]
-name = "mf2-printer"
+name = "mf2_printer"
 version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-mf2-parser = { path = "../parser" }
+mf2_parser = { path = "../parser" }

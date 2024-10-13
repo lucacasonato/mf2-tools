@@ -9,6 +9,38 @@ macro_rules! visit {
   };
 }
 
+/// The [Visit] trait is used to traverse the AST. You can implement this trait
+/// to visit each node in the AST in source text order.
+///
+/// Each method in the trait corresponds to a node type in the AST. The method
+/// is called with a reference to the node. The default implementation of each
+/// method calls [Visitable::apply_visitor_to_children] on the node, which then
+/// recursively applies the visitor to the node's children. To implement a
+/// recursive visitor, you must also call [Visitable::apply_visitor_to_children]
+/// on any overridden visit methods.
+///
+/// ### Example
+///
+/// ```rust
+/// use mf2_parser::ast::*;
+/// use mf2_parser::Visit;
+/// use mf2_parser::Visitable as _;
+/// use mf2_parser::parse;
+///
+/// struct MyVisitor;
+///
+/// impl<'ast, 'text> Visit<'ast, 'text> for MyVisitor {
+///   fn visit_variable(&mut self, var: &'ast Variable<'text>) {
+///     println!("Found variable: {}", var.name);
+///     var.apply_visitor_to_children(self);
+///   }
+/// }
+///
+///
+/// let (ast, _, _) = parse("Hello, {$name}!");
+/// let mut visitor = MyVisitor;
+/// ast.apply_visitor(&mut visitor);
+/// ```
 pub trait Visit<'ast, 'text> {
   visit!(visit_message, message, Message<'text>);
   visit!(visit_pattern, msg, Pattern<'text>);
@@ -51,20 +83,61 @@ pub trait Visit<'ast, 'text> {
   visit!(visit_star, star, Star);
 }
 
+/// The [Visitable] trait is used to apply a [Visit]or to an AST node.
 pub trait Visitable<'text> {
+  /// Call the visitor method for this node on the visitor.
   fn apply_visitor<'ast, V: Visit<'ast, 'text> + ?Sized>(
     &'ast self,
     visitor: &mut V,
   );
 
+  /// Call the visitor method for each child node on the visitor. This does not
+  /// call the visitor method for this node itself.
   fn apply_visitor_to_children<'ast, V: Visit<'ast, 'text> + ?Sized>(
     &'ast self,
     visitor: &mut V,
   );
 }
 
+/// The [VisitAny] trait is used to visit the AST without having to know the
+/// specific shape of each node. There are two methods, [VisitAny::before] and
+/// [VisitAny::after], which are called before and after visiting the children
+/// of a given node, respectively.
+///
+/// The [AnyNode] enum is used to represent any node in the AST.
+///
+/// ### Example
+///
+/// ```rust
+/// use mf2_parser::ast::*;
+/// use mf2_parser::VisitAny;
+/// use mf2_parser::Visitable as _;
+/// use mf2_parser::parse;
+///
+/// struct MyVisitor;
+///
+/// impl<'ast, 'text: 'ast> VisitAny<'ast, 'text> for MyVisitor {
+///   fn before(&mut self, node: AnyNode<'ast, 'text>) {
+///     println!("Start visiting node: {:?}", node);
+///   }
+///
+///   fn after(&mut self, node: AnyNode<'ast, 'text>) {
+///     println!("Finished visiting node: {:?}", node);
+///   }
+/// }
+///
+/// let (ast, _, _) = parse("Hello, {$name}!");
+/// let mut visitor = MyVisitor;
+/// ast.apply_visitor(&mut visitor);
+/// ```
 pub trait VisitAny<'ast, 'text: 'ast> {
+  /// Called before visiting the children of a node.
+  ///
+  /// The default implementation of this method does nothing.
   fn before(&mut self, _node: AnyNode<'ast, 'text>) {}
+  /// Called after visiting the children of a node.
+  ///
+  /// The default implementation of this method does nothing.
   fn after(&mut self, _node: AnyNode<'ast, 'text>) {}
 }
 
