@@ -258,9 +258,16 @@ impl<'ast, 'text> Visit<'ast, 'text> for Printer<'ast, 'text> {
   fn visit_matcher(&mut self, matcher: &'ast Matcher<'text>) {
     self.push_str(".match\n");
 
-    let selectors_count = matcher.selectors.len();
+    let selectors_count = matcher
+      .variants
+      .iter()
+      .map(|v| v.keys.len())
+      .chain(std::iter::once(matcher.selectors.len()))
+      .max()
+      .expect("There is at least matcher.selectors.len()");
     let mut max_lengths = vec![0; selectors_count];
 
+    assert!(matcher.selectors.len() <= selectors_count);
     for (i, selector) in matcher.selectors.iter().enumerate() {
       max_lengths[i] = selector.name.len() + 1;
     }
@@ -269,12 +276,15 @@ impl<'ast, 'text> Visit<'ast, 'text> for Printer<'ast, 'text> {
       Vec::with_capacity(selectors_count * matcher.variants.len());
 
     for variant in &matcher.variants {
-      assert_eq!(variant.keys.len(), selectors_count);
+      assert!(variant.keys.len() <= selectors_count);
 
       for (i, key) in variant.keys.iter().enumerate() {
         let printed = self.try_visit_match_key(key);
         max_lengths[i] = max_lengths[i].max(printed.len());
         printed_keys.push(printed);
+      }
+      for _ in variant.keys.len()..selectors_count {
+        printed_keys.push("".to_string());
       }
     }
     assert_eq!(printed_keys.len(), printed_keys.capacity());
