@@ -136,7 +136,7 @@ diagnostics! {
     FunctionMissingIdentifier { span: Span } => {
       message: ("Function is missing an identifier."),
       span: *span,
-      fatal: true,
+      fatal: false,
     },
     UnterminatedQuoted { span: Span } => {
       message: ("Quoted string is missing the closing quote."),
