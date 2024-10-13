@@ -1,7 +1,11 @@
 [package]
 name = "mf2lsp"
+description = "Language server for MessageFormat 2"
 version = "0.1.0-alpha.2"
-edition = "2021"
+edition.workspace = true
+authors.workspace = true
+license.workspace = true
+repository.workspace = true
 
 [[bin]]
 name = "mf2lsp"
