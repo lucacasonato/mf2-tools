@@ -1,0 +1,49 @@
+{#@foo = bar }
+=== spans ===
+                    {#@foo = bar }
+Pattern             ^^^^^^^^^^^^^^ 0:0-0:14
+Markup              ^^^^^^^^^^^^^^ 0:0-0:14
+Identifier                         0:2-0:2
+Attribute             ^^^^^^^^^^   0:2-0:12
+Identifier             ^^^         0:3-0:6
+Text                         ^^^   0:9-0:12
+=== diagnostics ===
+Attribute is missing a leading space. (at @2..12)
+  {#@foo = bar }
+    ^^^^^^^^^^
+Markup tag is missing an identifier. (at @0..14)
+  {#@foo = bar }
+  ^^^^^^^^^^^^^^
+=== formatted ===
+(cannot format due to fatal errors)
+=== ast ===
+Pattern {
+    parts: [
+        Markup {
+            span: @0..14,
+            kind: Open,
+            id: Identifier {
+                start: @2,
+                namespace: None,
+                name: "",
+            },
+            options: [],
+            attributes: [
+                Attribute {
+                    span: @2..12,
+                    key: Identifier {
+                        start: @3,
+                        namespace: None,
+                        name: "foo",
+                    },
+                    value: Some(
+                        Text {
+                            start: @9,
+                            content: "bar",
+                        },
+                    ),
+                },
+            ],
+        },
+    ],
+}

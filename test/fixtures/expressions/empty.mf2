@@ -1,0 +1,26 @@
+{}
+=== spans ===
+                    {}
+Pattern             ^^ 0:0-0:2
+LiteralExpression   ^^ 0:0-0:2
+Text                   0:0-0:0
+=== diagnostics ===
+Placeholder is empty, but should have at least a variable reference, literal, or annotation. (at @0..2)
+  {}
+  ^^
+=== formatted ===
+(cannot format due to fatal errors)
+=== ast ===
+Pattern {
+    parts: [
+        LiteralExpression {
+            span: @0..2,
+            literal: Text {
+                start: @0,
+                content: "",
+            },
+            annotation: None,
+            attributes: [],
+        },
+    ],
+}

@@ -1,0 +1,58 @@
+{$var :a :b}
+=== spans ===
+                    {$var :a :b}
+Pattern             ^^^^^^^^^^^^ 0:0-0:12
+VariableExpression  ^^^^^^^^^^^^ 0:0-0:12
+Variable             ^^^^        0:1-0:5
+Function                  ^^^^^  0:6-0:11
+Identifier                 ^     0:7-0:8
+FnOrMarkupOption             ^^  0:9-0:11
+Identifier                   ^^  0:9-0:11
+Text                             0:11-0:11
+=== diagnostics ===
+Identifiers with a colon before the name are namespaced identifiers, but this identifier is missing a namespace before the colon. (at @9..11)
+  {$var :a :b}
+           ^^
+Found an identifier followed by an equals sign, but not followed by a value. Did you forget to add a value to make this an option? (at @9..11)
+  {$var :a :b}
+           ^^
+=== formatted ===
+(cannot format due to fatal errors)
+=== ast ===
+Pattern {
+    parts: [
+        VariableExpression {
+            span: @0..12,
+            variable: Variable {
+                span: @1..5,
+                name: "var",
+            },
+            annotation: Some(
+                Function {
+                    start: @6,
+                    id: Identifier {
+                        start: @7,
+                        namespace: None,
+                        name: "a",
+                    },
+                    options: [
+                        FnOrMarkupOption {
+                            key: Identifier {
+                                start: @9,
+                                namespace: Some(
+                                    "",
+                                ),
+                                name: "b",
+                            },
+                            value: Text {
+                                start: @11,
+                                content: "",
+                            },
+                        },
+                    ],
+                },
+            ),
+            attributes: [],
+        },
+    ],
+}

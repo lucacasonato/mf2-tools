@@ -1,0 +1,28 @@
+{#foo 
+=== spans ===
+                    {#foo 
+Pattern             ^^^^^^ 0:0-0:6
+Markup              ^^^^^^ 0:0-0:6
+Identifier            ^^^  0:2-0:5
+=== diagnostics ===
+Markup tag is not closed with a closing brace. (at @0..6)
+  {#foo 
+  ^^^^^^
+=== formatted ===
+(cannot format due to fatal errors)
+=== ast ===
+Pattern {
+    parts: [
+        Markup {
+            span: @0..6,
+            kind: Open,
+            id: Identifier {
+                start: @2,
+                namespace: None,
+                name: "foo",
+            },
+            options: [],
+            attributes: [],
+        },
+    ],
+}

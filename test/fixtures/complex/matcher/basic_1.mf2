@@ -1,0 +1,54 @@
+.match $a
+c {{d}}
+=== spans ===
+                    .match $a↵c {{d}}
+ComplexMessage      ^^^^^^^^^^^^^^^^^ 0:0-1:7
+Matcher             ^^^^^^^^^^^^^^^^^ 0:0-1:7
+Variable                   ^^         0:7-0:9
+Variant                       ^^^^^^^ 1:0-1:7
+Text                          ^       1:0-1:1
+QuotedPattern                   ^^^^^ 1:2-1:7
+Pattern                           ^   1:4-1:5
+Text                              ^   1:4-1:5
+=== diagnostics ===
+
+=== formatted ===
+.match
+$a
+c  {{d}}
+
+=== ast ===
+ComplexMessage {
+    span: @0..17,
+    declarations: [],
+    body: Matcher {
+        start: @0,
+        selectors: [
+            Variable {
+                span: @7..9,
+                name: "a",
+            },
+        ],
+        variants: [
+            Variant {
+                keys: [
+                    Text {
+                        start: @10,
+                        content: "c",
+                    },
+                ],
+                pattern: QuotedPattern {
+                    span: @12..17,
+                    pattern: Pattern {
+                        parts: [
+                            Text {
+                                start: @14,
+                                content: "d",
+                            },
+                        ],
+                    },
+                },
+            },
+        ],
+    },
+}

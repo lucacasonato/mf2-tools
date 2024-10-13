@@ -1,0 +1,85 @@
+.local $var = {|hello|}
+.local $var2 = {|hello|}
+{{}}
+=== spans ===
+                    .local $var = {|hello|}↵.local $var2 = {|hello|}↵{{}}
+ComplexMessage      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ 0:0-2:4
+LocalDeclaration    ^^^^^^^^^^^^^^^^^^^^^^^                               0:0-0:23
+Variable                   ^^^^                                           0:7-0:11
+LiteralExpression                 ^^^^^^^^^                               0:14-0:23
+Quoted                             ^^^^^^^                                0:15-0:22
+Text                                ^^^^^                                 0:16-0:21
+LocalDeclaration                            ^^^^^^^^^^^^^^^^^^^^^^^^      1:0-1:24
+Variable                                           ^^^^^                  1:7-1:12
+LiteralExpression                                          ^^^^^^^^^      1:15-1:24
+Quoted                                                      ^^^^^^^       1:16-1:23
+Text                                                         ^^^^^        1:17-1:22
+QuotedPattern                                                        ^^^^ 2:0-2:4
+Pattern                                                                   2:2-2:2
+Text                                                                      2:2-2:2
+=== diagnostics ===
+
+=== formatted ===
+.local $var = { |hello| }
+.local $var2 = { |hello| }
+{{}}
+
+=== ast ===
+ComplexMessage {
+    span: @0..53,
+    declarations: [
+        LocalDeclaration {
+            start: @0,
+            variable: Variable {
+                span: @7..11,
+                name: "var",
+            },
+            expression: LiteralExpression {
+                span: @14..23,
+                literal: Quoted {
+                    span: @15..22,
+                    parts: [
+                        Text {
+                            start: @16,
+                            content: "hello",
+                        },
+                    ],
+                },
+                annotation: None,
+                attributes: [],
+            },
+        },
+        LocalDeclaration {
+            start: @24,
+            variable: Variable {
+                span: @31..36,
+                name: "var2",
+            },
+            expression: LiteralExpression {
+                span: @39..48,
+                literal: Quoted {
+                    span: @40..47,
+                    parts: [
+                        Text {
+                            start: @41,
+                            content: "hello",
+                        },
+                    ],
+                },
+                annotation: None,
+                attributes: [],
+            },
+        },
+    ],
+    body: QuotedPattern {
+        span: @49..53,
+        pattern: Pattern {
+            parts: [
+                Text {
+                    start: @51,
+                    content: "",
+                },
+            ],
+        },
+    },
+}

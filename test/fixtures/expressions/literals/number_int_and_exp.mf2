@@ -1,0 +1,62 @@
+a{ 1e3 }{ 1E3 }
+=== spans ===
+                    a{ 1e3 }{ 1E3 }
+Pattern             ^^^^^^^^^^^^^^^ 0:0-0:15
+Text                ^               0:0-0:1
+LiteralExpression    ^^^^^^^        0:1-0:8
+Number                 ^^^          0:3-0:6
+Number.integral        ^            0:3-0:4
+Number.exponent          ^          0:5-0:6
+LiteralExpression           ^^^^^^^ 0:8-0:15
+Number                        ^^^   0:10-0:13
+Number.integral               ^     0:10-0:11
+Number.exponent                 ^   0:12-0:13
+=== diagnostics ===
+
+=== formatted ===
+a{ 1e3 }{ 1E3 }
+=== ast ===
+Pattern {
+    parts: [
+        Text {
+            start: @0,
+            content: "a",
+        },
+        LiteralExpression {
+            span: @1..8,
+            literal: Number {
+                start: @3,
+                raw: "1e3",
+                is_negative: false,
+                integral_len: 1,
+                fractional_len: None,
+                exponent_len: Some(
+                    (
+                        None,
+                        1,
+                    ),
+                ),
+            },
+            annotation: None,
+            attributes: [],
+        },
+        LiteralExpression {
+            span: @8..15,
+            literal: Number {
+                start: @10,
+                raw: "1E3",
+                is_negative: false,
+                integral_len: 1,
+                fractional_len: None,
+                exponent_len: Some(
+                    (
+                        None,
+                        1,
+                    ),
+                ),
+            },
+            annotation: None,
+            attributes: [],
+        },
+    ],
+}

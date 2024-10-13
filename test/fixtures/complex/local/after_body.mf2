@@ -1,0 +1,82 @@
+.local $a = {1}
+{{}}
+.local $b = {1}
+=== spans ===
+                    .local $a = {1}↵{{}}↵.local $b = {1}
+ComplexMessage      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ 0:0-2:15
+LocalDeclaration    ^^^^^^^^^^^^^^^                      0:0-0:15
+Variable                   ^^                            0:7-0:9
+LiteralExpression               ^^^                      0:12-0:15
+Number                           ^                       0:13-0:14
+Number.integral                  ^                       0:13-0:14
+QuotedPattern                       ^^^^                 1:0-1:4
+Pattern                                                  1:2-1:2
+Text                                                     1:2-1:2
+LocalDeclaration                         ^^^^^^^^^^^^^^^ 2:0-2:15
+Variable                                        ^^       2:7-2:9
+LiteralExpression                                    ^^^ 2:12-2:15
+Number                                                ^  2:13-2:14
+Number.integral                                       ^  2:13-2:14
+=== diagnostics ===
+Declarations are not valid after the message body. Did you mean to put the declaration before the body? (at @21..36)
+  .local $a = {1}↵{{}}↵.local $b = {1}
+                       ^^^^^^^^^^^^^^^
+=== formatted ===
+(cannot format due to fatal errors)
+=== ast ===
+ComplexMessage {
+    span: @0..36,
+    declarations: [
+        LocalDeclaration {
+            start: @0,
+            variable: Variable {
+                span: @7..9,
+                name: "a",
+            },
+            expression: LiteralExpression {
+                span: @12..15,
+                literal: Number {
+                    start: @13,
+                    raw: "1",
+                    is_negative: false,
+                    integral_len: 1,
+                    fractional_len: None,
+                    exponent_len: None,
+                },
+                annotation: None,
+                attributes: [],
+            },
+        },
+        LocalDeclaration {
+            start: @21,
+            variable: Variable {
+                span: @28..30,
+                name: "b",
+            },
+            expression: LiteralExpression {
+                span: @33..36,
+                literal: Number {
+                    start: @34,
+                    raw: "1",
+                    is_negative: false,
+                    integral_len: 1,
+                    fractional_len: None,
+                    exponent_len: None,
+                },
+                annotation: None,
+                attributes: [],
+            },
+        },
+    ],
+    body: QuotedPattern {
+        span: @16..20,
+        pattern: Pattern {
+            parts: [
+                Text {
+                    start: @18,
+                    content: "",
+                },
+            ],
+        },
+    },
+}

@@ -1,0 +1,36 @@
+.input $foo
+{{}}
+=== spans ===
+                    .input $foo↵{{}}
+ComplexMessage      ^^^^^^^^^^^^^^^^ 0:0-1:4
+QuotedPattern              ^^^^^^^^^ 0:7-1:4
+Pattern                    ^^^^^^^^^ 0:7-1:4
+Text                       ^^^^^^^^^ 0:7-1:4
+=== diagnostics ===
+Input declaration is missing an expression. (at @0..6)
+  .input $foo↵{{}}
+  ^^^^^^
+Quoted pattern is not allowed inside of a pattern. (at @12..14)
+  .input $foo↵{{}}
+              ^^
+Using an unquoted pattern as the body is invalid, because the message contains declarations. Did you mean to quote the pattern?. (at @7..16)
+  .input $foo↵{{}}
+         ^^^^^^^^^
+=== formatted ===
+(cannot format due to fatal errors)
+=== ast ===
+ComplexMessage {
+    span: @0..16,
+    declarations: [],
+    body: QuotedPattern {
+        span: @7..16,
+        pattern: Pattern {
+            parts: [
+                Text {
+                    start: @7,
+                    content: "$foo\n{{}}",
+                },
+            ],
+        },
+    },
+}

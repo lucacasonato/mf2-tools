@@ -1,0 +1,169 @@
+.local $var1 = {1}
+
+
+
+.local $var2 = {2}
+.input {$var3}
+.local $var4 = {4}
+.input {$var5}
+
+.input {$var6}
+
+{{}}
+=== spans ===
+                    .local $var1 = {1}↵↵↵↵.local $var2 = {2}↵.input {$var3}↵.local $var4 = {4}↵.input {$var5}↵↵.input {$var6}↵↵{{}}
+ComplexMessage      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ 0:0-11:4
+LocalDeclaration    ^^^^^^^^^^^^^^^^^^                                                                                              0:0-0:18
+Variable                   ^^^^^                                                                                                    0:7-0:12
+LiteralExpression                  ^^^                                                                                              0:15-0:18
+Number                              ^                                                                                               0:16-0:17
+Number.integral                     ^                                                                                               0:16-0:17
+LocalDeclaration                          ^^^^^^^^^^^^^^^^^^                                                                        4:0-4:18
+Variable                                         ^^^^^                                                                              4:7-4:12
+LiteralExpression                                        ^^^                                                                        4:15-4:18
+Number                                                    ^                                                                         4:16-4:17
+Number.integral                                           ^                                                                         4:16-4:17
+InputDeclaration                                             ^^^^^^^^^^^^^^                                                         5:0-5:14
+VariableExpression                                                  ^^^^^^^                                                         5:7-5:14
+Variable                                                             ^^^^^                                                          5:8-5:13
+LocalDeclaration                                                            ^^^^^^^^^^^^^^^^^^                                      6:0-6:18
+Variable                                                                           ^^^^^                                            6:7-6:12
+LiteralExpression                                                                          ^^^                                      6:15-6:18
+Number                                                                                      ^                                       6:16-6:17
+Number.integral                                                                             ^                                       6:16-6:17
+InputDeclaration                                                                               ^^^^^^^^^^^^^^                       7:0-7:14
+VariableExpression                                                                                    ^^^^^^^                       7:7-7:14
+Variable                                                                                               ^^^^^                        7:8-7:13
+InputDeclaration                                                                                               ^^^^^^^^^^^^^^       9:0-9:14
+VariableExpression                                                                                                    ^^^^^^^       9:7-9:14
+Variable                                                                                                               ^^^^^        9:8-9:13
+QuotedPattern                                                                                                                  ^^^^ 11:0-11:4
+Pattern                                                                                                                             11:2-11:2
+Text                                                                                                                                11:2-11:2
+=== diagnostics ===
+
+=== formatted ===
+.local $var1 = { 1 }
+
+.local $var2 = { 2 }
+.input { $var3 }
+.local $var4 = { 4 }
+.input { $var5 }
+
+.input { $var6 }
+
+{{}}
+
+=== ast ===
+ComplexMessage {
+    span: @0..111,
+    declarations: [
+        LocalDeclaration {
+            start: @0,
+            variable: Variable {
+                span: @7..12,
+                name: "var1",
+            },
+            expression: LiteralExpression {
+                span: @15..18,
+                literal: Number {
+                    start: @16,
+                    raw: "1",
+                    is_negative: false,
+                    integral_len: 1,
+                    fractional_len: None,
+                    exponent_len: None,
+                },
+                annotation: None,
+                attributes: [],
+            },
+        },
+        LocalDeclaration {
+            start: @22,
+            variable: Variable {
+                span: @29..34,
+                name: "var2",
+            },
+            expression: LiteralExpression {
+                span: @37..40,
+                literal: Number {
+                    start: @38,
+                    raw: "2",
+                    is_negative: false,
+                    integral_len: 1,
+                    fractional_len: None,
+                    exponent_len: None,
+                },
+                annotation: None,
+                attributes: [],
+            },
+        },
+        InputDeclaration {
+            start: @41,
+            expression: VariableExpression {
+                span: @48..55,
+                variable: Variable {
+                    span: @49..54,
+                    name: "var3",
+                },
+                annotation: None,
+                attributes: [],
+            },
+        },
+        LocalDeclaration {
+            start: @56,
+            variable: Variable {
+                span: @63..68,
+                name: "var4",
+            },
+            expression: LiteralExpression {
+                span: @71..74,
+                literal: Number {
+                    start: @72,
+                    raw: "4",
+                    is_negative: false,
+                    integral_len: 1,
+                    fractional_len: None,
+                    exponent_len: None,
+                },
+                annotation: None,
+                attributes: [],
+            },
+        },
+        InputDeclaration {
+            start: @75,
+            expression: VariableExpression {
+                span: @82..89,
+                variable: Variable {
+                    span: @83..88,
+                    name: "var5",
+                },
+                annotation: None,
+                attributes: [],
+            },
+        },
+        InputDeclaration {
+            start: @91,
+            expression: VariableExpression {
+                span: @98..105,
+                variable: Variable {
+                    span: @99..104,
+                    name: "var6",
+                },
+                annotation: None,
+                attributes: [],
+            },
+        },
+    ],
+    body: QuotedPattern {
+        span: @107..111,
+        pattern: Pattern {
+            parts: [
+                Text {
+                    start: @109,
+                    content: "",
+                },
+            ],
+        },
+    },
+}

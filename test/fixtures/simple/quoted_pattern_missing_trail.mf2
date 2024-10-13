@@ -1,0 +1,23 @@
+Hello {{abc
+=== spans ===
+                    Hello {{abc
+Pattern             ^^^^^^^^^^^ 0:0-0:11
+Text                ^^^^^^^^^^^ 0:0-0:11
+=== diagnostics ===
+Quoted pattern is not allowed inside of a pattern. (at @6..8)
+  Hello {{abc
+        ^^
+Quoted string is missing the closing quote. (at @6..11)
+  Hello {{abc
+        ^^^^^
+=== formatted ===
+(cannot format due to fatal errors)
+=== ast ===
+Pattern {
+    parts: [
+        Text {
+            start: @0,
+            content: "Hello {{abc",
+        },
+    ],
+}

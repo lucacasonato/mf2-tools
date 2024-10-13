@@ -1,0 +1,103 @@
+.match $a $b e 1{{f}}|g| *{{h}}
+=== spans ===
+                    .match $a $b e 1{{f}}|g| *{{h}}
+ComplexMessage      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ 0:0-0:31
+Matcher             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ 0:0-0:31
+Variable                   ^^                       0:7-0:9
+Variable                      ^^                    0:10-0:12
+Variant                          ^^^^^^^^           0:13-0:21
+Text                             ^                  0:13-0:14
+Number                             ^                0:15-0:16
+Number.integral                    ^                0:15-0:16
+QuotedPattern                       ^^^^^           0:16-0:21
+Pattern                               ^             0:18-0:19
+Text                                  ^             0:18-0:19
+Variant                                  ^^^^^^^^^^ 0:21-0:31
+Quoted                                   ^^^        0:21-0:24
+Text                                      ^         0:22-0:23
+Star                                         ^      0:25-0:26
+QuotedPattern                                 ^^^^^ 0:26-0:31
+Pattern                                         ^   0:28-0:29
+Text                                            ^   0:28-0:29
+=== diagnostics ===
+
+=== formatted ===
+.match
+$a  $b
+e   1  {{f}}
+|g| *  {{h}}
+
+=== ast ===
+ComplexMessage {
+    span: @0..31,
+    declarations: [],
+    body: Matcher {
+        start: @0,
+        selectors: [
+            Variable {
+                span: @7..9,
+                name: "a",
+            },
+            Variable {
+                span: @10..12,
+                name: "b",
+            },
+        ],
+        variants: [
+            Variant {
+                keys: [
+                    Text {
+                        start: @13,
+                        content: "e",
+                    },
+                    Number {
+                        start: @15,
+                        raw: "1",
+                        is_negative: false,
+                        integral_len: 1,
+                        fractional_len: None,
+                        exponent_len: None,
+                    },
+                ],
+                pattern: QuotedPattern {
+                    span: @16..21,
+                    pattern: Pattern {
+                        parts: [
+                            Text {
+                                start: @18,
+                                content: "f",
+                            },
+                        ],
+                    },
+                },
+            },
+            Variant {
+                keys: [
+                    Quoted {
+                        span: @21..24,
+                        parts: [
+                            Text {
+                                start: @22,
+                                content: "g",
+                            },
+                        ],
+                    },
+                    Star {
+                        start: @25,
+                    },
+                ],
+                pattern: QuotedPattern {
+                    span: @26..31,
+                    pattern: Pattern {
+                        parts: [
+                            Text {
+                                start: @28,
+                                content: "h",
+                            },
+                        ],
+                    },
+                },
+            },
+        ],
+    },
+}

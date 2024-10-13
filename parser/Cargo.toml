@@ -2,15 +2,3 @@
 name = "mf2-parser"
 version = "0.1.0"
 edition = "2021"
-
-[[test]]
-name = "specs"
-path = "tests/specs_test.rs"
-harness = false
-
-[dev-dependencies]
-file_test_runner = "0.7.2"
-pretty_assertions = "1.4.0"
-
-[dependencies]
-unicode-width = "0.1.13"

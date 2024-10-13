@@ -1,0 +1,47 @@
+{1 @hello=world}
+=== spans ===
+                    {1 @hello=world}
+Pattern             ^^^^^^^^^^^^^^^^ 0:0-0:16
+LiteralExpression   ^^^^^^^^^^^^^^^^ 0:0-0:16
+Number               ^               0:1-0:2
+Number.integral      ^               0:1-0:2
+Attribute              ^^^^^^^^^^^^  0:3-0:15
+Identifier              ^^^^^        0:4-0:9
+Text                          ^^^^^  0:10-0:15
+=== diagnostics ===
+
+=== formatted ===
+{ 1 @hello=world }
+=== ast ===
+Pattern {
+    parts: [
+        LiteralExpression {
+            span: @0..16,
+            literal: Number {
+                start: @1,
+                raw: "1",
+                is_negative: false,
+                integral_len: 1,
+                fractional_len: None,
+                exponent_len: None,
+            },
+            annotation: None,
+            attributes: [
+                Attribute {
+                    span: @3..15,
+                    key: Identifier {
+                        start: @4,
+                        namespace: None,
+                        name: "hello",
+                    },
+                    value: Some(
+                        Text {
+                            start: @10,
+                            content: "world",
+                        },
+                    ),
+                },
+            ],
+        },
+    ],
+}

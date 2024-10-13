@@ -1,0 +1,61 @@
+{#el @attr=val opt=val}
+=== spans ===
+                    {#el @attr=val opt=val}
+Pattern             ^^^^^^^^^^^^^^^^^^^^^^^ 0:0-0:23
+Markup              ^^^^^^^^^^^^^^^^^^^^^^^ 0:0-0:23
+Identifier            ^^                    0:2-0:4
+Attribute                ^^^^^^^^^          0:5-0:14
+Identifier                ^^^^              0:6-0:10
+Text                           ^^^          0:11-0:14
+FnOrMarkupOption                   ^^^^^^^  0:15-0:22
+Identifier                         ^^^      0:15-0:18
+Text                                   ^^^  0:19-0:22
+=== diagnostics ===
+Markup tag has an option after an attribute, which is not allowed. All options must come before any attribute. (at @15..22)
+  {#el @attr=val opt=val}
+                 ^^^^^^^
+=== formatted ===
+(cannot format due to fatal errors)
+=== ast ===
+Pattern {
+    parts: [
+        Markup {
+            span: @0..23,
+            kind: Open,
+            id: Identifier {
+                start: @2,
+                namespace: None,
+                name: "el",
+            },
+            options: [
+                FnOrMarkupOption {
+                    key: Identifier {
+                        start: @15,
+                        namespace: None,
+                        name: "opt",
+                    },
+                    value: Text {
+                        start: @19,
+                        content: "val",
+                    },
+                },
+            ],
+            attributes: [
+                Attribute {
+                    span: @5..14,
+                    key: Identifier {
+                        start: @6,
+                        namespace: None,
+                        name: "attr",
+                    },
+                    value: Some(
+                        Text {
+                            start: @11,
+                            content: "val",
+                        },
+                    ),
+                },
+            ],
+        },
+    ],
+}

@@ -1,0 +1,67 @@
+.match $a
+|abc|+yej% {{Hi}}
+=== spans ===
+                    .match $a↵|abc|+yej% {{Hi}}
+ComplexMessage      ^^^^^^^^^^^^^^^^^^^^^^^^^^^ 0:0-1:17
+Matcher             ^^^^^^^^^^^^^^^^^^^^^^^^^^^ 0:0-1:17
+Variable                   ^^                   0:7-0:9
+Variant                       ^^^^^^^^^^^^^^^^^ 1:0-1:17
+Quoted                        ^^^^^             1:0-1:5
+Text                           ^^^              1:1-1:4
+Text                               ^^^^^        1:5-1:10
+QuotedPattern                            ^^^^^^ 1:11-1:17
+Pattern                                    ^^   1:13-1:15
+Text                                       ^^   1:13-1:15
+=== diagnostics ===
+Found an invalid matcher key (not a valid literal). Did you mean to quote the key to make it a literal? (at @15..20)
+  .match $a↵|abc|+yej% {{Hi}}
+                 ^^^^^
+Matcher key is missing a leading space. (at @15..20)
+  .match $a↵|abc|+yej% {{Hi}}
+                 ^^^^^
+=== formatted ===
+(cannot format due to fatal errors)
+=== ast ===
+ComplexMessage {
+    span: @0..27,
+    declarations: [],
+    body: Matcher {
+        start: @0,
+        selectors: [
+            Variable {
+                span: @7..9,
+                name: "a",
+            },
+        ],
+        variants: [
+            Variant {
+                keys: [
+                    Quoted {
+                        span: @10..15,
+                        parts: [
+                            Text {
+                                start: @11,
+                                content: "abc",
+                            },
+                        ],
+                    },
+                    Text {
+                        start: @15,
+                        content: "+yej%",
+                    },
+                ],
+                pattern: QuotedPattern {
+                    span: @21..27,
+                    pattern: Pattern {
+                        parts: [
+                            Text {
+                                start: @23,
+                                content: "Hi",
+                            },
+                        ],
+                    },
+                },
+            },
+        ],
+    },
+}

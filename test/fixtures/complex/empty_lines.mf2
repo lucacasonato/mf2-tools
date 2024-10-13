@@ -1,0 +1,89 @@
+.local $foo = {1}
+
+
+.local $bar = {2}
+
+{{$foo $bar}}
+
+=== spans ===
+                    .local $foo = {1}↵↵↵.local $bar = {2}↵↵{{$foo $bar}}↵
+ComplexMessage      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^  0:0-5:13
+LocalDeclaration    ^^^^^^^^^^^^^^^^^                                     0:0-0:17
+Variable                   ^^^^                                           0:7-0:11
+LiteralExpression                 ^^^                                     0:14-0:17
+Number                             ^                                      0:15-0:16
+Number.integral                    ^                                      0:15-0:16
+LocalDeclaration                        ^^^^^^^^^^^^^^^^^                 3:0-3:17
+Variable                                       ^^^^                       3:7-3:11
+LiteralExpression                                     ^^^                 3:14-3:17
+Number                                                 ^                  3:15-3:16
+Number.integral                                        ^                  3:15-3:16
+QuotedPattern                                              ^^^^^^^^^^^^^  5:0-5:13
+Pattern                                                      ^^^^^^^^^    5:2-5:11
+Text                                                         ^^^^^^^^^    5:2-5:11
+=== diagnostics ===
+
+=== formatted ===
+.local $foo = { 1 }
+
+.local $bar = { 2 }
+
+{{$foo $bar}}
+
+=== ast ===
+ComplexMessage {
+    span: @0..52,
+    declarations: [
+        LocalDeclaration {
+            start: @0,
+            variable: Variable {
+                span: @7..11,
+                name: "foo",
+            },
+            expression: LiteralExpression {
+                span: @14..17,
+                literal: Number {
+                    start: @15,
+                    raw: "1",
+                    is_negative: false,
+                    integral_len: 1,
+                    fractional_len: None,
+                    exponent_len: None,
+                },
+                annotation: None,
+                attributes: [],
+            },
+        },
+        LocalDeclaration {
+            start: @20,
+            variable: Variable {
+                span: @27..31,
+                name: "bar",
+            },
+            expression: LiteralExpression {
+                span: @34..37,
+                literal: Number {
+                    start: @35,
+                    raw: "2",
+                    is_negative: false,
+                    integral_len: 1,
+                    fractional_len: None,
+                    exponent_len: None,
+                },
+                annotation: None,
+                attributes: [],
+            },
+        },
+    ],
+    body: QuotedPattern {
+        span: @39..52,
+        pattern: Pattern {
+            parts: [
+                Text {
+                    start: @41,
+                    content: "$foo $bar",
+                },
+            ],
+        },
+    },
+}

@@ -1,0 +1,57 @@
+.local $var = {|hello|}
+{{}}
+=== spans ===
+                    .local $var = {|hello|}↵{{}}
+ComplexMessage      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^ 0:0-1:4
+LocalDeclaration    ^^^^^^^^^^^^^^^^^^^^^^^      0:0-0:23
+Variable                   ^^^^                  0:7-0:11
+LiteralExpression                 ^^^^^^^^^      0:14-0:23
+Quoted                             ^^^^^^^       0:15-0:22
+Text                                ^^^^^        0:16-0:21
+QuotedPattern                               ^^^^ 1:0-1:4
+Pattern                                          1:2-1:2
+Text                                             1:2-1:2
+=== diagnostics ===
+
+=== formatted ===
+.local $var = { |hello| }
+{{}}
+
+=== ast ===
+ComplexMessage {
+    span: @0..28,
+    declarations: [
+        LocalDeclaration {
+            start: @0,
+            variable: Variable {
+                span: @7..11,
+                name: "var",
+            },
+            expression: LiteralExpression {
+                span: @14..23,
+                literal: Quoted {
+                    span: @15..22,
+                    parts: [
+                        Text {
+                            start: @16,
+                            content: "hello",
+                        },
+                    ],
+                },
+                annotation: None,
+                attributes: [],
+            },
+        },
+    ],
+    body: QuotedPattern {
+        span: @24..28,
+        pattern: Pattern {
+            parts: [
+                Text {
+                    start: @26,
+                    content: "",
+                },
+            ],
+        },
+    },
+}

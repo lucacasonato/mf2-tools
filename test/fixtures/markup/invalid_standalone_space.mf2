@@ -1,0 +1,28 @@
+{#foo/ }
+=== spans ===
+                    {#foo/ }
+Pattern             ^^^^^^^^ 0:0-0:8
+Markup              ^^^^^^^^ 0:0-0:8
+Identifier            ^^^    0:2-0:5
+=== diagnostics ===
+Self-closing tag of a markup tag can not have trailing spaces before the closing brace. (at @6..7)
+  {#foo/ }
+        ^
+=== formatted ===
+(cannot format due to fatal errors)
+=== ast ===
+Pattern {
+    parts: [
+        Markup {
+            span: @0..8,
+            kind: Standalone,
+            id: Identifier {
+                start: @2,
+                namespace: None,
+                name: "foo",
+            },
+            options: [],
+            attributes: [],
+        },
+    ],
+}

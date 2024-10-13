@@ -1,0 +1,46 @@
+{:hello =foo}
+=== spans ===
+                    {:hello =foo}
+Pattern             ^^^^^^^^^^^^^ 0:0-0:13
+AnnotationExpression^^^^^^^^^^^^^ 0:0-0:13
+Function             ^^^^^^^^^^^  0:1-0:12
+Identifier            ^^^^^       0:2-0:7
+FnOrMarkupOption            ^^^^  0:8-0:12
+Identifier                        0:8-0:8
+Text                         ^^^  0:9-0:12
+=== diagnostics ===
+Found equals sign followed by value, but equals sign is not preceeded by a key. Did you forget to add a key to make this an option? (at @8..12)
+  {:hello =foo}
+          ^^^^
+=== formatted ===
+(cannot format due to fatal errors)
+=== ast ===
+Pattern {
+    parts: [
+        AnnotationExpression {
+            span: @0..13,
+            annotation: Function {
+                start: @1,
+                id: Identifier {
+                    start: @2,
+                    namespace: None,
+                    name: "hello",
+                },
+                options: [
+                    FnOrMarkupOption {
+                        key: Identifier {
+                            start: @8,
+                            namespace: None,
+                            name: "",
+                        },
+                        value: Text {
+                            start: @9,
+                            content: "foo",
+                        },
+                    },
+                ],
+            },
+            attributes: [],
+        },
+    ],
+}

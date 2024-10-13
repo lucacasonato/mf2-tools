@@ -1,0 +1,31 @@
+a{abc def}
+=== spans ===
+                    a{abc def}
+Pattern             ^^^^^^^^^^ 0:0-0:10
+Text                ^          0:0-0:1
+LiteralExpression    ^^^^^^^^^ 0:1-0:10
+Text                  ^^^      0:2-0:5
+=== diagnostics ===
+Placeholder expression contains invalid content. (at @6..9)
+  a{abc def}
+        ^^^
+=== formatted ===
+(cannot format due to fatal errors)
+=== ast ===
+Pattern {
+    parts: [
+        Text {
+            start: @0,
+            content: "a",
+        },
+        LiteralExpression {
+            span: @1..10,
+            literal: Text {
+                start: @2,
+                content: "abc",
+            },
+            annotation: None,
+            attributes: [],
+        },
+    ],
+}

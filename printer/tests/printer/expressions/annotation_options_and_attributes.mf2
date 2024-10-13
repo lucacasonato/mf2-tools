@@ -1,3 +1,0 @@
-{:fun key=val @some=attr}
-=== output ===
-{ :fun key=val @some=attr }

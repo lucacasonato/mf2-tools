@@ -1,0 +1,28 @@
+{#foo \} /}
+=== spans ===
+                    {#foo \} /}
+Pattern             ^^^^^^^^^^^ 0:0-0:11
+Markup              ^^^^^^^^^^^ 0:0-0:11
+Identifier            ^^^       0:2-0:5
+=== diagnostics ===
+Markup tag contains invalid content. (at @6..8)
+  {#foo \} /}
+        ^^
+=== formatted ===
+(cannot format due to fatal errors)
+=== ast ===
+Pattern {
+    parts: [
+        Markup {
+            span: @0..11,
+            kind: Standalone,
+            id: Identifier {
+                start: @2,
+                namespace: None,
+                name: "foo",
+            },
+            options: [],
+            attributes: [],
+        },
+    ],
+}

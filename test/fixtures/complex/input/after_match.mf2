@@ -1,0 +1,106 @@
+.local $a = {1}
+.match $a * {{}}
+.input {$b :a}
+=== spans ===
+                    .local $a = {1}↵.match $a * {{}}↵.input {$b :a}
+ComplexMessage      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ 0:0-2:14
+LocalDeclaration    ^^^^^^^^^^^^^^^                                 0:0-0:15
+Variable                   ^^                                       0:7-0:9
+LiteralExpression               ^^^                                 0:12-0:15
+Number                           ^                                  0:13-0:14
+Number.integral                  ^                                  0:13-0:14
+Matcher                             ^^^^^^^^^^^^^^^^                1:0-1:16
+Variable                                   ^^                       1:7-1:9
+Variant                                       ^^^^^^                1:10-1:16
+Star                                          ^                     1:10-1:11
+QuotedPattern                                   ^^^^                1:12-1:16
+Pattern                                                             1:14-1:14
+Text                                                                1:14-1:14
+InputDeclaration                                     ^^^^^^^^^^^^^^ 2:0-2:14
+VariableExpression                                          ^^^^^^^ 2:7-2:14
+Variable                                                     ^^     2:8-2:10
+Function                                                        ^^  2:11-2:13
+Identifier                                                       ^  2:12-2:13
+=== diagnostics ===
+Declarations are not valid after the message body. Did you mean to put the declaration before the body? (at @33..47)
+  .local $a = {1}↵.match $a * {{}}↵.input {$b :a}
+                                   ^^^^^^^^^^^^^^
+=== formatted ===
+(cannot format due to fatal errors)
+=== ast ===
+ComplexMessage {
+    span: @0..47,
+    declarations: [
+        LocalDeclaration {
+            start: @0,
+            variable: Variable {
+                span: @7..9,
+                name: "a",
+            },
+            expression: LiteralExpression {
+                span: @12..15,
+                literal: Number {
+                    start: @13,
+                    raw: "1",
+                    is_negative: false,
+                    integral_len: 1,
+                    fractional_len: None,
+                    exponent_len: None,
+                },
+                annotation: None,
+                attributes: [],
+            },
+        },
+        InputDeclaration {
+            start: @33,
+            expression: VariableExpression {
+                span: @40..47,
+                variable: Variable {
+                    span: @41..43,
+                    name: "b",
+                },
+                annotation: Some(
+                    Function {
+                        start: @44,
+                        id: Identifier {
+                            start: @45,
+                            namespace: None,
+                            name: "a",
+                        },
+                        options: [],
+                    },
+                ),
+                attributes: [],
+            },
+        },
+    ],
+    body: Matcher {
+        start: @16,
+        selectors: [
+            Variable {
+                span: @23..25,
+                name: "a",
+            },
+        ],
+        variants: [
+            Variant {
+                keys: [
+                    Star {
+                        start: @26,
+                    },
+                ],
+                pattern: QuotedPattern {
+                    span: @28..32,
+                    pattern: Pattern {
+                        parts: [
+                            Text {
+                                start: @30,
+                                content: "",
+                            },
+                        ],
+                    },
+                },
+            },
+        ],
+    },
+}

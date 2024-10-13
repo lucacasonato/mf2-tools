@@ -1,0 +1,26 @@
+Hello {{}
+=== spans ===
+                    Hello {{}
+Pattern             ^^^^^^^^^ 0:0-0:9
+Text                ^^^^^^^^^ 0:0-0:9
+=== diagnostics ===
+The closing brace character ('}') is invalid inside of messages, and must be escaped as '\}'. (at @8..9)
+  Hello {{}
+          ^
+Quoted pattern is not allowed inside of a pattern. (at @6..8)
+  Hello {{}
+        ^^
+Quoted string is missing the closing quote. (at @6..9)
+  Hello {{}
+        ^^^
+=== formatted ===
+(cannot format due to fatal errors)
+=== ast ===
+Pattern {
+    parts: [
+        Text {
+            start: @0,
+            content: "Hello {{}",
+        },
+    ],
+}

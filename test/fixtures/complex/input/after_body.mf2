@@ -1,0 +1,84 @@
+.local $a = {1}
+{{}}
+.input {$b :a}
+=== spans ===
+                    .local $a = {1}↵{{}}↵.input {$b :a}
+ComplexMessage      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ 0:0-2:14
+LocalDeclaration    ^^^^^^^^^^^^^^^                     0:0-0:15
+Variable                   ^^                           0:7-0:9
+LiteralExpression               ^^^                     0:12-0:15
+Number                           ^                      0:13-0:14
+Number.integral                  ^                      0:13-0:14
+QuotedPattern                       ^^^^                1:0-1:4
+Pattern                                                 1:2-1:2
+Text                                                    1:2-1:2
+InputDeclaration                         ^^^^^^^^^^^^^^ 2:0-2:14
+VariableExpression                              ^^^^^^^ 2:7-2:14
+Variable                                         ^^     2:8-2:10
+Function                                            ^^  2:11-2:13
+Identifier                                           ^  2:12-2:13
+=== diagnostics ===
+Declarations are not valid after the message body. Did you mean to put the declaration before the body? (at @21..35)
+  .local $a = {1}↵{{}}↵.input {$b :a}
+                       ^^^^^^^^^^^^^^
+=== formatted ===
+(cannot format due to fatal errors)
+=== ast ===
+ComplexMessage {
+    span: @0..35,
+    declarations: [
+        LocalDeclaration {
+            start: @0,
+            variable: Variable {
+                span: @7..9,
+                name: "a",
+            },
+            expression: LiteralExpression {
+                span: @12..15,
+                literal: Number {
+                    start: @13,
+                    raw: "1",
+                    is_negative: false,
+                    integral_len: 1,
+                    fractional_len: None,
+                    exponent_len: None,
+                },
+                annotation: None,
+                attributes: [],
+            },
+        },
+        InputDeclaration {
+            start: @21,
+            expression: VariableExpression {
+                span: @28..35,
+                variable: Variable {
+                    span: @29..31,
+                    name: "b",
+                },
+                annotation: Some(
+                    Function {
+                        start: @32,
+                        id: Identifier {
+                            start: @33,
+                            namespace: None,
+                            name: "a",
+                        },
+                        options: [],
+                    },
+                ),
+                attributes: [],
+            },
+        },
+    ],
+    body: QuotedPattern {
+        span: @16..20,
+        pattern: Pattern {
+            parts: [
+                Text {
+                    start: @18,
+                    content: "",
+                },
+            ],
+        },
+    },
+}

@@ -1,0 +1,28 @@
+{# foo}
+=== spans ===
+                    {# foo}
+Pattern             ^^^^^^^ 0:0-0:7
+Markup              ^^^^^^^ 0:0-0:7
+Identifier             ^^^  0:3-0:6
+=== diagnostics ===
+Identifier of the markup tag is preceeded by spaces, which is not allowed. (at @2..3)
+  {# foo}
+    ^
+=== formatted ===
+(cannot format due to fatal errors)
+=== ast ===
+Pattern {
+    parts: [
+        Markup {
+            span: @0..7,
+            kind: Open,
+            id: Identifier {
+                start: @3,
+                namespace: None,
+                name: "foo",
+            },
+            options: [],
+            attributes: [],
+        },
+    ],
+}

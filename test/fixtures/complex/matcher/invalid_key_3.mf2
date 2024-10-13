@@ -1,0 +1,91 @@
+.match $a
+* {{Hello}}
++yej%|foo| {{Hi}}
+=== spans ===
+                    .match $a↵* {{Hello}}↵+yej%|foo| {{Hi}}
+ComplexMessage      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ 0:0-2:17
+Matcher             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ 0:0-2:17
+Variable                   ^^                               0:7-0:9
+Variant                       ^^^^^^^^^^^                   1:0-1:11
+Star                          ^                             1:0-1:1
+QuotedPattern                   ^^^^^^^^^                   1:2-1:11
+Pattern                           ^^^^^                     1:4-1:9
+Text                              ^^^^^                     1:4-1:9
+Variant                                   ^^^^^^^^^^^^^^^^^ 2:0-2:17
+Text                                      ^^^^^             2:0-2:5
+Quoted                                         ^^^^^        2:5-2:10
+Text                                            ^^^         2:6-2:9
+QuotedPattern                                        ^^^^^^ 2:11-2:17
+Pattern                                                ^^   2:13-2:15
+Text                                                   ^^   2:13-2:15
+=== diagnostics ===
+Found an invalid matcher key (not a valid literal). Did you mean to quote the key to make it a literal? (at @22..27)
+  .match $a↵* {{Hello}}↵+yej%|foo| {{Hi}}
+                        ^^^^^
+Matcher key is missing a leading space. (at @27..32)
+  .match $a↵* {{Hello}}↵+yej%|foo| {{Hi}}
+                             ^^^^^
+=== formatted ===
+(cannot format due to fatal errors)
+=== ast ===
+ComplexMessage {
+    span: @0..39,
+    declarations: [],
+    body: Matcher {
+        start: @0,
+        selectors: [
+            Variable {
+                span: @7..9,
+                name: "a",
+            },
+        ],
+        variants: [
+            Variant {
+                keys: [
+                    Star {
+                        start: @10,
+                    },
+                ],
+                pattern: QuotedPattern {
+                    span: @12..21,
+                    pattern: Pattern {
+                        parts: [
+                            Text {
+                                start: @14,
+                                content: "Hello",
+                            },
+                        ],
+                    },
+                },
+            },
+            Variant {
+                keys: [
+                    Text {
+                        start: @22,
+                        content: "+yej%",
+                    },
+                    Quoted {
+                        span: @27..32,
+                        parts: [
+                            Text {
+                                start: @28,
+                                content: "foo",
+                            },
+                        ],
+                    },
+                ],
+                pattern: QuotedPattern {
+                    span: @33..39,
+                    pattern: Pattern {
+                        parts: [
+                            Text {
+                                start: @35,
+                                content: "Hi",
+                            },
+                        ],
+                    },
+                },
+            },
+        ],
+    },
+}

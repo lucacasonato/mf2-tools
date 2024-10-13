@@ -1,0 +1,38 @@
+{$var :a:b}
+=== spans ===
+                    {$var :a:b}
+Pattern             ^^^^^^^^^^^ 0:0-0:11
+VariableExpression  ^^^^^^^^^^^ 0:0-0:11
+Variable             ^^^^       0:1-0:5
+Function                  ^^^^  0:6-0:10
+Identifier                 ^^^  0:7-0:10
+=== diagnostics ===
+
+=== formatted ===
+{ $var :a:b }
+=== ast ===
+Pattern {
+    parts: [
+        VariableExpression {
+            span: @0..11,
+            variable: Variable {
+                span: @1..5,
+                name: "var",
+            },
+            annotation: Some(
+                Function {
+                    start: @6,
+                    id: Identifier {
+                        start: @7,
+                        namespace: Some(
+                            "a",
+                        ),
+                        name: "b",
+                    },
+                    options: [],
+                },
+            ),
+            attributes: [],
+        },
+    ],
+}

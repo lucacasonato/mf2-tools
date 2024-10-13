@@ -1,0 +1,63 @@
+{#el @   attr=1}
+=== spans ===
+                    {#el @   attr=1}
+Pattern             ^^^^^^^^^^^^^^^^ 0:0-0:16
+Markup              ^^^^^^^^^^^^^^^^ 0:0-0:16
+Identifier            ^^             0:2-0:4
+Attribute                ^           0:5-0:6
+Identifier                           0:6-0:6
+FnOrMarkupOption             ^^^^^^  0:9-0:15
+Identifier                   ^^^^    0:9-0:13
+Number                            ^  0:14-0:15
+Number.integral                   ^  0:14-0:15
+=== diagnostics ===
+Attribute is missing a key after the '@' sign. (at @5..6)
+  {#el @   attr=1}
+       ^
+Markup tag has an option after an attribute, which is not allowed. All options must come before any attribute. (at @9..15)
+  {#el @   attr=1}
+           ^^^^^^
+=== formatted ===
+(cannot format due to fatal errors)
+=== ast ===
+Pattern {
+    parts: [
+        Markup {
+            span: @0..16,
+            kind: Open,
+            id: Identifier {
+                start: @2,
+                namespace: None,
+                name: "el",
+            },
+            options: [
+                FnOrMarkupOption {
+                    key: Identifier {
+                        start: @9,
+                        namespace: None,
+                        name: "attr",
+                    },
+                    value: Number {
+                        start: @14,
+                        raw: "1",
+                        is_negative: false,
+                        integral_len: 1,
+                        fractional_len: None,
+                        exponent_len: None,
+                    },
+                },
+            ],
+            attributes: [
+                Attribute {
+                    span: @5..6,
+                    key: Identifier {
+                        start: @6,
+                        namespace: None,
+                        name: "",
+                    },
+                    value: None,
+                },
+            ],
+        },
+    ],
+}

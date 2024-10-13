@@ -1,0 +1,30 @@
+.input {:foo}
+{{}}
+=== spans ===
+                    .input {:foo}↵{{}}
+ComplexMessage      ^^^^^^^^^^^^^^^^^^ 0:0-1:4
+QuotedPattern                     ^^^^ 1:0-1:4
+Pattern                                1:2-1:2
+Text                                   1:2-1:2
+=== diagnostics ===
+Input declaration has a non-variable expression, which is invalid. Did you mean to use a local declaration instead of an input declaration? (at @0..13)
+  .input {:foo}↵{{}}
+  ^^^^^^^^^^^^^
+=== formatted ===
+(cannot format due to fatal errors)
+=== ast ===
+ComplexMessage {
+    span: @0..18,
+    declarations: [],
+    body: QuotedPattern {
+        span: @14..18,
+        pattern: Pattern {
+            parts: [
+                Text {
+                    start: @16,
+                    content: "",
+                },
+            ],
+        },
+    },
+}

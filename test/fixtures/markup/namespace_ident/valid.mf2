@@ -1,0 +1,28 @@
+{#foo:bar}
+=== spans ===
+                    {#foo:bar}
+Pattern             ^^^^^^^^^^ 0:0-0:10
+Markup              ^^^^^^^^^^ 0:0-0:10
+Identifier            ^^^^^^^  0:2-0:9
+=== diagnostics ===
+
+=== formatted ===
+{#foo:bar }
+=== ast ===
+Pattern {
+    parts: [
+        Markup {
+            span: @0..10,
+            kind: Open,
+            id: Identifier {
+                start: @2,
+                namespace: Some(
+                    "foo",
+                ),
+                name: "bar",
+            },
+            options: [],
+            attributes: [],
+        },
+    ],
+}

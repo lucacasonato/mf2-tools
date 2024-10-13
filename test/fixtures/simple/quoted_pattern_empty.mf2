@@ -1,0 +1,20 @@
+Hello {{}}
+=== spans ===
+                    Hello {{}}
+Pattern             ^^^^^^^^^^ 0:0-0:10
+Text                ^^^^^^^^^^ 0:0-0:10
+=== diagnostics ===
+Quoted pattern is not allowed inside of a pattern. (at @6..8)
+  Hello {{}}
+        ^^
+=== formatted ===
+(cannot format due to fatal errors)
+=== ast ===
+Pattern {
+    parts: [
+        Text {
+            start: @0,
+            content: "Hello {{}}",
+        },
+    ],
+}

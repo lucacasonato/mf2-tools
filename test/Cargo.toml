@@ -1,0 +1,16 @@
+[package]
+name = "test"
+edition = "2021"
+publish = false
+
+[[test]]
+name = "specs"
+path = "fixtures.rs"
+harness = false
+
+[dev-dependencies]
+file_test_runner = "0.7.2"
+pretty_assertions = "1.4.0"
+mf2-parser = { path = "../parser" }
+mf2-printer = { path = "../printer" }
+unicode-width = "0.1.13"

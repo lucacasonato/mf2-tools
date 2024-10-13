@@ -1,0 +1,18 @@
+Hello, World!
+=== spans ===
+                    Hello, World!
+Pattern             ^^^^^^^^^^^^^ 0:0-0:13
+Text                ^^^^^^^^^^^^^ 0:0-0:13
+=== diagnostics ===
+
+=== formatted ===
+Hello, World!
+=== ast ===
+Pattern {
+    parts: [
+        Text {
+            start: @0,
+            content: "Hello, World!",
+        },
+    ],
+}

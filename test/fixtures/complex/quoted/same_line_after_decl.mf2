@@ -1,0 +1,46 @@
+.input {$foo} {{}}
+
+=== spans ===
+                    .input {$foo} {{}}↵
+ComplexMessage      ^^^^^^^^^^^^^^^^^^  0:0-0:18
+InputDeclaration    ^^^^^^^^^^^^^       0:0-0:13
+VariableExpression         ^^^^^^       0:7-0:13
+Variable                    ^^^^        0:8-0:12
+QuotedPattern                     ^^^^  0:14-0:18
+Pattern                                 0:16-0:16
+Text                                    0:16-0:16
+=== diagnostics ===
+
+=== formatted ===
+.input { $foo }
+{{}}
+
+=== ast ===
+ComplexMessage {
+    span: @0..18,
+    declarations: [
+        InputDeclaration {
+            start: @0,
+            expression: VariableExpression {
+                span: @7..13,
+                variable: Variable {
+                    span: @8..12,
+                    name: "foo",
+                },
+                annotation: None,
+                attributes: [],
+            },
+        },
+    ],
+    body: QuotedPattern {
+        span: @14..18,
+        pattern: Pattern {
+            parts: [
+                Text {
+                    start: @16,
+                    content: "",
+                },
+            ],
+        },
+    },
+}

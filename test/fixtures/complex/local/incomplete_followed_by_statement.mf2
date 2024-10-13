@@ -1,0 +1,80 @@
+.local $var
+.local $bar = {123}
+{{hello}}
+=== spans ===
+                    .local $var↵.local $bar = {123}↵{{hello}}
+ComplexMessage      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ 0:0-2:9
+LocalDeclaration    ^^^^^^^^^^^                               0:0-0:11
+Variable                   ^^^^                               0:7-0:11
+LiteralExpression                                             0:11-0:11
+Text                                                          0:11-0:11
+LocalDeclaration                ^^^^^^^^^^^^^^^^^^^           1:0-1:19
+Variable                               ^^^^                   1:7-1:11
+LiteralExpression                             ^^^^^           1:14-1:19
+Number                                         ^^^            1:15-1:18
+Number.integral                                ^^^            1:15-1:18
+QuotedPattern                                       ^^^^^^^^^ 2:0-2:9
+Pattern                                               ^^^^^   2:2-2:7
+Text                                                  ^^^^^   2:2-2:7
+=== diagnostics ===
+Local declaration is missing an equals sign after the variable. (at @7..11)
+  .local $var↵.local $bar = {123}↵{{hello}}
+         ^^^^
+Local declaration is missing an expression as the value after the equals sign. (at @0..6)
+  .local $var↵.local $bar = {123}↵{{hello}}
+  ^^^^^^
+=== formatted ===
+(cannot format due to fatal errors)
+=== ast ===
+ComplexMessage {
+    span: @0..41,
+    declarations: [
+        LocalDeclaration {
+            start: @0,
+            variable: Variable {
+                span: @7..11,
+                name: "var",
+            },
+            expression: LiteralExpression {
+                span: @11..11,
+                literal: Text {
+                    start: @11,
+                    content: "",
+                },
+                annotation: None,
+                attributes: [],
+            },
+        },
+        LocalDeclaration {
+            start: @12,
+            variable: Variable {
+                span: @19..23,
+                name: "bar",
+            },
+            expression: LiteralExpression {
+                span: @26..31,
+                literal: Number {
+                    start: @27,
+                    raw: "123",
+                    is_negative: false,
+                    integral_len: 3,
+                    fractional_len: None,
+                    exponent_len: None,
+                },
+                annotation: None,
+                attributes: [],
+            },
+        },
+    ],
+    body: QuotedPattern {
+        span: @32..41,
+        pattern: Pattern {
+            parts: [
+                Text {
+                    start: @34,
+                    content: "hello",
+                },
+            ],
+        },
+    },
+}

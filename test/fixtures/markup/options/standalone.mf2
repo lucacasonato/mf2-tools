@@ -1,0 +1,48 @@
+{#el opt=val /}
+
+=== spans ===
+                    {#el opt=val /}↵
+Pattern             ^^^^^^^^^^^^^^^^ 0:0-1:0
+Markup              ^^^^^^^^^^^^^^^  0:0-0:15
+Identifier            ^^             0:2-0:4
+FnOrMarkupOption         ^^^^^^^     0:5-0:12
+Identifier               ^^^         0:5-0:8
+Text                         ^^^     0:9-0:12
+Text                               ^ 0:15-1:0
+=== diagnostics ===
+
+=== formatted ===
+{#el opt=val /}
+
+=== ast ===
+Pattern {
+    parts: [
+        Markup {
+            span: @0..15,
+            kind: Standalone,
+            id: Identifier {
+                start: @2,
+                namespace: None,
+                name: "el",
+            },
+            options: [
+                FnOrMarkupOption {
+                    key: Identifier {
+                        start: @5,
+                        namespace: None,
+                        name: "opt",
+                    },
+                    value: Text {
+                        start: @9,
+                        content: "val",
+                    },
+                },
+            ],
+            attributes: [],
+        },
+        Text {
+            start: @15,
+            content: "\n",
+        },
+    ],
+}

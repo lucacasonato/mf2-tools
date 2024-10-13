@@ -1,0 +1,53 @@
+{1 :bar @foo}
+=== spans ===
+                    {1 :bar @foo}
+Pattern             ^^^^^^^^^^^^^ 0:0-0:13
+LiteralExpression   ^^^^^^^^^^^^^ 0:0-0:13
+Number               ^            0:1-0:2
+Number.integral      ^            0:1-0:2
+Function               ^^^^       0:3-0:7
+Identifier              ^^^       0:4-0:7
+Attribute                   ^^^^  0:8-0:12
+Identifier                   ^^^  0:9-0:12
+=== diagnostics ===
+
+=== formatted ===
+{ 1 :bar @foo }
+=== ast ===
+Pattern {
+    parts: [
+        LiteralExpression {
+            span: @0..13,
+            literal: Number {
+                start: @1,
+                raw: "1",
+                is_negative: false,
+                integral_len: 1,
+                fractional_len: None,
+                exponent_len: None,
+            },
+            annotation: Some(
+                Function {
+                    start: @3,
+                    id: Identifier {
+                        start: @4,
+                        namespace: None,
+                        name: "bar",
+                    },
+                    options: [],
+                },
+            ),
+            attributes: [
+                Attribute {
+                    span: @8..12,
+                    key: Identifier {
+                        start: @9,
+                        namespace: None,
+                        name: "foo",
+                    },
+                    value: None,
+                },
+            ],
+        },
+    ],
+}

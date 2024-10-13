@@ -1,0 +1,41 @@
+{^a@foo}
+=== spans ===
+                    {^a@foo}
+Pattern             ^^^^^^^^ 0:0-0:8
+LiteralExpression   ^^^^^^^^ 0:0-0:8
+Text                 ^^      0:1-0:3
+Attribute              ^^^^  0:3-0:7
+Identifier              ^^^  0:4-0:7
+=== diagnostics ===
+Placeholder expression contains a literal that is not valid when unquoted. Did you mean to quote it? (at @1..3)
+  {^a@foo}
+   ^^
+Attribute is missing a leading space. (at @3..7)
+  {^a@foo}
+     ^^^^
+=== formatted ===
+(cannot format due to fatal errors)
+=== ast ===
+Pattern {
+    parts: [
+        LiteralExpression {
+            span: @0..8,
+            literal: Text {
+                start: @1,
+                content: "^a",
+            },
+            annotation: None,
+            attributes: [
+                Attribute {
+                    span: @3..7,
+                    key: Identifier {
+                        start: @4,
+                        namespace: None,
+                        name: "foo",
+                    },
+                    value: None,
+                },
+            ],
+        },
+    ],
+}

@@ -1,0 +1,51 @@
+{#el@attr=1}
+=== spans ===
+                    {#el@attr=1}
+Pattern             ^^^^^^^^^^^^ 0:0-0:12
+Markup              ^^^^^^^^^^^^ 0:0-0:12
+Identifier            ^^         0:2-0:4
+Attribute               ^^^^^^^  0:4-0:11
+Identifier               ^^^^    0:5-0:9
+Number                        ^  0:10-0:11
+Number.integral               ^  0:10-0:11
+=== diagnostics ===
+Attribute is missing a leading space. (at @4..11)
+  {#el@attr=1}
+      ^^^^^^^
+=== formatted ===
+(cannot format due to fatal errors)
+=== ast ===
+Pattern {
+    parts: [
+        Markup {
+            span: @0..12,
+            kind: Open,
+            id: Identifier {
+                start: @2,
+                namespace: None,
+                name: "el",
+            },
+            options: [],
+            attributes: [
+                Attribute {
+                    span: @4..11,
+                    key: Identifier {
+                        start: @5,
+                        namespace: None,
+                        name: "attr",
+                    },
+                    value: Some(
+                        Number {
+                            start: @10,
+                            raw: "1",
+                            is_negative: false,
+                            integral_len: 1,
+                            fractional_len: None,
+                            exponent_len: None,
+                        },
+                    ),
+                },
+            ],
+        },
+    ],
+}

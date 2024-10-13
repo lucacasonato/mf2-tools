@@ -1,0 +1,65 @@
+{{hi {$var} how are {|you|}}}
+=== output ===
+{{hi { $var } how are { |you| }}}
+
+=== spans ===
+                    {{hi {$var} how are {|you|}}}↵=== output ===↵{{hi { $var } how are { |you| }}}↵
+ComplexMessage      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^  0:0-2:33
+QuotedPattern       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^                                                   0:0-0:29
+Pattern               ^^^^^^^^^^^^^^^^^^^^^^^^^                                                     0:2-0:27
+Text                  ^^^                                                                           0:2-0:5
+VariableExpression       ^^^^^^                                                                     0:5-0:11
+Variable                  ^^^^                                                                      0:6-0:10
+Text                           ^^^^^^^^^                                                            0:11-0:20
+LiteralExpression                       ^^^^^^^                                                     0:20-0:27
+Quoted                                   ^^^^^                                                      0:21-0:26
+Text                                      ^^^                                                       0:22-0:25
+=== diagnostics ===
+Message has additional invalid content after the body. (at @30..78)
+  {{hi {$var} how are {|you|}}}↵=== output ===↵{{hi { $var } how are { |you| }}}↵
+                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+=== formatted ===
+(cannot format due to fatal errors)
+=== ast ===
+ComplexMessage {
+    span: @0..78,
+    declarations: [],
+    body: QuotedPattern {
+        span: @0..29,
+        pattern: Pattern {
+            parts: [
+                Text {
+                    start: @2,
+                    content: "hi ",
+                },
+                VariableExpression {
+                    span: @5..11,
+                    variable: Variable {
+                        span: @6..10,
+                        name: "var",
+                    },
+                    annotation: None,
+                    attributes: [],
+                },
+                Text {
+                    start: @11,
+                    content: " how are ",
+                },
+                LiteralExpression {
+                    span: @20..27,
+                    literal: Quoted {
+                        span: @21..26,
+                        parts: [
+                            Text {
+                                start: @22,
+                                content: "you",
+                            },
+                        ],
+                    },
+                    annotation: None,
+                    attributes: [],
+                },
+            ],
+        },
+    },
+}

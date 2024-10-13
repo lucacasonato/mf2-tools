@@ -1,0 +1,94 @@
+.local $foo = {$bar :fn opt=1 @attr} {{}}
+=== spans ===
+                    .local $foo = {$bar :fn opt=1 @attr} {{}}
+ComplexMessage      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ 0:0-0:41
+LocalDeclaration    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^      0:0-0:36
+Variable                   ^^^^                               0:7-0:11
+VariableExpression                ^^^^^^^^^^^^^^^^^^^^^^      0:14-0:36
+Variable                           ^^^^                       0:15-0:19
+Function                                ^^^^^^^^^             0:20-0:29
+Identifier                               ^^                   0:21-0:23
+FnOrMarkupOption                            ^^^^^             0:24-0:29
+Identifier                                  ^^^               0:24-0:27
+Number                                          ^             0:28-0:29
+Number.integral                                 ^             0:28-0:29
+Attribute                                         ^^^^^       0:30-0:35
+Identifier                                         ^^^^       0:31-0:35
+QuotedPattern                                            ^^^^ 0:37-0:41
+Pattern                                                       0:39-0:39
+Text                                                          0:39-0:39
+=== diagnostics ===
+
+=== formatted ===
+.local $foo = { $bar :fn opt=1 @attr }
+{{}}
+
+=== ast ===
+ComplexMessage {
+    span: @0..41,
+    declarations: [
+        LocalDeclaration {
+            start: @0,
+            variable: Variable {
+                span: @7..11,
+                name: "foo",
+            },
+            expression: VariableExpression {
+                span: @14..36,
+                variable: Variable {
+                    span: @15..19,
+                    name: "bar",
+                },
+                annotation: Some(
+                    Function {
+                        start: @20,
+                        id: Identifier {
+                            start: @21,
+                            namespace: None,
+                            name: "fn",
+                        },
+                        options: [
+                            FnOrMarkupOption {
+                                key: Identifier {
+                                    start: @24,
+                                    namespace: None,
+                                    name: "opt",
+                                },
+                                value: Number {
+                                    start: @28,
+                                    raw: "1",
+                                    is_negative: false,
+                                    integral_len: 1,
+                                    fractional_len: None,
+                                    exponent_len: None,
+                                },
+                            },
+                        ],
+                    },
+                ),
+                attributes: [
+                    Attribute {
+                        span: @30..35,
+                        key: Identifier {
+                            start: @31,
+                            namespace: None,
+                            name: "attr",
+                        },
+                        value: None,
+                    },
+                ],
+            },
+        },
+    ],
+    body: QuotedPattern {
+        span: @37..41,
+        pattern: Pattern {
+            parts: [
+                Text {
+                    start: @39,
+                    content: "",
+                },
+            ],
+        },
+    },
+}

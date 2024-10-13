@@ -1,0 +1,41 @@
+{#el opt = $var }
+=== spans ===
+                    {#el opt = $var }
+Pattern             ^^^^^^^^^^^^^^^^^ 0:0-0:17
+Markup              ^^^^^^^^^^^^^^^^^ 0:0-0:17
+Identifier            ^^              0:2-0:4
+FnOrMarkupOption         ^^^^^^^^^^   0:5-0:15
+Identifier               ^^^          0:5-0:8
+Variable                       ^^^^   0:11-0:15
+=== diagnostics ===
+
+=== formatted ===
+{#el opt=$var }
+=== ast ===
+Pattern {
+    parts: [
+        Markup {
+            span: @0..17,
+            kind: Open,
+            id: Identifier {
+                start: @2,
+                namespace: None,
+                name: "el",
+            },
+            options: [
+                FnOrMarkupOption {
+                    key: Identifier {
+                        start: @5,
+                        namespace: None,
+                        name: "opt",
+                    },
+                    value: Variable {
+                        span: @11..15,
+                        name: "var",
+                    },
+                },
+            ],
+            attributes: [],
+        },
+    ],
+}

@@ -1,0 +1,51 @@
+{:a: b}
+=== spans ===
+                    {:a: b}
+Pattern             ^^^^^^^ 0:0-0:7
+AnnotationExpression^^^^^^^ 0:0-0:7
+Function             ^^^^^  0:1-0:6
+Identifier            ^^    0:2-0:4
+FnOrMarkupOption         ^  0:5-0:6
+Identifier               ^  0:5-0:6
+Text                        0:6-0:6
+=== diagnostics ===
+Namespaced identifier is missing a name, which is required after the colon following the namespace. (at @2..4)
+  {:a: b}
+    ^^
+Found an identifier followed by an equals sign, but not followed by a value. Did you forget to add a value to make this an option? (at @5..6)
+  {:a: b}
+       ^
+=== formatted ===
+(cannot format due to fatal errors)
+=== ast ===
+Pattern {
+    parts: [
+        AnnotationExpression {
+            span: @0..7,
+            annotation: Function {
+                start: @1,
+                id: Identifier {
+                    start: @2,
+                    namespace: Some(
+                        "a",
+                    ),
+                    name: "",
+                },
+                options: [
+                    FnOrMarkupOption {
+                        key: Identifier {
+                            start: @5,
+                            namespace: None,
+                            name: "b",
+                        },
+                        value: Text {
+                            start: @6,
+                            content: "",
+                        },
+                    },
+                ],
+            },
+            attributes: [],
+        },
+    ],
+}

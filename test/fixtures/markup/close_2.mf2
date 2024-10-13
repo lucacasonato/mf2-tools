@@ -1,0 +1,26 @@
+{ /close}
+=== spans ===
+                    { /close}
+Pattern             ^^^^^^^^^ 0:0-0:9
+Markup              ^^^^^^^^^ 0:0-0:9
+Identifier             ^^^^^  0:3-0:8
+=== diagnostics ===
+
+=== formatted ===
+{/close }
+=== ast ===
+Pattern {
+    parts: [
+        Markup {
+            span: @0..9,
+            kind: Close,
+            id: Identifier {
+                start: @3,
+                namespace: None,
+                name: "close",
+            },
+            options: [],
+            attributes: [],
+        },
+    ],
+}

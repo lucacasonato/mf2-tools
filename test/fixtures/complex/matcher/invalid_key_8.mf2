@@ -1,0 +1,60 @@
+.match $a
+*+yej% {{Hi}}
+=== spans ===
+                    .match $a↵*+yej% {{Hi}}
+ComplexMessage      ^^^^^^^^^^^^^^^^^^^^^^^ 0:0-1:13
+Matcher             ^^^^^^^^^^^^^^^^^^^^^^^ 0:0-1:13
+Variable                   ^^               0:7-0:9
+Variant                       ^^^^^^^^^^^^^ 1:0-1:13
+Star                          ^             1:0-1:1
+Text                           ^^^^^        1:1-1:6
+QuotedPattern                        ^^^^^^ 1:7-1:13
+Pattern                                ^^   1:9-1:11
+Text                                   ^^   1:9-1:11
+=== diagnostics ===
+Found an invalid matcher key (not a valid literal). Did you mean to quote the key to make it a literal? (at @11..16)
+  .match $a↵*+yej% {{Hi}}
+             ^^^^^
+Matcher key is missing a leading space. (at @11..16)
+  .match $a↵*+yej% {{Hi}}
+             ^^^^^
+=== formatted ===
+(cannot format due to fatal errors)
+=== ast ===
+ComplexMessage {
+    span: @0..23,
+    declarations: [],
+    body: Matcher {
+        start: @0,
+        selectors: [
+            Variable {
+                span: @7..9,
+                name: "a",
+            },
+        ],
+        variants: [
+            Variant {
+                keys: [
+                    Star {
+                        start: @10,
+                    },
+                    Text {
+                        start: @11,
+                        content: "+yej%",
+                    },
+                ],
+                pattern: QuotedPattern {
+                    span: @17..23,
+                    pattern: Pattern {
+                        parts: [
+                            Text {
+                                start: @19,
+                                content: "Hi",
+                            },
+                        ],
+                    },
+                },
+            },
+        ],
+    },
+}

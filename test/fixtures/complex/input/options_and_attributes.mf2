@@ -1,0 +1,89 @@
+.input {$foo :fn opt=1 @attr} {{}}
+=== spans ===
+                    .input {$foo :fn opt=1 @attr} {{}}
+ComplexMessage      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ 0:0-0:34
+InputDeclaration    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^      0:0-0:29
+VariableExpression         ^^^^^^^^^^^^^^^^^^^^^^      0:7-0:29
+Variable                    ^^^^                       0:8-0:12
+Function                         ^^^^^^^^^             0:13-0:22
+Identifier                        ^^                   0:14-0:16
+FnOrMarkupOption                     ^^^^^             0:17-0:22
+Identifier                           ^^^               0:17-0:20
+Number                                   ^             0:21-0:22
+Number.integral                          ^             0:21-0:22
+Attribute                                  ^^^^^       0:23-0:28
+Identifier                                  ^^^^       0:24-0:28
+QuotedPattern                                     ^^^^ 0:30-0:34
+Pattern                                                0:32-0:32
+Text                                                   0:32-0:32
+=== diagnostics ===
+
+=== formatted ===
+.input { $foo :fn opt=1 @attr }
+{{}}
+
+=== ast ===
+ComplexMessage {
+    span: @0..34,
+    declarations: [
+        InputDeclaration {
+            start: @0,
+            expression: VariableExpression {
+                span: @7..29,
+                variable: Variable {
+                    span: @8..12,
+                    name: "foo",
+                },
+                annotation: Some(
+                    Function {
+                        start: @13,
+                        id: Identifier {
+                            start: @14,
+                            namespace: None,
+                            name: "fn",
+                        },
+                        options: [
+                            FnOrMarkupOption {
+                                key: Identifier {
+                                    start: @17,
+                                    namespace: None,
+                                    name: "opt",
+                                },
+                                value: Number {
+                                    start: @21,
+                                    raw: "1",
+                                    is_negative: false,
+                                    integral_len: 1,
+                                    fractional_len: None,
+                                    exponent_len: None,
+                                },
+                            },
+                        ],
+                    },
+                ),
+                attributes: [
+                    Attribute {
+                        span: @23..28,
+                        key: Identifier {
+                            start: @24,
+                            namespace: None,
+                            name: "attr",
+                        },
+                        value: None,
+                    },
+                ],
+            },
+        },
+    ],
+    body: QuotedPattern {
+        span: @30..34,
+        pattern: Pattern {
+            parts: [
+                Text {
+                    start: @32,
+                    content: "",
+                },
+            ],
+        },
+    },
+}

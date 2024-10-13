@@ -1,0 +1,29 @@
+{{Hello, World!
+=== spans ===
+                    {{Hello, World!
+ComplexMessage      ^^^^^^^^^^^^^^^ 0:0-0:15
+QuotedPattern       ^^^^^^^^^^^^^^^ 0:0-0:15
+Pattern               ^^^^^^^^^^^^^ 0:2-0:15
+Text                  ^^^^^^^^^^^^^ 0:2-0:15
+=== diagnostics ===
+Quoted pattern is missing the closing braces ('}'). (at @0..15)
+  {{Hello, World!
+  ^^^^^^^^^^^^^^^
+=== formatted ===
+(cannot format due to fatal errors)
+=== ast ===
+ComplexMessage {
+    span: @0..15,
+    declarations: [],
+    body: QuotedPattern {
+        span: @0..15,
+        pattern: Pattern {
+            parts: [
+                Text {
+                    start: @2,
+                    content: "Hello, World!",
+                },
+            ],
+        },
+    },
+}

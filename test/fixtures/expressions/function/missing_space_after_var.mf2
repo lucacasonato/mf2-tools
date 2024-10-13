@@ -1,0 +1,38 @@
+{$a:b}
+=== spans ===
+                    {$a:b}
+Pattern             ^^^^^^ 0:0-0:6
+VariableExpression  ^^^^^^ 0:0-0:6
+Variable             ^^    0:1-0:3
+Function               ^^  0:3-0:5
+Identifier              ^  0:4-0:5
+=== diagnostics ===
+Annotation is missing a leading space. (at @3..5)
+  {$a:b}
+     ^^
+=== formatted ===
+(cannot format due to fatal errors)
+=== ast ===
+Pattern {
+    parts: [
+        VariableExpression {
+            span: @0..6,
+            variable: Variable {
+                span: @1..3,
+                name: "a",
+            },
+            annotation: Some(
+                Function {
+                    start: @3,
+                    id: Identifier {
+                        start: @4,
+                        namespace: None,
+                        name: "b",
+                    },
+                    options: [],
+                },
+            ),
+            attributes: [],
+        },
+    ],
+}

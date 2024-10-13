@@ -1,0 +1,104 @@
+a{ 1e }
+{ 1e+ }
+{ 1e- }
+=== spans ===
+                    a{ 1e }↵{ 1e+ }↵{ 1e- }
+Pattern             ^^^^^^^^^^^^^^^^^^^^^^^ 0:0-2:7
+Text                ^                       0:0-0:1
+LiteralExpression    ^^^^^^                 0:1-0:7
+Number                 ^^                   0:3-0:5
+Number.integral        ^                    0:3-0:4
+Number.exponent                             0:5-0:5
+Text                       ^                0:7-1:0
+LiteralExpression           ^^^^^^^         1:0-1:7
+Number                        ^^^           1:2-1:5
+Number.integral               ^             1:2-1:3
+Number.exponent                             1:5-1:5
+Text                               ^        1:7-2:0
+LiteralExpression                   ^^^^^^^ 2:0-2:7
+Number                                ^^^   2:2-2:5
+Number.integral                       ^     2:2-2:3
+Number.exponent                             2:5-2:5
+=== diagnostics ===
+Number is missing an exponent part, which it must have because it is written in scientific notation. (at @3..5)
+  a{ 1e }↵{ 1e+ }↵{ 1e- }
+     ^^
+Number is missing an exponent part, which it must have because it is written in scientific notation. (at @10..13)
+  a{ 1e }↵{ 1e+ }↵{ 1e- }
+            ^^^
+Number is missing an exponent part, which it must have because it is written in scientific notation. (at @18..21)
+  a{ 1e }↵{ 1e+ }↵{ 1e- }
+                    ^^^
+=== formatted ===
+(cannot format due to fatal errors)
+=== ast ===
+Pattern {
+    parts: [
+        Text {
+            start: @0,
+            content: "a",
+        },
+        LiteralExpression {
+            span: @1..7,
+            literal: Number {
+                start: @3,
+                raw: "1e",
+                is_negative: false,
+                integral_len: 1,
+                fractional_len: None,
+                exponent_len: Some(
+                    (
+                        None,
+                        0,
+                    ),
+                ),
+            },
+            annotation: None,
+            attributes: [],
+        },
+        Text {
+            start: @7,
+            content: "\n",
+        },
+        LiteralExpression {
+            span: @8..15,
+            literal: Number {
+                start: @10,
+                raw: "1e+",
+                is_negative: false,
+                integral_len: 1,
+                fractional_len: None,
+                exponent_len: Some(
+                    (
+                        Plus,
+                        0,
+                    ),
+                ),
+            },
+            annotation: None,
+            attributes: [],
+        },
+        Text {
+            start: @15,
+            content: "\n",
+        },
+        LiteralExpression {
+            span: @16..23,
+            literal: Number {
+                start: @18,
+                raw: "1e-",
+                is_negative: false,
+                integral_len: 1,
+                fractional_len: None,
+                exponent_len: Some(
+                    (
+                        Minus,
+                        0,
+                    ),
+                ),
+            },
+            annotation: None,
+            attributes: [],
+        },
+    ],
+}

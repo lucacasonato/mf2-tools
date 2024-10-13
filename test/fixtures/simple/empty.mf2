@@ -1,0 +1,18 @@
+
+=== spans ===
+                    
+Pattern              0:0-0:0
+Text                 0:0-0:0
+=== diagnostics ===
+
+=== formatted ===
+
+=== ast ===
+Pattern {
+    parts: [
+        Text {
+            start: @0,
+            content: "",
+        },
+    ],
+}

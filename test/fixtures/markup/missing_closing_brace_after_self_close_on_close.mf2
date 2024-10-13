@@ -1,0 +1,31 @@
+{/foo /
+=== spans ===
+                    {/foo /
+Pattern             ^^^^^^^ 0:0-0:7
+Markup              ^^^^^^^ 0:0-0:7
+Identifier            ^^^   0:2-0:5
+=== diagnostics ===
+Markup tag can not be self-closing if it is a close tag. (at @6..7)
+  {/foo /
+        ^
+Markup tag is not closed with a closing brace. (at @0..7)
+  {/foo /
+  ^^^^^^^
+=== formatted ===
+(cannot format due to fatal errors)
+=== ast ===
+Pattern {
+    parts: [
+        Markup {
+            span: @0..7,
+            kind: Standalone,
+            id: Identifier {
+                start: @2,
+                namespace: None,
+                name: "foo",
+            },
+            options: [],
+            attributes: [],
+        },
+    ],
+}

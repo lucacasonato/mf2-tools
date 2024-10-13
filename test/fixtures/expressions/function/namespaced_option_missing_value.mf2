@@ -1,0 +1,72 @@
+{$var :number a :b=c}
+=== spans ===
+                    {$var :number a :b=c}
+Pattern             ^^^^^^^^^^^^^^^^^^^^^ 0:0-0:21
+VariableExpression  ^^^^^^^^^^^^^^^^^^^^^ 0:0-0:21
+Variable             ^^^^                 0:1-0:5
+Function                  ^^^^^^^^^^^^^^  0:6-0:20
+Identifier                 ^^^^^^         0:7-0:13
+FnOrMarkupOption                  ^       0:14-0:15
+Identifier                        ^       0:14-0:15
+Text                                      0:15-0:15
+FnOrMarkupOption                    ^^^^  0:16-0:20
+Identifier                          ^^    0:16-0:18
+Text                                   ^  0:19-0:20
+=== diagnostics ===
+Found an identifier followed by an equals sign, but not followed by a value. Did you forget to add a value to make this an option? (at @14..15)
+  {$var :number a :b=c}
+                ^
+Identifiers with a colon before the name are namespaced identifiers, but this identifier is missing a namespace before the colon. (at @16..18)
+  {$var :number a :b=c}
+                  ^^
+=== formatted ===
+(cannot format due to fatal errors)
+=== ast ===
+Pattern {
+    parts: [
+        VariableExpression {
+            span: @0..21,
+            variable: Variable {
+                span: @1..5,
+                name: "var",
+            },
+            annotation: Some(
+                Function {
+                    start: @6,
+                    id: Identifier {
+                        start: @7,
+                        namespace: None,
+                        name: "number",
+                    },
+                    options: [
+                        FnOrMarkupOption {
+                            key: Identifier {
+                                start: @14,
+                                namespace: None,
+                                name: "a",
+                            },
+                            value: Text {
+                                start: @15,
+                                content: "",
+                            },
+                        },
+                        FnOrMarkupOption {
+                            key: Identifier {
+                                start: @16,
+                                namespace: Some(
+                                    "",
+                                ),
+                                name: "b",
+                            },
+                            value: Text {
+                                start: @19,
+                                content: "c",
+                            },
+                        },
+                    ],
+                },
+            ),
+            attributes: [],
+        },
+    ],
+}

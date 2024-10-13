@@ -1,0 +1,34 @@
+a{ -1 }
+=== spans ===
+                    a{ -1 }
+Pattern             ^^^^^^^ 0:0-0:7
+Text                ^       0:0-0:1
+LiteralExpression    ^^^^^^ 0:1-0:7
+Number                 ^^   0:3-0:5
+Number.integral         ^   0:4-0:5
+=== diagnostics ===
+
+=== formatted ===
+a{ -1 }
+=== ast ===
+Pattern {
+    parts: [
+        Text {
+            start: @0,
+            content: "a",
+        },
+        LiteralExpression {
+            span: @1..7,
+            literal: Number {
+                start: @3,
+                raw: "-1",
+                is_negative: true,
+                integral_len: 1,
+                fractional_len: None,
+                exponent_len: None,
+            },
+            annotation: None,
+            attributes: [],
+        },
+    ],
+}

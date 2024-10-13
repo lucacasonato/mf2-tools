@@ -1,0 +1,29 @@
+{ :hello}
+=== spans ===
+                    { :hello}
+Pattern             ^^^^^^^^^ 0:0-0:9
+AnnotationExpression^^^^^^^^^ 0:0-0:9
+Function              ^^^^^^  0:2-0:8
+Identifier             ^^^^^  0:3-0:8
+=== diagnostics ===
+
+=== formatted ===
+{ :hello }
+=== ast ===
+Pattern {
+    parts: [
+        AnnotationExpression {
+            span: @0..9,
+            annotation: Function {
+                start: @2,
+                id: Identifier {
+                    start: @3,
+                    namespace: None,
+                    name: "hello",
+                },
+                options: [],
+            },
+            attributes: [],
+        },
+    ],
+}

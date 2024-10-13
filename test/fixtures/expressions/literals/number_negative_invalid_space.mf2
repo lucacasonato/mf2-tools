@@ -1,0 +1,39 @@
+a{ - 1 }
+=== spans ===
+                    a{ - 1 }
+Pattern             ^^^^^^^^ 0:0-0:8
+Text                ^        0:0-0:1
+LiteralExpression    ^^^^^^^ 0:1-0:8
+Number                 ^     0:3-0:4
+Number.integral              0:4-0:4
+=== diagnostics ===
+Number is missing an integral part. (at @3..4)
+  a{ - 1 }
+     ^
+Placeholder expression contains invalid content. (at @5..6)
+  a{ - 1 }
+       ^
+=== formatted ===
+(cannot format due to fatal errors)
+=== ast ===
+Pattern {
+    parts: [
+        Text {
+            start: @0,
+            content: "a",
+        },
+        LiteralExpression {
+            span: @1..8,
+            literal: Number {
+                start: @3,
+                raw: "-",
+                is_negative: true,
+                integral_len: 0,
+                fractional_len: None,
+                exponent_len: None,
+            },
+            annotation: None,
+            attributes: [],
+        },
+    ],
+}

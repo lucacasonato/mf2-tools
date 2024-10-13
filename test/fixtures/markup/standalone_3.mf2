@@ -1,0 +1,26 @@
+{#standalone /}
+=== spans ===
+                    {#standalone /}
+Pattern             ^^^^^^^^^^^^^^^ 0:0-0:15
+Markup              ^^^^^^^^^^^^^^^ 0:0-0:15
+Identifier            ^^^^^^^^^^    0:2-0:12
+=== diagnostics ===
+
+=== formatted ===
+{#standalone /}
+=== ast ===
+Pattern {
+    parts: [
+        Markup {
+            span: @0..15,
+            kind: Standalone,
+            id: Identifier {
+                start: @2,
+                namespace: None,
+                name: "standalone",
+            },
+            options: [],
+            attributes: [],
+        },
+    ],
+}

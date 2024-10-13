@@ -1,0 +1,32 @@
+{{Hello, World!}
+=== spans ===
+                    {{Hello, World!}
+ComplexMessage      ^^^^^^^^^^^^^^^^ 0:0-0:16
+QuotedPattern       ^^^^^^^^^^^^^^^^ 0:0-0:16
+Pattern               ^^^^^^^^^^^^^^ 0:2-0:16
+Text                  ^^^^^^^^^^^^^^ 0:2-0:16
+=== diagnostics ===
+The closing brace character ('}') is invalid inside of messages, and must be escaped as '\}'. (at @15..16)
+  {{Hello, World!}
+                 ^
+Quoted pattern is missing the closing braces ('}'). (at @0..16)
+  {{Hello, World!}
+  ^^^^^^^^^^^^^^^^
+=== formatted ===
+(cannot format due to fatal errors)
+=== ast ===
+ComplexMessage {
+    span: @0..16,
+    declarations: [],
+    body: QuotedPattern {
+        span: @0..16,
+        pattern: Pattern {
+            parts: [
+                Text {
+                    start: @2,
+                    content: "Hello, World!}",
+                },
+            ],
+        },
+    },
+}

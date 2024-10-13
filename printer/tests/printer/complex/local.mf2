@@ -1,4 +1,0 @@
-.local $foo = {2 :fn opt=1 @attr} {{}}
-=== output ===
-.local $foo = { 2 :fn opt=1 @attr }
-{{}}

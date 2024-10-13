@@ -1,0 +1,49 @@
+{: hello}
+=== spans ===
+                    {: hello}
+Pattern             ^^^^^^^^^ 0:0-0:9
+AnnotationExpression^^^^^^^^^ 0:0-0:9
+Function             ^^^^^^^  0:1-0:8
+Identifier                    0:2-0:2
+FnOrMarkupOption       ^^^^^  0:3-0:8
+Identifier             ^^^^^  0:3-0:8
+Text                          0:8-0:8
+=== diagnostics ===
+Found an identifier followed by an equals sign, but not followed by a value. Did you forget to add a value to make this an option? (at @3..8)
+  {: hello}
+     ^^^^^
+Function is missing an identifier. (at @1..8)
+  {: hello}
+   ^^^^^^^
+=== formatted ===
+(cannot format due to fatal errors)
+=== ast ===
+Pattern {
+    parts: [
+        AnnotationExpression {
+            span: @0..9,
+            annotation: Function {
+                start: @1,
+                id: Identifier {
+                    start: @2,
+                    namespace: None,
+                    name: "",
+                },
+                options: [
+                    FnOrMarkupOption {
+                        key: Identifier {
+                            start: @3,
+                            namespace: None,
+                            name: "hello",
+                        },
+                        value: Text {
+                            start: @8,
+                            content: "",
+                        },
+                    },
+                ],
+            },
+            attributes: [],
+        },
+    ],
+}
