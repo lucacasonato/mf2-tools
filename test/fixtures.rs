@@ -25,7 +25,7 @@ use unicode_width::UnicodeWidthStr;
 fn main() {
   collect_and_run_tests(
     CollectOptions {
-      base: Path::new("tests").join("parser"),
+      base: Path::new("fixtures").into(),
       strategy: Box::new(TestPerFileCollectionStrategy { file_pattern: None }),
       filter_override: None,
     },
