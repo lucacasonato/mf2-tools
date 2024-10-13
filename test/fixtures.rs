@@ -150,7 +150,7 @@ fn run_test(test: &CollectedTest) {
   }
 
   if !has_fatal_diag {
-    let (new_ast, _, new_info) = parse(&actual_formatted);
+    let (new_ast, new_diagnostics, new_info) = parse(&actual_formatted);
     let new_formatted = print(&new_ast, Some(&new_info));
 
     pretty_assertions::assert_eq!(
@@ -158,6 +158,18 @@ fn run_test(test: &CollectedTest) {
       new_formatted,
       "Formatting is stable"
     );
+    pretty_assertions::assert_eq!(
+      diagnostics.len(),
+      new_diagnostics.len(),
+      "Formtting preserves the number of diagnostics"
+    );
+    for (old, new) in diagnostics.iter().zip(new_diagnostics.iter()) {
+      assert_eq!(
+        std::mem::discriminant(old),
+        std::mem::discriminant(new),
+        "Formatting preserves the diagnostics"
+      );
+    }
   }
 }
 
