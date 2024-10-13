@@ -101,7 +101,7 @@
     },
     {
       "contentName": "meta.embedded.block.mf2",
-      "begin": "(/(\\*)(?:[\\t\\r \\x{3000}])?mf2(?:[\\t\\r \\x{3000}])?(\\*)/)(?:[\\t\\r \\x{3000}])?((`))",
+      "begin": "(/(\\*)(?:[\\t\\r \\x{3000}])*mf2(?:[\\t\\r \\x{3000}])*(\\*)/)(?:[\\t\\r \\x{3000}])*((`))",
       "beginCaptures": {
         "1": {
           "name": "comment.block.js"
