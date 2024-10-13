@@ -55,11 +55,11 @@ fn run_test(test: &CollectedTest) {
   let (expected_spans, rest_str) = rest_str
     .split_once(diagnostics_marker)
     .unwrap_or((rest_str, ""));
-  let (expected_diagnostics, rest_str) =
-    rest_str.split_once(ast_marker).unwrap_or((rest_str, ""));
-  let (expected_formatted, rest_str) = rest_str
+  let (expected_diagnostics, rest_str) = rest_str
     .split_once(formatted_marker)
     .unwrap_or((rest_str, ""));
+  let (expected_formatted, rest_str) =
+    rest_str.split_once(ast_marker).unwrap_or((rest_str, ""));
   let expected_ast_dbg = rest_str;
 
   if test
