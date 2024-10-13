@@ -226,7 +226,7 @@ diagnostics! {
     AttributeValueIsVariable { span: Span } => {
       message: ("Attribute value can not be a variable, but must be a literal value."),
       span: *span,
-      fatal: true,
+      fatal: false,
     },
     VariableMissingName { span: Span } => {
       message: ("Variable is missing a name after the dollar sign ('$')."),
