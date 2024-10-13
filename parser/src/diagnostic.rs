@@ -186,7 +186,7 @@ diagnostics! {
     EscapeInvalidCharacter { char_loc: Location, char: char } => {
       message: ( "The character '{char}' can not be escaped as escape sequences can only escape '}}', '{{', '|', and '\\'."),
       span: Span::new(*char_loc..(*char_loc + *char)),
-      fatal: true,
+      fatal: false,
     },
     EscapeMissingCharacter { slash_loc: Location } => {
       message: ("Backslashes start an escape sequence, but no character to be escaped was found. A literal '\\' must be written as '\\\\'."),
