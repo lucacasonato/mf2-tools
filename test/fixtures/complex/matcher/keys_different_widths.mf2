@@ -1,0 +1,204 @@
+.input {$var}
+
+.match $var $var2longname $var3
+1 a |2| {{hi}}
+* |q\|a| hello {{hi2}}
+1.3e2 * * {{hi3}}
+=== spans ===
+                    .input {$var}↵↵.match $var $var2longname $var3↵1 a |2| {{hi}}↵* |q\|a| hello {{hi2}}↵1.3e2 * * {{hi3}}
+ComplexMessage      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ 0:0-5:17
+InputDeclaration    ^^^^^^^^^^^^^                                                                                          0:0-0:13
+VariableExpression         ^^^^^^                                                                                          0:7-0:13
+Variable                    ^^^^                                                                                           0:8-0:12
+Matcher                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ 2:0-5:17
+Variable                                  ^^^^                                                                             2:7-2:11
+Variable                                       ^^^^^^^^^^^^^                                                               2:12-2:25
+Variable                                                     ^^^^^                                                         2:26-2:31
+Variant                                                            ^^^^^^^^^^^^^^                                          3:0-3:14
+Number                                                             ^                                                       3:0-3:1
+Number.integral                                                    ^                                                       3:0-3:1
+Text                                                                 ^                                                     3:2-3:3
+Quoted                                                                 ^^^                                                 3:4-3:7
+Text                                                                    ^                                                  3:5-3:6
+QuotedPattern                                                              ^^^^^^                                          3:8-3:14
+Pattern                                                                      ^^                                            3:10-3:12
+Text                                                                         ^^                                            3:10-3:12
+Variant                                                                           ^^^^^^^^^^^^^^^^^^^^^^                   4:0-4:22
+Star                                                                              ^                                        4:0-4:1
+Quoted                                                                              ^^^^^^                                 4:2-4:8
+Text                                                                                 ^                                     4:3-4:4
+Escape                                                                                ^^                                   4:4-4:6
+Text                                                                                    ^                                  4:6-4:7
+Text                                                                                       ^^^^^                           4:9-4:14
+QuotedPattern                                                                                    ^^^^^^^                   4:15-4:22
+Pattern                                                                                            ^^^                     4:17-4:20
+Text                                                                                               ^^^                     4:17-4:20
+Variant                                                                                                  ^^^^^^^^^^^^^^^^^ 5:0-5:17
+Number                                                                                                   ^^^^^             5:0-5:5
+Number.integral                                                                                          ^                 5:0-5:1
+Number.fractional                                                                                          ^               5:2-5:3
+Number.exponent                                                                                              ^             5:4-5:5
+Star                                                                                                           ^           5:6-5:7
+Star                                                                                                             ^         5:8-5:9
+QuotedPattern                                                                                                      ^^^^^^^ 5:10-5:17
+Pattern                                                                                                              ^^^   5:12-5:15
+Text                                                                                                                 ^^^   5:12-5:15
+=== diagnostics ===
+
+=== formatted ===
+.input { $var }
+
+.match
+$var  $var2longname $var3
+1     a             |2|   {{hi}}
+*     |q\|a|        hello {{hi2}}
+1.3e2 *             *     {{hi3}}
+
+=== ast ===
+ComplexMessage {
+    span: @0..102,
+    declarations: [
+        InputDeclaration {
+            start: @0,
+            expression: VariableExpression {
+                span: @7..13,
+                variable: Variable {
+                    span: @8..12,
+                    name: "var",
+                },
+                annotation: None,
+                attributes: [],
+            },
+        },
+    ],
+    body: Matcher {
+        start: @15,
+        selectors: [
+            Variable {
+                span: @22..26,
+                name: "var",
+            },
+            Variable {
+                span: @27..40,
+                name: "var2longname",
+            },
+            Variable {
+                span: @41..46,
+                name: "var3",
+            },
+        ],
+        variants: [
+            Variant {
+                keys: [
+                    Number {
+                        start: @47,
+                        raw: "1",
+                        is_negative: false,
+                        integral_len: 1,
+                        fractional_len: None,
+                        exponent_len: None,
+                    },
+                    Text {
+                        start: @49,
+                        content: "a",
+                    },
+                    Quoted {
+                        span: @51..54,
+                        parts: [
+                            Text {
+                                start: @52,
+                                content: "2",
+                            },
+                        ],
+                    },
+                ],
+                pattern: QuotedPattern {
+                    span: @55..61,
+                    pattern: Pattern {
+                        parts: [
+                            Text {
+                                start: @57,
+                                content: "hi",
+                            },
+                        ],
+                    },
+                },
+            },
+            Variant {
+                keys: [
+                    Star {
+                        start: @62,
+                    },
+                    Quoted {
+                        span: @64..70,
+                        parts: [
+                            Text {
+                                start: @65,
+                                content: "q",
+                            },
+                            Escape {
+                                start: @66,
+                                escaped_char: '|',
+                            },
+                            Text {
+                                start: @68,
+                                content: "a",
+                            },
+                        ],
+                    },
+                    Text {
+                        start: @71,
+                        content: "hello",
+                    },
+                ],
+                pattern: QuotedPattern {
+                    span: @77..84,
+                    pattern: Pattern {
+                        parts: [
+                            Text {
+                                start: @79,
+                                content: "hi2",
+                            },
+                        ],
+                    },
+                },
+            },
+            Variant {
+                keys: [
+                    Number {
+                        start: @85,
+                        raw: "1.3e2",
+                        is_negative: false,
+                        integral_len: 1,
+                        fractional_len: Some(
+                            1,
+                        ),
+                        exponent_len: Some(
+                            (
+                                None,
+                                1,
+                            ),
+                        ),
+                    },
+                    Star {
+                        start: @91,
+                    },
+                    Star {
+                        start: @93,
+                    },
+                ],
+                pattern: QuotedPattern {
+                    span: @95..102,
+                    pattern: Pattern {
+                        parts: [
+                            Text {
+                                start: @97,
+                                content: "hi3",
+                            },
+                        ],
+                    },
+                },
+            },
+        ],
+    },
+}

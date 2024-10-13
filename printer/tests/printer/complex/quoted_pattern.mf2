@@ -1,3 +1,0 @@
-{{hi {$var} how are {|you|}}}
-=== output ===
-{{hi { $var } how are { |you| }}}
