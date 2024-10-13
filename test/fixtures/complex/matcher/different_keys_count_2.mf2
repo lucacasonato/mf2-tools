@@ -1,0 +1,95 @@
+.match $foo $bar
+  hi {{1}}
+  hello hola ciao {{2}}
+=== spans ===
+                    .match $foo $bar↵  hi {{1}}↵  hello hola ciao {{2}}
+ComplexMessage      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ 0:0-2:23
+Matcher             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ 0:0-2:23
+Variable                   ^^^^                                         0:7-0:11
+Variable                        ^^^^                                    0:12-0:16
+Variant                                ^^^^^^^^                         1:2-1:10
+Text                                   ^^                               1:2-1:4
+QuotedPattern                             ^^^^^                         1:5-1:10
+Pattern                                     ^                           1:7-1:8
+Text                                        ^                           1:7-1:8
+Variant                                           ^^^^^^^^^^^^^^^^^^^^^ 2:2-2:23
+Text                                              ^^^^^                 2:2-2:7
+Text                                                    ^^^^            2:8-2:12
+Text                                                         ^^^^       2:13-2:17
+QuotedPattern                                                     ^^^^^ 2:18-2:23
+Pattern                                                             ^   2:20-2:21
+Text                                                                ^   2:20-2:21
+=== diagnostics ===
+
+=== formatted ===
+.match
+$foo  $bar 
+hi              {{1}}
+hello hola ciao {{2}}
+
+=== ast ===
+ComplexMessage {
+    span: @0..51,
+    declarations: [],
+    body: Matcher {
+        start: @0,
+        selectors: [
+            Variable {
+                span: @7..11,
+                name: "foo",
+            },
+            Variable {
+                span: @12..16,
+                name: "bar",
+            },
+        ],
+        variants: [
+            Variant {
+                keys: [
+                    Text {
+                        start: @19,
+                        content: "hi",
+                    },
+                ],
+                pattern: QuotedPattern {
+                    span: @22..27,
+                    pattern: Pattern {
+                        parts: [
+                            Text {
+                                start: @24,
+                                content: "1",
+                            },
+                        ],
+                    },
+                },
+            },
+            Variant {
+                keys: [
+                    Text {
+                        start: @30,
+                        content: "hello",
+                    },
+                    Text {
+                        start: @36,
+                        content: "hola",
+                    },
+                    Text {
+                        start: @41,
+                        content: "ciao",
+                    },
+                ],
+                pattern: QuotedPattern {
+                    span: @46..51,
+                    pattern: Pattern {
+                        parts: [
+                            Text {
+                                start: @48,
+                                content: "2",
+                            },
+                        ],
+                    },
+                },
+            },
+        ],
+    },
+}
