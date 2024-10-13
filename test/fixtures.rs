@@ -149,7 +149,10 @@ fn run_test(test: &CollectedTest) {
     .unwrap();
   }
 
-  if !has_fatal_diag {
+  if has_fatal_diag {
+    // test that it does not panic
+    print(&actual_ast, Some(&info));
+  } else {
     let (new_ast, new_diagnostics, new_info) = parse(&actual_formatted);
 
     let new_ast_dbg = generated_actual_ast_dbg(&new_ast);

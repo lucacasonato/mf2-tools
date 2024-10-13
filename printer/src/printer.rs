@@ -102,7 +102,7 @@ impl<'ast, 'text> Printer<'ast, 'text> {
     } = info.utf8_line_col(start);
     let LineColUtf8 { line: end_line, .. } = info.utf8_line_col(end);
 
-    end_line - start_line > 1
+    end_line > start_line + 1
   }
 }
 
