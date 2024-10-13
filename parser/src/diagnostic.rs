@@ -216,7 +216,7 @@ diagnostics! {
     AttributeMissingKey { span: Span } => {
       message: ("Attribute is missing a key after the '@' sign."),
       span: *span,
-      fatal: true,
+      fatal: false,
     },
     AttributeMissingValue { span: Span } => {
       message: ("Attribute is missing a value after the '=' sign."),
