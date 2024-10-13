@@ -1,21 +1,4 @@
-//! A library for pretty-printing MessageFormat 2 ASTs. Use in combination with
-//! the `mf2_parser` crate to parse MessageFormat 2 strings and then print them
-//! back out in a human-readable format.
-//!
-//! # Example
-//!
-//! ```rust
-//! use mf2_parser::parse;
-//! use mf2_printer::print;
-//!
-//! let input = "Hello, {   name  }!";
-//! let (ast, diagnostics, info) = parse(input);
-//! if !diagnostics.is_empty() {
-//!   panic!("Failed to parse input: {:?}", diagnostics);
-//! }
-//! let pretty = print(&ast, None);
-//! assert_eq!(pretty, "Hello, { name }!");
-//! ```
+#![doc = include_str!("../README.md")]
 
 mod printer;
 

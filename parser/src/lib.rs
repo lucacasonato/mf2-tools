@@ -1,24 +1,4 @@
-//! A parser for the MessageFormat 2 syntax.
-//!
-//! The parser is able to successfully parse any string into an AST, even if the
-//! string contains invalid syntax. The diagnostics will contain any errors that
-//! were found during parsing.
-//!
-//! Use the `mf2_printer` to pretty-print the AST back into the human-readable
-//! MessageFormat 2 syntax.
-//!
-//! # Example
-//!
-//! ```rust
-//! use mf2_parser::parse;
-//!
-//! let (ast, diagnostics, source_text_info) = parse("Hello, {$name}!");
-//! if !diagnostics.is_empty() {
-//!   panic!("Failed to parse message: {:?}", diagnostics);
-//! }
-//!
-//! println!("AST: {:?}", ast);
-//! ```
+#![doc = include_str!("../README.md")]
 
 use ast::Message;
 use parser::Parser;
