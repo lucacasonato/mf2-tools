@@ -1,25 +1,61 @@
-# mf2-language-server
+# mf2-tools
 
-This repo contains a language server for the
-[Message Format 2](https://messageformat.dev) message localization system from
-Unicode.
+This repository contains various tools for working with the
+[Message Format 2](https://messageformat.dev) localization system from Unicode.
 
-Also contained in this repo is a Rust parser for the Message Format 2 syntax.
-This parser has error recovery, and can parse any sequence of Unicode scalar
-values (valid UTF-8) into an AST representing the Message Format 2 syntax.
+- [mf2lsp](#mf2lsp): A language server for Message Format 2.
+- [vscode-mf2](#vscode-mf2): A VS Code extension for Message Format 2.
+- [mf2_parser](#rust-crates): A Rust parser for Message Format 2.
+- [mf2_printer](#rust-crates): A Rust pretty-printer for Message Format 2.
 
-> **Note**: This project is still in the early stages of development and the
-> language server is still missing many features.
+## mf2lsp
 
-## Usage
+The `mf2lsp` language server provides language support for Message Format 2 in
+editors that support the Language Server Protocol. It is implemented in Rust and
+can be run as a standalone executable or via Wasm (for use in web-based
+editors).
 
-To use the language server, you will need to have a language client that can
-communicate with it via the Language Server Protocol. The language server itself
-is implemented in Rust, and can be run as a standalone executable.
+`mf2lsp` is still in early development, but it already has a relatively rich
+feature set:
 
-For VS Code, you can use the
-[vscode-mf2](https://marketplace.visualstudio.com/items?itemName=nicolo-ribaudo.vscode-mf2)
+- Semantic highlighting
+- Diagnostics (syntax errors, early errors)
+- Variable completion
+- Quick fixes for some errors
+- Formatting
+- Hover information
+- Go to definition for variables
+
+To use `mf2lsp` in VS Code, you can install the [vscode-mf2](#vscode-mf2)
 extension.
+
+For use in other editors with LSP support, you can run `mf2lsp` as a standalone
+executable. You can find the latest release on the
+[releases page](https://github.com/lucacasonato/mf2-tools/releases).
+
+## vscode-mf2
+
+The `vscode-mf2` extension provides support for Message Format 2 in Visual
+Studio Code. It uses the `mf2lsp` language server to provide all the features
+mentioned above, but also includes a language grammar that enables syntax
+highlighting and bracket matching.
+
+You can install the extension from the Visual Studio Code marketplace:
+https://marketplace.visualstudio.com/items?itemName=nicolo-ribaudo.vscode-mf2.
+
+## Rust Crates
+
+This repository also contains two Rust crates for working with Message Format 2.
+
+The `mf2_parser` crate provides a parser for the Message Format 2 syntax. It can
+parse any sequence of Unicode scalar values (valid UTF-8) into an AST
+representing the Message Format 2 syntax. The parser has very strong error
+recovery, so it can parse even very broken or incomplete input (like is common
+in editors).
+
+The `mf2_printer` crate provides a pretty-printer for the Message Format 2 AST.
+It can take an AST and convert it back to a string, preserving some of the
+original formatting (like empty lines).
 
 ## Development
 
@@ -40,7 +76,8 @@ You can run tests by running:
 cargo test && deno task test
 ```
 
-To regenerate expected test output after modifying the parser / ast, run:
+To regenerate expected test output after modifying the parser / ast / printer,
+run:
 
 ```sh
 UPDATE=1 cargo test
