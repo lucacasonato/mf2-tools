@@ -1,3 +1,9 @@
 [workspace]
 members = ["parser", "printer", "lsp", "test"]
 resolver = "2"
+
+[workspace.package]
+edition = "2021"
+authors = ["Luca Casonato <hello@lcas.dev>", "Nicolò Ribaudo <hello@nicr.dev>"]
+license = "GPL-3.0-or-later"
+repository = "https://github.com/lucacasonato/mf2-tools"

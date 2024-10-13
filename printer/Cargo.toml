@@ -1,7 +1,12 @@
 [package]
 name = "mf2_printer"
+description = "Printer for MessageFormat 2"
+categories = ["ast", "mf2", "printer"]
 version = "0.1.0"
-edition = "2021"
+edition.workspace = true
+authors.workspace = true
+license.workspace = true
+repository.workspace = true
 
 [dependencies]
 mf2_parser = { path = "../parser" }

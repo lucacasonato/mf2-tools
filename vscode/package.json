@@ -1,7 +1,8 @@
 {
   "name": "vscode-mf2",
   "displayName": "MessageFormat 2",
-  "description": "",
+  "description": "MessageFormat 2 support for Visual Studio Code",
+  "license": "GPL-3.0-or-later",
   "version": "0.0.3",
   "scripts": {
     "publish": "npx @vscode/vsce publish",
