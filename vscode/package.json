@@ -20,6 +20,7 @@
     "url": "https://github.com/lucacasonato/mf2-language-server"
   },
   "publisher": "nicolo-ribaudo",
+  "logo": "./media/logo.png",
   "type": "module",
   "main": "./src/main.cjs",
   "dependencies": {
