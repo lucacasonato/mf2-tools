@@ -151,13 +151,18 @@ fn run_test(test: &CollectedTest) {
 
   if !has_fatal_diag {
     let (new_ast, new_diagnostics, new_info) = parse(&actual_formatted);
-    let new_formatted = print(&new_ast, Some(&new_info));
 
-    pretty_assertions::assert_eq!(
-      actual_formatted,
-      new_formatted,
-      "Formatting is stable"
+    let new_ast_dbg = generated_actual_ast_dbg(&new_ast);
+    let re = regex::Regex::new(r"(span|start): @[\d\.]+").unwrap();
+    let ast_before = re.replace_all(&actual_ast_dbg, "$1:@???");
+    let ast_after = re.replace_all(&new_ast_dbg, "$1:@???");
+
+    pretty_assertions::assert_str_eq!(
+      ast_before,
+      ast_after,
+      "Formatting preserved the AST"
     );
+
     pretty_assertions::assert_eq!(
       diagnostics.len(),
       new_diagnostics.len(),
@@ -170,6 +175,13 @@ fn run_test(test: &CollectedTest) {
         "Formatting preserves the diagnostics"
       );
     }
+
+    let new_formatted = print(&new_ast, Some(&new_info));
+    pretty_assertions::assert_eq!(
+      actual_formatted,
+      new_formatted,
+      "Formatting is stable"
+    );
   }
 }
 

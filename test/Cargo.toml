@@ -14,3 +14,4 @@ pretty_assertions = "1.4.0"
 mf2_parser = { path = "../parser" }
 mf2_printer = { path = "../printer" }
 unicode-width = "0.1.13"
+regex = "1.11.0"
