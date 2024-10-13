@@ -15,7 +15,8 @@ Number.integral                                 ^             0:28-0:29
 Attribute                                         ^^^^^       0:30-0:35
 Identifier                                         ^^^^       0:31-0:35
 QuotedPattern                                            ^^^^ 0:37-0:41
-Pattern                                                       0:0-0:0
+Pattern                                                       0:39-0:39
+Text                                                          0:39-0:39
 === diagnostics ===
 
 === formatted ===
@@ -82,7 +83,12 @@ ComplexMessage {
     body: QuotedPattern {
         span: @37..41,
         pattern: Pattern {
-            parts: [],
+            parts: [
+                Text {
+                    start: @39,
+                    content: "",
+                },
+            ],
         },
     },
 }

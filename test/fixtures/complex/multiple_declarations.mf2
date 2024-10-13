@@ -38,7 +38,8 @@ InputDeclaration                                                                
 VariableExpression                                                                                                    ^^^^^^^       9:7-9:14
 Variable                                                                                                               ^^^^^        9:8-9:13
 QuotedPattern                                                                                                                  ^^^^ 11:0-11:4
-Pattern                                                                                                                             0:0-0:0
+Pattern                                                                                                                             11:2-11:2
+Text                                                                                                                                11:2-11:2
 === diagnostics ===
 
 === formatted ===
@@ -157,7 +158,12 @@ ComplexMessage {
     body: QuotedPattern {
         span: @107..111,
         pattern: Pattern {
-            parts: [],
+            parts: [
+                Text {
+                    start: @109,
+                    content: "",
+                },
+            ],
         },
     },
 }
