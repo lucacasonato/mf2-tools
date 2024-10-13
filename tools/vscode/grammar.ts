@@ -119,7 +119,7 @@ export const standalone = {
     },
     expression: {
       name: "expression.mf2",
-      begin: re`\{(?!${s}?[#/])`,
+      begin: re`\{(?!${s}*[#/])`,
       patterns: [
         { include: "#variable" },
         { include: "#annotation" },
@@ -154,7 +154,7 @@ export const standalone = {
       match: re`\b\-?(0|[1-9]${digit}*)(\.${digit}+)?([eE][-+]?${digit}+)?\b`,
     },
     attribute: {
-      match: re`(@)(${identifier})(?:${s}?(=))?`,
+      match: re`(@)(${identifier})(?:${s}*(=))?`,
       captures: {
         1: { name: "punctuation.definition.attribute.mf2" },
         2: { name: "entity.other.attribute-name.mf2" },
@@ -176,7 +176,7 @@ export const standalone = {
       },
     },
     option: {
-      match: re`(${identifier})${s}?(=)`,
+      match: re`(${identifier})${s}*(=)`,
       captures: {
         1: { name: "variable.parameter.function-call.mf2" },
         2: { name: "punctuation.separator.key-value.mf2" },
@@ -189,7 +189,7 @@ export const standalone = {
     markup: {
       patterns: [
         {
-          begin: re`(\{${s}?#)(${identifier})`,
+          begin: re`(\{${s}*#)(${identifier})`,
           beginCaptures: {
             1: { name: "punctuation.definition.markup.open.mf2" },
             2: { name: "entity.name.tag.mf2" },
@@ -206,7 +206,7 @@ export const standalone = {
           ],
         },
         {
-          begin: re`(\{${s}?/)(${identifier})`,
+          begin: re`(\{${s}*/)(${identifier})`,
           beginCaptures: {
             1: { name: "punctuation.definition.markup.open.mf2" },
             2: { name: "entity.name.tag.mf2" },
@@ -231,7 +231,7 @@ export const standalone = {
       ],
     },
     "input-declaration": {
-      begin: re`(\.input)${s}?({)`,
+      begin: re`(\.input)${s}*({)`,
       beginCaptures: {
         1: { name: "keyword.declaration.input.mf2" },
         2: { name: "punctuation.definition.declaration.open.mf2" },
@@ -248,7 +248,7 @@ export const standalone = {
       ],
     },
     "local-declaration": {
-      begin: re`(\.local)${s}(\$${name})${s}?=${s}?({)`,
+      begin: re`(\.local)${s}+(\$${name})${s}*=${s}*({)`,
       beginCaptures: {
         1: { name: "keyword.declaration.local.mf2" },
         2: { name: "variable.other.mf2" },
@@ -350,7 +350,7 @@ export const js = {
     },
     ...root({
       contentName: "meta.embedded.block.mf2",
-      begin: re`(/(\*)${s}?mf2${s}?(\*)/)${s}?((${"`"}))`,
+      begin: re`(/(\*)${s}*mf2${s}*(\*)/)${s}*((${"`"}))`,
       beginCaptures: {
         "1": {
           name: "comment.block.js",
