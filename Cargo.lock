@@ -170,14 +170,14 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "78ca9ab1a0babb1e7d5695e3530886289c18cf2f87ec19a575a0abdce112e3a3"
 
 [[package]]
-name = "mf2-parser"
+name = "mf2_parser"
 version = "0.1.0"
 
 [[package]]
-name = "mf2-printer"
+name = "mf2_printer"
 version = "0.1.0"
 dependencies = [
- "mf2-parser",
+ "mf2_parser",
 ]
 
 [[package]]
@@ -187,8 +187,8 @@ dependencies = [
  "anyhow",
  "lsp-server",
  "lsp-types",
- "mf2-parser",
- "mf2-printer",
+ "mf2_parser",
+ "mf2_printer",
  "serde",
  "serde-wasm-bindgen",
  "serde_json",
@@ -404,8 +404,8 @@ name = "test"
 version = "0.0.0"
 dependencies = [
  "file_test_runner",
- "mf2-parser",
- "mf2-printer",
+ "mf2_parser",
+ "mf2_printer",
  "pretty_assertions",
  "unicode-width",
 ]

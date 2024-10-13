@@ -1,4 +1,4 @@
 [package]
-name = "mf2-parser"
+name = "mf2_parser"
 version = "0.1.0"
 edition = "2021"

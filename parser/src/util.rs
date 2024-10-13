@@ -166,12 +166,32 @@ impl<'text> SourceTextIterator<'text> {
   }
 }
 
+/// A view onto the source text, with additional information about the source
+/// text that was derived during parsing.
+///
+/// This struct provides methods to convert between opaque [Location] values,
+/// UTF-8 line and column indices, and UTF-16 line and column indices. It also
+/// provides methods to calculate the length of a span in UTF-8 bytes or UTF-16
+/// code units.
 pub struct SourceTextInfo<'text> {
   text: &'text str,
   utf8_line_starts: Vec<u32>,
 }
 
+impl Spanned for SourceTextInfo<'_> {
+  fn span(&self) -> Span {
+    Span {
+      start: Location(0),
+      end: Location(self.text.len() as u32),
+    }
+  }
+}
+
 impl SourceTextInfo<'_> {
+  /// Returns a UTF-8 line and column index pair given a [Location].
+  ///
+  /// It is undefined behavior to pass a location that is out of bounds for the
+  /// source text.
   pub fn utf8_line_col(&self, loc: Location) -> LineColUtf8 {
     let result = self.utf8_line_starts.binary_search_by(|&x| x.cmp(&loc.0));
     match result {
@@ -190,6 +210,10 @@ impl SourceTextInfo<'_> {
     }
   }
 
+  /// Returns a UTF-16 line and column index pair given a [Location].
+  ///
+  /// It is undefined behavior to pass a location that is out of bounds for the
+  /// source text.
   pub fn utf16_line_col(&self, loc: Location) -> LineColUtf16 {
     let result = self.utf8_line_starts.binary_search_by(|&x| x.cmp(&loc.0));
     match result {
@@ -219,10 +243,8 @@ impl SourceTextInfo<'_> {
 
   /// Returns the length of the given span in UTF-16 code units.
   pub fn utf16_len(&self, span: Span) -> u32 {
-    let line_text = &self.text[span.start.0 as usize..span.end.0 as usize];
-    line_text
-      .chars()
-      .fold(0, |acc, c| acc + c.len_utf16() as u32)
+    let text = &self.text[span.start.0 as usize..span.end.0 as usize];
+    text.chars().fold(0, |acc, c| acc + c.len_utf16() as u32)
   }
 
   /// Returns the location of the given UTF-8 line and column index pair.
@@ -298,6 +320,10 @@ impl SourceTextInfo<'_> {
   }
 }
 
+/// A location is an opaque value that is used to represent a position in the
+/// source text. It can be mapped to UTF-8 byte indices, UTF-8 line and column,
+/// or UTF-16 line and column indices in the source text using the
+/// [SourceTextInfo] struct.
 #[derive(Clone, Copy, PartialEq, Eq, Ord, PartialOrd)]
 pub struct Location(u32);
 
@@ -307,6 +333,7 @@ impl Location {
     Location(byte)
   }
 
+  #[doc(hidden)]
   pub fn inner_byte_index_for_test(&self) -> u32 {
     self.0
   }
@@ -346,6 +373,10 @@ impl Add<LengthShort> for Location {
   }
 }
 
+/// A span is a pair of [Location]s that represent a range in the source text.
+///
+/// The start location is inclusive, and the end location is exclusive. A span
+/// with the same start and end location is considered empty.
 #[derive(Clone, Copy)]
 pub struct Span {
   pub start: Location,
@@ -353,21 +384,32 @@ pub struct Span {
 }
 
 impl Span {
+  /// Creates a new span from a range of [Location]s. The range must be valid, i.e.
+  /// the start location must be less than or equal to the end location.
+  ///
+  /// ### Panics
+  ///
+  /// In debug builds, panics if the range is invalid.
   pub fn new(range: Range<Location>) -> Self {
+    debug_assert!(range.start <= range.end);
     Span {
       start: range.start,
       end: range.end,
     }
   }
 
+  /// Whether the span contains the given [Location].
   pub fn contains_loc(&self, loc: Location) -> bool {
     self.start.0 <= loc.0 && self.end.0 > loc.0
   }
 
+  /// Whether the span fully contains the given span. This includes the case
+  /// where the spans are equal.
   pub fn contains(&self, other: &Span) -> bool {
     self.start.0 <= other.start.0 && self.end.0 >= other.end.0
   }
 
+  /// Whether the span is empty.
   pub fn is_empty(&self) -> bool {
     self.start == self.end
   }
@@ -407,8 +449,8 @@ impl LengthShort {
   }
 }
 
-/// A line and column index pair, 0-based, for the UTF-8 encoding of the source
-/// text.
+/// A line and column index pair, both 0-based, for the UTF-8 encoding of the
+/// source text.
 #[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
 pub struct LineColUtf8 {
   pub line: u32,
@@ -421,8 +463,8 @@ impl Debug for LineColUtf8 {
   }
 }
 
-/// A line and column index pair, 0-based, for the UTF-16 encoding of the source
-/// text.
+/// A line and column index pair, both 0-based, for the UTF-16 encoding of the
+/// source text.
 #[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
 pub struct LineColUtf16 {
   pub line: u32,

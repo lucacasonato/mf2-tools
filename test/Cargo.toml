@@ -11,6 +11,6 @@ harness = false
 [dev-dependencies]
 file_test_runner = "0.7.2"
 pretty_assertions = "1.4.0"
-mf2-parser = { path = "../parser" }
-mf2-printer = { path = "../printer" }
+mf2_parser = { path = "../parser" }
+mf2_printer = { path = "../printer" }
 unicode-width = "0.1.13"
