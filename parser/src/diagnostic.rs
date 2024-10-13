@@ -71,22 +71,22 @@ diagnostics! {
     NumberMissingIntegralPart { number: Number<'text> } => {
       message: ("Number is missing an integral part."),
       span: number.span(),
-      fatal: true,
+      fatal: false,
     },
     NumberLeadingZeroIntegralPart { number: Number<'text> } => {
       message: ("Number has leading zero in integral part, which is not allowed."),
       span: number.span(),
-      fatal: true,
+      fatal: false,
     },
     NumberMissingFractionalPart { number: Number<'text> } => {
       message: ("Number is missing a fractional part, which it must have because it has a decimal point."),
       span: number.span(),
-      fatal: true,
+      fatal: false,
     },
     NumberMissingExponentPart { number: Number<'text> } => {
       message: ("Number is missing an exponent part, which it must have because it is written in scientific notation."),
       span: number.span(),
-      fatal: true,
+      fatal: false,
     },
     OptionMissingKey { span: Span } => {
       message: ("Found equals sign followed by value, but equals sign is not preceeded by a key. Did you forget to add a key to make this an option?"),

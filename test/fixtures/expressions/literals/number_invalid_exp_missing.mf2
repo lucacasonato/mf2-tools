@@ -30,7 +30,9 @@ Number is missing an exponent part, which it must have because it is written in 
   a{ 1e }↵{ 1e+ }↵{ 1e- }
                     ^^^
 === formatted ===
-(cannot format due to fatal errors)
+a{ 1e }
+{ 1e+ }
+{ 1e- }
 === ast ===
 Pattern {
     parts: [
