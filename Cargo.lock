@@ -175,7 +175,7 @@ version = "0.1.1"
 
 [[package]]
 name = "mf2_printer"
-version = "0.1.1"
+version = "0.1.2"
 dependencies = [
  "mf2_parser",
 ]

@@ -26,7 +26,7 @@ if !diagnostics.is_empty() {
   panic!("Failed to parse message: {:?}", diagnostics);
 }
 
-let pretty_printed = print(&ast);
+let pretty_printed = print(&ast, None);
 println!("Pretty-printed: {}", pretty_printed);
 ```
 
