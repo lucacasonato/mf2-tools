@@ -617,26 +617,29 @@ Deno.test("formatting", async (t) => {
     },
   });
 
-  await t.step("does not format code with unrecoverable syntax errors", async () => {
-    const uri = "file:///src/test-4.mf2";
+  await t.step(
+    "does not format code with unrecoverable syntax errors",
+    async () => {
+      const uri = "file:///src/test-4.mf2";
 
-    await lsp.notify(
-      "textDocument/didOpen",
-      {
-        textDocument: {
-          uri,
-          languageId: "mf2",
-          version: 1,
-          text: ".hello world {    .4 }}",
+      await lsp.notify(
+        "textDocument/didOpen",
+        {
+          textDocument: {
+            uri,
+            languageId: "mf2",
+            version: 1,
+            text: ".hello world {    .4 }}",
+          },
         },
-      },
-    );
+      );
 
-    const res = await lsp.request("textDocument/formatting", {
-      textDocument: { uri },
-      options: { tabSize: 2, insertSpaces: true },
-    });
+      const res = await lsp.request("textDocument/formatting", {
+        textDocument: { uri },
+        options: { tabSize: 2, insertSpaces: true },
+      });
 
-    assertEquals(res, null);
-  });
+      assertEquals(res, null);
+    },
+  );
 });
