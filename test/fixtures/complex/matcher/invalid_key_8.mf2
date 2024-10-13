@@ -18,6 +18,8 @@ Found an invalid matcher key (not a valid literal). Did you mean to quote the ke
 Matcher key is missing a leading space. (at @11..16)
   .match $a↵*+yej% {{Hi}}
              ^^^^^
+=== formatted ===
+(cannot format due to fatal errors)
 === ast ===
 ComplexMessage {
     span: @0..23,

@@ -12,6 +12,10 @@ Pattern                                         0:25-0:25
 Text                                            0:25-0:25
 === diagnostics ===
 
+=== formatted ===
+.local $var = { |hello| }
+{{}}
+
 === ast ===
 ComplexMessage {
     span: @0..27,

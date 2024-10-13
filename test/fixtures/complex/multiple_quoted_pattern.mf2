@@ -9,6 +9,8 @@ Text                  ^        0:2-0:3
 Message has multiple bodies, but only one is allowed. (at @5..10)
   {{a}}{{b}}
        ^^^^^
+=== formatted ===
+(cannot format due to fatal errors)
 === ast ===
 ComplexMessage {
     span: @0..10,

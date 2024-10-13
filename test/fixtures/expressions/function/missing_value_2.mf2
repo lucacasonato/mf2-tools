@@ -19,6 +19,8 @@ Found an identifier followed by an equals sign, but not followed by a value. Did
 Found an identifier followed by an equals sign, but not followed by a value. Did you forget to add a value to make this an option? (at @16..17)
   {$var :number a b}
                   ^
+=== formatted ===
+(cannot format due to fatal errors)
 === ast ===
 Pattern {
     parts: [

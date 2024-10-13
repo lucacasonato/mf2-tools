@@ -16,6 +16,8 @@ Text                                     1:6-1:6
 Matcher selector is missing a leading space. (at @9..11)
   .match $a$b↵a * {{}}
            ^^
+=== formatted ===
+(cannot format due to fatal errors)
 === ast ===
 ComplexMessage {
     span: @0..20,

@@ -11,6 +11,8 @@ Quoted string is missing the closing quote. (at @1..9)
 Placeholder is missing the closing brace. (at @0..9)
   {|abc def
   ^^^^^^^^^
+=== formatted ===
+(cannot format due to fatal errors)
 === ast ===
 Pattern {
     parts: [

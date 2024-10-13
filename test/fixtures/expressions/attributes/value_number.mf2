@@ -11,6 +11,8 @@ Number                        ^  0:10-0:11
 Number.integral               ^  0:10-0:11
 === diagnostics ===
 
+=== formatted ===
+{ 1 @hello=1 }
 === ast ===
 Pattern {
     parts: [

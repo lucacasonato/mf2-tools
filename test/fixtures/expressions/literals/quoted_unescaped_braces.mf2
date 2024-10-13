@@ -7,6 +7,8 @@ Quoted               ^^^^^^^  0:1-0:8
 Text                  ^^^^^   0:2-0:7
 === diagnostics ===
 
+=== formatted ===
+{ |a}b{c| }
 === ast ===
 Pattern {
     parts: [

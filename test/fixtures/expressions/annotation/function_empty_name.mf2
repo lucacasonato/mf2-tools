@@ -9,6 +9,8 @@ Identifier              0:2-0:2
 Function is missing an identifier. (at @1..2)
   {:}
    ^
+=== formatted ===
+(cannot format due to fatal errors)
 === ast ===
 Pattern {
     parts: [

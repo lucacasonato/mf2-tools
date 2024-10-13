@@ -7,6 +7,8 @@ Text                ^^^^^^ 0:0-0:6
 The closing brace character ('}') is invalid inside of messages, and must be escaped as '\}'. (at @0..1)
   }Hello
   ^
+=== formatted ===
+(cannot format due to fatal errors)
 === ast ===
 Pattern {
     parts: [

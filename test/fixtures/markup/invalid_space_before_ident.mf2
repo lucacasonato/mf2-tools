@@ -8,6 +8,8 @@ Identifier             ^^^  0:3-0:6
 Identifier of the markup tag is preceeded by spaces, which is not allowed. (at @2..3)
   {# foo}
     ^
+=== formatted ===
+(cannot format due to fatal errors)
 === ast ===
 Pattern {
     parts: [

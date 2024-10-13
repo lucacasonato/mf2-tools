@@ -19,6 +19,8 @@ Found an identifier followed by an equals sign, but not followed by a value. Did
 Identifiers with a colon before the name are namespaced identifiers, but this identifier is missing a namespace before the colon. (at @16..18)
   {$var :number a :b=c}
                   ^^
+=== formatted ===
+(cannot format due to fatal errors)
 === ast ===
 Pattern {
     parts: [

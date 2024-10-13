@@ -11,6 +11,8 @@ Identifier             ^^^  0:3-0:6
 Attribute is missing a leading space. (at @2..6)
   {1@foo}
     ^^^^
+=== formatted ===
+(cannot format due to fatal errors)
 === ast ===
 Pattern {
     parts: [

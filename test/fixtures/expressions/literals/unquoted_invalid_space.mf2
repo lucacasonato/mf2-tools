@@ -9,6 +9,8 @@ Text                  ^^^      0:2-0:5
 Placeholder expression contains invalid content. (at @6..9)
   a{abc def}
         ^^^
+=== formatted ===
+(cannot format due to fatal errors)
 === ast ===
 Pattern {
     parts: [

@@ -20,6 +20,8 @@ Text                                               1:10-1:10
 Using an unquoted pattern as the body is invalid, because the message contains declarations. Did you mean to quote the pattern?. (at @17..25)
   .input {$a :b}↵  abc {$a}   ↵↵
                    ^^^^^^^^
+=== formatted ===
+(cannot format due to fatal errors)
 === ast ===
 ComplexMessage {
     span: @0..25,

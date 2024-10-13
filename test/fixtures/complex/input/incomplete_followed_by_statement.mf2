@@ -16,6 +16,8 @@ Text                                             ^^^^^   2:2-2:7
 Input declaration is missing an expression. (at @0..6)
   .input↵.local $bar = {123}↵{{hello}}
   ^^^^^^
+=== formatted ===
+(cannot format due to fatal errors)
 === ast ===
 ComplexMessage {
     span: @0..36,

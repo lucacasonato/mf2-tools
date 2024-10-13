@@ -16,6 +16,8 @@ Identifiers with a colon before the name are namespaced identifiers, but this id
 Found an identifier followed by an equals sign, but not followed by a value. Did you forget to add a value to make this an option? (at @9..11)
   {$var :a :b}
            ^^
+=== formatted ===
+(cannot format due to fatal errors)
 === ast ===
 Pattern {
     parts: [

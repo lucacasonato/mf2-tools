@@ -9,6 +9,8 @@ Function                          ^^^^^^^  0:14-0:21
 Identifier                         ^^^^^^  0:15-0:21
 === diagnostics ===
 
+=== formatted ===
+Count: { $var :number }
 === ast ===
 Pattern {
     parts: [

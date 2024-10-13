@@ -9,6 +9,8 @@ Number.integral      ^             0:1-0:2
 Placeholder expression contains invalid content. (at @3..13)
   {1 a \| thing}
      ^^^^^^^^^^
+=== formatted ===
+(cannot format due to fatal errors)
 === ast ===
 Pattern {
     parts: [

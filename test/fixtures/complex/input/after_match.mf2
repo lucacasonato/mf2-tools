@@ -25,6 +25,8 @@ Identifier                                                       ^  2:12-2:13
 Declarations are not valid after the message body. Did you mean to put the declaration before the body? (at @33..47)
   .local $a = {1}↵.match $a * {{}}↵.input {$b :a}
                                    ^^^^^^^^^^^^^^
+=== formatted ===
+(cannot format due to fatal errors)
 === ast ===
 ComplexMessage {
     span: @0..47,

@@ -19,6 +19,11 @@ Pattern                                                               2:2-2:2
 Text                                                                  2:2-2:2
 === diagnostics ===
 
+=== formatted ===
+.input { $var :number }
+.input { $var2 :number }
+{{}}
+
 === ast ===
 ComplexMessage {
     span: @0..49,

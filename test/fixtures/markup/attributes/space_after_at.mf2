@@ -17,6 +17,8 @@ Attribute is missing a key after the '@' sign. (at @5..6)
 Markup tag has an option after an attribute, which is not allowed. All options must come before any attribute. (at @9..15)
   {#el @   attr=1}
            ^^^^^^
+=== formatted ===
+(cannot format due to fatal errors)
 === ast ===
 Pattern {
     parts: [

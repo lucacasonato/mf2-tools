@@ -20,6 +20,9 @@ Number.integral                                  ^     1:12-1:13
 Number.fractional                                  ^   1:14-1:15
 === diagnostics ===
 
+=== formatted ===
+{#el opt=1.0 }
+{#el opt=-1.0 }
 === ast ===
 Pattern {
     parts: [

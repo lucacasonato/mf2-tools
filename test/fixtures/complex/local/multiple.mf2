@@ -19,6 +19,11 @@ Pattern                                                                   2:2-2:
 Text                                                                      2:2-2:2
 === diagnostics ===
 
+=== formatted ===
+.local $var = { |hello| }
+.local $var2 = { |hello| }
+{{}}
+
 === ast ===
 ComplexMessage {
     span: @0..53,

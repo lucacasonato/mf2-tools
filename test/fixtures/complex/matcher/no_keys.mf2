@@ -13,6 +13,8 @@ Text                            ^^^^^   1:2-1:7
 Matcher variant is missing key(s), but at least one is required. (at @10..19)
   .match $a↵{{hello}}
             ^^^^^^^^^
+=== formatted ===
+(cannot format due to fatal errors)
 === ast ===
 ComplexMessage {
     span: @0..19,

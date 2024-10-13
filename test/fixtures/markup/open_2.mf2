@@ -6,6 +6,8 @@ Markup              ^^^^^^^^ 0:0-0:8
 Identifier             ^^^^  0:3-0:7
 === diagnostics ===
 
+=== formatted ===
+{#open }
 === ast ===
 Pattern {
     parts: [

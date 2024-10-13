@@ -13,6 +13,8 @@ Text                           ^^^^^   1:4-1:9
 Matcher is missing a selector, but at least one is required. (at @0..6)
   .match↵* {{hello}}
   ^^^^^^
+=== formatted ===
+(cannot format due to fatal errors)
 === ast ===
 ComplexMessage {
     span: @0..18,

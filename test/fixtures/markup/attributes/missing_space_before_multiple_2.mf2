@@ -13,6 +13,8 @@ Identifier                            ^^^^^   0:18-0:23
 Attribute is missing a leading space. (at @17..23)
   {#el @attr1 = val@attr2 }
                    ^^^^^^
+=== formatted ===
+(cannot format due to fatal errors)
 === ast ===
 Pattern {
     parts: [

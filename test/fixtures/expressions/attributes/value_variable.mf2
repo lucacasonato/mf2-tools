@@ -12,6 +12,8 @@ Text                          ^^^^^^  0:10-0:16
 Attribute value can not be a variable, but must be a literal value. (at @10..16)
   {1 @hello=$world}
             ^^^^^^
+=== formatted ===
+(cannot format due to fatal errors)
 === ast ===
 Pattern {
     parts: [

@@ -12,6 +12,8 @@ Identifier                   ^^^^^        0:9-0:14
 Text                               ^^^^^  0:15-0:20
 === diagnostics ===
 
+=== formatted ===
+{ 1 @foo @hello=world }
 === ast ===
 Pattern {
     parts: [

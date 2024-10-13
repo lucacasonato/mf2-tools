@@ -10,6 +10,8 @@ Number                                ^  0:18-0:19
 Number.integral                       ^  0:18-0:19
 === diagnostics ===
 
+=== formatted ===
+{#foo name:spaced=1 }
 === ast ===
 Pattern {
     parts: [

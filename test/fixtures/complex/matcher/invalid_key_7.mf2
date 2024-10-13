@@ -23,6 +23,8 @@ Found an invalid matcher key (not a valid literal). Did you mean to quote the ke
 Matcher variant is missing a body. (at @22..27)
   .match $a↵* {{Hello}}↵+yej%
                         ^^^^^
+=== formatted ===
+(cannot format due to fatal errors)
 === ast ===
 ComplexMessage {
     span: @0..27,

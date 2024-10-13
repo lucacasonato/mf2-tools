@@ -23,6 +23,13 @@ Pattern                                                      ^^^^^^^^^    5:2-5:
 Text                                                         ^^^^^^^^^    5:2-5:11
 === diagnostics ===
 
+=== formatted ===
+.local $foo = { 1 }
+
+.local $bar = { 2 }
+
+{{$foo $bar}}
+
 === ast ===
 ComplexMessage {
     span: @0..52,

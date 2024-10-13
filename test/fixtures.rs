@@ -20,6 +20,7 @@ use mf2_parser::Span;
 use mf2_parser::Spanned;
 use mf2_parser::Visit;
 use mf2_parser::Visitable;
+use mf2_printer::print;
 use unicode_width::UnicodeWidthStr;
 
 fn main() {
@@ -43,7 +44,10 @@ fn run_test(test: &CollectedTest) {
 
   let spans_marker = "\n=== spans ===\n";
   let diagnostics_marker = "\n=== diagnostics ===\n";
+  let formatted_marker = "\n=== formatted ===\n";
   let ast_marker = "\n=== ast ===\n";
+
+  let cannot_format = "(cannot format due to fatal errors)".to_string();
 
   let (message, rest_str) = file_text
     .split_once(spans_marker)
@@ -53,6 +57,9 @@ fn run_test(test: &CollectedTest) {
     .unwrap_or((rest_str, ""));
   let (expected_diagnostics, rest_str) =
     rest_str.split_once(ast_marker).unwrap_or((rest_str, ""));
+  let (expected_formatted, rest_str) = rest_str
+    .split_once(formatted_marker)
+    .unwrap_or((rest_str, ""));
   let expected_ast_dbg = rest_str;
 
   if test
@@ -79,29 +86,56 @@ fn run_test(test: &CollectedTest) {
     .collect::<String>();
 
   let (actual_ast, diagnostics, info) = parse(message);
+  let has_fatal_diag = diagnostics.iter().any(|d| d.fatal());
 
   let actual_ast_dbg = generated_actual_ast_dbg(&actual_ast);
   let actual_spans =
     generate_actual_spans(&actual_ast, message, &normalized_message, &info);
   let actual_diags =
     generate_actual_diagnostics(&diagnostics, message, &normalized_message);
+  let actual_formatted = if has_fatal_diag {
+    cannot_format
+  } else {
+    print(&actual_ast, Some(&info))
+  };
 
   let mut need_update = std::env::var("UPDATE").is_ok();
   if !need_update {
     if expected_diagnostics.is_empty() {
       need_update = true;
     } else {
-      pretty_assertions::assert_eq!(actual_diags, expected_diagnostics);
+      pretty_assertions::assert_eq!(
+        actual_diags,
+        expected_diagnostics,
+        "Diagnostics match expected"
+      );
     }
     if expected_ast_dbg.is_empty() {
       need_update = true;
     } else {
-      pretty_assertions::assert_eq!(actual_ast_dbg, expected_ast_dbg);
+      pretty_assertions::assert_eq!(
+        actual_ast_dbg,
+        expected_ast_dbg,
+        "AST matches expected"
+      );
     }
     if expected_spans.is_empty() {
       need_update = true;
     } else {
-      pretty_assertions::assert_eq!(actual_spans, expected_spans);
+      pretty_assertions::assert_eq!(
+        actual_spans,
+        expected_spans,
+        "Spans match expected"
+      );
+    }
+    if expected_formatted.is_empty() {
+      need_update = true;
+    } else {
+      pretty_assertions::assert_eq!(
+        actual_formatted,
+        expected_formatted,
+        "Formatted code matches expected"
+      );
     }
   }
 
@@ -109,10 +143,21 @@ fn run_test(test: &CollectedTest) {
     std::fs::write(
       &test.path,
       format!(
-        "{message}{spans_marker}{actual_spans}{diagnostics_marker}{actual_diags}{ast_marker}{actual_ast_dbg}"
+        "{message}{spans_marker}{actual_spans}{diagnostics_marker}{actual_diags}{formatted_marker}{actual_formatted}{ast_marker}{actual_ast_dbg}"
       ),
     )
     .unwrap();
+  }
+
+  if !has_fatal_diag {
+    let (new_ast, _, new_info) = parse(&actual_formatted);
+    let new_formatted = print(&new_ast, Some(&new_info));
+
+    pretty_assertions::assert_eq!(
+      actual_formatted,
+      new_formatted,
+      "Formatting is stable"
+    );
   }
 }
 

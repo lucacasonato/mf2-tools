@@ -21,6 +21,12 @@ Escape                                                                       ^^ 
 Escape                                                                         ^^ 4:3-4:5
 === diagnostics ===
 
+=== formatted ===
+\{\|\}\\
+Hello,\|World!
+Hello,\| World!
+Hello, \|World!
+a\|\|
 === ast ===
 Pattern {
     parts: [

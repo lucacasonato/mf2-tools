@@ -19,6 +19,8 @@ Namespaced identifier is missing a name, which is required after the colon follo
 Found an identifier followed by an equals sign, but not followed by a value. Did you forget to add a value to make this an option? (at @14..16)
   {$var :number a: b=c}
                 ^^
+=== formatted ===
+(cannot format due to fatal errors)
 === ast ===
 Pattern {
     parts: [

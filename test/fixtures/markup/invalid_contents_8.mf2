@@ -13,6 +13,8 @@ Markup tag contains invalid content. (at @6..10)
 Attribute is missing a leading space. (at @10..16)
   {#foo !abc@hello /}
             ^^^^^^
+=== formatted ===
+(cannot format due to fatal errors)
 === ast ===
 Pattern {
     parts: [

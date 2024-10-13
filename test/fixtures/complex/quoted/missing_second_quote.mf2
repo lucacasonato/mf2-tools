@@ -12,6 +12,8 @@ The closing brace character ('}') is invalid inside of messages, and must be esc
 Quoted pattern is missing the closing braces ('}'). (at @0..16)
   {{Hello, World!}
   ^^^^^^^^^^^^^^^^
+=== formatted ===
+(cannot format due to fatal errors)
 === ast ===
 ComplexMessage {
     span: @0..16,

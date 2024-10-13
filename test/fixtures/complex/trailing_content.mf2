@@ -9,6 +9,8 @@ Text                         0:2-0:2
 Message has additional invalid content after the body. (at @5..8)
   {{}} asd
        ^^^
+=== formatted ===
+(cannot format due to fatal errors)
 === ast ===
 ComplexMessage {
     span: @0..8,

@@ -14,6 +14,8 @@ Text                                                  1:2-1:2
 Found a statement that is invalid because the keyword 'foo' is keyword. (at @0..5)
   .foo .local $hello = {world}↵{{}}
   ^^^^^
+=== formatted ===
+(cannot format due to fatal errors)
 === ast ===
 ComplexMessage {
     span: @0..33,

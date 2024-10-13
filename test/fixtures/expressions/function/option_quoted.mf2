@@ -12,6 +12,8 @@ Quoted                              ^^^^^  0:16-0:21
 Text                                 ^^^   0:17-0:20
 === diagnostics ===
 
+=== formatted ===
+{ $var :number a=|foo| }
 === ast ===
 Pattern {
     parts: [

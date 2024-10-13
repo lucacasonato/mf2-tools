@@ -9,6 +9,8 @@ Text                  ^^^^^^^^^^^^^ 0:2-0:15
 Quoted pattern is missing the closing braces ('}'). (at @0..15)
   {{Hello, World!
   ^^^^^^^^^^^^^^^
+=== formatted ===
+(cannot format due to fatal errors)
 === ast ===
 ComplexMessage {
     span: @0..15,

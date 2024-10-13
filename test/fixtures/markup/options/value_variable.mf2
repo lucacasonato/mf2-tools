@@ -9,6 +9,8 @@ Identifier               ^^^          0:5-0:8
 Variable                       ^^^^   0:11-0:15
 === diagnostics ===
 
+=== formatted ===
+{#el opt=$var }
 === ast ===
 Pattern {
     parts: [

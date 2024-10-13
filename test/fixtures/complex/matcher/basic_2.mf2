@@ -23,6 +23,12 @@ Pattern                                              ^   2:8-2:9
 Text                                                 ^   2:8-2:9
 === diagnostics ===
 
+=== formatted ===
+.match
+$a  $b
+e   1  {{f}}
+|g| *  {{h}}
+
 === ast ===
 ComplexMessage {
     span: @0..36,

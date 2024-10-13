@@ -11,6 +11,9 @@ Text                         ^^^    0:9-0:12
 Text                              ^ 0:14-1:0
 === diagnostics ===
 
+=== formatted ===
+{#el opt=val /}
+
 === ast ===
 Pattern {
     parts: [

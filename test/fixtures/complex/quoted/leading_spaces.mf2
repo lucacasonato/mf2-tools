@@ -7,6 +7,9 @@ Pattern                  ^^^^^^^^^^^^^^^   0:5-0:20
 Text                     ^^^^^^^^^^^^^^^   0:5-0:20
 === diagnostics ===
 
+=== formatted ===
+{{ Hello, World! }}
+
 === ast ===
 ComplexMessage {
     span: @3..22,

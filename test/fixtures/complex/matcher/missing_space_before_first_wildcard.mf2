@@ -13,6 +13,8 @@ Text                               0:12-0:12
 Matcher key is missing a leading space. (at @9..10)
   .match $a*{{}}
            ^
+=== formatted ===
+(cannot format due to fatal errors)
 === ast ===
 ComplexMessage {
     span: @0..14,

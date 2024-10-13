@@ -6,6 +6,8 @@ VariableExpression  ^^^^^^^ 0:0-0:7
 Variable              ^^^^  0:2-0:6
 === diagnostics ===
 
+=== formatted ===
+{ $var }
 === ast ===
 Pattern {
     parts: [

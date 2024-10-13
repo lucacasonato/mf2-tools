@@ -10,6 +10,8 @@ Identifier              ^  0:4-0:5
 Annotation is missing a leading space. (at @3..5)
   {$a:b}
      ^^
+=== formatted ===
+(cannot format due to fatal errors)
 === ast ===
 Pattern {
     parts: [

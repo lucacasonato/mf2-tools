@@ -9,6 +9,8 @@ Text                       ^^^ 0:7-0:10
 The character 't' can not be escaped as escape sequences can only escape '}', '{', '|', and '\'. (at @6..7)
   hello\tbar
         ^
+=== formatted ===
+(cannot format due to fatal errors)
 === ast ===
 Pattern {
     parts: [

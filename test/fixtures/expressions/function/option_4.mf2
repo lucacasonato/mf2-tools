@@ -11,6 +11,8 @@ Identifier                        ^      0:14-0:15
 Text                                  ^  0:18-0:19
 === diagnostics ===
 
+=== formatted ===
+{ $var :number a=b }
 === ast ===
 Pattern {
     parts: [
