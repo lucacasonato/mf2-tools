@@ -176,12 +176,12 @@ diagnostics! {
     MissingIdentifierName { identifier: Identifier<'text> } => {
       message: ("Namespaced identifier is missing a name, which is required after the colon following the namespace."),
       span: identifier.span(),
-      fatal: true,
+      fatal: false,
     },
     MissingIdentifierNamespace { identifier: Identifier<'text> } => {
       message: ("Identifiers with a colon before the name are namespaced identifiers, but this identifier is missing a namespace before the colon."),
       span: identifier.span(),
-      fatal: true,
+      fatal: false,
     },
     EscapeInvalidCharacter { char_loc: Location, char: char } => {
       message: ( "The character '{char}' can not be escaped as escape sequences can only escape '}}', '{{', '|', and '\\'."),

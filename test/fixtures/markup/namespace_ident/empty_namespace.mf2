@@ -9,7 +9,7 @@ Namespaced identifier is missing a name, which is required after the colon follo
   {#foo: }
     ^^^^
 === formatted ===
-(cannot format due to fatal errors)
+{#foo: }
 === ast ===
 Pattern {
     parts: [
