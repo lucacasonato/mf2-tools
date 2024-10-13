@@ -8,7 +8,7 @@ Quoted pattern is not allowed inside of a pattern. (at @6..8)
   Hello {{World}}
         ^^
 === formatted ===
-(cannot format due to fatal errors)
+Hello {{World}}
 === ast ===
 Pattern {
     parts: [

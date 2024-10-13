@@ -71,27 +71,27 @@ diagnostics! {
     NumberMissingIntegralPart { number: Number<'text> } => {
       message: ("Number is missing an integral part."),
       span: number.span(),
-      fatal: true,
+      fatal: false,
     },
     NumberLeadingZeroIntegralPart { number: Number<'text> } => {
       message: ("Number has leading zero in integral part, which is not allowed."),
       span: number.span(),
-      fatal: true,
+      fatal: false,
     },
     NumberMissingFractionalPart { number: Number<'text> } => {
       message: ("Number is missing a fractional part, which it must have because it has a decimal point."),
       span: number.span(),
-      fatal: true,
+      fatal: false,
     },
     NumberMissingExponentPart { number: Number<'text> } => {
       message: ("Number is missing an exponent part, which it must have because it is written in scientific notation."),
       span: number.span(),
-      fatal: true,
+      fatal: false,
     },
     OptionMissingKey { span: Span } => {
       message: ("Found equals sign followed by value, but equals sign is not preceeded by a key. Did you forget to add a key to make this an option?"),
       span: *span,
-      fatal: true,
+      fatal: false,
     },
     OptionMissingValue { span: Span } => {
       message: ("Found an identifier followed by an equals sign, but not followed by a value. Did you forget to add a value to make this an option?"),
@@ -106,7 +106,7 @@ diagnostics! {
     MarkupMissingIdentifier { span: Span } => {
       message: ("Markup tag is missing an identifier."),
       span: *span,
-      fatal: true,
+      fatal: false,
     },
     MarkupInvalidSpaceBeforeIdentifier { id: Identifier<'text>, start_loc: Location } => {
       message: ("Identifier of the markup tag is preceeded by spaces, which is not allowed."),
@@ -131,12 +131,12 @@ diagnostics! {
     MarkupOptionAfterAttribute { previous_attribute: Attribute<'text>, option: FnOrMarkupOption<'text> } => {
       message: ("Markup tag has an option after an attribute, which is not allowed. All options must come before any attribute."),
       span: option.span(),
-      fatal: true,
+      fatal: false,
     },
     FunctionMissingIdentifier { span: Span } => {
       message: ("Function is missing an identifier."),
       span: *span,
-      fatal: true,
+      fatal: false,
     },
     UnterminatedQuoted { span: Span } => {
       message: ("Quoted string is missing the closing quote."),
@@ -151,12 +151,12 @@ diagnostics! {
     PlaceholderMissingBody { span: Span } => {
       message: ("Placeholder is empty, but should have at least a variable reference, literal, or annotation."),
       span: *span,
-      fatal: true,
+      fatal: false,
     },
     PlaceholderInvalidLiteral { span: Span } => {
       message: ("Placeholder expression contains a literal that is not valid when unquoted. Did you mean to quote it?"),
       span: *span,
-      fatal: true,
+      fatal: false,
     },
     PlaceholderInvalidContents { span: Span } => {
       message: ("Placeholder expression contains invalid content."),
@@ -166,7 +166,7 @@ diagnostics! {
     QuotedPatternInsidePattern { open_span: Span, close_span: Option<Span> } => {
       message: ("Quoted pattern is not allowed inside of a pattern."),
       span: *open_span,
-      fatal: true,
+      fatal: false,
     },
     MarkupInvalidContents { span: Span } => {
       message: ("Markup tag contains invalid content."),
@@ -176,17 +176,17 @@ diagnostics! {
     MissingIdentifierName { identifier: Identifier<'text> } => {
       message: ("Namespaced identifier is missing a name, which is required after the colon following the namespace."),
       span: identifier.span(),
-      fatal: true,
+      fatal: false,
     },
     MissingIdentifierNamespace { identifier: Identifier<'text> } => {
       message: ("Identifiers with a colon before the name are namespaced identifiers, but this identifier is missing a namespace before the colon."),
       span: identifier.span(),
-      fatal: true,
+      fatal: false,
     },
     EscapeInvalidCharacter { char_loc: Location, char: char } => {
       message: ( "The character '{char}' can not be escaped as escape sequences can only escape '}}', '{{', '|', and '\\'."),
       span: Span::new(*char_loc..(*char_loc + *char)),
-      fatal: true,
+      fatal: false,
     },
     EscapeMissingCharacter { slash_loc: Location } => {
       message: ("Backslashes start an escape sequence, but no character to be escaped was found. A literal '\\' must be written as '\\\\'."),
@@ -196,12 +196,12 @@ diagnostics! {
     InvalidNullCharacter { char_loc: Location } => {
       message: ("The NULL character (0x00) is invalid anywhere inside of messages."),
       span: Span::new(*char_loc..(*char_loc + '\0')),
-      fatal: true,
+      fatal: false,
     },
     InvalidClosingBrace { brace_loc: Location } => {
       message: ("The closing brace character ('}}') is invalid inside of messages, and must be escaped as '\\}}'."),
       span: Span::new(*brace_loc..(*brace_loc + '}')),
-      fatal: true,
+      fatal: false,
     },
     AnnotationMissingSpaceBefore { span: Span } => {
       message: ("Annotation is missing a leading space."),
@@ -216,7 +216,7 @@ diagnostics! {
     AttributeMissingKey { span: Span } => {
       message: ("Attribute is missing a key after the '@' sign."),
       span: *span,
-      fatal: true,
+      fatal: false,
     },
     AttributeMissingValue { span: Span } => {
       message: ("Attribute is missing a value after the '=' sign."),
@@ -226,12 +226,12 @@ diagnostics! {
     AttributeValueIsVariable { span: Span } => {
       message: ("Attribute value can not be a variable, but must be a literal value."),
       span: *span,
-      fatal: true,
+      fatal: false,
     },
     VariableMissingName { span: Span } => {
       message: ("Variable is missing a name after the dollar sign ('$')."),
       span: *span,
-      fatal: true,
+      fatal: false,
     },
     UnterminatedQuotedPattern { span: Span } => {
       message: ("Quoted pattern is missing the closing braces ('}}')."),
@@ -286,12 +286,12 @@ diagnostics! {
     MatcherKeyIsVariable { span: Span } => {
       message: ("Matcher key is a variable, which is not allowed. Matcher keys must be literal values, or the wildcard ('*')."),
       span: *span,
-      fatal: true,
+      fatal: false,
     },
     InvalidMatcherLiteralKey { span: Span } => {
       message: ("Found an invalid matcher key (not a valid literal). Did you mean to quote the key to make it a literal?"),
       span: *span,
-      fatal: true,
+      fatal: false,
     },
     InvalidStatement { span: Span, keyword: &'text str } => {
       message: ("Found a statement that is invalid because the keyword '{keyword}' is keyword."),

@@ -10,7 +10,7 @@ The character 't' can not be escaped as escape sequences can only escape '}', '{
   hello\tbar
         ^
 === formatted ===
-(cannot format due to fatal errors)
+hello\tbar
 === ast ===
 Pattern {
     parts: [

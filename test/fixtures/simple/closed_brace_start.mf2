@@ -8,7 +8,7 @@ The closing brace character ('}') is invalid inside of messages, and must be esc
   }Hello
   ^
 === formatted ===
-(cannot format due to fatal errors)
+}Hello
 === ast ===
 Pattern {
     parts: [

@@ -21,7 +21,11 @@ Found an invalid matcher key (not a valid literal). Did you mean to quote the ke
   .match $a↵* {{Hello}}↵+yej%{{Hi}}
                         ^^^^^
 === formatted ===
-(cannot format due to fatal errors)
+.match
+$a
+*     {{Hello}}
++yej% {{Hi}}
+
 === ast ===
 ComplexMessage {
     span: @0..33,

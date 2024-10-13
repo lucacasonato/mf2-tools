@@ -11,7 +11,7 @@ Markup tag is missing an identifier. (at @0..12)
   {# @hello /}
   ^^^^^^^^^^^^
 === formatted ===
-(cannot format due to fatal errors)
+{# @hello /}
 === ast ===
 Pattern {
     parts: [

@@ -1,0 +1,99 @@
+{#el @attr opt=val @attr2=1 opt2=2}
+=== spans ===
+                    {#el @attr opt=val @attr2=1 opt2=2}
+Pattern             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ 0:0-0:35
+Markup              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ 0:0-0:35
+Identifier            ^^                                0:2-0:4
+Attribute                ^^^^^                          0:5-0:10
+Identifier                ^^^^                          0:6-0:10
+FnOrMarkupOption               ^^^^^^^                  0:11-0:18
+Identifier                     ^^^                      0:11-0:14
+Text                               ^^^                  0:15-0:18
+Attribute                              ^^^^^^^^         0:19-0:27
+Identifier                              ^^^^^           0:20-0:25
+Number                                        ^         0:26-0:27
+Number.integral                               ^         0:26-0:27
+FnOrMarkupOption                                ^^^^^^  0:28-0:34
+Identifier                                      ^^^^    0:28-0:32
+Number                                               ^  0:33-0:34
+Number.integral                                      ^  0:33-0:34
+=== diagnostics ===
+Markup tag has an option after an attribute, which is not allowed. All options must come before any attribute. (at @11..18)
+  {#el @attr opt=val @attr2=1 opt2=2}
+             ^^^^^^^
+Markup tag has an option after an attribute, which is not allowed. All options must come before any attribute. (at @28..34)
+  {#el @attr opt=val @attr2=1 opt2=2}
+                              ^^^^^^
+=== formatted ===
+{#el @attr opt=val @attr2=1 opt2=2 }
+=== ast ===
+Pattern {
+    parts: [
+        Markup {
+            span: @0..35,
+            kind: Open,
+            id: Identifier {
+                start: @2,
+                namespace: None,
+                name: "el",
+            },
+            options: [
+                FnOrMarkupOption {
+                    key: Identifier {
+                        start: @11,
+                        namespace: None,
+                        name: "opt",
+                    },
+                    value: Text {
+                        start: @15,
+                        content: "val",
+                    },
+                },
+                FnOrMarkupOption {
+                    key: Identifier {
+                        start: @28,
+                        namespace: None,
+                        name: "opt2",
+                    },
+                    value: Number {
+                        start: @33,
+                        raw: "2",
+                        is_negative: false,
+                        integral_len: 1,
+                        fractional_len: None,
+                        exponent_len: None,
+                    },
+                },
+            ],
+            attributes: [
+                Attribute {
+                    span: @5..10,
+                    key: Identifier {
+                        start: @6,
+                        namespace: None,
+                        name: "attr",
+                    },
+                    value: None,
+                },
+                Attribute {
+                    span: @19..27,
+                    key: Identifier {
+                        start: @20,
+                        namespace: None,
+                        name: "attr2",
+                    },
+                    value: Some(
+                        Number {
+                            start: @26,
+                            raw: "1",
+                            is_negative: false,
+                            integral_len: 1,
+                            fractional_len: None,
+                            exponent_len: None,
+                        },
+                    ),
+                },
+            ],
+        },
+    ],
+}
