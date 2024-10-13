@@ -25,7 +25,7 @@ impl<'ast, 'text> Printer<'ast, 'text> {
   }
 
   pub fn print(mut self) -> String {
-    self.visit_message(self.ast);
+    self.ast.apply_visitor(&mut self);
     self.out
   }
 
@@ -63,11 +63,11 @@ impl<'ast, 'text> Printer<'ast, 'text> {
       }
 
       let Annotation::Function(fun) = annotation;
-      self.visit_function(fun);
+      fun.apply_visitor(self);
     }
 
     for attr in attributes {
-      self.visit_attribute(attr);
+      attr.apply_visitor(self);
     }
 
     self.push(' ');
@@ -82,7 +82,7 @@ impl<'ast, 'text> Printer<'ast, 'text> {
 
     let backup = std::mem::take(&mut self.out);
 
-    self.visit_literal(key);
+    key.apply_visitor(self);
 
     std::mem::replace(&mut self.out, backup)
   }
@@ -167,9 +167,9 @@ impl<'ast, 'text> Visit<'ast, 'text> for Printer<'ast, 'text> {
     option: &'ast FnOrMarkupOption<'text>,
   ) {
     self.push(' ');
-    self.visit_identifier(&option.key);
+    option.key.apply_visitor(self);
     self.push('=');
-    self.visit_literal_or_variable(&option.value);
+    option.value.apply_visitor(self);
   }
 
   fn visit_quoted(&mut self, quoted: &'ast Quoted<'text>) {
@@ -190,11 +190,11 @@ impl<'ast, 'text> Visit<'ast, 'text> for Printer<'ast, 'text> {
   fn visit_attribute(&mut self, attr: &'ast Attribute<'text>) {
     self.push(' ');
     self.push('@');
-    self.visit_identifier(&attr.key);
+    attr.key.apply_visitor(self);
 
     if let Some(value) = &attr.value {
       self.push('=');
-      self.visit_literal(value);
+      value.apply_visitor(self);
     }
   }
 
@@ -217,7 +217,7 @@ impl<'ast, 'text> Visit<'ast, 'text> for Printer<'ast, 'text> {
 
   fn visit_complex_message(&mut self, message: &'ast ComplexMessage<'text>) {
     for (i, decl) in message.declarations.iter().enumerate() {
-      self.visit_declaration(decl);
+      decl.apply_visitor(self);
       self.push('\n');
 
       let next_decl =
@@ -232,26 +232,26 @@ impl<'ast, 'text> Visit<'ast, 'text> for Printer<'ast, 'text> {
       }
     }
 
-    self.visit_complex_message_body(&message.body);
+    message.body.apply_visitor(self);
 
     self.push('\n');
   }
 
   fn visit_input_declaration(&mut self, decl: &'ast InputDeclaration<'text>) {
     self.push_str(".input ");
-    self.visit_variable_expression(&decl.expression);
+    decl.expression.apply_visitor(self);
   }
 
   fn visit_local_declaration(&mut self, decl: &'ast LocalDeclaration<'text>) {
     self.push_str(".local ");
-    self.visit_variable(&decl.variable);
+    decl.variable.apply_visitor(self);
     self.push_str(" = ");
-    self.visit_expression(&decl.expression);
+    decl.expression.apply_visitor(self);
   }
 
   fn visit_quoted_pattern(&mut self, pattern: &'ast QuotedPattern<'text>) {
     self.push_str("{{");
-    self.visit_pattern(&pattern.pattern);
+    pattern.pattern.apply_visitor(self);
     self.push_str("}}");
   }
 
@@ -280,7 +280,7 @@ impl<'ast, 'text> Visit<'ast, 'text> for Printer<'ast, 'text> {
     assert_eq!(printed_keys.len(), printed_keys.capacity());
 
     for (i, selector) in matcher.selectors.iter().enumerate() {
-      self.visit_variable(selector);
+      selector.apply_visitor(self);
       if i < selectors_count - 1 {
         self.push_n(' ', max_lengths[i] - selector.name.len());
       }
@@ -296,7 +296,7 @@ impl<'ast, 'text> Visit<'ast, 'text> for Printer<'ast, 'text> {
         self.push(' ');
       }
 
-      self.visit_quoted_pattern(&variant.pattern);
+      variant.pattern.apply_visitor(self);
     }
   }
 }
