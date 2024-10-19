@@ -1,28 +1,36 @@
-.match $a
+.match $a $b
 *+yej% {{Hi}}
+* * {{Hello}}
 === spans ===
-                    .match $a↵*+yej% {{Hi}}
-ComplexMessage      ^^^^^^^^^^^^^^^^^^^^^^^ 0:0-1:13
-Matcher             ^^^^^^^^^^^^^^^^^^^^^^^ 0:0-1:13
-Variable                   ^^               0:7-0:9
-Variant                       ^^^^^^^^^^^^^ 1:0-1:13
-Star                          ^             1:0-1:1
-Text                           ^^^^^        1:1-1:6
-QuotedPattern                        ^^^^^^ 1:7-1:13
-Pattern                                ^^   1:9-1:11
-Text                                   ^^   1:9-1:11
+                    .match $a $b↵*+yej% {{Hi}}↵* * {{Hello}}
+ComplexMessage      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ 0:0-2:13
+Matcher             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ 0:0-2:13
+Variable                   ^^                                0:7-0:9
+Variable                      ^^                             0:10-0:12
+Variant                          ^^^^^^^^^^^^^               1:0-1:13
+Star                             ^                           1:0-1:1
+Text                              ^^^^^                      1:1-1:6
+QuotedPattern                           ^^^^^^               1:7-1:13
+Pattern                                   ^^                 1:9-1:11
+Text                                      ^^                 1:9-1:11
+Variant                                        ^^^^^^^^^^^^^ 2:0-2:13
+Star                                           ^             2:0-2:1
+Star                                             ^           2:2-2:3
+QuotedPattern                                      ^^^^^^^^^ 2:4-2:13
+Pattern                                              ^^^^^   2:6-2:11
+Text                                                 ^^^^^   2:6-2:11
 === diagnostics ===
-Found an invalid matcher key (not a valid literal). Did you mean to quote the key to make it a literal? (at @11..16)
-  .match $a↵*+yej% {{Hi}}
-             ^^^^^
-Matcher key is missing a leading space. (at @11..16)
-  .match $a↵*+yej% {{Hi}}
-             ^^^^^
+Found an invalid matcher key (not a valid literal). Did you mean to quote the key to make it a literal? (at @14..19)
+  .match $a $b↵*+yej% {{Hi}}↵* * {{Hello}}
+                ^^^^^
+Matcher key is missing a leading space. (at @14..19)
+  .match $a $b↵*+yej% {{Hi}}↵* * {{Hello}}
+                ^^^^^
 === formatted ===
 (cannot format due to fatal errors)
 === ast ===
 ComplexMessage {
-    span: @0..23,
+    span: @0..40,
     declarations: [],
     body: Matcher {
         start: @0,
@@ -31,25 +39,50 @@ ComplexMessage {
                 span: @7..9,
                 name: "a",
             },
+            Variable {
+                span: @10..12,
+                name: "b",
+            },
         ],
         variants: [
             Variant {
                 keys: [
                     Star {
-                        start: @10,
+                        start: @13,
                     },
                     Text {
-                        start: @11,
+                        start: @14,
                         content: "+yej%",
                     },
                 ],
                 pattern: QuotedPattern {
-                    span: @17..23,
+                    span: @20..26,
                     pattern: Pattern {
                         parts: [
                             Text {
-                                start: @19,
+                                start: @22,
                                 content: "Hi",
+                            },
+                        ],
+                    },
+                },
+            },
+            Variant {
+                keys: [
+                    Star {
+                        start: @27,
+                    },
+                    Star {
+                        start: @29,
+                    },
+                ],
+                pattern: QuotedPattern {
+                    span: @31..40,
+                    pattern: Pattern {
+                        parts: [
+                            Text {
+                                start: @33,
+                                content: "Hello",
                             },
                         ],
                     },

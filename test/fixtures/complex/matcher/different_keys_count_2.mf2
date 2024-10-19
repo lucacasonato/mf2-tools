@@ -1,35 +1,48 @@
 .match $foo $bar
   hi {{1}}
   hello hola ciao {{2}}
+  * * {{3}}
 === spans ===
-                    .match $foo $bar↵  hi {{1}}↵  hello hola ciao {{2}}
-ComplexMessage      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ 0:0-2:23
-Matcher             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ 0:0-2:23
-Variable                   ^^^^                                         0:7-0:11
-Variable                        ^^^^                                    0:12-0:16
-Variant                                ^^^^^^^^                         1:2-1:10
-Text                                   ^^                               1:2-1:4
-QuotedPattern                             ^^^^^                         1:5-1:10
-Pattern                                     ^                           1:7-1:8
-Text                                        ^                           1:7-1:8
-Variant                                           ^^^^^^^^^^^^^^^^^^^^^ 2:2-2:23
-Text                                              ^^^^^                 2:2-2:7
-Text                                                    ^^^^            2:8-2:12
-Text                                                         ^^^^       2:13-2:17
-QuotedPattern                                                     ^^^^^ 2:18-2:23
-Pattern                                                             ^   2:20-2:21
-Text                                                                ^   2:20-2:21
+                    .match $foo $bar↵  hi {{1}}↵  hello hola ciao {{2}}↵  * * {{3}}
+ComplexMessage      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ 0:0-3:11
+Matcher             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ 0:0-3:11
+Variable                   ^^^^                                                     0:7-0:11
+Variable                        ^^^^                                                0:12-0:16
+Variant                                ^^^^^^^^                                     1:2-1:10
+Text                                   ^^                                           1:2-1:4
+QuotedPattern                             ^^^^^                                     1:5-1:10
+Pattern                                     ^                                       1:7-1:8
+Text                                        ^                                       1:7-1:8
+Variant                                           ^^^^^^^^^^^^^^^^^^^^^             2:2-2:23
+Text                                              ^^^^^                             2:2-2:7
+Text                                                    ^^^^                        2:8-2:12
+Text                                                         ^^^^                   2:13-2:17
+QuotedPattern                                                     ^^^^^             2:18-2:23
+Pattern                                                             ^               2:20-2:21
+Text                                                                ^               2:20-2:21
+Variant                                                                   ^^^^^^^^^ 3:2-3:11
+Star                                                                      ^         3:2-3:3
+Star                                                                        ^       3:4-3:5
+QuotedPattern                                                                 ^^^^^ 3:6-3:11
+Pattern                                                                         ^   3:8-3:9
+Text                                                                            ^   3:8-3:9
 === diagnostics ===
-
+Matcher variant has 1 keys, but there are 2 selectors. (at @19..21)
+  .match $foo $bar↵  hi {{1}}↵  hello hola ciao {{2}}↵  * * {{3}}
+                     ^^
+Matcher variant has 3 keys, but there are 2 selectors. (at @41..45)
+  .match $foo $bar↵  hi {{1}}↵  hello hola ciao {{2}}↵  * * {{3}}
+                                           ^^^^
 === formatted ===
 .match
 $foo  $bar 
 hi              {{1}}
 hello hola ciao {{2}}
+*     *         {{3}}
 
 === ast ===
 ComplexMessage {
-    span: @0..51,
+    span: @0..63,
     declarations: [],
     body: Matcher {
         start: @0,
@@ -85,6 +98,27 @@ ComplexMessage {
                             Text {
                                 start: @48,
                                 content: "2",
+                            },
+                        ],
+                    },
+                },
+            },
+            Variant {
+                keys: [
+                    Star {
+                        start: @54,
+                    },
+                    Star {
+                        start: @56,
+                    },
+                ],
+                pattern: QuotedPattern {
+                    span: @58..63,
+                    pattern: Pattern {
+                        parts: [
+                            Text {
+                                start: @60,
+                                content: "3",
                             },
                         ],
                     },

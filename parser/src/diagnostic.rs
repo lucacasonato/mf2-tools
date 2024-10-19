@@ -334,6 +334,11 @@ diagnostics! {
       span: *span,
       fatal: false,
     },
+    MatcherVariantKeysMismatch { span: Span, selectors: usize, keys: usize } => {
+      message: ("Matcher variant has {keys} keys, but there are {selectors} selectors."),
+      span: *span,
+      fatal: false,
+    },
     MatcherVariantMissingKeys { span: Span } => {
       message: ("Matcher variant is missing key(s), but at least one is required."),
       span: *span,
@@ -349,8 +354,13 @@ diagnostics! {
       span: *span,
       fatal: true,
     },
+    MatcherMissingFallback { span: Span } => {
+      message: ("Matcher is missing a catch-all variant, where all keys are *."),
+      span: *span,
+      fatal: false,
+    },
 
-    // Data Model Erorrs
+    // Scope Erorrs
     DuplicateDeclaration { first_span: Span, second_span: Span, name: &'text str } => {
       message: ("${name} has already been declared."),
       span: *second_span,

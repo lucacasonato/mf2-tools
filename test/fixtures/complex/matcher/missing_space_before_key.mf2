@@ -1,26 +1,33 @@
-.match $a
-a|b|{{}}
+.match $a $b
+a|b|{{}} * * {{Hello}}
 === spans ===
-                    .match $a↵a|b|{{}}
-ComplexMessage      ^^^^^^^^^^^^^^^^^^ 0:0-1:8
-Matcher             ^^^^^^^^^^^^^^^^^^ 0:0-1:8
-Variable                   ^^          0:7-0:9
-Variant                       ^^^^^^^^ 1:0-1:8
-Text                          ^        1:0-1:1
-Quoted                         ^^^     1:1-1:4
-Text                            ^      1:2-1:3
-QuotedPattern                     ^^^^ 1:4-1:8
-Pattern                                1:6-1:6
-Text                                   1:6-1:6
+                    .match $a $b↵a|b|{{}} * * {{Hello}}
+ComplexMessage      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ 0:0-1:22
+Matcher             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ 0:0-1:22
+Variable                   ^^                           0:7-0:9
+Variable                      ^^                        0:10-0:12
+Variant                          ^^^^^^^^               1:0-1:8
+Text                             ^                      1:0-1:1
+Quoted                            ^^^                   1:1-1:4
+Text                               ^                    1:2-1:3
+QuotedPattern                        ^^^^               1:4-1:8
+Pattern                                                 1:6-1:6
+Text                                                    1:6-1:6
+Variant                                   ^^^^^^^^^^^^^ 1:9-1:22
+Star                                      ^             1:9-1:10
+Star                                        ^           1:11-1:12
+QuotedPattern                                 ^^^^^^^^^ 1:13-1:22
+Pattern                                         ^^^^^   1:15-1:20
+Text                                            ^^^^^   1:15-1:20
 === diagnostics ===
-Matcher key is missing a leading space. (at @11..14)
-  .match $a↵a|b|{{}}
-             ^^^
+Matcher key is missing a leading space. (at @14..17)
+  .match $a $b↵a|b|{{}} * * {{Hello}}
+                ^^^
 === formatted ===
 (cannot format due to fatal errors)
 === ast ===
 ComplexMessage {
-    span: @0..18,
+    span: @0..35,
     declarations: [],
     body: Matcher {
         start: @0,
@@ -29,31 +36,56 @@ ComplexMessage {
                 span: @7..9,
                 name: "a",
             },
+            Variable {
+                span: @10..12,
+                name: "b",
+            },
         ],
         variants: [
             Variant {
                 keys: [
                     Text {
-                        start: @10,
+                        start: @13,
                         content: "a",
                     },
                     Quoted {
-                        span: @11..14,
+                        span: @14..17,
                         parts: [
                             Text {
-                                start: @12,
+                                start: @15,
                                 content: "b",
                             },
                         ],
                     },
                 ],
                 pattern: QuotedPattern {
-                    span: @14..18,
+                    span: @17..21,
                     pattern: Pattern {
                         parts: [
                             Text {
-                                start: @16,
+                                start: @19,
                                 content: "",
+                            },
+                        ],
+                    },
+                },
+            },
+            Variant {
+                keys: [
+                    Star {
+                        start: @22,
+                    },
+                    Star {
+                        start: @24,
+                    },
+                ],
+                pattern: QuotedPattern {
+                    span: @26..35,
+                    pattern: Pattern {
+                        parts: [
+                            Text {
+                                start: @28,
+                                content: "Hello",
                             },
                         ],
                     },

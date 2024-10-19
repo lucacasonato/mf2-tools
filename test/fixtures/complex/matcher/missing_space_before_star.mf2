@@ -1,25 +1,32 @@
-.match $a
-a*{{}}
+.match $a $b
+a*{{}} * * {{Hello}}
 === spans ===
-                    .match $a↵a*{{}}
-ComplexMessage      ^^^^^^^^^^^^^^^^ 0:0-1:6
-Matcher             ^^^^^^^^^^^^^^^^ 0:0-1:6
-Variable                   ^^        0:7-0:9
-Variant                       ^^^^^^ 1:0-1:6
-Text                          ^      1:0-1:1
-Star                           ^     1:1-1:2
-QuotedPattern                   ^^^^ 1:2-1:6
-Pattern                              1:4-1:4
-Text                                 1:4-1:4
+                    .match $a $b↵a*{{}} * * {{Hello}}
+ComplexMessage      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ 0:0-1:20
+Matcher             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ 0:0-1:20
+Variable                   ^^                         0:7-0:9
+Variable                      ^^                      0:10-0:12
+Variant                          ^^^^^^               1:0-1:6
+Text                             ^                    1:0-1:1
+Star                              ^                   1:1-1:2
+QuotedPattern                      ^^^^               1:2-1:6
+Pattern                                               1:4-1:4
+Text                                                  1:4-1:4
+Variant                                 ^^^^^^^^^^^^^ 1:7-1:20
+Star                                    ^             1:7-1:8
+Star                                      ^           1:9-1:10
+QuotedPattern                               ^^^^^^^^^ 1:11-1:20
+Pattern                                       ^^^^^   1:13-1:18
+Text                                          ^^^^^   1:13-1:18
 === diagnostics ===
-Matcher key is missing a leading space. (at @11..12)
-  .match $a↵a*{{}}
-             ^
+Matcher key is missing a leading space. (at @14..15)
+  .match $a $b↵a*{{}} * * {{Hello}}
+                ^
 === formatted ===
 (cannot format due to fatal errors)
 === ast ===
 ComplexMessage {
-    span: @0..16,
+    span: @0..33,
     declarations: [],
     body: Matcher {
         start: @0,
@@ -28,25 +35,50 @@ ComplexMessage {
                 span: @7..9,
                 name: "a",
             },
+            Variable {
+                span: @10..12,
+                name: "b",
+            },
         ],
         variants: [
             Variant {
                 keys: [
                     Text {
-                        start: @10,
+                        start: @13,
                         content: "a",
                     },
                     Star {
-                        start: @11,
+                        start: @14,
                     },
                 ],
                 pattern: QuotedPattern {
-                    span: @12..16,
+                    span: @15..19,
                     pattern: Pattern {
                         parts: [
                             Text {
-                                start: @14,
+                                start: @17,
                                 content: "",
+                            },
+                        ],
+                    },
+                },
+            },
+            Variant {
+                keys: [
+                    Star {
+                        start: @20,
+                    },
+                    Star {
+                        start: @22,
+                    },
+                ],
+                pattern: QuotedPattern {
+                    span: @24..33,
+                    pattern: Pattern {
+                        parts: [
+                            Text {
+                                start: @26,
+                                content: "Hello",
                             },
                         ],
                     },

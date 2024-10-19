@@ -1393,6 +1393,8 @@ impl<'text> Parser<'text> {
 
     let mut variants = vec![];
     let mut current_variant_keys = vec![];
+    let mut had_fallback = false;
+    let mut current_variant_is_fallback = true;
 
     while let Some((loc, c)) = self.peek() {
       match c {
@@ -1408,6 +1410,9 @@ impl<'text> Parser<'text> {
           had_space = self.skip_spaces();
         }
         '{' => {
+          had_fallback = had_fallback || current_variant_is_fallback;
+          current_variant_is_fallback = true;
+
           let pattern = if let Some((_, '{')) = self.peek2() {
             self.parse_quoted_pattern(loc)
           } else {
@@ -1429,6 +1434,22 @@ impl<'text> Parser<'text> {
           if variant.keys.is_empty() {
             self.report(Diagnostic::MatcherVariantMissingKeys {
               span: variant.span(),
+            });
+          } else if !selectors.is_empty()
+            && selectors.len() != variant.keys.len()
+          {
+            self.report(Diagnostic::MatcherVariantKeysMismatch {
+              span: {
+                let first = variant
+                  .keys
+                  .get(selectors.len())
+                  .unwrap_or(&variant.keys[0]);
+                let last = variant.keys.last().unwrap();
+
+                Span::new(first.span().start..last.span().end)
+              },
+              selectors: selectors.len(),
+              keys: variant.keys.len(),
             });
           }
           variants.push(variant);
@@ -1507,6 +1528,7 @@ impl<'text> Parser<'text> {
           }
           current_variant_keys.push(key);
           had_space = self.skip_spaces();
+          current_variant_is_fallback = false;
         }
       }
     }
@@ -1530,6 +1552,10 @@ impl<'text> Parser<'text> {
         span: variant.span(),
       });
       variants.push(variant);
+    } else if !had_fallback {
+      self.report(Diagnostic::MatcherMissingFallback {
+        span: Span::new(start..start + ".match"),
+      });
     }
 
     Matcher {

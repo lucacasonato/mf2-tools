@@ -1,27 +1,34 @@
 .match $a
 abc+yej% {{Hi}}
+* {{Hello}}
 === spans ===
-                    .match $a↵abc+yej% {{Hi}}
-ComplexMessage      ^^^^^^^^^^^^^^^^^^^^^^^^^ 0:0-1:15
-Matcher             ^^^^^^^^^^^^^^^^^^^^^^^^^ 0:0-1:15
-Variable                   ^^                 0:7-0:9
-Variant                       ^^^^^^^^^^^^^^^ 1:0-1:15
-Text                          ^^^^^^^^        1:0-1:8
-QuotedPattern                          ^^^^^^ 1:9-1:15
-Pattern                                  ^^   1:11-1:13
-Text                                     ^^   1:11-1:13
+                    .match $a↵abc+yej% {{Hi}}↵* {{Hello}}
+ComplexMessage      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ 0:0-2:11
+Matcher             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ 0:0-2:11
+Variable                   ^^                             0:7-0:9
+Variant                       ^^^^^^^^^^^^^^^             1:0-1:15
+Text                          ^^^^^^^^                    1:0-1:8
+QuotedPattern                          ^^^^^^             1:9-1:15
+Pattern                                  ^^               1:11-1:13
+Text                                     ^^               1:11-1:13
+Variant                                       ^^^^^^^^^^^ 2:0-2:11
+Star                                          ^           2:0-2:1
+QuotedPattern                                   ^^^^^^^^^ 2:2-2:11
+Pattern                                           ^^^^^   2:4-2:9
+Text                                              ^^^^^   2:4-2:9
 === diagnostics ===
 Found an invalid matcher key (not a valid literal). Did you mean to quote the key to make it a literal? (at @10..18)
-  .match $a↵abc+yej% {{Hi}}
+  .match $a↵abc+yej% {{Hi}}↵* {{Hello}}
             ^^^^^^^^
 === formatted ===
 .match
 $a
 abc+yej% {{Hi}}
+*        {{Hello}}
 
 === ast ===
 ComplexMessage {
-    span: @0..25,
+    span: @0..37,
     declarations: [],
     body: Matcher {
         start: @0,
@@ -46,6 +53,24 @@ ComplexMessage {
                             Text {
                                 start: @21,
                                 content: "Hi",
+                            },
+                        ],
+                    },
+                },
+            },
+            Variant {
+                keys: [
+                    Star {
+                        start: @26,
+                    },
+                ],
+                pattern: QuotedPattern {
+                    span: @28..37,
+                    pattern: Pattern {
+                        parts: [
+                            Text {
+                                start: @30,
+                                content: "Hello",
                             },
                         ],
                     },

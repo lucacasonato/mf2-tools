@@ -1,24 +1,30 @@
-.match $a $b e 1{{f}}|g| *{{h}}
+.match $a $b e 1{{f}}|g| *{{h}} * * {{i}}
 === spans ===
-                    .match $a $b e 1{{f}}|g| *{{h}}
-ComplexMessage      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ 0:0-0:31
-Matcher             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ 0:0-0:31
-Variable                   ^^                       0:7-0:9
-Variable                      ^^                    0:10-0:12
-Variant                          ^^^^^^^^           0:13-0:21
-Text                             ^                  0:13-0:14
-Number                             ^                0:15-0:16
-Number.integral                    ^                0:15-0:16
-QuotedPattern                       ^^^^^           0:16-0:21
-Pattern                               ^             0:18-0:19
-Text                                  ^             0:18-0:19
-Variant                                  ^^^^^^^^^^ 0:21-0:31
-Quoted                                   ^^^        0:21-0:24
-Text                                      ^         0:22-0:23
-Star                                         ^      0:25-0:26
-QuotedPattern                                 ^^^^^ 0:26-0:31
-Pattern                                         ^   0:28-0:29
-Text                                            ^   0:28-0:29
+                    .match $a $b e 1{{f}}|g| *{{h}} * * {{i}}
+ComplexMessage      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ 0:0-0:41
+Matcher             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ 0:0-0:41
+Variable                   ^^                                 0:7-0:9
+Variable                      ^^                              0:10-0:12
+Variant                          ^^^^^^^^                     0:13-0:21
+Text                             ^                            0:13-0:14
+Number                             ^                          0:15-0:16
+Number.integral                    ^                          0:15-0:16
+QuotedPattern                       ^^^^^                     0:16-0:21
+Pattern                               ^                       0:18-0:19
+Text                                  ^                       0:18-0:19
+Variant                                  ^^^^^^^^^^           0:21-0:31
+Quoted                                   ^^^                  0:21-0:24
+Text                                      ^                   0:22-0:23
+Star                                         ^                0:25-0:26
+QuotedPattern                                 ^^^^^           0:26-0:31
+Pattern                                         ^             0:28-0:29
+Text                                            ^             0:28-0:29
+Variant                                             ^^^^^^^^^ 0:32-0:41
+Star                                                ^         0:32-0:33
+Star                                                  ^       0:34-0:35
+QuotedPattern                                           ^^^^^ 0:36-0:41
+Pattern                                                   ^   0:38-0:39
+Text                                                      ^   0:38-0:39
 === diagnostics ===
 
 === formatted ===
@@ -26,10 +32,11 @@ Text                                            ^   0:28-0:29
 $a  $b
 e   1  {{f}}
 |g| *  {{h}}
+*   *  {{i}}
 
 === ast ===
 ComplexMessage {
-    span: @0..31,
+    span: @0..41,
     declarations: [],
     body: Matcher {
         start: @0,
@@ -93,6 +100,27 @@ ComplexMessage {
                             Text {
                                 start: @28,
                                 content: "h",
+                            },
+                        ],
+                    },
+                },
+            },
+            Variant {
+                keys: [
+                    Star {
+                        start: @32,
+                    },
+                    Star {
+                        start: @34,
+                    },
+                ],
+                pattern: QuotedPattern {
+                    span: @36..41,
+                    pattern: Pattern {
+                        parts: [
+                            Text {
+                                start: @38,
+                                content: "i",
                             },
                         ],
                     },

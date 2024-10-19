@@ -4,45 +4,53 @@
 1 a |2| {{hi}}
 * |q\|a| hello {{hi2}}
 1.3e2 * * {{hi3}}
+* * * {{hi4}}
 === spans ===
-                    .input {$var}↵↵.match $var $var2longname $var3↵1 a |2| {{hi}}↵* |q\|a| hello {{hi2}}↵1.3e2 * * {{hi3}}
-ComplexMessage      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ 0:0-5:17
-InputDeclaration    ^^^^^^^^^^^^^                                                                                          0:0-0:13
-VariableExpression         ^^^^^^                                                                                          0:7-0:13
-Variable                    ^^^^                                                                                           0:8-0:12
-Matcher                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ 2:0-5:17
-Variable                                  ^^^^                                                                             2:7-2:11
-Variable                                       ^^^^^^^^^^^^^                                                               2:12-2:25
-Variable                                                     ^^^^^                                                         2:26-2:31
-Variant                                                            ^^^^^^^^^^^^^^                                          3:0-3:14
-Number                                                             ^                                                       3:0-3:1
-Number.integral                                                    ^                                                       3:0-3:1
-Text                                                                 ^                                                     3:2-3:3
-Quoted                                                                 ^^^                                                 3:4-3:7
-Text                                                                    ^                                                  3:5-3:6
-QuotedPattern                                                              ^^^^^^                                          3:8-3:14
-Pattern                                                                      ^^                                            3:10-3:12
-Text                                                                         ^^                                            3:10-3:12
-Variant                                                                           ^^^^^^^^^^^^^^^^^^^^^^                   4:0-4:22
-Star                                                                              ^                                        4:0-4:1
-Quoted                                                                              ^^^^^^                                 4:2-4:8
-Text                                                                                 ^                                     4:3-4:4
-Escape                                                                                ^^                                   4:4-4:6
-Text                                                                                    ^                                  4:6-4:7
-Text                                                                                       ^^^^^                           4:9-4:14
-QuotedPattern                                                                                    ^^^^^^^                   4:15-4:22
-Pattern                                                                                            ^^^                     4:17-4:20
-Text                                                                                               ^^^                     4:17-4:20
-Variant                                                                                                  ^^^^^^^^^^^^^^^^^ 5:0-5:17
-Number                                                                                                   ^^^^^             5:0-5:5
-Number.integral                                                                                          ^                 5:0-5:1
-Number.fractional                                                                                          ^               5:2-5:3
-Number.exponent                                                                                              ^             5:4-5:5
-Star                                                                                                           ^           5:6-5:7
-Star                                                                                                             ^         5:8-5:9
-QuotedPattern                                                                                                      ^^^^^^^ 5:10-5:17
-Pattern                                                                                                              ^^^   5:12-5:15
-Text                                                                                                                 ^^^   5:12-5:15
+                    .input {$var}↵↵.match $var $var2longname $var3↵1 a |2| {{hi}}↵* |q\|a| hello {{hi2}}↵1.3e2 * * {{hi3}}↵* * * {{hi4}}
+ComplexMessage      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ 0:0-6:13
+InputDeclaration    ^^^^^^^^^^^^^                                                                                                        0:0-0:13
+VariableExpression         ^^^^^^                                                                                                        0:7-0:13
+Variable                    ^^^^                                                                                                         0:8-0:12
+Matcher                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ 2:0-6:13
+Variable                                  ^^^^                                                                                           2:7-2:11
+Variable                                       ^^^^^^^^^^^^^                                                                             2:12-2:25
+Variable                                                     ^^^^^                                                                       2:26-2:31
+Variant                                                            ^^^^^^^^^^^^^^                                                        3:0-3:14
+Number                                                             ^                                                                     3:0-3:1
+Number.integral                                                    ^                                                                     3:0-3:1
+Text                                                                 ^                                                                   3:2-3:3
+Quoted                                                                 ^^^                                                               3:4-3:7
+Text                                                                    ^                                                                3:5-3:6
+QuotedPattern                                                              ^^^^^^                                                        3:8-3:14
+Pattern                                                                      ^^                                                          3:10-3:12
+Text                                                                         ^^                                                          3:10-3:12
+Variant                                                                           ^^^^^^^^^^^^^^^^^^^^^^                                 4:0-4:22
+Star                                                                              ^                                                      4:0-4:1
+Quoted                                                                              ^^^^^^                                               4:2-4:8
+Text                                                                                 ^                                                   4:3-4:4
+Escape                                                                                ^^                                                 4:4-4:6
+Text                                                                                    ^                                                4:6-4:7
+Text                                                                                       ^^^^^                                         4:9-4:14
+QuotedPattern                                                                                    ^^^^^^^                                 4:15-4:22
+Pattern                                                                                            ^^^                                   4:17-4:20
+Text                                                                                               ^^^                                   4:17-4:20
+Variant                                                                                                  ^^^^^^^^^^^^^^^^^               5:0-5:17
+Number                                                                                                   ^^^^^                           5:0-5:5
+Number.integral                                                                                          ^                               5:0-5:1
+Number.fractional                                                                                          ^                             5:2-5:3
+Number.exponent                                                                                              ^                           5:4-5:5
+Star                                                                                                           ^                         5:6-5:7
+Star                                                                                                             ^                       5:8-5:9
+QuotedPattern                                                                                                      ^^^^^^^               5:10-5:17
+Pattern                                                                                                              ^^^                 5:12-5:15
+Text                                                                                                                 ^^^                 5:12-5:15
+Variant                                                                                                                    ^^^^^^^^^^^^^ 6:0-6:13
+Star                                                                                                                       ^             6:0-6:1
+Star                                                                                                                         ^           6:2-6:3
+Star                                                                                                                           ^         6:4-6:5
+QuotedPattern                                                                                                                    ^^^^^^^ 6:6-6:13
+Pattern                                                                                                                            ^^^   6:8-6:11
+Text                                                                                                                               ^^^   6:8-6:11
 === diagnostics ===
 
 === formatted ===
@@ -53,10 +61,11 @@ $var  $var2longname $var3
 1     a             |2|   {{hi}}
 *     |q\|a|        hello {{hi2}}
 1.3e2 *             *     {{hi3}}
+*     *             *     {{hi4}}
 
 === ast ===
 ComplexMessage {
-    span: @0..102,
+    span: @0..116,
     declarations: [
         InputDeclaration {
             start: @0,
@@ -194,6 +203,30 @@ ComplexMessage {
                             Text {
                                 start: @97,
                                 content: "hi3",
+                            },
+                        ],
+                    },
+                },
+            },
+            Variant {
+                keys: [
+                    Star {
+                        start: @103,
+                    },
+                    Star {
+                        start: @105,
+                    },
+                    Star {
+                        start: @107,
+                    },
+                ],
+                pattern: QuotedPattern {
+                    span: @109..116,
+                    pattern: Pattern {
+                        parts: [
+                            Text {
+                                start: @111,
+                                content: "hi4",
                             },
                         ],
                     },
