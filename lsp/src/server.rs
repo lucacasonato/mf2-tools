@@ -1,6 +1,4 @@
 use lsp_server::Connection;
-use lsp_types::CodeAction;
-use lsp_types::Diagnostic as LspDiagnostic;
 use lsp_types::DidChangeTextDocumentParams;
 use lsp_types::DidCloseTextDocumentParams;
 use lsp_types::DidOpenTextDocumentParams;
@@ -274,7 +272,7 @@ impl LanguageServer for Server<'_> {
       .diagnostics
       .iter()
       .filter(|diag| diag.span().contains(dbg!(&span)))
-      .filter_map(|d| fix_for_diagnostic(document, d).map(Into::into))
+      .flat_map(|d| fixes_for_diagnostic(d, document))
       .collect::<Vec<_>>();
 
     Ok(Some(diagnostics))
@@ -475,8 +473,8 @@ impl LanguageServer for Server<'_> {
 fn diagnostic_to_lsp(
   diag: &mf2_parser::Diagnostic,
   doc: &Document,
-) -> LspDiagnostic {
-  LspDiagnostic {
+) -> lsp_types::Diagnostic {
+  lsp_types::Diagnostic {
     range: doc.span_to_range(diag.span()),
     severity: Some(lsp_types::DiagnosticSeverity::ERROR),
     code: None,
@@ -489,43 +487,42 @@ fn diagnostic_to_lsp(
   }
 }
 
-fn fix_for_diagnostic(
+fn fixes_for_diagnostic(
+  diagnostic: &mf2_parser::Diagnostic,
   document: &Document,
-  diag: &mf2_parser::Diagnostic,
-) -> Option<lsp_types::CodeAction> {
-  use mf2_parser::Diagnostic::*;
-
-  match diag {
-    MarkupInvalidSpaceBeforeIdentifier { .. } => Some(CodeAction {
-      title: "Remove space before identifier".to_string(),
-      kind: Some(lsp_types::CodeActionKind::QUICKFIX),
-      edit: Some(lsp_types::WorkspaceEdit {
-        changes: Some(
-          [(
-            document.uri.clone(),
-            vec![lsp_types::TextEdit {
-              range: document.span_to_range(diag.span()),
-              new_text: "".to_string(),
-            }],
-          )]
-          .into_iter()
-          .collect(),
-        ),
-        change_annotations: None,
-        document_changes: None,
-      }),
-      command: None,
-      diagnostics: Some(vec![LspDiagnostic {
-        range: document.span_to_range(diag.span()),
-        severity: Some(lsp_types::DiagnosticSeverity::ERROR),
-        message: diag.to_string(),
-        source: Some("mf2".to_string()),
-        ..LspDiagnostic::default()
-      }]),
-      is_preferred: Some(true),
-      disabled: None,
-      data: None,
-    }),
-    _ => None,
-  }
+) -> Vec<lsp_types::CodeActionOrCommand> {
+  let fixes = diagnostic.fixes(document.info());
+  let fix_count = fixes.len();
+  fixes
+    .into_iter()
+    .map(|fix| {
+      lsp_types::CodeActionOrCommand::CodeAction(lsp_types::CodeAction {
+        title: fix.label.to_owned(),
+        kind: Some(lsp_types::CodeActionKind::QUICKFIX),
+        edit: Some(lsp_types::WorkspaceEdit {
+          changes: Some(
+            std::iter::once((
+              document.uri.clone(),
+              fix
+                .edits
+                .into_iter()
+                .map(|edit| lsp_types::TextEdit {
+                  range: document.span_to_range(edit.span),
+                  new_text: edit.new_text,
+                })
+                .collect::<Vec<_>>(),
+            ))
+            .collect(),
+          ),
+          change_annotations: None,
+          document_changes: None,
+        }),
+        command: None,
+        diagnostics: Some(vec![diagnostic_to_lsp(diagnostic, document)]),
+        is_preferred: Some(fix_count == 1),
+        data: None,
+        disabled: None,
+      })
+    })
+    .collect()
 }

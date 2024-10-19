@@ -187,6 +187,12 @@ impl Spanned for SourceTextInfo<'_> {
   }
 }
 
+impl<'text> SourceTextInfo<'text> {
+  pub fn text(&self, span: Span) -> &'text str {
+    &self.text[span.start.0 as usize..span.end.0 as usize]
+  }
+}
+
 impl SourceTextInfo<'_> {
   /// Returns a UTF-8 line and column index pair given a [Location].
   ///

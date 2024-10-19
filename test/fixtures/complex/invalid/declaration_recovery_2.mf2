@@ -12,7 +12,7 @@ QuotedPattern                                         ^^^^ 2:0-2:4
 Pattern                                                    2:2-2:2
 Text                                                       2:2-2:2
 === diagnostics ===
-Found a statement that is invalid because the keyword 'foo' is keyword. (at @0..9)
+Found a statement that is invalid because the keyword 'foo' is unrecognized. (at @0..9)
   .foo $var↵.local $hello = {world}↵{{}}
   ^^^^^^^^^
 === formatted ===
