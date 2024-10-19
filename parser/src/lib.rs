@@ -4,16 +4,18 @@ use ast::Message;
 use parser::Parser;
 
 pub mod ast;
+mod chars;
 mod diagnostic;
 mod parser;
-mod semantics;
+mod scope;
+mod text;
 mod visitor;
 
 pub use diagnostic::Diagnostic;
-pub use parser::util::{
+pub use scope::Scope;
+pub use text::{
   LineColUtf16, LineColUtf8, Location, SourceTextInfo, Span, Spanned,
 };
-pub use semantics::scope::Scope;
 pub use visitor::{Visit, VisitAny, Visitable};
 
 /// Parse a message and return the AST, diagnostics, and source text info.
@@ -58,6 +60,6 @@ pub fn analyse_semantics<'text>(
 pub fn is_valid_name(name: &str) -> bool {
   let mut ch_it = name.chars();
 
-  matches!(ch_it.next(), Some(parser::chars::name_start!()))
-    && ch_it.all(|c| matches!(c, parser::chars::name!()))
+  matches!(ch_it.next(), Some(chars::name_start!()))
+    && ch_it.all(|c| matches!(c, chars::name!()))
 }

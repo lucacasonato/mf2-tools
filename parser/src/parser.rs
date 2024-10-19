@@ -1,6 +1,3 @@
-pub mod chars;
-pub mod util;
-
 use std::ops::Range;
 
 use crate::ast::Annotation;
@@ -38,14 +35,14 @@ use crate::ast::VariableExpression;
 use crate::ast::Variant;
 use crate::diagnostic::Diagnostic;
 
-use chars::space;
+use crate::chars;
 
-use util::LengthShort;
-use util::Location;
-use util::SourceTextInfo;
-use util::SourceTextIterator;
-use util::Span;
-use util::Spanned as _;
+use crate::text::LengthShort;
+use crate::text::Location;
+use crate::text::SourceTextInfo;
+use crate::text::SourceTextIterator;
+use crate::text::Span;
+use crate::text::Spanned as _;
 
 pub struct Parser<'text> {
   text: SourceTextIterator<'text>,
@@ -282,7 +279,7 @@ impl<'text> Parser<'text> {
       let mut had_space = false;
       while let Some((_, ch)) = self.peek() {
         match ch {
-          space!() => {
+          chars::space!() => {
             had_space = self.skip_spaces();
           }
           '\0' | '@' | ':' | '\\' | '{' | '}' | '|' => {
