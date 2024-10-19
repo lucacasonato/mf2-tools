@@ -1,3 +1,6 @@
+pub mod chars;
+pub mod util;
+
 use std::ops::Range;
 
 use crate::ast::Annotation;
@@ -33,15 +36,16 @@ use crate::ast::Text;
 use crate::ast::Variable;
 use crate::ast::VariableExpression;
 use crate::ast::Variant;
-use crate::chars;
-use crate::chars::space;
 use crate::diagnostic::Diagnostic;
-use crate::util::LengthShort;
-use crate::util::Location;
-use crate::util::SourceTextInfo;
-use crate::util::SourceTextIterator;
-use crate::Span;
-use crate::Spanned as _;
+
+use chars::space;
+
+use util::LengthShort;
+use util::Location;
+use util::SourceTextInfo;
+use util::SourceTextIterator;
+use util::Span;
+use util::Spanned as _;
 
 pub struct Parser<'text> {
   text: SourceTextIterator<'text>,
