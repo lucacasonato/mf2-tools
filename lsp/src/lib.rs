@@ -1,9 +1,7 @@
 mod ast_utils;
 mod completions;
-mod diagnostics;
 mod document;
 mod protocol;
-mod scope;
 mod semantic_tokens;
 mod server;
 

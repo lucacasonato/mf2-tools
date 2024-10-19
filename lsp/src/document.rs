@@ -2,16 +2,16 @@ use lsp_types::Range;
 use lsp_types::Uri;
 use mf2_parser::ast;
 use mf2_parser::ast::Message;
+use mf2_parser::Diagnostic;
 use mf2_parser::LineColUtf16;
 use mf2_parser::Location;
+use mf2_parser::Scope;
 use mf2_parser::SourceTextInfo;
 use mf2_parser::Span;
 use yoke::Yoke;
 use yoke::Yokeable;
 
 use crate::ast_utils::find_node;
-use crate::diagnostics::Diagnostic;
-use crate::scope::Scope;
 
 pub struct Document {
   pub uri: Uri,
@@ -30,13 +30,8 @@ pub struct ParsedDocument<'text> {
 impl Document {
   pub fn new(uri: Uri, version: i32, text: Box<str>) -> Document {
     let parsed = Yoke::attach_to_cart(text, |text| {
-      let (ast, parser_diagnostics, info) = mf2_parser::parse(text);
-      let (scope, scope_diagnostics) = Scope::analyse(&ast);
-
-      let diagnostics = std::iter::empty()
-        .chain(parser_diagnostics.into_iter().map(Diagnostic::Parser))
-        .chain(scope_diagnostics.into_iter().map(Diagnostic::Scope))
-        .collect();
+      let (ast, mut diagnostics, info) = mf2_parser::parse(text);
+      let scope = mf2_parser::analyse_semantics(&ast, &mut diagnostics);
 
       ParsedDocument {
         ast,

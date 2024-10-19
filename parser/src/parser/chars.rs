@@ -35,7 +35,12 @@ pub(crate) use name;
 
 macro_rules! quoted {
   () => {
-    crate::parser::chars::content!() | crate::parser::chars::space!() | '.' | '@' | '{' | '}'
+    crate::parser::chars::content!()
+      | crate::parser::chars::space!()
+      | '.'
+      | '@'
+      | '{'
+      | '}'
   };
 }
 pub(crate) use quoted;

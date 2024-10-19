@@ -6,12 +6,14 @@ use parser::Parser;
 pub mod ast;
 mod diagnostic;
 mod parser;
+mod semantics;
 mod visitor;
 
 pub use diagnostic::Diagnostic;
 pub use parser::util::{
   LineColUtf16, LineColUtf8, Location, SourceTextInfo, Span, Spanned,
 };
+pub use semantics::scope::Scope;
 pub use visitor::{Visit, VisitAny, Visitable};
 
 /// Parse a message and return the AST, diagnostics, and source text info.
@@ -43,6 +45,13 @@ pub use visitor::{Visit, VisitAny, Visitable};
 /// ```
 pub fn parse(message: &str) -> (Message, Vec<Diagnostic>, SourceTextInfo) {
   Parser::new(message).parse()
+}
+
+pub fn analyse_semantics<'text>(
+  message: &Message<'text>,
+  diagnostics: &mut Vec<Diagnostic<'text>>,
+) -> Scope<'text> {
+  Scope::analyse(message, diagnostics)
 }
 
 /// Check if a string is a syntactically valid name in MF2.

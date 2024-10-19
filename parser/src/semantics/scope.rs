@@ -1,26 +1,12 @@
 use std::collections::hash_map::Entry;
 use std::collections::HashMap;
 
-use mf2_parser::ast;
-use mf2_parser::Span;
-use mf2_parser::Spanned as _;
-use mf2_parser::Visit as _;
-use mf2_parser::Visitable as _;
-
-pub enum ScopeDiagnostic<'text> {
-  DuplicateDeclaration {
-    name: &'text str,
-    #[allow(dead_code)]
-    first_span: Span,
-    second_span: Span,
-  },
-  UsageBeforeDeclaration {
-    name: &'text str,
-    #[allow(dead_code)]
-    declaration_span: Span,
-    usage_span: Span,
-  },
-}
+use crate::ast;
+use crate::Diagnostic;
+use crate::Span;
+use crate::Spanned as _;
+use crate::Visit;
+use crate::Visitable as _;
 
 pub struct VariableUsage {
   pub declaration: Option<Span>,
@@ -32,18 +18,19 @@ pub struct Scope<'text> {
 }
 
 impl Scope<'_> {
-  pub fn analyse<'text>(
+  pub(crate) fn analyse<'text>(
     ast: &ast::Message<'text>,
-  ) -> (Scope<'text>, Vec<ScopeDiagnostic<'text>>) {
+    diagnostics: &mut Vec<Diagnostic<'text>>,
+  ) -> Scope<'text> {
     let mut visitor = ScopeVisitor {
       scope: Scope {
         variables: HashMap::new(),
       },
-      diagnostics: vec![],
+      diagnostics,
     };
     visitor.visit_message(ast);
 
-    (visitor.scope, visitor.diagnostics)
+    visitor.scope
   }
 
   pub fn get_spans(&self, name: &str) -> Option<&Vec<Span>> {
@@ -59,36 +46,32 @@ impl Scope<'_> {
   }
 }
 
-struct ScopeVisitor<'text> {
+struct ScopeVisitor<'diag, 'text> {
   scope: Scope<'text>,
-  diagnostics: Vec<ScopeDiagnostic<'text>>,
+  diagnostics: &'diag mut Vec<Diagnostic<'text>>,
 }
 
-impl<'text> ScopeVisitor<'text> {
+impl<'text> ScopeVisitor<'_, 'text> {
   fn push_variable_declaration<'ast>(
     &mut self,
-    var: &'ast mf2_parser::ast::Variable<'text>,
+    var: &'ast ast::Variable<'text>,
   ) {
     match self.scope.variables.entry(var.name) {
       Entry::Occupied(existing) => {
         let existing = existing.into_mut();
         if let Some(existing_span) = existing.declaration {
-          self
-            .diagnostics
-            .push(ScopeDiagnostic::DuplicateDeclaration {
-              name: var.name,
-              first_span: existing_span,
-              second_span: var.span(),
-            });
+          self.diagnostics.push(Diagnostic::DuplicateDeclaration {
+            name: var.name,
+            first_span: existing_span,
+            second_span: var.span(),
+          });
         } else {
           for reference in &existing.all {
-            self
-              .diagnostics
-              .push(ScopeDiagnostic::UsageBeforeDeclaration {
-                name: var.name,
-                declaration_span: var.span(),
-                usage_span: *reference,
-              });
+            self.diagnostics.push(Diagnostic::UsageBeforeDeclaration {
+              name: var.name,
+              declaration_span: var.span(),
+              usage_span: *reference,
+            });
           }
 
           existing.declaration = Some(var.span());
@@ -105,10 +88,7 @@ impl<'text> ScopeVisitor<'text> {
     };
   }
 
-  fn push_variable_reference<'ast>(
-    &mut self,
-    var: &'ast mf2_parser::ast::Variable<'text>,
-  ) {
+  fn push_variable_reference<'ast>(&mut self, var: &'ast ast::Variable<'text>) {
     if let Some(existing) = self.scope.variables.get_mut(var.name) {
       existing.all.push(var.span());
     } else {
@@ -123,10 +103,10 @@ impl<'text> ScopeVisitor<'text> {
   }
 }
 
-impl<'ast, 'text> mf2_parser::Visit<'ast, 'text> for ScopeVisitor<'text> {
+impl<'ast, 'text> Visit<'ast, 'text> for ScopeVisitor<'_, 'text> {
   fn visit_local_declaration(
     &mut self,
-    decl: &'ast mf2_parser::ast::LocalDeclaration<'text>,
+    decl: &'ast ast::LocalDeclaration<'text>,
   ) {
     decl.expression.apply_visitor(self);
 
@@ -135,7 +115,7 @@ impl<'ast, 'text> mf2_parser::Visit<'ast, 'text> for ScopeVisitor<'text> {
 
   fn visit_input_declaration(
     &mut self,
-    decl: &'ast mf2_parser::ast::InputDeclaration<'text>,
+    decl: &'ast ast::InputDeclaration<'text>,
   ) {
     if let Some(annotation) = &decl.expression.annotation {
       annotation.apply_visitor(self);
@@ -144,7 +124,7 @@ impl<'ast, 'text> mf2_parser::Visit<'ast, 'text> for ScopeVisitor<'text> {
     self.push_variable_declaration(&decl.expression.variable);
   }
 
-  fn visit_variable(&mut self, var: &'ast mf2_parser::ast::Variable<'text>) {
+  fn visit_variable(&mut self, var: &'ast ast::Variable<'text>) {
     self.push_variable_reference(var);
   }
 }

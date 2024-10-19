@@ -2,12 +2,11 @@ use mf2_parser::ast;
 use mf2_parser::ast::AnyNode;
 use mf2_parser::ast::Message;
 use mf2_parser::Location;
+use mf2_parser::Scope;
 use mf2_parser::Span;
 use mf2_parser::Spanned;
 use mf2_parser::Visit as _;
 use mf2_parser::VisitAny;
-
-use crate::scope::Scope;
 
 #[derive(Debug)]
 pub enum CompletionAction {
