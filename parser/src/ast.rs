@@ -1,9 +1,9 @@
 use std::fmt::Debug;
 
-use crate::parser::util::LengthShort;
-use crate::parser::util::Location;
-use crate::parser::util::Span;
-use crate::parser::util::Spanned;
+use crate::text::LengthShort;
+use crate::text::Location;
+use crate::text::Span;
+use crate::text::Spanned;
 use crate::visitor::Visit;
 use crate::visitor::Visitable;
 
@@ -27,7 +27,7 @@ macro_rules! ast_enum {
       }
     }
 
-    impl crate::parser::util::Spanned for $name<'_> {
+    impl crate::text::Spanned for $name<'_> {
       fn span(&self) -> Span {
         match self {
           $( $name::$item(item) => item.span(), )*
@@ -988,7 +988,7 @@ macro_rules! any_node {
         }
       }
 
-      impl crate::parser::util::Spanned for $name<'_, '_> {
+      impl crate::text::Spanned for $name<'_, '_> {
         fn span(&self) -> Span {
           match self {
             $( $name::$item(item) => item.span(), )*
