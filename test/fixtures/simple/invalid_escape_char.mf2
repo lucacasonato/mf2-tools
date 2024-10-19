@@ -6,9 +6,9 @@ Text                ^^^^^      0:0-0:5
 Escape                   ^^    0:5-0:7
 Text                       ^^^ 0:7-0:10
 === diagnostics ===
-The character 't' can not be escaped as escape sequences can only escape '}', '{', '|', and '\'. (at @6..7)
+The character 't' can not be escaped, as escape sequences can only escape '}', '{', '|', and '\'. (at @5..7)
   hello\tbar
-        ^
+       ^^
 === formatted ===
 hello\tbar
 === ast ===

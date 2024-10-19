@@ -7,7 +7,7 @@ QuotedPattern                      ^^^^ 1:0-1:4
 Pattern                                 1:2-1:2
 Text                                    1:2-1:2
 === diagnostics ===
-Found a statement that is invalid because the keyword 'foo' is keyword. (at @0..14)
+Found a statement that is invalid because the keyword 'foo' is unrecognized. (at @0..14)
   .foo { :hello}↵{{}}
   ^^^^^^^^^^^^^^
 === formatted ===
