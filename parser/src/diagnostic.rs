@@ -355,7 +355,7 @@ diagnostics! {
       fatal: true,
     },
     MatcherMissingFallback { span: Span } => {
-      message: ("Matcher must contain a catch-all variant, whose all keys are *."),
+      message: ("Matcher must contain a catch-all variant, all keys of must be *."),
       span: *span,
       fatal: false,
     },

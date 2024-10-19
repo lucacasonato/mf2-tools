@@ -22,7 +22,7 @@ QuotedPattern                                      ^^^^^ 2:6-2:11
 Pattern                                              ^   2:8-2:9
 Text                                                 ^   2:8-2:9
 === diagnostics ===
-Matcher must contain a catch-all variant, whose all keys are *. (at @0..6)
+Matcher must contain a catch-all variant, all keys of must be *. (at @0..6)
   .match $a $b↵e   1 {{f}}↵|g| * {{h}}
   ^^^^^^
 === formatted ===
