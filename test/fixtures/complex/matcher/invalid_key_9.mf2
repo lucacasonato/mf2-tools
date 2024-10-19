@@ -19,6 +19,9 @@ Found an invalid matcher key (not a valid literal). Did you mean to quote the ke
 Matcher key is missing a leading space. (at @15..20)
   .match $a↵|abc|+yej% {{Hi}}
                  ^^^^^
+Matcher variant has 2 keys, but there are 1 selectors. (at @15..20)
+  .match $a↵|abc|+yej% {{Hi}}
+                 ^^^^^
 === formatted ===
 (cannot format due to fatal errors)
 === ast ===

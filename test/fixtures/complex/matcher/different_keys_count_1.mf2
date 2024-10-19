@@ -12,7 +12,9 @@ QuotedPattern                             ^^^^^ 1:5-1:10
 Pattern                                     ^   1:7-1:8
 Text                                        ^   1:7-1:8
 === diagnostics ===
-
+Matcher variant has 1 keys, but there are 2 selectors. (at @19..21)
+  .match $foo $bar↵  hi {{1}}
+                     ^^
 === formatted ===
 .match
 $foo $bar

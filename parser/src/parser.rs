@@ -1430,6 +1430,22 @@ impl<'text> Parser<'text> {
             self.report(Diagnostic::MatcherVariantMissingKeys {
               span: variant.span(),
             });
+          } else if !selectors.is_empty()
+            && selectors.len() != variant.keys.len()
+          {
+            self.report(Diagnostic::MatcherVariantKeysMismatch {
+              span: {
+                let first = variant
+                  .keys
+                  .get(selectors.len())
+                  .unwrap_or(&variant.keys[0]);
+                let last = variant.keys.last().unwrap();
+
+                Span::new(first.span().start..last.span().end)
+              },
+              selectors: selectors.len(),
+              keys: variant.keys.len(),
+            });
           }
           variants.push(variant);
           self.skip_spaces();

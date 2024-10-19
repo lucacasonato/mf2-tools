@@ -334,6 +334,11 @@ diagnostics! {
       span: *span,
       fatal: false,
     },
+    MatcherVariantKeysMismatch { span: Span, selectors: usize, keys: usize } => {
+      message: ("Matcher variant has {keys} keys, but there are {selectors} selectors."),
+      span: *span,
+      fatal: false,
+    },
     MatcherVariantMissingKeys { span: Span } => {
       message: ("Matcher variant is missing key(s), but at least one is required."),
       span: *span,

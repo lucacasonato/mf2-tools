@@ -20,7 +20,12 @@ QuotedPattern                                                     ^^^^^ 2:18-2:2
 Pattern                                                             ^   2:20-2:21
 Text                                                                ^   2:20-2:21
 === diagnostics ===
-
+Matcher variant has 1 keys, but there are 2 selectors. (at @19..21)
+  .match $foo $bar↵  hi {{1}}↵  hello hola ciao {{2}}
+                     ^^
+Matcher variant has 3 keys, but there are 2 selectors. (at @41..45)
+  .match $foo $bar↵  hi {{1}}↵  hello hola ciao {{2}}
+                                           ^^^^
 === formatted ===
 .match
 $foo  $bar 

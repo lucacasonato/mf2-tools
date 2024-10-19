@@ -1,3 +1,6 @@
 {
-  "deno.disablePaths": ["./vscode"]
+  "deno.disablePaths": ["./vscode"],
+  "files.associations": {
+    "**/test/fixtures/**/*.mf2": "plaintext"
+  }
 }
