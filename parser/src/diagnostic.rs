@@ -68,6 +68,7 @@ macro_rules! diagnostics {
 
 diagnostics! {
   pub enum Diagnostic<'text> {
+    // Syntax Errors
     NumberMissingIntegralPart { number: Number<'text> } => {
       message: ("Number is missing an integral part."),
       span: number.span(),
@@ -347,6 +348,18 @@ diagnostics! {
       message: ("Matcher variant is missing a body."),
       span: *span,
       fatal: true,
+    },
+
+    // Data Model Erorrs
+    DuplicateDeclaration { first_span: Span, second_span: Span, name: &'text str } => {
+      message: ("${name} has already been declared."),
+      span: *second_span,
+      fatal: false,
+    },
+    UsageBeforeDeclaration { declaration_span: Span, usage_span: Span, name: &'text str } => {
+      message: ("${name} is used before it is declared."),
+      span: *usage_span,
+      fatal: false,
     },
   }
 }

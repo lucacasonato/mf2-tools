@@ -32,7 +32,6 @@ use std::collections::HashMap;
 use crate::ast_utils::find_node;
 use crate::completions::CompletionAction;
 use crate::completions::CompletionsProvider;
-use crate::diagnostics::Diagnostic;
 use crate::document::Document;
 use crate::protocol::LanguageClient;
 use crate::protocol::LanguageServer;
@@ -85,7 +84,7 @@ impl Server<'_> {
       version: Some(document.version),
       diagnostics: diagnostics
         .iter()
-        .map(|diag| diag.to_lsp(document))
+        .map(|diag| diagnostic_to_lsp(diag, document))
         .collect(),
     });
   }
@@ -458,13 +457,8 @@ impl LanguageServer for Server<'_> {
       return Ok(None);
     };
 
-    let abort_formatting = document.diagnostics().iter().any(|diag| {
-      if let Diagnostic::Parser(diag) = diag {
-        diag.fatal()
-      } else {
-        false
-      }
-    });
+    let abort_formatting =
+      document.diagnostics().iter().any(|diag| diag.fatal());
     if abort_formatting {
       return Ok(None);
     }
@@ -478,45 +472,60 @@ impl LanguageServer for Server<'_> {
   }
 }
 
+fn diagnostic_to_lsp(
+  diag: &mf2_parser::Diagnostic,
+  doc: &Document,
+) -> LspDiagnostic {
+  LspDiagnostic {
+    range: doc.span_to_range(diag.span()),
+    severity: Some(lsp_types::DiagnosticSeverity::ERROR),
+    code: None,
+    code_description: None,
+    source: Some("mf2".to_string()),
+    message: diag.message(),
+    related_information: None,
+    tags: None,
+    data: None,
+  }
+}
+
 fn fix_for_diagnostic(
   document: &Document,
-  diag: &Diagnostic,
+  diag: &mf2_parser::Diagnostic,
 ) -> Option<lsp_types::CodeAction> {
   use mf2_parser::Diagnostic::*;
 
   match diag {
-    Diagnostic::Parser(MarkupInvalidSpaceBeforeIdentifier { .. }) => {
-      Some(CodeAction {
-        title: "Remove space before identifier".to_string(),
-        kind: Some(lsp_types::CodeActionKind::QUICKFIX),
-        edit: Some(lsp_types::WorkspaceEdit {
-          changes: Some(
-            [(
-              document.uri.clone(),
-              vec![lsp_types::TextEdit {
-                range: document.span_to_range(diag.span()),
-                new_text: "".to_string(),
-              }],
-            )]
-            .into_iter()
-            .collect(),
-          ),
-          change_annotations: None,
-          document_changes: None,
-        }),
-        command: None,
-        diagnostics: Some(vec![LspDiagnostic {
-          range: document.span_to_range(diag.span()),
-          severity: Some(lsp_types::DiagnosticSeverity::ERROR),
-          message: diag.to_string(),
-          source: Some("mf2".to_string()),
-          ..LspDiagnostic::default()
-        }]),
-        is_preferred: Some(true),
-        disabled: None,
-        data: None,
-      })
-    }
+    MarkupInvalidSpaceBeforeIdentifier { .. } => Some(CodeAction {
+      title: "Remove space before identifier".to_string(),
+      kind: Some(lsp_types::CodeActionKind::QUICKFIX),
+      edit: Some(lsp_types::WorkspaceEdit {
+        changes: Some(
+          [(
+            document.uri.clone(),
+            vec![lsp_types::TextEdit {
+              range: document.span_to_range(diag.span()),
+              new_text: "".to_string(),
+            }],
+          )]
+          .into_iter()
+          .collect(),
+        ),
+        change_annotations: None,
+        document_changes: None,
+      }),
+      command: None,
+      diagnostics: Some(vec![LspDiagnostic {
+        range: document.span_to_range(diag.span()),
+        severity: Some(lsp_types::DiagnosticSeverity::ERROR),
+        message: diag.to_string(),
+        source: Some("mf2".to_string()),
+        ..LspDiagnostic::default()
+      }]),
+      is_preferred: Some(true),
+      disabled: None,
+      data: None,
+    }),
     _ => None,
   }
 }

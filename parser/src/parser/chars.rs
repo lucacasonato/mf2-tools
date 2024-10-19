@@ -27,7 +27,7 @@ pub(crate) use name_start;
 
 macro_rules! name {
   () => {
-    crate::chars::name_start!() |
+    crate::parser::chars::name_start!() |
     '0'..='9' | '-' | '.' | '\u{B7}' | '\u{300}'..='\u{36F}' | '\u{203F}'..='\u{2040}'
   };
 }
@@ -35,7 +35,12 @@ pub(crate) use name;
 
 macro_rules! quoted {
   () => {
-    crate::chars::content!() | crate::chars::space!() | '.' | '@' | '{' | '}'
+    crate::parser::chars::content!()
+      | crate::parser::chars::space!()
+      | '.'
+      | '@'
+      | '{'
+      | '}'
   };
 }
 pub(crate) use quoted;
