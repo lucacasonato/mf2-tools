@@ -354,8 +354,13 @@ diagnostics! {
       span: *span,
       fatal: true,
     },
+    MatcherMissingFallback { span: Span } => {
+      message: ("Matcher must contain a catch-all variant, whose all keys are *."),
+      span: *span,
+      fatal: false,
+    },
 
-    // Data Model Erorrs
+    // Scope Erorrs
     DuplicateDeclaration { first_span: Span, second_span: Span, name: &'text str } => {
       message: ("${name} has already been declared."),
       span: *second_span,

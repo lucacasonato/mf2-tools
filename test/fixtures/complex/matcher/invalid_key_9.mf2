@@ -1,32 +1,38 @@
 .match $a
 |abc|+yej% {{Hi}}
+* {{Hello}}
 === spans ===
-                    .match $a↵|abc|+yej% {{Hi}}
-ComplexMessage      ^^^^^^^^^^^^^^^^^^^^^^^^^^^ 0:0-1:17
-Matcher             ^^^^^^^^^^^^^^^^^^^^^^^^^^^ 0:0-1:17
-Variable                   ^^                   0:7-0:9
-Variant                       ^^^^^^^^^^^^^^^^^ 1:0-1:17
-Quoted                        ^^^^^             1:0-1:5
-Text                           ^^^              1:1-1:4
-Text                               ^^^^^        1:5-1:10
-QuotedPattern                            ^^^^^^ 1:11-1:17
-Pattern                                    ^^   1:13-1:15
-Text                                       ^^   1:13-1:15
+                    .match $a↵|abc|+yej% {{Hi}}↵* {{Hello}}
+ComplexMessage      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ 0:0-2:11
+Matcher             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ 0:0-2:11
+Variable                   ^^                               0:7-0:9
+Variant                       ^^^^^^^^^^^^^^^^^             1:0-1:17
+Quoted                        ^^^^^                         1:0-1:5
+Text                           ^^^                          1:1-1:4
+Text                               ^^^^^                    1:5-1:10
+QuotedPattern                            ^^^^^^             1:11-1:17
+Pattern                                    ^^               1:13-1:15
+Text                                       ^^               1:13-1:15
+Variant                                         ^^^^^^^^^^^ 2:0-2:11
+Star                                            ^           2:0-2:1
+QuotedPattern                                     ^^^^^^^^^ 2:2-2:11
+Pattern                                             ^^^^^   2:4-2:9
+Text                                                ^^^^^   2:4-2:9
 === diagnostics ===
 Found an invalid matcher key (not a valid literal). Did you mean to quote the key to make it a literal? (at @15..20)
-  .match $a↵|abc|+yej% {{Hi}}
+  .match $a↵|abc|+yej% {{Hi}}↵* {{Hello}}
                  ^^^^^
 Matcher key is missing a leading space. (at @15..20)
-  .match $a↵|abc|+yej% {{Hi}}
+  .match $a↵|abc|+yej% {{Hi}}↵* {{Hello}}
                  ^^^^^
 Matcher variant has 2 keys, but there are 1 selectors. (at @15..20)
-  .match $a↵|abc|+yej% {{Hi}}
+  .match $a↵|abc|+yej% {{Hi}}↵* {{Hello}}
                  ^^^^^
 === formatted ===
 (cannot format due to fatal errors)
 === ast ===
 ComplexMessage {
-    span: @0..27,
+    span: @0..39,
     declarations: [],
     body: Matcher {
         start: @0,
@@ -60,6 +66,24 @@ ComplexMessage {
                             Text {
                                 start: @23,
                                 content: "Hi",
+                            },
+                        ],
+                    },
+                },
+            },
+            Variant {
+                keys: [
+                    Star {
+                        start: @28,
+                    },
+                ],
+                pattern: QuotedPattern {
+                    span: @30..39,
+                    pattern: Pattern {
+                        parts: [
+                            Text {
+                                start: @32,
+                                content: "Hello",
                             },
                         ],
                     },

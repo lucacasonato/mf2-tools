@@ -1,14 +1,14 @@
 {{}}
-.match $a a {{}}
+.match $a * {{}}
 === spans ===
-                    {{}}↵.match $a a {{}}
+                    {{}}↵.match $a * {{}}
 ComplexMessage      ^^^^^^^^^^^^^^^^^^^^^ 0:0-1:16
 QuotedPattern       ^^^^                  0:0-0:4
 Pattern                                   0:2-0:2
 Text                                      0:2-0:2
 === diagnostics ===
 Message has multiple bodies, but only one is allowed. (at @5..21)
-  {{}}↵.match $a a {{}}
+  {{}}↵.match $a * {{}}
        ^^^^^^^^^^^^^^^^
 === formatted ===
 (cannot format due to fatal errors)

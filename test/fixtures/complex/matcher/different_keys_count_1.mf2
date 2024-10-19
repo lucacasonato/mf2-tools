@@ -1,28 +1,36 @@
 .match $foo $bar
   hi {{1}}
+  * * {{2}}
 === spans ===
-                    .match $foo $bar↵  hi {{1}}
-ComplexMessage      ^^^^^^^^^^^^^^^^^^^^^^^^^^^ 0:0-1:10
-Matcher             ^^^^^^^^^^^^^^^^^^^^^^^^^^^ 0:0-1:10
-Variable                   ^^^^                 0:7-0:11
-Variable                        ^^^^            0:12-0:16
-Variant                                ^^^^^^^^ 1:2-1:10
-Text                                   ^^       1:2-1:4
-QuotedPattern                             ^^^^^ 1:5-1:10
-Pattern                                     ^   1:7-1:8
-Text                                        ^   1:7-1:8
+                    .match $foo $bar↵  hi {{1}}↵  * * {{2}}
+ComplexMessage      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ 0:0-2:11
+Matcher             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ 0:0-2:11
+Variable                   ^^^^                             0:7-0:11
+Variable                        ^^^^                        0:12-0:16
+Variant                                ^^^^^^^^             1:2-1:10
+Text                                   ^^                   1:2-1:4
+QuotedPattern                             ^^^^^             1:5-1:10
+Pattern                                     ^               1:7-1:8
+Text                                        ^               1:7-1:8
+Variant                                           ^^^^^^^^^ 2:2-2:11
+Star                                              ^         2:2-2:3
+Star                                                ^       2:4-2:5
+QuotedPattern                                         ^^^^^ 2:6-2:11
+Pattern                                                 ^   2:8-2:9
+Text                                                    ^   2:8-2:9
 === diagnostics ===
 Matcher variant has 1 keys, but there are 2 selectors. (at @19..21)
-  .match $foo $bar↵  hi {{1}}
+  .match $foo $bar↵  hi {{1}}↵  * * {{2}}
                      ^^
 === formatted ===
 .match
 $foo $bar
 hi        {{1}}
+*    *    {{2}}
 
 === ast ===
 ComplexMessage {
-    span: @0..27,
+    span: @0..39,
     declarations: [],
     body: Matcher {
         start: @0,
@@ -51,6 +59,27 @@ ComplexMessage {
                             Text {
                                 start: @24,
                                 content: "1",
+                            },
+                        ],
+                    },
+                },
+            },
+            Variant {
+                keys: [
+                    Star {
+                        start: @30,
+                    },
+                    Star {
+                        start: @32,
+                    },
+                ],
+                pattern: QuotedPattern {
+                    span: @34..39,
+                    pattern: Pattern {
+                        parts: [
+                            Text {
+                                start: @36,
+                                content: "2",
                             },
                         ],
                     },

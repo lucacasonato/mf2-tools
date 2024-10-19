@@ -1,26 +1,32 @@
 .match $a$b
-a * {{}}
+a * {{}} * * {{Hello}}
 === spans ===
-                    .match $a$b↵a * {{}}
-ComplexMessage      ^^^^^^^^^^^^^^^^^^^^ 0:0-1:8
-Matcher             ^^^^^^^^^^^^^^^^^^^^ 0:0-1:8
-Variable                   ^^            0:7-0:9
-Variable                     ^^          0:9-0:11
-Variant                         ^^^^^^^^ 1:0-1:8
-Text                            ^        1:0-1:1
-Star                              ^      1:2-1:3
-QuotedPattern                       ^^^^ 1:4-1:8
-Pattern                                  1:6-1:6
-Text                                     1:6-1:6
+                    .match $a$b↵a * {{}} * * {{Hello}}
+ComplexMessage      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ 0:0-1:22
+Matcher             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ 0:0-1:22
+Variable                   ^^                          0:7-0:9
+Variable                     ^^                        0:9-0:11
+Variant                         ^^^^^^^^               1:0-1:8
+Text                            ^                      1:0-1:1
+Star                              ^                    1:2-1:3
+QuotedPattern                       ^^^^               1:4-1:8
+Pattern                                                1:6-1:6
+Text                                                   1:6-1:6
+Variant                                  ^^^^^^^^^^^^^ 1:9-1:22
+Star                                     ^             1:9-1:10
+Star                                       ^           1:11-1:12
+QuotedPattern                                ^^^^^^^^^ 1:13-1:22
+Pattern                                        ^^^^^   1:15-1:20
+Text                                           ^^^^^   1:15-1:20
 === diagnostics ===
 Matcher selector is missing a leading space. (at @9..11)
-  .match $a$b↵a * {{}}
+  .match $a$b↵a * {{}} * * {{Hello}}
            ^^
 === formatted ===
 (cannot format due to fatal errors)
 === ast ===
 ComplexMessage {
-    span: @0..20,
+    span: @0..34,
     declarations: [],
     body: Matcher {
         start: @0,
@@ -52,6 +58,27 @@ ComplexMessage {
                             Text {
                                 start: @18,
                                 content: "",
+                            },
+                        ],
+                    },
+                },
+            },
+            Variant {
+                keys: [
+                    Star {
+                        start: @21,
+                    },
+                    Star {
+                        start: @23,
+                    },
+                ],
+                pattern: QuotedPattern {
+                    span: @25..34,
+                    pattern: Pattern {
+                        parts: [
+                            Text {
+                                start: @27,
+                                content: "Hello",
                             },
                         ],
                     },

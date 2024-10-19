@@ -1,31 +1,37 @@
 .match $a
 *+yej% {{Hi}}
+* {{Hello}}
 === spans ===
-                    .match $a↵*+yej% {{Hi}}
-ComplexMessage      ^^^^^^^^^^^^^^^^^^^^^^^ 0:0-1:13
-Matcher             ^^^^^^^^^^^^^^^^^^^^^^^ 0:0-1:13
-Variable                   ^^               0:7-0:9
-Variant                       ^^^^^^^^^^^^^ 1:0-1:13
-Star                          ^             1:0-1:1
-Text                           ^^^^^        1:1-1:6
-QuotedPattern                        ^^^^^^ 1:7-1:13
-Pattern                                ^^   1:9-1:11
-Text                                   ^^   1:9-1:11
+                    .match $a↵*+yej% {{Hi}}↵* {{Hello}}
+ComplexMessage      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ 0:0-2:11
+Matcher             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ 0:0-2:11
+Variable                   ^^                           0:7-0:9
+Variant                       ^^^^^^^^^^^^^             1:0-1:13
+Star                          ^                         1:0-1:1
+Text                           ^^^^^                    1:1-1:6
+QuotedPattern                        ^^^^^^             1:7-1:13
+Pattern                                ^^               1:9-1:11
+Text                                   ^^               1:9-1:11
+Variant                                     ^^^^^^^^^^^ 2:0-2:11
+Star                                        ^           2:0-2:1
+QuotedPattern                                 ^^^^^^^^^ 2:2-2:11
+Pattern                                         ^^^^^   2:4-2:9
+Text                                            ^^^^^   2:4-2:9
 === diagnostics ===
 Found an invalid matcher key (not a valid literal). Did you mean to quote the key to make it a literal? (at @11..16)
-  .match $a↵*+yej% {{Hi}}
+  .match $a↵*+yej% {{Hi}}↵* {{Hello}}
              ^^^^^
 Matcher key is missing a leading space. (at @11..16)
-  .match $a↵*+yej% {{Hi}}
+  .match $a↵*+yej% {{Hi}}↵* {{Hello}}
              ^^^^^
 Matcher variant has 2 keys, but there are 1 selectors. (at @11..16)
-  .match $a↵*+yej% {{Hi}}
+  .match $a↵*+yej% {{Hi}}↵* {{Hello}}
              ^^^^^
 === formatted ===
 (cannot format due to fatal errors)
 === ast ===
 ComplexMessage {
-    span: @0..23,
+    span: @0..35,
     declarations: [],
     body: Matcher {
         start: @0,
@@ -53,6 +59,24 @@ ComplexMessage {
                             Text {
                                 start: @19,
                                 content: "Hi",
+                            },
+                        ],
+                    },
+                },
+            },
+            Variant {
+                keys: [
+                    Star {
+                        start: @24,
+                    },
+                ],
+                pattern: QuotedPattern {
+                    span: @26..35,
+                    pattern: Pattern {
+                        parts: [
+                            Text {
+                                start: @28,
+                                content: "Hello",
                             },
                         ],
                     },
