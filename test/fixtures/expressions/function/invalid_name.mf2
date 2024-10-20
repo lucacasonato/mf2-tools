@@ -4,7 +4,7 @@
 Pattern             ^^^^^^^^^^^^^^^^^^^ 0:0-0:19
 VariableExpression  ^^^^^^^^^^^^^^^^^^^ 0:0-0:19
 Variable             ^^^^               0:1-0:5
-Function                  ^^^^^^^       0:6-0:13
+Annotation                ^^^^^^^       0:6-0:13
 Identifier                 ^^^^^^       0:7-0:13
 === diagnostics ===
 Placeholder expression contains invalid content. (at @14..18)
@@ -22,7 +22,7 @@ Pattern {
                 name: "var",
             },
             annotation: Some(
-                Function {
+                Annotation {
                     start: @6,
                     id: Identifier {
                         start: @7,

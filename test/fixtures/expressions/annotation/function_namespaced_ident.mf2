@@ -3,7 +3,7 @@
                     {:a:b}
 Pattern             ^^^^^^ 0:0-0:6
 AnnotationExpression^^^^^^ 0:0-0:6
-Function             ^^^^  0:1-0:5
+Annotation           ^^^^  0:1-0:5
 Identifier            ^^^  0:2-0:5
 === diagnostics ===
 
@@ -14,7 +14,7 @@ Pattern {
     parts: [
         AnnotationExpression {
             span: @0..6,
-            annotation: Function {
+            annotation: Annotation {
                 start: @1,
                 id: Identifier {
                     start: @2,

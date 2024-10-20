@@ -3,7 +3,7 @@
                     { :hello }
 Pattern             ^^^^^^^^^^ 0:0-0:10
 AnnotationExpression^^^^^^^^^^ 0:0-0:10
-Function              ^^^^^^   0:2-0:8
+Annotation            ^^^^^^   0:2-0:8
 Identifier             ^^^^^   0:3-0:8
 === diagnostics ===
 
@@ -14,7 +14,7 @@ Pattern {
     parts: [
         AnnotationExpression {
             span: @0..10,
-            annotation: Function {
+            annotation: Annotation {
                 start: @2,
                 id: Identifier {
                     start: @3,

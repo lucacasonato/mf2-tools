@@ -10,7 +10,6 @@ use crate::ast::Escape;
 use crate::ast::ExponentSign;
 use crate::ast::Expression;
 use crate::ast::FnOrMarkupOption;
-use crate::ast::Function;
 use crate::ast::Identifier;
 use crate::ast::InputDeclaration;
 use crate::ast::Key;
@@ -638,15 +637,15 @@ impl<'text> Parser<'text> {
           }
         }
 
-        let function = Function { start, id, options };
+        let annotation = Annotation { start, id, options };
 
         if is_id_empty {
           self.report(Diagnostic::FunctionMissingIdentifier {
-            span: function.span(),
+            span: annotation.span(),
           });
         }
 
-        Some(Annotation::Function(function))
+        Some(annotation)
       }
       _ => None,
     }

@@ -62,8 +62,7 @@ impl<'ast, 'text> Printer<'ast, 'text> {
         self.push(' ');
       }
 
-      let Annotation::Function(fun) = annotation;
-      fun.apply_visitor(self);
+      annotation.apply_visitor(self);
     }
 
     for attr in attributes {
@@ -149,9 +148,9 @@ impl<'ast, 'text> Visit<'ast, 'text> for Printer<'ast, 'text> {
     );
   }
 
-  fn visit_function(&mut self, fun: &'ast Function<'text>) {
+  fn visit_annotation(&mut self, ann: &'ast Annotation<'text>) {
     self.push(':');
-    fun.apply_visitor_to_children(self);
+    ann.apply_visitor_to_children(self);
   }
 
   fn visit_identifier(&mut self, id: &Identifier) {
