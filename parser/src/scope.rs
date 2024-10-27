@@ -18,7 +18,7 @@ pub struct Scope<'text> {
 }
 
 impl Scope<'_> {
-  pub(crate) fn analyse<'text>(
+  pub(crate) fn analyze<'text>(
     ast: &ast::Message<'text>,
     diagnostics: &mut Vec<Diagnostic<'text>>,
   ) -> Scope<'text> {
@@ -29,7 +29,6 @@ impl Scope<'_> {
       diagnostics,
     };
     visitor.visit_message(ast);
-
     visitor.scope
   }
 

@@ -49,11 +49,11 @@ pub fn parse(message: &str) -> (Message, Vec<Diagnostic>, SourceTextInfo) {
   Parser::new(message).parse()
 }
 
-pub fn analyse_semantics<'text>(
+pub fn analyze_semantics<'text>(
   message: &Message<'text>,
   diagnostics: &mut Vec<Diagnostic<'text>>,
 ) -> Scope<'text> {
-  Scope::analyse(message, diagnostics)
+  Scope::analyze(message, diagnostics)
 }
 
 /// Check if a string is a syntactically valid name in MF2.
