@@ -9,7 +9,7 @@ Text                  ^^^^^^^^^^^^^^ 0:2-0:16
 The closing brace character ('}') is invalid inside of messages, and must be escaped as '\}'. (at @15..16)
   {{Hello, World!}
                  ^
-Quoted pattern is missing the closing braces ('}'). (at @0..16)
+Quoted pattern is missing the closing braces ('}}'). (at @0..16)
   {{Hello, World!}
   ^^^^^^^^^^^^^^^^
 === formatted ===
