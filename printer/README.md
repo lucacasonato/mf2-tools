@@ -12,7 +12,7 @@ Add this to your `Cargo.toml`:
 
 ```toml
 [dependencies]
-mf2_printer = "0.1"
+mf2_printer = "0.2"
 ```
 
 Then you can parse a string like this:

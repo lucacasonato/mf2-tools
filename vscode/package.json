@@ -3,7 +3,7 @@
   "displayName": "MessageFormat 2",
   "description": "MessageFormat 2 support for Visual Studio Code",
   "license": "GPL-3.0-or-later",
-  "version": "0.0.4",
+  "version": "0.1.1",
   "scripts": {
     "vscode:prepublish": "rm -rf ./dist && cp -r ../target/wasm/release ./dist && mv ./dist/mf2lsp.generated.js ./dist/mf2lsp.generated.mjs",
     "publish": "npx @vscode/vsce publish",
@@ -17,10 +17,11 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/lucacasonato/mf2-language-server"
+    "url": "https://github.com/lucacasonato/mf2-tools",
+    "directory": "vscode"
   },
   "publisher": "nicolo-ribaudo",
-  "logo": "./media/logo.png",
+  "icon": "./media/logo.png",
   "type": "module",
   "main": "./src/main.cjs",
   "dependencies": {
