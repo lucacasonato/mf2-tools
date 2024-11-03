@@ -247,7 +247,7 @@ fn generate_actual_fixed(
   let mut output = String::new();
   for diag in diagnostics {
     for mut fix in diag.fixes(info) {
-      output.push_str(&fix.label);
+      output.push_str(fix.label);
       output.push_str(":\n  ");
 
       fix.edits.sort_by(|a, b| a.span.start.cmp(&b.span.start));
