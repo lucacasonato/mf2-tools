@@ -12,7 +12,7 @@ Text                                    0:16-0:16
 === diagnostics ===
 
 === formatted ===
-.input { $foo }
+.input {$foo}
 {{}}
 
 === ast ===

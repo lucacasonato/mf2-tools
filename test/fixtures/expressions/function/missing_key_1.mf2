@@ -13,7 +13,7 @@ Found equals sign followed by value, but equals sign is not preceeded by a key. 
   {:hello =foo}
           ^^^^
 === formatted ===
-{ :hello =foo }
+{:hello =foo}
 === ast ===
 Pattern {
     parts: [

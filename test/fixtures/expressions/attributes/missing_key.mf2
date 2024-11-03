@@ -12,7 +12,7 @@ Attribute is missing a key after the '@' sign. (at @6..11)
   {$var @=bar}
         ^^^^^
 === formatted ===
-{ $var @=bar }
+{$var @=bar}
 === ast ===
 Pattern {
     parts: [

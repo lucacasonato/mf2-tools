@@ -7,7 +7,7 @@ Variable              ^^^^  0:2-0:6
 === diagnostics ===
 
 === formatted ===
-{ $var }
+{$var}
 === ast ===
 Pattern {
     parts: [

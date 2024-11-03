@@ -8,7 +8,7 @@ Identifier             ^^^^^   0:3-0:8
 === diagnostics ===
 
 === formatted ===
-{ :hello }
+{:hello}
 === ast ===
 Pattern {
     parts: [

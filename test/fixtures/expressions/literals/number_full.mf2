@@ -11,7 +11,7 @@ Number.exponent              ^^   0:9-0:11
 === diagnostics ===
 
 === formatted ===
-a{ 1.34e+56 }
+a{1.34e+56}
 === ast ===
 Pattern {
     parts: [

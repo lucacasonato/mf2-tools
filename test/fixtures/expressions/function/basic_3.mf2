@@ -10,7 +10,7 @@ Identifier                        ^^^^^^   0:14-0:20
 === diagnostics ===
 
 === formatted ===
-Count: { $var :number }
+Count: {$var :number}
 === ast ===
 Pattern {
     parts: [

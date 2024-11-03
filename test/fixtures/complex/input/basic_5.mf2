@@ -13,7 +13,7 @@ Text                                          0:23-0:23
 === diagnostics ===
 
 === formatted ===
-.input { $var :number }
+.input {$var :number}
 {{}}
 
 === ast ===

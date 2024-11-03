@@ -13,7 +13,7 @@ Identifier                           ^^^  0:17-0:20
 === diagnostics ===
 
 === formatted ===
-{ 1 @hello=world @foo }
+{1 @hello=world @foo}
 === ast ===
 Pattern {
     parts: [

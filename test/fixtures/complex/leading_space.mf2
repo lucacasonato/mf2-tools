@@ -14,7 +14,7 @@ Text                                               1:2-1:2
 === diagnostics ===
 
 === formatted ===
-.input { $hello :space }
+.input {$hello :space}
 {{}}
 
 === ast ===

@@ -14,7 +14,7 @@ Markup tag has an option after an attribute, which is not allowed. All options m
   {#el @attr opt=val}
              ^^^^^^^
 === formatted ===
-{#el @attr opt=val }
+{#el @attr opt=val}
 === ast ===
 Pattern {
     parts: [

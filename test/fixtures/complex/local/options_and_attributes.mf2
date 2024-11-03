@@ -20,7 +20,7 @@ Text                                                          0:39-0:39
 === diagnostics ===
 
 === formatted ===
-.local $foo = { $bar :fn opt=1 @attr }
+.local $foo = {$bar :fn opt=1 @attr}
 {{}}
 
 === ast ===

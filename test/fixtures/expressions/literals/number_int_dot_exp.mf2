@@ -13,7 +13,7 @@ Number is missing a fractional part, which it must have because it has a decimal
   a{ 1.e3 }
      ^^^^
 === formatted ===
-a{ 1.e3 }
+a{1.e3}
 === ast ===
 Pattern {
     parts: [

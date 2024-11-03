@@ -9,7 +9,7 @@ Placeholder expression contains a literal that is not valid when unquoted. Did y
   {^a }
    ^^
 === formatted ===
-{ ^a }
+{^a}
 === ast ===
 Pattern {
     parts: [

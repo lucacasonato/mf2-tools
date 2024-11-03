@@ -11,7 +11,7 @@ Number has leading zero in integral part, which is not allowed. (at @3..5)
   a{ 01 }
      ^^
 === formatted ===
-a{ 01 }
+a{01}
 === ast ===
 Pattern {
     parts: [

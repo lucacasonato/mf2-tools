@@ -12,7 +12,7 @@ Function is missing an identifier. (at @1..2)
   {: @foo}
    ^
 === formatted ===
-{ : @foo }
+{: @foo}
 === ast ===
 Pattern {
     parts: [

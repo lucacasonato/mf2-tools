@@ -9,7 +9,7 @@ Markup tag is missing an identifier. (at @0..4)
   {# }
   ^^^^
 === formatted ===
-{# }
+{#}
 === ast ===
 Pattern {
     parts: [

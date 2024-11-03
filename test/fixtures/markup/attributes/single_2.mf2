@@ -9,7 +9,7 @@ Identifier                ^^^^   0:6-0:10
 === diagnostics ===
 
 === formatted ===
-{#el @attr }
+{#el @attr}
 === ast ===
 Pattern {
     parts: [

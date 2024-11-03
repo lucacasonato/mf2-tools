@@ -12,7 +12,7 @@ Text                                  ^  0:18-0:19
 === diagnostics ===
 
 === formatted ===
-{ $var :number a=b }
+{$var :number a=b}
 === ast ===
 Pattern {
     parts: [

@@ -9,7 +9,7 @@ Number.integral        ^   0:3-0:4
 === diagnostics ===
 
 === formatted ===
-a{ 1 }
+a{1}
 === ast ===
 Pattern {
     parts: [

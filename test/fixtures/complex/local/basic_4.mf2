@@ -14,7 +14,7 @@ Text                                              1:2-1:2
 === diagnostics ===
 
 === formatted ===
-.local $var = { |hello| }
+.local $var = {|hello|}
 {{}}
 
 === ast ===
