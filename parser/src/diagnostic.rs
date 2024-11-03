@@ -383,8 +383,8 @@ diagnostics! {
         label: "Escape the brace",
         fix() {
           vec![DiagnosticEdit {
-            span: Span::new(*brace_loc..*brace_loc+'}'),
-            new_text: "\\}".to_string(),
+            span: Span::new(*brace_loc..*brace_loc),
+            new_text: "\\".to_string(),
           }]
         }
       }],
