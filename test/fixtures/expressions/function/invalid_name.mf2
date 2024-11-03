@@ -10,6 +10,8 @@ Identifier                 ^^^^^^       0:7-0:13
 Placeholder expression contains invalid content. (at @14..18)
   {$var :number 1a=2}
                 ^^^^
+=== fixed ===
+(no fixes)
 === formatted ===
 (cannot format due to fatal errors)
 === ast ===

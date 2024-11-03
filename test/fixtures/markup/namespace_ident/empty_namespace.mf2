@@ -8,6 +8,8 @@ Identifier            ^^^^   0:2-0:6
 Namespaced identifier is missing a name, which is required after the colon following the namespace. (at @2..6)
   {#foo: }
     ^^^^
+=== fixed ===
+(no fixes)
 === formatted ===
 {#foo: }
 === ast ===

@@ -7,6 +7,10 @@ Text                ^^^^^^^^^^^^^^^ 0:0-0:15
 Quoted pattern is not allowed inside of a pattern. (at @6..8)
   Hello {{World}}
         ^^
+=== fixed ===
+Remove quotes:
+  Hello World
+
 === formatted ===
 Hello {{World}}
 === ast ===

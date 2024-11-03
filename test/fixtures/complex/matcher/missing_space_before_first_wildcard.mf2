@@ -13,6 +13,10 @@ Text                               0:12-0:12
 Matcher key is missing a leading space. (at @9..10)
   .match $a*{{}}
            ^
+=== fixed ===
+Add space before key:
+  .match $a *{{}}
+
 === formatted ===
 (cannot format due to fatal errors)
 === ast ===

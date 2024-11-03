@@ -27,6 +27,8 @@ Pattern                                                   ^   0:38-0:39
 Text                                                      ^   0:38-0:39
 === diagnostics ===
 
+=== fixed ===
+(no fixes)
 === formatted ===
 .match
 $a  $b

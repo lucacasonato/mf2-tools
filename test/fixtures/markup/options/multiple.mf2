@@ -12,6 +12,8 @@ Identifier                           ^^^        0:17-0:20
 Text                                     ^^^^   0:21-0:25
 === diagnostics ===
 
+=== fixed ===
+(no fixes)
 === formatted ===
 {#foo abc=val1 def=val2 }
 === ast ===

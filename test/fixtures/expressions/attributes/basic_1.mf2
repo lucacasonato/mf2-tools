@@ -9,6 +9,8 @@ Attribute              ^^^^^^  0:3-0:9
 Identifier              ^^^^^  0:4-0:9
 === diagnostics ===
 
+=== fixed ===
+(no fixes)
 === formatted ===
 { 1 @hello }
 === ast ===

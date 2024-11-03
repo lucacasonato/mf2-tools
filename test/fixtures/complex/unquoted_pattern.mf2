@@ -17,6 +17,10 @@ Variable                                ^^  1:5-1:7
 Using an unquoted pattern as the body is invalid, because the message contains declarations. Did you mean to quote the pattern?. (at @15..23)
   .input {$a :b}↵abc {$a}
                  ^^^^^^^^
+=== fixed ===
+Surround with quotes:
+  .input {$a :b}↵{{abc {$a}}}
+
 === formatted ===
 (cannot format due to fatal errors)
 === ast ===

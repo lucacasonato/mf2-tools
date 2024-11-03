@@ -11,6 +11,8 @@ Namespaced identifier is missing a name, which is required after the colon follo
 Identifiers with a colon before the name are namespaced identifiers, but this identifier is missing a namespace before the colon. (at @2..3)
   {#: }
     ^
+=== fixed ===
+(no fixes)
 === formatted ===
 {#: }
 === ast ===

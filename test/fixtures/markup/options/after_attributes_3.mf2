@@ -24,6 +24,12 @@ Markup tag has an option after an attribute, which is not allowed. All options m
 Markup tag has an option after an attribute, which is not allowed. All options must come before any attribute. (at @28..34)
   {#el @attr opt=val @attr2=1 opt2=2}
                               ^^^^^^
+=== fixed ===
+Move option before attribute:
+  {#el opt=val @attr  @attr2=1 opt2=2}
+Move option before attribute:
+  {#el @attr opt=val opt2=2 @attr2=1 }
+
 === formatted ===
 {#el @attr opt=val @attr2=1 opt2=2 }
 === ast ===

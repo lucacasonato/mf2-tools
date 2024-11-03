@@ -11,6 +11,8 @@ Text                        ^^^  0:8-0:11
 Attribute is missing a key after the '@' sign. (at @6..11)
   {$var @=bar}
         ^^^^^
+=== fixed ===
+(no fixes)
 === formatted ===
 { $var @=bar }
 === ast ===

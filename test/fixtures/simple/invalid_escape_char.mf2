@@ -9,6 +9,10 @@ Text                       ^^^ 0:7-0:10
 The character 't' can not be escaped, as escape sequences can only escape '}', '{', '|', and '\'. (at @5..7)
   hello\tbar
        ^^
+=== fixed ===
+Remove backslash:
+  hellotbar
+
 === formatted ===
 hello\tbar
 === ast ===

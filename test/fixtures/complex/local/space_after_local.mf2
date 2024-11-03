@@ -15,6 +15,10 @@ Text                                            1:2-1:2
 '.local' keyword is not followed by a space. (at @0..6)
   .local$var = {|hello|}↵{{}}
   ^^^^^^
+=== fixed ===
+Add space after '.local':
+  .local $var = {|hello|}↵{{}}
+
 === formatted ===
 (cannot format due to fatal errors)
 === ast ===

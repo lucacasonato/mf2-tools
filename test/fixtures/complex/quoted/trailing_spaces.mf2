@@ -7,6 +7,8 @@ Pattern               ^^^^^^^^^^^^^^^     0:2-0:17
 Text                  ^^^^^^^^^^^^^^^     0:2-0:17
 === diagnostics ===
 
+=== fixed ===
+(no fixes)
 === formatted ===
 {{ Hello, World! }}
 

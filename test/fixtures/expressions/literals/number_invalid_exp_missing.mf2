@@ -29,6 +29,14 @@ Number is missing an exponent part, which it must have because it is written in 
 Number is missing an exponent part, which it must have because it is written in scientific notation. (at @18..21)
   a{ 1e }↵{ 1e+ }↵{ 1e- }
                     ^^^
+=== fixed ===
+Remove the 'e':
+  a{ 1 }↵{ 1e+ }↵{ 1e- }
+Remove the 'e':
+  a{ 1e }↵{ 1 }↵{ 1e- }
+Remove the 'e':
+  a{ 1e }↵{ 1e+ }↵{ 1 }
+
 === formatted ===
 a{ 1e }
 { 1e+ }

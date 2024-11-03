@@ -8,6 +8,8 @@ Variable             ^   0:1-0:2
 Variable is missing a name after the dollar sign ('$'). (at @1..2)
   {$ }
    ^
+=== fixed ===
+(no fixes)
 === formatted ===
 { $ }
 === ast ===

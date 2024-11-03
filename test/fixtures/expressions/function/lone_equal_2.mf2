@@ -13,6 +13,8 @@ Number.integral            ^    0:7-0:8
 Found an equals sign without a key or value. Did you mean to add a key and value to make this an option? (at @9..10)
   {:fn a=1 =}
            ^
+=== fixed ===
+(no fixes)
 === formatted ===
 (cannot format due to fatal errors)
 === ast ===

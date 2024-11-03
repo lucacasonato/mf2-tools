@@ -13,6 +13,8 @@ Identifier                     ^^^^^      0:11-0:16
 Placeholder expression contains invalid content. (at @17..20)
   {1 :hello @world a=b}
                    ^^^
+=== fixed ===
+(no fixes)
 === formatted ===
 (cannot format due to fatal errors)
 === ast ===

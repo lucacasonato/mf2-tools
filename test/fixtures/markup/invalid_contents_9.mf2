@@ -10,6 +10,8 @@ Identifier              ^^^^^    0:4-0:9
 Markup tag is missing an identifier. (at @0..12)
   {# @hello /}
   ^^^^^^^^^^^^
+=== fixed ===
+(no fixes)
 === formatted ===
 {# @hello /}
 === ast ===

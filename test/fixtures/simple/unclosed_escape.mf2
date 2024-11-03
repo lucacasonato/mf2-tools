@@ -7,6 +7,8 @@ Text                ^^^^^  0:0-0:5
 Backslashes start an escape sequence, but no character to be escaped was found. A literal '\' must be written as '\\'. (at @5..6)
   hello\
        ^
+=== fixed ===
+(no fixes)
 === formatted ===
 (cannot format due to fatal errors)
 === ast ===

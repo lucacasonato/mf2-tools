@@ -8,6 +8,8 @@ Number                 ^   0:3-0:4
 Number.integral        ^   0:3-0:4
 === diagnostics ===
 
+=== fixed ===
+(no fixes)
 === formatted ===
 a{ 1 }
 === ast ===

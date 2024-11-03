@@ -16,6 +16,12 @@ Quoted pattern is not allowed inside of a pattern. (at @12..14)
 Using an unquoted pattern as the body is invalid, because the message contains declarations. Did you mean to quote the pattern?. (at @7..16)
   .input $foo↵{{}}
          ^^^^^^^^^
+=== fixed ===
+Remove quotes:
+  .input $foo↵
+Surround with quotes:
+  .input {{$foo↵{{}}}}
+
 === formatted ===
 (cannot format due to fatal errors)
 === ast ===

@@ -10,6 +10,10 @@ Number.integral        ^^   0:3-0:5
 Number has leading zero in integral part, which is not allowed. (at @3..5)
   a{ 01 }
      ^^
+=== fixed ===
+Remove leading zeros:
+  a{ 1 }
+
 === formatted ===
 a{ 01 }
 === ast ===

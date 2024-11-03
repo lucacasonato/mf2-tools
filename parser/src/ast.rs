@@ -574,7 +574,8 @@ impl<'text> Visitable<'text> for Number<'text> {
 
 impl<'text> Number<'text> {
   fn slice(&self, span: Span) -> &'text str {
-    &self.raw[span.start.inner() as usize..span.end.inner() as usize]
+    &self.raw[span.start.inner() as usize - self.start.inner() as usize
+      ..span.end.inner() as usize - self.start.inner() as usize]
   }
 
   fn integral_start(&self) -> Location {

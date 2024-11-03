@@ -8,6 +8,8 @@ Function                  ^^^^  0:6-0:10
 Identifier                 ^^^  0:7-0:10
 === diagnostics ===
 
+=== fixed ===
+(no fixes)
 === formatted ===
 { $var :a:b }
 === ast ===

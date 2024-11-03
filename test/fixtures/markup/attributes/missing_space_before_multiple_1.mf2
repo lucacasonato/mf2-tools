@@ -12,6 +12,10 @@ Identifier                      ^^^^^   0:12-0:17
 Attribute is missing a leading space. (at @11..17)
   {#el @attr1@attr2 }
              ^^^^^^
+=== fixed ===
+Add space before attribute:
+  {#el @attr1 @attr2 }
+
 === formatted ===
 (cannot format due to fatal errors)
 === ast ===

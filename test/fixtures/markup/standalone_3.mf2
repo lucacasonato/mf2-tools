@@ -6,6 +6,8 @@ Markup              ^^^^^^^^^^^^^^^ 0:0-0:15
 Identifier            ^^^^^^^^^^    0:2-0:12
 === diagnostics ===
 
+=== fixed ===
+(no fixes)
 === formatted ===
 {#standalone /}
 === ast ===

@@ -13,6 +13,10 @@ Text                               ^^^  0:15-0:18
 Markup tag has an option after an attribute, which is not allowed. All options must come before any attribute. (at @11..18)
   {#el @attr opt=val}
              ^^^^^^^
+=== fixed ===
+Move option before attribute:
+  {#el opt=val @attr }
+
 === formatted ===
 {#el @attr opt=val }
 === ast ===

@@ -12,6 +12,10 @@ Number.integral               ^  0:10-0:11
 Attribute is missing a leading space. (at @4..11)
   {#el@attr=1}
       ^^^^^^^
+=== fixed ===
+Add space before attribute:
+  {#el @attr=1}
+
 === formatted ===
 (cannot format due to fatal errors)
 === ast ===

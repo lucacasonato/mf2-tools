@@ -12,6 +12,10 @@ The character 'a' can not be escaped, as escape sequences can only escape '}', '
 Placeholder expression contains invalid content. (at @3..8)
   {1 abc\a}
      ^^^^^
+=== fixed ===
+Remove backslash:
+  {1 abca}
+
 === formatted ===
 (cannot format due to fatal errors)
 === ast ===

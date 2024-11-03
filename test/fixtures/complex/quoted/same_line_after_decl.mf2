@@ -11,6 +11,8 @@ Pattern                                 0:16-0:16
 Text                                    0:16-0:16
 === diagnostics ===
 
+=== fixed ===
+(no fixes)
 === formatted ===
 .input { $foo }
 {{}}

@@ -17,6 +17,10 @@ Local declaration is missing an equals sign after the variable. (at @7..11)
 Local declaration is missing an expression as the value after the equals sign. (at @0..6)
   .local $var↵{{}}
   ^^^^^^
+=== fixed ===
+Add equals after variable:
+  .local $var =↵{{}}
+
 === formatted ===
 (cannot format due to fatal errors)
 === ast ===

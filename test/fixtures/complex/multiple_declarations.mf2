@@ -42,6 +42,8 @@ Pattern                                                                         
 Text                                                                                                                                11:2-11:2
 === diagnostics ===
 
+=== fixed ===
+(no fixes)
 === formatted ===
 .local $var1 = { 1 }
 

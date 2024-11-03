@@ -9,6 +9,8 @@ Number.integral        ^      0:3-0:4
 Number.fractional        ^^   0:5-0:7
 === diagnostics ===
 
+=== fixed ===
+(no fixes)
 === formatted ===
 a{ 1.03 }
 === ast ===

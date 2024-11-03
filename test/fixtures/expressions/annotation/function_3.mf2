@@ -7,6 +7,8 @@ Function             ^^^^^^   0:1-0:7
 Identifier            ^^^^^   0:2-0:7
 === diagnostics ===
 
+=== fixed ===
+(no fixes)
 === formatted ===
 { :hello }
 === ast ===

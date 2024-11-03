@@ -8,6 +8,8 @@ Identifier               0:2-0:2
 Markup tag is missing an identifier. (at @0..4)
   {# }
   ^^^^
+=== fixed ===
+(no fixes)
 === formatted ===
 {# }
 === ast ===

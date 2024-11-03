@@ -13,6 +13,12 @@ Placeholder expression contains a literal that is not valid when unquoted. Did y
 Placeholder expression contains a literal that is not valid when unquoted. Did you mean to quote it? (at @5..7)
   {^a}{&b}
        ^^
+=== fixed ===
+Quote literal:
+  {|^a|}{&b}
+Quote literal:
+  {^a}{|&b|}
+
 === formatted ===
 { ^a }{ &b }
 === ast ===

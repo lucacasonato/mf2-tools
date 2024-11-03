@@ -19,6 +19,12 @@ Local declaration is missing an equals sign after the variable. (at @7..13)
 Value of a local declaration is a literal or variable, but must be an expression. Did you mean to wrap the value in braces? (at @14..17)
   .local $count 123↵{{{$count}}}
                 ^^^
+=== fixed ===
+Add equals after variable:
+  .local $count = 123↵{{{$count}}}
+Wrap value in braces:
+  .local $count {123}↵{{{$count}}}
+
 === formatted ===
 (cannot format due to fatal errors)
 === ast ===

@@ -21,6 +21,10 @@ Number.integral                                       ^  2:13-2:14
 Declarations are not valid after the message body. Did you mean to put the declaration before the body? (at @21..36)
   .local $a = {1}↵{{}}↵.local $b = {1}
                        ^^^^^^^^^^^^^^^
+=== fixed ===
+Move declaration before body:
+  .local $a = {1}↵.local $b = {1}↵{{}}↵
+
 === formatted ===
 (cannot format due to fatal errors)
 === ast ===

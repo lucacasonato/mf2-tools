@@ -14,6 +14,10 @@ Text                              ^^^^^  0:14-0:19
 Attribute is missing a leading space. (at @7..19)
   {1 @foo@hello=world}
          ^^^^^^^^^^^^
+=== fixed ===
+Add space before attribute:
+  {1 @foo @hello=world}
+
 === formatted ===
 (cannot format due to fatal errors)
 === ast ===

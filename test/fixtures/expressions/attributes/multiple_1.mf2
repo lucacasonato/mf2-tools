@@ -12,6 +12,8 @@ Attribute                           ^^^^  0:16-0:20
 Identifier                           ^^^  0:17-0:20
 === diagnostics ===
 
+=== fixed ===
+(no fixes)
 === formatted ===
 { 1 @hello=world @foo }
 === ast ===

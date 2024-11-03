@@ -10,6 +10,8 @@ Escape                    ^^      0:6-0:8
 Text                        ^^^   0:8-0:11
 === diagnostics ===
 
+=== fixed ===
+(no fixes)
 === formatted ===
 a{ |abc\|def| }
 === ast ===

@@ -8,6 +8,10 @@ Text                  ^^   0:2-0:4
 Placeholder expression contains a literal that is not valid when unquoted. Did you mean to quote it? (at @2..4)
   { ^a }
     ^^
+=== fixed ===
+Quote literal:
+  { |^a| }
+
 === formatted ===
 { ^a }
 === ast ===

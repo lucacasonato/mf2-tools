@@ -28,6 +28,12 @@ Matcher key is missing a leading space. (at @27..32)
 Matcher variant has 2 keys, but there are 1 selectors. (at @27..32)
   .match $a↵* {{Hello}}↵+yej%|foo| {{Hi}}
                              ^^^^^
+=== fixed ===
+Quote literal:
+  .match $a↵* {{Hello}}↵|+yej%||foo| {{Hi}}
+Add space before key:
+  .match $a↵* {{Hello}}↵+yej% |foo| {{Hi}}
+
 === formatted ===
 (cannot format due to fatal errors)
 === ast ===

@@ -12,6 +12,8 @@ Text                         ^^^  0:9-0:12
 Found equals sign followed by value, but equals sign is not preceeded by a key. Did you forget to add a key to make this an option? (at @8..12)
   {:hello =foo}
           ^^^^
+=== fixed ===
+(no fixes)
 === formatted ===
 { :hello =foo }
 === ast ===
