@@ -119,6 +119,39 @@ jobs:
           PROFILE: release
           MODE: wasm
 
+      - name: Smoke test the dprint plugin
+        run: |
+          echo "Hello { |World|   }!" > actual.mf2
+          echo "Hello {|World|}!\n" > expected.mf2
+          deno run -A npm:dprint fmt --plugins=./target/wasm32-unknown-unknown/release/dprint_plugin_mf2.wasm -- test.mf2
+          cmp -s actual.mf2 expected.mf2
+
+      - name: Prepare dprint plugin for release
+        run: mv ./target/wasm32-unknown-unknown/release/dprint_plugin_mf2.wasm ./dprint-plugin-mf2.wasm
+
+      - name: Prepare dprint plugin schema
+        run: |
+          cp ./dprint-plugin/schema.json ./dprint-plugin-mf2.schema.json
+          # replace {{VERSION}} with the version from the tag
+          sed -i "s/{{VERSION}}/${{ github.ref }}" ./dprint-plugin-mf2.schema.json
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: dprint-plugin-mf2
+          path: |
+            dprint-plugin-mf2.wasm
+            dprint-plugin-mf2.schema.json
+
+      - name: GitHub release
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v2
+        with:
+          draft: true
+          files: |
+            dprint-plugin-mf2.wasm
+            dprint-plugin-mf2.schema.json
+
   vscode:
     name: "ci-vscode"
     runs-on: ubuntu-24.04

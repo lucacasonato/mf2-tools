@@ -1,0 +1,20 @@
+[package]
+name = "dprint-plugin-mf2"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+license.workspace = true
+repository.workspace = true
+
+[lib]
+crate-type = ["cdylib"]
+
+
+[dependencies]
+mf2_parser = { version = "0.1", path = "../parser" }
+mf2_printer = { version = "0.1", path = "../printer" }
+
+anyhow = "1"
+dprint-core = { version = "0.67.2", features = ["wasm"] }
+serde = { version = "1.0", features = ["derive"] }
+serde_json = { version = "1.0", features = ["preserve_order"] }
