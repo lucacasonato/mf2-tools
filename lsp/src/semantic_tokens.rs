@@ -68,9 +68,9 @@ impl SemanticTokenVisitor<'_> {
 }
 
 impl<'ast, 'text> Visit<'ast, 'text> for SemanticTokenVisitor<'ast> {
-  fn visit_function(&mut self, func: &'ast ast::Function<'text>) {
-    self.report_token(func.id.span(), 2 /* function */);
-    func.apply_visitor_to_children(self);
+  fn visit_annotation(&mut self, ann: &'ast ast::Annotation<'text>) {
+    self.report_token(ann.id.span(), 2 /* function */);
+    ann.apply_visitor_to_children(self);
   }
 
   fn visit_variable(&mut self, var: &'ast ast::Variable<'text>) {

@@ -4,7 +4,7 @@
 Pattern             ^^^^^^^^^^^^^^^^^^ 0:0-0:18
 VariableExpression  ^^^^^^^^^^^^^^^^^^ 0:0-0:18
 Variable             ^^^^              0:1-0:5
-Function                  ^^^^^^^^^^^  0:6-0:17
+Annotation                ^^^^^^^^^^^  0:6-0:17
 Identifier                 ^^^^^^      0:7-0:13
 FnOrMarkupOption                  ^^^  0:14-0:17
 Identifier                        ^    0:14-0:15
@@ -23,7 +23,7 @@ Pattern {
                 name: "var",
             },
             annotation: Some(
-                Function {
+                Annotation {
                     start: @6,
                     id: Identifier {
                         start: @7,

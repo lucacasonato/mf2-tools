@@ -5,7 +5,7 @@ Pattern             ^^^^^^^^^^^^^ 0:0-0:13
 LiteralExpression   ^^^^^^^^^^^^^ 0:0-0:13
 Number               ^            0:1-0:2
 Number.integral      ^            0:1-0:2
-Function               ^^^^       0:3-0:7
+Annotation             ^^^^       0:3-0:7
 Identifier              ^^^       0:4-0:7
 Attribute                   ^^^^  0:8-0:12
 Identifier                   ^^^  0:9-0:12
@@ -27,7 +27,7 @@ Pattern {
                 exponent_len: None,
             },
             annotation: Some(
-                Function {
+                Annotation {
                     start: @3,
                     id: Identifier {
                         start: @4,

@@ -19,7 +19,7 @@ Text                                                                1:14-1:14
 InputDeclaration                                     ^^^^^^^^^^^^^^ 2:0-2:14
 VariableExpression                                          ^^^^^^^ 2:7-2:14
 Variable                                                     ^^     2:8-2:10
-Function                                                        ^^  2:11-2:13
+Annotation                                                      ^^  2:11-2:13
 Identifier                                                       ^  2:12-2:13
 === diagnostics ===
 Declarations are not valid after the message body. Did you mean to put the declaration before the body? (at @33..47)
@@ -60,7 +60,7 @@ ComplexMessage {
                     name: "b",
                 },
                 annotation: Some(
-                    Function {
+                    Annotation {
                         start: @44,
                         id: Identifier {
                             start: @45,

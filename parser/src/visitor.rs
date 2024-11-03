@@ -54,7 +54,6 @@ pub trait Visit<'ast, 'text> {
   visit!(visit_quoted_part, part, QuotedPart<'text>);
   visit!(visit_number, num, Number<'text>);
   visit!(visit_annotation, ann, Annotation<'text>);
-  visit!(visit_function, func, Function<'text>);
   visit!(visit_identifier, ident, Identifier<'text>);
   visit!(visit_fn_or_markup_option, opt, FnOrMarkupOption<'text>);
   visit!(
@@ -167,7 +166,6 @@ impl<'ast, 'text: 'ast, T: VisitAny<'ast, 'text>> Visit<'ast, 'text> for T {
   visit_any!(visit_literal_expression, expr, LiteralExpression);
   visit_any!(visit_quoted, quoted, Quoted);
   visit_any!(visit_number, num, Number);
-  visit_any!(visit_function, func, Function);
   visit_any!(visit_identifier, ident, Identifier);
   visit_any!(visit_fn_or_markup_option, opt, FnOrMarkupOption);
   visit_any!(visit_variable, var, Variable);

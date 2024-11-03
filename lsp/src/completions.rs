@@ -157,15 +157,13 @@ fn get_completion_type<'text>(
       | X::AnnotationExpression(_)
       | X::LiteralExpression(_),
       _,
-      Some(X::Function(fun)),
+      Some(X::FnOrMarkupOption(opt)),
     ) => {
       #[allow(clippy::collapsible_match)]
-      if let Some(FnOrMarkupOption { key, value }) = fun.options.last() {
-        if let LiteralOrVariable::Literal(Literal::Text(text)) = &value {
-          if text.span().is_empty() && text.span().start != key.span().end {
-            // { $a :fn param= | }
-            return AllowedCompletionType::Variable(None);
-          }
+      if let LiteralOrVariable::Literal(Literal::Text(text)) = &opt.value {
+        if text.span().is_empty() && text.span().start != opt.key.span().end {
+          // { $a :fn param= | }
+          return AllowedCompletionType::Variable(None);
         }
       }
       AllowedCompletionType::None

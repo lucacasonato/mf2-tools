@@ -6,7 +6,7 @@ LocalDeclaration    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^      0:0-0:36
 Variable                   ^^^^                               0:7-0:11
 VariableExpression                ^^^^^^^^^^^^^^^^^^^^^^      0:14-0:36
 Variable                           ^^^^                       0:15-0:19
-Function                                ^^^^^^^^^             0:20-0:29
+Annotation                              ^^^^^^^^^             0:20-0:29
 Identifier                               ^^                   0:21-0:23
 FnOrMarkupOption                            ^^^^^             0:24-0:29
 Identifier                                  ^^^               0:24-0:27
@@ -40,7 +40,7 @@ ComplexMessage {
                     name: "bar",
                 },
                 annotation: Some(
-                    Function {
+                    Annotation {
                         start: @20,
                         id: Identifier {
                             start: @21,

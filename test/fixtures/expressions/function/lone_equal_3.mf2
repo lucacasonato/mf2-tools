@@ -3,7 +3,7 @@
                     {:fn a= =}
 Pattern             ^^^^^^^^^^ 0:0-0:10
 AnnotationExpression^^^^^^^^^^ 0:0-0:10
-Function             ^^^^^^    0:1-0:7
+Annotation           ^^^^^^    0:1-0:7
 Identifier            ^^       0:2-0:4
 FnOrMarkupOption         ^^    0:5-0:7
 Identifier               ^     0:5-0:6
@@ -22,7 +22,7 @@ Pattern {
     parts: [
         AnnotationExpression {
             span: @0..10,
-            annotation: Function {
+            annotation: Annotation {
                 start: @1,
                 id: Identifier {
                     start: @2,
