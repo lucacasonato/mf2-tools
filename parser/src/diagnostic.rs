@@ -106,7 +106,7 @@ diagnostics! {
       fatal: false,
       fixes: [{
         label: "Remove leading zeros",
-        fix(_) {
+        fix() {
           let integral_span = number.integral_span();
           let integral = number.integral_part();
           let trimmed = integral.trim_start_matches('0');
