@@ -53,12 +53,11 @@ impl<'ast, 'text> Printer<'ast, 'text> {
     F: FnOnce(&mut Self, T),
   {
     self.push('{');
-    self.push(' ');
 
     cb(self, body);
 
     if let Some(annotation) = annotation {
-      if !matches!(self.out.chars().last(), Some(' ')) {
+      if !matches!(self.out.chars().last(), Some('{')) {
         self.push(' ');
       }
 
@@ -70,7 +69,6 @@ impl<'ast, 'text> Printer<'ast, 'text> {
       attr.apply_visitor(self);
     }
 
-    self.push(' ');
     self.push('}');
   }
 
@@ -208,8 +206,8 @@ impl<'ast, 'text> Visit<'ast, 'text> for Printer<'ast, 'text> {
 
     markup.apply_visitor_to_children(self);
 
-    self.push(' ');
     if let MarkupKind::Standalone = markup.kind {
+      self.push(' ');
       self.push('/');
     }
     self.push('}');
@@ -256,7 +254,7 @@ impl<'ast, 'text> Visit<'ast, 'text> for Printer<'ast, 'text> {
   }
 
   fn visit_matcher(&mut self, matcher: &'ast Matcher<'text>) {
-    self.push_str(".match\n");
+    self.push_str(".match");
 
     let selectors_count = matcher
       .variants
@@ -270,6 +268,12 @@ impl<'ast, 'text> Visit<'ast, 'text> for Printer<'ast, 'text> {
     assert!(matcher.selectors.len() <= selectors_count);
     for (i, selector) in matcher.selectors.iter().enumerate() {
       max_lengths[i] = selector.name.len() + 1;
+    }
+
+    if max_lengths.len() > 1 {
+      self.push_str("\n  ");
+    } else {
+      self.push(' ');
     }
 
     let mut printed_keys =
@@ -297,7 +301,7 @@ impl<'ast, 'text> Visit<'ast, 'text> for Printer<'ast, 'text> {
     }
 
     for (j, variant) in matcher.variants.iter().enumerate() {
-      self.push('\n');
+      self.push_str("\n  ");
 
       for i in 0..selectors_count {
         let printed_key = &printed_keys[j * selectors_count + i];

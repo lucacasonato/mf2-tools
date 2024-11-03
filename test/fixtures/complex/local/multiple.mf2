@@ -20,8 +20,8 @@ Text                                                                      2:2-2:
 === diagnostics ===
 
 === formatted ===
-.local $var = { |hello| }
-.local $var2 = { |hello| }
+.local $var = {|hello|}
+.local $var2 = {|hello|}
 {{}}
 
 === ast ===

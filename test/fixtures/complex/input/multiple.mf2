@@ -20,8 +20,8 @@ Text                                                                  2:2-2:2
 === diagnostics ===
 
 === formatted ===
-.input { $var :number }
-.input { $var2 :number }
+.input {$var :number}
+.input {$var2 :number}
 {{}}
 
 === ast ===

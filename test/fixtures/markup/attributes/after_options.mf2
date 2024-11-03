@@ -12,7 +12,7 @@ Identifier                          ^^^^   0:16-0:20
 === diagnostics ===
 
 === formatted ===
-{#el opt1=val1 @attr }
+{#el opt1=val1 @attr}
 === ast ===
 Pattern {
     parts: [

@@ -13,7 +13,7 @@ Text                                            0:25-0:25
 === diagnostics ===
 
 === formatted ===
-.local $var = { |hello| }
+.local $var = {|hello|}
 {{}}
 
 === ast ===

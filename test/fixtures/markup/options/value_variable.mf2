@@ -10,7 +10,7 @@ Variable                       ^^^^   0:11-0:15
 === diagnostics ===
 
 === formatted ===
-{#el opt=$var }
+{#el opt=$var}
 === ast ===
 Pattern {
     parts: [

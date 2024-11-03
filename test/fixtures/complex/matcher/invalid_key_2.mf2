@@ -21,10 +21,9 @@ Found an invalid matcher key (not a valid literal). Did you mean to quote the ke
   .match $a↵* {{Hello}}↵1+1 {{Hi}}
                         ^^^
 === formatted ===
-.match
-$a
-*   {{Hello}}
-1+1 {{Hi}}
+.match $a
+  *   {{Hello}}
+  1+1 {{Hi}}
 
 === ast ===
 ComplexMessage {

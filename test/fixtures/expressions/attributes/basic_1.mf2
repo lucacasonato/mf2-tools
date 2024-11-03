@@ -10,7 +10,7 @@ Identifier              ^^^^^  0:4-0:9
 === diagnostics ===
 
 === formatted ===
-{ 1 @hello }
+{1 @hello}
 === ast ===
 Pattern {
     parts: [

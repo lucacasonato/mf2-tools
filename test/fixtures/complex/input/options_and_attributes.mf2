@@ -19,7 +19,7 @@ Text                                                   0:32-0:32
 === diagnostics ===
 
 === formatted ===
-.input { $foo :fn opt=1 @attr }
+.input {$foo :fn opt=1 @attr}
 {{}}
 
 === ast ===

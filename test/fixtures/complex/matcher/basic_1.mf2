@@ -19,10 +19,9 @@ Text                                      ^   2:4-2:5
 === diagnostics ===
 
 === formatted ===
-.match
-$a
-c  {{d}}
-*  {{e}}
+.match $a
+  c  {{d}}
+  *  {{e}}
 
 === ast ===
 ComplexMessage {

@@ -7,7 +7,7 @@ Identifier            ^^^^  0:2-0:6
 === diagnostics ===
 
 === formatted ===
-{#open }
+{#open}
 === ast ===
 Pattern {
     parts: [

@@ -11,7 +11,7 @@ Text                        ^^^   0:8-0:11
 === diagnostics ===
 
 === formatted ===
-a{ |abc\|def| }
+a{|abc\|def|}
 === ast ===
 Pattern {
     parts: [

@@ -10,7 +10,7 @@ Text                           ^^^   0:11-0:14
 === diagnostics ===
 
 === formatted ===
-{#el @attr=val }
+{#el @attr=val}
 === ast ===
 Pattern {
     parts: [

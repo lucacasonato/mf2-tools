@@ -9,7 +9,7 @@ Identifier                 ^^^  0:7-0:10
 === diagnostics ===
 
 === formatted ===
-{ $var :a:b }
+{$var :a:b}
 === ast ===
 Pattern {
     parts: [

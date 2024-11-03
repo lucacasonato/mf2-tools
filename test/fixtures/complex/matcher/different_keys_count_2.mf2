@@ -35,10 +35,10 @@ Matcher variant has 3 keys, but there are 2 selectors. (at @41..45)
                                            ^^^^
 === formatted ===
 .match
-$foo  $bar 
-hi              {{1}}
-hello hola ciao {{2}}
-*     *         {{3}}
+  $foo  $bar 
+  hi              {{1}}
+  hello hola ciao {{2}}
+  *     *         {{3}}
 
 === ast ===
 ComplexMessage {

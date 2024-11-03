@@ -15,7 +15,7 @@ Add this to your `Cargo.toml`:
 
 ```toml
 [dependencies]
-mf2_parser = "0.2"
+mf2_parser = "0.1"
 ```
 
 Then you can parse a string like this:

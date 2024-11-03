@@ -12,7 +12,7 @@ Number is missing an integral part. (at @3..6)
   a{ .03 }
      ^^^
 === formatted ===
-a{ .03 }
+a{.03}
 === ast ===
 Pattern {
     parts: [

@@ -11,7 +11,7 @@ Text                          ^^^^^^    0:10-0:16
 === diagnostics ===
 
 === formatted ===
-{#el opt=|quoted| }
+{#el opt=|quoted|}
 === ast ===
 Pattern {
     parts: [
