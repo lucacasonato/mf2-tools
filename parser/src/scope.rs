@@ -2,19 +2,21 @@ use std::collections::hash_map::Entry;
 use std::collections::HashMap;
 
 use crate::ast;
+use crate::ast::Expression;
 use crate::Diagnostic;
 use crate::Span;
 use crate::Spanned as _;
 use crate::Visit;
 use crate::Visitable as _;
 
-pub struct VariableUsage {
+pub struct VariableUsage<'text> {
   pub declaration: Option<Span>,
   pub all: Vec<Span>,
+  pub annotation: Option<&'text str>,
 }
 
 pub struct Scope<'text> {
-  variables: HashMap<&'text str, VariableUsage>,
+  variables: HashMap<&'text str, VariableUsage<'text>>,
 }
 
 impl Scope<'_> {
@@ -51,9 +53,18 @@ struct ScopeVisitor<'diag, 'text> {
 }
 
 impl<'text> ScopeVisitor<'_, 'text> {
+  fn get_variable_annotation(&self, var: &ast::Variable) -> Option<&'text str> {
+    self
+      .scope
+      .variables
+      .get(var.name)
+      .and_then(|v| v.annotation)
+  }
+
   fn push_variable_declaration<'ast>(
     &mut self,
     var: &'ast ast::Variable<'text>,
+    annotation: Option<&'text str>,
   ) {
     match self.scope.variables.entry(var.name) {
       Entry::Occupied(existing) => {
@@ -82,6 +93,7 @@ impl<'text> ScopeVisitor<'_, 'text> {
         vacant.insert(VariableUsage {
           declaration: Some(var.span()),
           all: vec![var.span()],
+          annotation,
         });
       }
     };
@@ -96,6 +108,7 @@ impl<'text> ScopeVisitor<'_, 'text> {
         VariableUsage {
           declaration: None,
           all: vec![var.span()],
+          annotation: None,
         },
       );
     }
@@ -109,21 +122,50 @@ impl<'ast, 'text> Visit<'ast, 'text> for ScopeVisitor<'_, 'text> {
   ) {
     decl.expression.apply_visitor(self);
 
-    self.push_variable_declaration(&decl.variable);
+    let annotation_name = match &decl.expression {
+      Expression::AnnotationExpression(exp) => Some(exp.annotation.id.name),
+      Expression::LiteralExpression(exp) => {
+        exp.annotation.as_ref().map(|a| a.id.name)
+      }
+      Expression::VariableExpression(exp) => exp
+        .annotation
+        .as_ref()
+        .map(|a| a.id.name)
+        .or_else(|| self.get_variable_annotation(&exp.variable)),
+    };
+
+    self.push_variable_declaration(&decl.variable, annotation_name);
   }
 
   fn visit_input_declaration(
     &mut self,
     decl: &'ast ast::InputDeclaration<'text>,
   ) {
+    let mut annotation_name = None;
     if let Some(annotation) = &decl.expression.annotation {
       annotation.apply_visitor(self);
+      annotation_name = Some(annotation.id.name);
     }
 
-    self.push_variable_declaration(&decl.expression.variable);
+    self.push_variable_declaration(&decl.expression.variable, annotation_name);
   }
 
   fn visit_variable(&mut self, var: &'ast ast::Variable<'text>) {
     self.push_variable_reference(var);
+  }
+
+  fn visit_matcher(&mut self, matcher: &'ast ast::Matcher<'text>) {
+    matcher.apply_visitor_to_children(self);
+
+    for selector in &matcher.selectors {
+      if self.get_variable_annotation(selector).is_none() {
+        self
+          .diagnostics
+          .push(Diagnostic::SelectorMissingAnnotation {
+            span: selector.span(),
+            name: selector.name,
+          });
+      }
+    }
   }
 }

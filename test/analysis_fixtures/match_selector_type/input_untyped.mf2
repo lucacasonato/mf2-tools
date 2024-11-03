@@ -1,0 +1,7 @@
+.input {$a}
+.match $a
+* {{}}
+=== diagnostics ===
+$a has not been declared with an annotation, but all .match selectors must be explicitly annotated. (at @19..21)
+  .input {$a}↵.match $a↵* {{}}
+                     ^^

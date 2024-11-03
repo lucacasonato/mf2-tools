@@ -1,5 +1,4 @@
 use std::fmt::Write;
-use std::iter;
 use std::panic;
 use std::panic::AssertUnwindSafe;
 use std::path::Path;
@@ -13,7 +12,6 @@ use file_test_runner::TestResult;
 use mf2_parser::ast;
 use mf2_parser::ast::Message;
 use mf2_parser::parse;
-use mf2_parser::Diagnostic;
 use mf2_parser::Location;
 use mf2_parser::SourceTextInfo;
 use mf2_parser::Span;
@@ -22,6 +20,11 @@ use mf2_parser::Visit;
 use mf2_parser::Visitable;
 use mf2_printer::print;
 use unicode_width::UnicodeWidthStr;
+
+mod utils;
+use utils::generate_actual_diagnostics;
+use utils::normalize_message;
+use utils::parse_fixture;
 
 fn main() {
   collect_and_run_tests(
@@ -49,18 +52,20 @@ fn run_test(test: &CollectedTest) {
 
   let cannot_format = "(cannot format due to fatal errors)".to_string();
 
-  let (message, rest_str) = file_text
-    .split_once(spans_marker)
-    .unwrap_or((&*file_text, ""));
-  let (expected_spans, rest_str) = rest_str
-    .split_once(diagnostics_marker)
-    .unwrap_or((rest_str, ""));
-  let (expected_diagnostics, rest_str) = rest_str
-    .split_once(formatted_marker)
-    .unwrap_or((rest_str, ""));
-  let (expected_formatted, rest_str) =
-    rest_str.split_once(ast_marker).unwrap_or((rest_str, ""));
-  let expected_ast_dbg = rest_str;
+  let mut parts = parse_fixture(
+    &file_text,
+    vec![
+      spans_marker,
+      diagnostics_marker,
+      formatted_marker,
+      ast_marker,
+    ],
+  );
+  let message = parts.next().unwrap_or("");
+  let expected_spans = parts.next().unwrap_or("");
+  let expected_diagnostics = parts.next().unwrap_or("");
+  let expected_formatted = parts.next().unwrap_or("");
+  let expected_ast_dbg = parts.next().unwrap_or("");
 
   if test
     .path
@@ -76,14 +81,7 @@ fn run_test(test: &CollectedTest) {
     return;
   }
 
-  let normalized_message = message
-    .chars()
-    .map(|c| match c {
-      '\n' => '↵',
-      '\t' => '⇥',
-      c => c,
-    })
-    .collect::<String>();
+  let normalized_message = normalize_message(message);
 
   let (actual_ast, diagnostics, info) = parse(message);
   let has_fatal_diag = diagnostics.iter().any(|d| d.fatal());
@@ -190,36 +188,6 @@ fn run_test(test: &CollectedTest) {
 
 fn generated_actual_ast_dbg(actual_ast: &Message) -> String {
   format!("{actual_ast:#?}")
-}
-
-fn generate_actual_diagnostics(
-  diagnostics: &[Diagnostic],
-  input_message: &str,
-  normalized_message: &str,
-) -> String {
-  let mut formatted_diagnostics = "".to_string();
-  for (i, diag) in diagnostics.iter().enumerate() {
-    let span = diag.span();
-    let span_start = span.start.inner_byte_index_for_test() as usize;
-    let span_end = span.end.inner_byte_index_for_test() as usize;
-
-    let prefix = &input_message[0..span_start];
-    let contents = &input_message[span_start..span_end];
-
-    if i != 0 {
-      formatted_diagnostics.push('\n');
-    }
-    writeln!(formatted_diagnostics, "{}", diag).unwrap();
-    formatted_diagnostics.push(' ');
-    formatted_diagnostics.push(' ');
-    formatted_diagnostics.push_str(normalized_message);
-    formatted_diagnostics.push('\n');
-    iter::repeat(' ')
-      .take(prefix.width_cjk() + 2)
-      .chain(iter::repeat('^').take(contents.width_cjk()))
-      .for_each(|c| formatted_diagnostics.push(c));
-  }
-  formatted_diagnostics
 }
 
 fn generate_actual_spans(

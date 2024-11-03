@@ -4,8 +4,13 @@ edition = "2021"
 publish = false
 
 [[test]]
-name = "specs"
+name = "fixtures"
 path = "fixtures.rs"
+harness = false
+
+[[test]]
+name = "analysis_fixtures"
+path = "analysis_fixtures.rs"
 harness = false
 
 [dev-dependencies]
