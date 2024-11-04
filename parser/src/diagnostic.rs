@@ -371,6 +371,11 @@ diagnostics! {
       span: *usage_span,
       fatal: false,
     },
+    SelectorMissingAnnotation { span: Span, name: &'text str } => {
+      message: ("${name} has not been declared with an annotation, but all .match selectors must be explicitly annotated."),
+      span: *span,
+      fatal: false,
+    },
   }
 }
 

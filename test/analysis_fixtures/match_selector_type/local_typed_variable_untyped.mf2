@@ -1,0 +1,5 @@
+.input {$b}
+.local $a = {$b :string}
+.match $a
+* {{}}
+=== diagnostics ===
