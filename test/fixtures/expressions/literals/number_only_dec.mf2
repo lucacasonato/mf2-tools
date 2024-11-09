@@ -16,7 +16,7 @@ Add 0 before the decimal point:
   a{ 0.03 }
 
 === formatted ===
-a{ .03 }
+a{.03}
 === ast ===
 Pattern {
     parts: [

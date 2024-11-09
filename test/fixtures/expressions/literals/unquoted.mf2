@@ -10,7 +10,7 @@ Text                  ^^^  0:2-0:5
 === fixed ===
 (no fixes)
 === formatted ===
-a{ abc }
+a{abc}
 === ast ===
 Pattern {
     parts: [

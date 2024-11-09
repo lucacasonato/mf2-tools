@@ -21,10 +21,9 @@ Text                                      ^   2:4-2:5
 === fixed ===
 (no fixes)
 === formatted ===
-.match
-$a
-c  {{d}}
-*  {{e}}
+.match $a
+  c  {{d}}
+  *  {{e}}
 
 === ast ===
 ComplexMessage {

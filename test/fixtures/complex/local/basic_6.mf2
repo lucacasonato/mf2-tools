@@ -15,7 +15,7 @@ Text                                            0:25-0:25
 === fixed ===
 (no fixes)
 === formatted ===
-.local $var = { |hello| }
+.local $var = {|hello|}
 {{}}
 
 === ast ===

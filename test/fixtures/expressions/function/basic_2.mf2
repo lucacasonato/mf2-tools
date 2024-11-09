@@ -5,14 +5,14 @@ Pattern             ^^^^^^^^^^^^^^^^^^^^^^ 0:0-0:22
 Text                ^^^^^^^                0:0-0:7
 VariableExpression         ^^^^^^^^^^^^^^^ 0:7-0:22
 Variable                     ^^^^          0:9-0:13
-Function                          ^^^^^^^  0:14-0:21
+Annotation                        ^^^^^^^  0:14-0:21
 Identifier                         ^^^^^^  0:15-0:21
 === diagnostics ===
 
 === fixed ===
 (no fixes)
 === formatted ===
-Count: { $var :number }
+Count: {$var :number}
 === ast ===
 Pattern {
     parts: [
@@ -27,7 +27,7 @@ Pattern {
                 name: "var",
             },
             annotation: Some(
-                Function {
+                Annotation {
                     start: @14,
                     id: Identifier {
                         start: @15,

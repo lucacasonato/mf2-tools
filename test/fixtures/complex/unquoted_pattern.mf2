@@ -6,7 +6,7 @@ ComplexMessage      ^^^^^^^^^^^^^^^^^^^^^^^ 0:0-1:8
 InputDeclaration    ^^^^^^^^^^^^^^          0:0-0:14
 VariableExpression         ^^^^^^^          0:7-0:14
 Variable                    ^^              0:8-0:10
-Function                       ^^           0:11-0:13
+Annotation                     ^^           0:11-0:13
 Identifier                      ^           0:12-0:13
 QuotedPattern                      ^^^^^^^^ 1:0-1:8
 Pattern                            ^^^^^^^^ 1:0-1:8
@@ -36,7 +36,7 @@ ComplexMessage {
                     name: "a",
                 },
                 annotation: Some(
-                    Function {
+                    Annotation {
                         start: @11,
                         id: Identifier {
                             start: @12,

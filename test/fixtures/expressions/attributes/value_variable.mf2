@@ -15,7 +15,7 @@ Attribute value can not be a variable, but must be a literal value. (at @10..16)
 === fixed ===
 (no fixes)
 === formatted ===
-{ 1 @hello=$world }
+{1 @hello=$world}
 === ast ===
 Pattern {
     parts: [

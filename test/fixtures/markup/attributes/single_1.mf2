@@ -11,7 +11,7 @@ Identifier                ^^^^  0:6-0:10
 === fixed ===
 (no fixes)
 === formatted ===
-{#el @attr }
+{#el @attr}
 === ast ===
 Pattern {
     parts: [

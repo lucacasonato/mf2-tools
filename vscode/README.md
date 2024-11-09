@@ -41,31 +41,31 @@ she {{Her name is {$name}.}}
 
 </td><td>
 
-![screenshot](./media/formatting.png)
+![screenshot](https://raw.githubusercontent.com/lucacasonato/mf2-tools/main/vscode/media/formatting.png)
 
 _Syntax highlighting, and formatting_
 
 </td></tr><tr><td>
 
-![screenshot](./media/js_constructor.png)
+![screenshot](https://raw.githubusercontent.com/lucacasonato/mf2-tools/main/vscode/media/js_constructor.png)
 
 _Syntax highlighting in Intl.MessageFormat constructor_
 
 </td><td>
 
-![screenshot](./media/js_template.png)
+![screenshot](https://raw.githubusercontent.com/lucacasonato/mf2-tools/main/vscode/media/js_template.png)
 
 _Syntax highlighting in JavaScript template string_
 
 </td></tr><tr><td>
 
-![screenshot](./media/rename.png)
+![screenshot](https://raw.githubusercontent.com/lucacasonato/mf2-tools/main/vscode/media/rename.png)
 
 _Variable rename_
 
 </td><td>
 
-![screenshot](./media/diagnostic.png)
+![screenshot](https://raw.githubusercontent.com/lucacasonato/mf2-tools/main/vscode/media/diagnostic.png)
 
 _Diagnostics for syntax errors_
 

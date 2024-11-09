@@ -26,9 +26,9 @@ Matcher variant has 1 keys, but there are 2 selectors. (at @19..21)
 (no fixes)
 === formatted ===
 .match
-$foo $bar
-hi        {{1}}
-*    *    {{2}}
+  $foo $bar
+  hi        {{1}}
+  *    *    {{2}}
 
 === ast ===
 ComplexMessage {

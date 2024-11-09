@@ -11,7 +11,7 @@ Number.integral        ^   0:3-0:4
 === fixed ===
 (no fixes)
 === formatted ===
-a{ 0 }
+a{0}
 === ast ===
 Pattern {
     parts: [

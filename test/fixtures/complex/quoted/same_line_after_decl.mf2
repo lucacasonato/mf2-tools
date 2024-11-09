@@ -14,7 +14,7 @@ Text                                    0:16-0:16
 === fixed ===
 (no fixes)
 === formatted ===
-.input { $foo }
+.input {$foo}
 {{}}
 
 === ast ===

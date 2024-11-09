@@ -15,7 +15,7 @@ Remove leading zeros:
   a{ 1 }
 
 === formatted ===
-a{ 01 }
+a{01}
 === ast ===
 Pattern {
     parts: [

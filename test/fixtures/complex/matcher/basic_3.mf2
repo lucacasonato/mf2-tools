@@ -31,10 +31,10 @@ Text                                                      ^   0:38-0:39
 (no fixes)
 === formatted ===
 .match
-$a  $b
-e   1  {{f}}
-|g| *  {{h}}
-*   *  {{i}}
+  $a  $b
+  e   1  {{f}}
+  |g| *  {{h}}
+  *   *  {{i}}
 
 === ast ===
 ComplexMessage {

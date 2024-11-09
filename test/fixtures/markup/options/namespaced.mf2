@@ -13,7 +13,7 @@ Number.integral                       ^  0:18-0:19
 === fixed ===
 (no fixes)
 === formatted ===
-{#foo name:spaced=1 }
+{#foo name:spaced=1}
 === ast ===
 Pattern {
     parts: [

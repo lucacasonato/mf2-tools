@@ -16,7 +16,7 @@ Text                                            1:2-1:2
 === fixed ===
 (no fixes)
 === formatted ===
-.local $var = { |hello| }
+.local $var = {|hello|}
 {{}}
 
 === ast ===

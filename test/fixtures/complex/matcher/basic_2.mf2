@@ -29,9 +29,9 @@ Matcher is missing a catch-all variant, where all keys are *. (at @0..6)
 (no fixes)
 === formatted ===
 .match
-$a  $b
-e   1  {{f}}
-|g| *  {{h}}
+  $a  $b
+  e   1  {{f}}
+  |g| *  {{h}}
 
 === ast ===
 ComplexMessage {

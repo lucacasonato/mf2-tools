@@ -12,7 +12,7 @@ Text                            ^^^  0:12-0:15
 === fixed ===
 (no fixes)
 === formatted ===
-{#el @attr=val }
+{#el @attr=val}
 === ast ===
 Pattern {
     parts: [

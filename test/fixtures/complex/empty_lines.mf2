@@ -26,9 +26,9 @@ Text                                                         ^^^^^^^^^    5:2-5:
 === fixed ===
 (no fixes)
 === formatted ===
-.local $foo = { 1 }
+.local $foo = {1}
 
-.local $bar = { 2 }
+.local $bar = {2}
 
 {{$foo $bar}}
 

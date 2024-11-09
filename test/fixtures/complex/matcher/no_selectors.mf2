@@ -16,9 +16,8 @@ Matcher is missing a selector, but at least one is required. (at @0..6)
 === fixed ===
 (no fixes)
 === formatted ===
-.match
-
-* {{hello}}
+.match 
+  * {{hello}}
 
 === ast ===
 ComplexMessage {

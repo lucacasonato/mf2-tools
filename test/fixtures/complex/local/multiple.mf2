@@ -22,8 +22,8 @@ Text                                                                      2:2-2:
 === fixed ===
 (no fixes)
 === formatted ===
-.local $var = { |hello| }
-.local $var2 = { |hello| }
+.local $var = {|hello|}
+.local $var2 = {|hello|}
 {{}}
 
 === ast ===

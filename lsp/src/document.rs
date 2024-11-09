@@ -31,7 +31,7 @@ impl Document {
   pub fn new(uri: Uri, version: i32, text: Box<str>) -> Document {
     let parsed = Yoke::attach_to_cart(text, |text| {
       let (ast, mut diagnostics, info) = mf2_parser::parse(text);
-      let scope = mf2_parser::analyse_semantics(&ast, &mut diagnostics);
+      let scope = mf2_parser::analyze_semantics(&ast, &mut diagnostics);
 
       ParsedDocument {
         ast,

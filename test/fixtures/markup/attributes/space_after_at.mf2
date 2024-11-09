@@ -22,7 +22,7 @@ Move option before attribute:
   {#el attr=1 @   }
 
 === formatted ===
-{#el @ attr=1 }
+{#el @ attr=1}
 === ast ===
 Pattern {
     parts: [

@@ -9,7 +9,7 @@ Identifier            ^^^^   0:2-0:6
 === fixed ===
 (no fixes)
 === formatted ===
-{#open }
+{#open}
 === ast ===
 Pattern {
     parts: [

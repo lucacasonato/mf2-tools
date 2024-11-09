@@ -13,7 +13,7 @@ Quote literal:
   { |^a|}
 
 === formatted ===
-{ ^a }
+{^a}
 === ast ===
 Pattern {
     parts: [

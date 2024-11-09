@@ -38,9 +38,9 @@ Remove the 'e':
   a{ 1e }↵{ 1e+ }↵{ 1 }
 
 === formatted ===
-a{ 1e }
-{ 1e+ }
-{ 1e- }
+a{1e}
+{1e+}
+{1e-}
 === ast ===
 Pattern {
     parts: [

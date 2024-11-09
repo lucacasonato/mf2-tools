@@ -19,7 +19,7 @@ Remove decimal point:
   a{ 1e3 }
 
 === formatted ===
-a{ 1.e3 }
+a{1.e3}
 === ast ===
 Pattern {
     parts: [

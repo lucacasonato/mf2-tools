@@ -19,7 +19,7 @@ Move option before attribute:
   {#el opt=val @attr=val }
 
 === formatted ===
-{#el @attr=val opt=val }
+{#el @attr=val opt=val}
 === ast ===
 Pattern {
     parts: [

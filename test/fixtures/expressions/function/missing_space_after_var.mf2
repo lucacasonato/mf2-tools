@@ -4,7 +4,7 @@
 Pattern             ^^^^^^ 0:0-0:6
 VariableExpression  ^^^^^^ 0:0-0:6
 Variable             ^^    0:1-0:3
-Function               ^^  0:3-0:5
+Annotation             ^^  0:3-0:5
 Identifier              ^  0:4-0:5
 === diagnostics ===
 Annotation is missing a leading space. (at @3..5)
@@ -26,7 +26,7 @@ Pattern {
                 name: "a",
             },
             annotation: Some(
-                Function {
+                Annotation {
                     start: @3,
                     id: Identifier {
                         start: @4,

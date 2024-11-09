@@ -9,7 +9,7 @@ Variable              ^^^^  0:2-0:6
 === fixed ===
 (no fixes)
 === formatted ===
-{ $var }
+{$var}
 === ast ===
 Pattern {
     parts: [

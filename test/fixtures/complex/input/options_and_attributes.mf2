@@ -5,7 +5,7 @@ ComplexMessage      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ 0:0-0:34
 InputDeclaration    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^      0:0-0:29
 VariableExpression         ^^^^^^^^^^^^^^^^^^^^^^      0:7-0:29
 Variable                    ^^^^                       0:8-0:12
-Function                         ^^^^^^^^^             0:13-0:22
+Annotation                       ^^^^^^^^^             0:13-0:22
 Identifier                        ^^                   0:14-0:16
 FnOrMarkupOption                     ^^^^^             0:17-0:22
 Identifier                           ^^^               0:17-0:20
@@ -21,7 +21,7 @@ Text                                                   0:32-0:32
 === fixed ===
 (no fixes)
 === formatted ===
-.input { $foo :fn opt=1 @attr }
+.input {$foo :fn opt=1 @attr}
 {{}}
 
 === ast ===
@@ -37,7 +37,7 @@ ComplexMessage {
                     name: "foo",
                 },
                 annotation: Some(
-                    Function {
+                    Annotation {
                         start: @13,
                         id: Identifier {
                             start: @14,

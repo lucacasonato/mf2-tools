@@ -350,7 +350,7 @@ fn generate_actual_spans(
       Escape: visit_escape,
       LiteralExpression: visit_literal_expression,
       Quoted: visit_quoted,
-      Function: visit_function,
+      Annotation: visit_annotation,
       Identifier: visit_identifier,
       FnOrMarkupOption: visit_fn_or_markup_option,
       Variable: visit_variable,

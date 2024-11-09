@@ -11,7 +11,7 @@ Identifiers with a colon before the name are namespaced identifiers, but this id
 === fixed ===
 (no fixes)
 === formatted ===
-{#:foo }
+{#:foo}
 === ast ===
 Pattern {
     parts: [

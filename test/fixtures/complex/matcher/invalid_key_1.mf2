@@ -25,10 +25,9 @@ Quote literal:
   .match $a↵* {{Hello}}↵|+yej%| {{Hi}}
 
 === formatted ===
-.match
-$a
-*     {{Hello}}
-+yej% {{Hi}}
+.match $a
+  *     {{Hello}}
+  +yej% {{Hi}}
 
 === ast ===
 ComplexMessage {

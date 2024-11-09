@@ -16,7 +16,7 @@ Identifier                                  ^^^^^   0:24-0:29
 === fixed ===
 (no fixes)
 === formatted ===
-{#el @attr1 @attr2=val @attr3 }
+{#el @attr1 @attr2=val @attr3}
 === ast ===
 Pattern {
     parts: [

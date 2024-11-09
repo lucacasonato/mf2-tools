@@ -14,7 +14,7 @@ Text                           ^^^^^   0:11-0:16
 === fixed ===
 (no fixes)
 === formatted ===
-{ 1 @hello=|world| }
+{1 @hello=|world|}
 === ast ===
 Pattern {
     parts: [

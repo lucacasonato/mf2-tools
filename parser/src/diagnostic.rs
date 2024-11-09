@@ -442,7 +442,7 @@ diagnostics! {
       fixes: [],
     },
     UnterminatedQuotedPattern { span: Span } => {
-      message: ("Quoted pattern is missing the closing braces ('}}')."),
+      message: ("Quoted pattern is missing the closing braces ('}}}}')."),
       span: *span,
       fatal: true,
       fixes: [],

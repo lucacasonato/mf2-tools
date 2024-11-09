@@ -29,11 +29,10 @@ Matcher key is a variable, which is not allowed. Matcher keys must be literal va
 === fixed ===
 (no fixes)
 === formatted ===
-.match
-$a
-a    {{Hold it}}
-$var {{Hello}}
-*    {{}}
+.match $a
+  a    {{Hold it}}
+  $var {{Hello}}
+  *    {{}}
 
 === ast ===
 ComplexMessage {

@@ -6,7 +6,7 @@ ComplexMessage       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ 0:1-1:4
 InputDeclaration     ^^^^^^^^^^^^^^^^^^^^^^^^      0:1-0:25
 VariableExpression          ^^^^^^^^^^^^^^^^^      0:8-0:25
 Variable                      ^^^^^^               0:10-0:16
-Function                             ^^^^^^        0:17-0:23
+Annotation                           ^^^^^^        0:17-0:23
 Identifier                            ^^^^^        0:18-0:23
 QuotedPattern                                 ^^^^ 1:0-1:4
 Pattern                                            1:2-1:2
@@ -16,7 +16,7 @@ Text                                               1:2-1:2
 === fixed ===
 (no fixes)
 === formatted ===
-.input { $hello :space }
+.input {$hello :space}
 {{}}
 
 === ast ===
@@ -32,7 +32,7 @@ ComplexMessage {
                     name: "hello",
                 },
                 annotation: Some(
-                    Function {
+                    Annotation {
                         start: @17,
                         id: Identifier {
                             start: @18,

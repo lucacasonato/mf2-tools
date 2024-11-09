@@ -31,7 +31,7 @@ Move option before attribute:
   {#el @attr opt=val opt2=2 @attr2=1 }
 
 === formatted ===
-{#el @attr opt=val @attr2=1 opt2=2 }
+{#el @attr opt=val @attr2=1 opt2=2}
 === ast ===
 Pattern {
     parts: [

@@ -338,13 +338,6 @@ impl<'text> Visitable<'text> for AnnotationExpression<'text> {
   }
 }
 
-ast_enum! {
-  #[visit(visit_annotation)]
-  pub enum Annotation<'text> {
-    Function<'text>,
-  }
-}
-
 #[derive(Debug, Clone)]
 pub struct Identifier<'text> {
   pub start: Location,
@@ -380,13 +373,13 @@ impl<'text> Visitable<'text> for Identifier<'text> {
 }
 
 #[derive(Debug, Clone)]
-pub struct Function<'text> {
+pub struct Annotation<'text> {
   pub start: Location,
   pub id: Identifier<'text>,
   pub options: Vec<FnOrMarkupOption<'text>>,
 }
 
-impl Spanned for Function<'_> {
+impl Spanned for Annotation<'_> {
   fn span(&self) -> Span {
     let start = self.start;
     let end = self
@@ -397,12 +390,12 @@ impl Spanned for Function<'_> {
   }
 }
 
-impl<'text> Visitable<'text> for Function<'text> {
+impl<'text> Visitable<'text> for Annotation<'text> {
   fn apply_visitor<'ast, V: Visit<'ast, 'text> + ?Sized>(
     &'ast self,
     visitor: &mut V,
   ) {
-    visitor.visit_function(self);
+    visitor.visit_annotation(self);
   }
 
   fn apply_visitor_to_children<'ast, V: Visit<'ast, 'text> + ?Sized>(
@@ -1020,7 +1013,6 @@ any_node! {
     Variable<'text>,
     AnnotationExpression<'text>,
     Annotation<'text>,
-    Function<'text>,
     FnOrMarkupOption<'text>,
     Attribute<'text>,
     LiteralOrVariable<'text>,

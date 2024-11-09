@@ -3,7 +3,7 @@
                     {:hello =foo}
 Pattern             ^^^^^^^^^^^^^ 0:0-0:13
 AnnotationExpression^^^^^^^^^^^^^ 0:0-0:13
-Function             ^^^^^^^^^^^  0:1-0:12
+Annotation           ^^^^^^^^^^^  0:1-0:12
 Identifier            ^^^^^       0:2-0:7
 FnOrMarkupOption            ^^^^  0:8-0:12
 Identifier                        0:8-0:8
@@ -15,13 +15,13 @@ Found equals sign followed by value, but equals sign is not preceeded by a key. 
 === fixed ===
 (no fixes)
 === formatted ===
-{ :hello =foo }
+{:hello =foo}
 === ast ===
 Pattern {
     parts: [
         AnnotationExpression {
             span: @0..13,
-            annotation: Function {
+            annotation: Annotation {
                 start: @1,
                 id: Identifier {
                     start: @2,

@@ -20,7 +20,7 @@ Quote literal:
   {^a}{|&b|}
 
 === formatted ===
-{ ^a }{ &b }
+{^a}{&b}
 === ast ===
 Pattern {
     parts: [

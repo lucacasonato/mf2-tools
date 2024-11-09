@@ -15,7 +15,7 @@ Text                                     ^^^^   0:21-0:25
 === fixed ===
 (no fixes)
 === formatted ===
-{#foo abc=val1 def=val2 }
+{#foo abc=val1 def=val2}
 === ast ===
 Pattern {
     parts: [

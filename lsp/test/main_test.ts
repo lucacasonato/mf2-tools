@@ -542,7 +542,7 @@ Deno.test("formatting", async (t) => {
     assertEquals(res, [
       {
         newText:
-          ".local $foo = { 1 }\n.input { $bar }\n{{Hello { $foo } and { $bar }!}}\n",
+          ".local $foo = {1}\n.input {$bar}\n{{Hello {$foo} and {$bar}!}}\n",
         range: {
           start: { line: 0, character: 0 },
           end: { line: 1, character: 28 },
@@ -573,7 +573,7 @@ Deno.test("formatting", async (t) => {
 
     assertEquals(res, [
       {
-        newText: ".local $foo = { $bar }\n.input { $bar }\n{{}}\n",
+        newText: ".local $foo = {$bar}\n.input {$bar}\n{{}}\n",
         range: {
           start: { line: 0, character: 0 },
           end: { line: 1, character: 4 },

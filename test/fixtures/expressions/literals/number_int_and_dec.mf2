@@ -12,7 +12,7 @@ Number.fractional        ^^   0:5-0:7
 === fixed ===
 (no fixes)
 === formatted ===
-a{ 1.03 }
+a{1.03}
 === ast ===
 Pattern {
     parts: [
