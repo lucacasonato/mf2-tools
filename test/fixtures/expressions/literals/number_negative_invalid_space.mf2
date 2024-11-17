@@ -14,9 +14,7 @@ Placeholder expression contains invalid content. (at @5..6)
   a{ - 1 }
        ^
 === fixed ===
-Add 0 before the decimal point:
-  a{ -0 1 }
-
+(no fixes)
 === formatted ===
 (cannot format due to fatal errors)
 === ast ===

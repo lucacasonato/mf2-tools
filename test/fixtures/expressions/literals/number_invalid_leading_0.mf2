@@ -13,6 +13,8 @@ Number has leading zero in integral part, which is not allowed. (at @3..5)
 === fixed ===
 Remove leading zeros:
   a{ 1 }
+Add . after leading zero:
+  a{ 0.1 }
 
 === formatted ===
 a{01}

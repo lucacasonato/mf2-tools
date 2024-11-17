@@ -12,9 +12,7 @@ Number is missing an integral part. (at @3..6)
   a{ .03 }
      ^^^
 === fixed ===
-Add 0 before the decimal point:
-  a{ 0.03 }
-
+(no fixes)
 === formatted ===
 a{.03}
 === ast ===

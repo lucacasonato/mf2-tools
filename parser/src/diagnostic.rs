@@ -90,33 +90,47 @@ diagnostics! {
       message: ("Number is missing an integral part."),
       span: number.span(),
       fatal: false,
-      fixes: [{
-        label: "Add 0 before the decimal point",
-        fix() {
-          vec![DiagnosticEdit {
-            span: number.integral_span(),
-            new_text: "0".to_string(),
-          }]
-        }
-      }],
+      fixes: [
+        // TODO: this should only be activated if the number has a fractional part
+        // {
+        //   label: "Add 0 before the decimal point",
+        //   fix() {
+        //     vec![DiagnosticEdit {
+        //       span: number.integral_span(),
+        //       new_text: "0".to_string(),
+        //     }]
+        //   }
+        // }
+      ],
     },
     NumberLeadingZeroIntegralPart { number: Number<'text> } => {
       message: ("Number has leading zero in integral part, which is not allowed."),
       span: number.span(),
       fatal: false,
-      fixes: [{
-        label: "Remove leading zeros",
-        fix() {
-          let integral_span = number.integral_span();
-          let integral = number.integral_part();
-          let trimmed = integral.trim_start_matches('0');
-          let trimmed = if trimmed.is_empty() { "0" } else { trimmed };
-          vec![DiagnosticEdit {
-            span: number.integral_span(),
-            new_text: trimmed.to_owned(),
-          }]
+      fixes: [
+        {
+          label: "Remove leading zeros",
+          fix() {
+            let integral_span = number.integral_span();
+            let integral = number.integral_part();
+            let trimmed = integral.trim_start_matches('0');
+            let trimmed = if trimmed.is_empty() { "0" } else { trimmed };
+            vec![DiagnosticEdit {
+              span: number.integral_span(),
+              new_text: trimmed.to_owned(),
+            }]
+          }
+        },
+        {
+          label: "Add . after leading zero",
+          fix() {
+            vec![DiagnosticEdit {
+              span: Span::new(number.integral_span().start..number.integral_span().start + '0'),
+              new_text: "0.".to_string(),
+            }]
+          }
         }
-      }],
+      ],
     },
     NumberMissingFractionalPart { number: Number<'text> } => {
       message: ("Number is missing a fractional part, which it must have because it has a decimal point."),
@@ -675,21 +689,39 @@ diagnostics! {
       message: ("Matcher variant has an expression as a body, but only quoted patterns are allowed. Did you mean to wrap the expression in a quoted pattern?"),
       span: *span,
       fatal: true,
-      fixes: [{
-        label: "Quote the expression",
-        fix() {
-          vec![
-            DiagnosticEdit {
-              span: Span::new(span.start..span.start),
-              new_text: "{{".to_owned()
-            },
-            DiagnosticEdit {
-              span: Span::new(span.end..span.end),
-              new_text: "}}".to_owned()
-            }
-          ]
-        }
-      }],
+      fixes: [
+        {
+          label: "Quote the expression",
+          fix() {
+            vec![
+              DiagnosticEdit {
+                span: Span::new(span.start..span.start),
+                new_text: "{{".to_owned()
+              },
+              DiagnosticEdit {
+                span: Span::new(span.end..span.end),
+                new_text: "}}".to_owned()
+              }
+            ]
+          }
+        },
+        // TODO: this should only be activated if the expression is a literal expression with no values
+        // {
+        //   label: "Turn expression into quoted pattern",
+        //   fix() {
+        //     vec![
+        //       DiagnosticEdit {
+        //         span: Span::new(span.start..span.start),
+        //         new_text: "{".to_owned()
+        //       },
+        //       DiagnosticEdit {
+        //         span: Span::new(span.end..span.end),
+        //         new_text: "}".to_owned()
+        //       }
+        //     ]
+        //   }
+        // }
+      ],
     },
     MatcherVariantMissingBody { span: Span } => {
       message: ("Matcher variant is missing a body."),
