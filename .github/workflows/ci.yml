@@ -122,7 +122,7 @@ jobs:
       - name: Smoke test the dprint plugin
         run: |
           echo "Hello { |World|   }!" > actual.mf2
-          echo "Hello {|World|}!\n" > expected.mf2
+          echo "Hello {|World|}!" > expected.mf2
           deno run -A npm:dprint fmt --plugins=./target/wasm32-unknown-unknown/release/dprint_plugin_mf2.wasm -- actual.mf2
           cmp -s actual.mf2 expected.mf2
 
