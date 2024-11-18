@@ -17,8 +17,8 @@ path = "src/lib.rs"
 crate-type = ["cdylib", "lib"]
 
 [dependencies]
-mf2_parser = { path = "../parser", version = "0.1.2" }
-mf2_printer = { path = "../printer", version = "0.1.1" }
+mf2_parser = { path = "../parser", version = "0.2.0" }
+mf2_printer = { path = "../printer", version = "0.2.0" }
 
 anyhow = "1.0.86"
 lsp-server = "0.7.6"

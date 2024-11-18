@@ -117,7 +117,7 @@ dependencies = [
 
 [[package]]
 name = "dprint-plugin-mf2"
-version = "0.1.1"
+version = "0.2.0"
 dependencies = [
  "anyhow",
  "dprint-core",
@@ -253,18 +253,18 @@ checksum = "78ca9ab1a0babb1e7d5695e3530886289c18cf2f87ec19a575a0abdce112e3a3"
 
 [[package]]
 name = "mf2_parser"
-version = "0.1.2"
+version = "0.2.0"
 
 [[package]]
 name = "mf2_printer"
-version = "0.1.2"
+version = "0.2.0"
 dependencies = [
  "mf2_parser",
 ]
 
 [[package]]
 name = "mf2lsp"
-version = "0.1.1"
+version = "0.2.0"
 dependencies = [
  "anyhow",
  "lsp-server",
