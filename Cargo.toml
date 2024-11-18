@@ -3,7 +3,7 @@ members = ["dprint-plugin", "parser", "printer", "lsp", "test"]
 resolver = "2"
 
 [workspace.package]
-version = "0.1.1" # for lsp and dprint-plugin
+version = "0.2.0" # for lsp and dprint-plugin, remember to update vscode/ too
 edition = "2021"
 authors = ["Luca Casonato <hello@lcas.dev>", "Nicolò Ribaudo <hello@nicr.dev>"]
 license = "GPL-3.0-or-later"

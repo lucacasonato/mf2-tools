@@ -11,8 +11,8 @@ crate-type = ["cdylib"]
 
 
 [dependencies]
-mf2_parser = { version = "0.1", path = "../parser" }
-mf2_printer = { version = "0.1", path = "../printer" }
+mf2_parser = { version = "0.2.0", path = "../parser" }
+mf2_printer = { version = "0.2.0", path = "../printer" }
 
 anyhow = "1"
 dprint-core = { version = "0.67.2", features = ["wasm"] }

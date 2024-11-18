@@ -1,11 +1,11 @@
 [package]
 name = "mf2_printer"
 description = "Printer for MessageFormat 2"
-version = "0.1.2"
+version = "0.2.0"
 edition.workspace = true
 authors.workspace = true
 license.workspace = true
 repository.workspace = true
 
 [dependencies]
-mf2_parser = { path = "../parser", version = "0.1.1" }
+mf2_parser = { path = "../parser", version = "0.2.0" }
