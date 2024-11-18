@@ -36,9 +36,7 @@ jobs:
 
       - uses: actions/checkout@v4
 
-      - uses: denoland/setup-deno@v1
-        with:
-          deno-version: rc
+      - uses: denoland/setup-deno@v2
 
       - uses: dsherret/rust-toolchain-file@v1
 
@@ -99,9 +97,7 @@ jobs:
 
       - uses: actions/checkout@v4
 
-      - uses: denoland/setup-deno@v1
-        with:
-          deno-version: rc
+      - uses: denoland/setup-deno@v2
 
       - uses: dsherret/rust-toolchain-file@v1
 
@@ -130,10 +126,7 @@ jobs:
         run: mv ./target/wasm32-unknown-unknown/release/dprint_plugin_mf2.wasm ./dprint-plugin-mf2.wasm
 
       - name: Prepare dprint plugin schema
-        run: |
-          cp ./dprint-plugin/schema.json ./dprint-plugin-mf2.schema.json
-          # replace {{VERSION}} with the version from the tag
-          sed -i "s/{{VERSION}}/${{ github.ref }}" ./dprint-plugin-mf2.schema.json
+        run: deno task dprint:build {{ github.ref_name }}
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
@@ -179,9 +172,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: denoland/setup-deno@v1
-        with:
-          deno-version: rc
+      - uses: denoland/setup-deno@v2
 
       - run: deno lint
 

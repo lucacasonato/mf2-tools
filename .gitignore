@@ -1,3 +1,4 @@
 /target
 node_modules/
 lsp/dist/
+dprint-plugin-mf2.schema.json

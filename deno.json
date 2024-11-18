@@ -9,7 +9,8 @@
     "wasm:debug": "deno task wasmbuild -p mf2lsp --debug --skip-opt --out ./target/wasm/debug && cargo build -p dprint-plugin-mf2 --target=wasm32-unknown-unknown",
     "wasmbuild": "deno run -A jsr:@deno/wasmbuild@0.17.2",
     "vscode:build": "deno run -A tools/vscode/build.ts",
-    "vscode:install": "cd vscode && npm ci"
+    "vscode:install": "cd vscode && npm ci",
+    "dprint:build": "deno run -A tools/generate_dprint_schema.ts"
   },
   "exclude": ["target/", "vscode/node_modules/"]
 }
