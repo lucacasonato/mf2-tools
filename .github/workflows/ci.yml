@@ -36,9 +36,7 @@ jobs:
 
       - uses: actions/checkout@v4
 
-      - uses: denoland/setup-deno@v1
-        with:
-          deno-version: rc
+      - uses: denoland/setup-deno@v2
 
       - uses: dsherret/rust-toolchain-file@v1
 
@@ -99,9 +97,7 @@ jobs:
 
       - uses: actions/checkout@v4
 
-      - uses: denoland/setup-deno@v1
-        with:
-          deno-version: rc
+      - uses: denoland/setup-deno@v2
 
       - uses: dsherret/rust-toolchain-file@v1
 
@@ -118,6 +114,36 @@ jobs:
         env:
           PROFILE: release
           MODE: wasm
+
+      - name: Smoke test the dprint plugin
+        run: |
+          echo "Hello { |World|   }!" > actual.mf2
+          echo "Hello {|World|}!" > expected.mf2
+          deno run -A npm:dprint fmt --plugins=./target/wasm32-unknown-unknown/release/dprint_plugin_mf2.wasm -- actual.mf2
+          cmp -s actual.mf2 expected.mf2
+
+      - name: Prepare dprint plugin for release
+        run: mv ./target/wasm32-unknown-unknown/release/dprint_plugin_mf2.wasm ./dprint-plugin-mf2.wasm
+
+      - name: Prepare dprint plugin schema
+        run: deno task dprint:build {{ github.ref_name }}
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: dprint-plugin-mf2
+          path: |
+            dprint-plugin-mf2.wasm
+            dprint-plugin-mf2.schema.json
+
+      - name: GitHub release
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v2
+        with:
+          draft: true
+          files: |
+            dprint-plugin-mf2.wasm
+            dprint-plugin-mf2.schema.json
 
   vscode:
     name: "ci-vscode"
@@ -146,9 +172,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: denoland/setup-deno@v1
-        with:
-          deno-version: rc
+      - uses: denoland/setup-deno@v2
 
       - run: deno lint
 
