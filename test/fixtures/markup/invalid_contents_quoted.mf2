@@ -8,6 +8,8 @@ Identifier            ^^^             0:2-0:5
 Markup tag contains invalid content. (at @6..15)
   {#foo !|hello}| }
         ^^^^^^^^^
+=== fixed ===
+(no fixes)
 === formatted ===
 (cannot format due to fatal errors)
 === ast ===

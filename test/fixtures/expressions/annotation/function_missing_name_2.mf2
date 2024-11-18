@@ -15,6 +15,8 @@ Found an identifier followed by an equals sign, but not followed by a value. Did
 Function is missing an identifier. (at @1..8)
   {: hello}
    ^^^^^^^
+=== fixed ===
+(no fixes)
 === formatted ===
 (cannot format due to fatal errors)
 === ast ===

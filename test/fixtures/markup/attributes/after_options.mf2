@@ -11,6 +11,8 @@ Attribute                          ^^^^^   0:15-0:20
 Identifier                          ^^^^   0:16-0:20
 === diagnostics ===
 
+=== fixed ===
+(no fixes)
 === formatted ===
 {#el opt1=val1 @attr}
 === ast ===

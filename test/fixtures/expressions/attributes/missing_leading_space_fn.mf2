@@ -11,6 +11,10 @@ Identifier               ^^^  0:5-0:8
 Attribute is missing a leading space. (at @4..8)
   {:fn@foo}
       ^^^^
+=== fixed ===
+Add space before attribute:
+  {:fn @foo}
+
 === formatted ===
 (cannot format due to fatal errors)
 === ast ===

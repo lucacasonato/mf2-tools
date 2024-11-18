@@ -11,6 +11,8 @@ Number                          ^  0:12-0:13
 Number.integral                 ^  0:12-0:13
 === diagnostics ===
 
+=== fixed ===
+(no fixes)
 === formatted ===
 {1 @hello=2}
 === ast ===

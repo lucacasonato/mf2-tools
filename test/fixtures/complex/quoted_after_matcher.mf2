@@ -23,6 +23,10 @@ Declarations are not valid after the message body. Did you mean to put the decla
 Message has multiple bodies, but only one is allowed. (at @33..37)
   .match $a * {{}}↵.local $a = {1}↵{{}}
                                    ^^^^
+=== fixed ===
+Move declaration before body:
+  .local $a = {1}↵.match $a * {{}}↵↵{{}}
+
 === formatted ===
 (cannot format due to fatal errors)
 === ast ===

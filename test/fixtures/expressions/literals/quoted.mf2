@@ -8,6 +8,8 @@ Quoted                 ^^^^^^^^^  0:3-0:12
 Text                    ^^^^^^^   0:4-0:11
 === diagnostics ===
 
+=== fixed ===
+(no fixes)
 === formatted ===
 a {|abc def|}
 === ast ===

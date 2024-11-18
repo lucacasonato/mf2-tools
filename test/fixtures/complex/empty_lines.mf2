@@ -23,6 +23,8 @@ Pattern                                                      ^^^^^^^^^    5:2-5:
 Text                                                         ^^^^^^^^^    5:2-5:11
 === diagnostics ===
 
+=== fixed ===
+(no fixes)
 === formatted ===
 .local $foo = {1}
 

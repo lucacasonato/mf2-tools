@@ -1,21 +1,23 @@
-{#el @attr =val}
+{#el @attr=val}
 === spans ===
-                    {#el @attr =val}
-Pattern             ^^^^^^^^^^^^^^^^ 0:0-0:16
-Markup              ^^^^^^^^^^^^^^^^ 0:0-0:16
-Identifier            ^^             0:2-0:4
-Attribute                ^^^^^^^^^^  0:5-0:15
-Identifier                ^^^^       0:6-0:10
-Text                            ^^^  0:12-0:15
+                    {#el @attr=val}
+Pattern             ^^^^^^^^^^^^^^^ 0:0-0:15
+Markup              ^^^^^^^^^^^^^^^ 0:0-0:15
+Identifier            ^^            0:2-0:4
+Attribute                ^^^^^^^^^  0:5-0:14
+Identifier                ^^^^      0:6-0:10
+Text                           ^^^  0:11-0:14
 === diagnostics ===
 
+=== fixed ===
+(no fixes)
 === formatted ===
 {#el @attr=val}
 === ast ===
 Pattern {
     parts: [
         Markup {
-            span: @0..16,
+            span: @0..15,
             kind: Open,
             id: Identifier {
                 start: @2,
@@ -25,7 +27,7 @@ Pattern {
             options: [],
             attributes: [
                 Attribute {
-                    span: @5..15,
+                    span: @5..14,
                     key: Identifier {
                         start: @6,
                         namespace: None,
@@ -33,7 +35,7 @@ Pattern {
                     },
                     value: Some(
                         Text {
-                            start: @12,
+                            start: @11,
                             content: "val",
                         },
                     ),

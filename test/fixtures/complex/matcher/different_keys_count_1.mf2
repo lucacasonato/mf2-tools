@@ -22,6 +22,8 @@ Text                                                    ^   2:8-2:9
 Matcher variant has 1 keys, but there are 2 selectors. (at @19..21)
   .match $foo $bar↵  hi {{1}}↵  * * {{2}}
                      ^^
+=== fixed ===
+(no fixes)
 === formatted ===
 .match
   $foo $bar

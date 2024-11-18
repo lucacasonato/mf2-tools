@@ -8,6 +8,8 @@ Attribute                ^^^^^  0:5-0:10
 Identifier                ^^^^  0:6-0:10
 === diagnostics ===
 
+=== fixed ===
+(no fixes)
 === formatted ===
 {#el @attr}
 === ast ===

@@ -11,6 +11,8 @@ Variable is missing a name after the dollar sign ('$'). (at @1..2)
 Placeholder expression contains invalid content. (at @3..6)
   {$ var}
      ^^^
+=== fixed ===
+(no fixes)
 === formatted ===
 (cannot format due to fatal errors)
 === ast ===

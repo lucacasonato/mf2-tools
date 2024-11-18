@@ -13,6 +13,10 @@ Attribute is missing a leading space. (at @2..8)
 Markup tag is missing an identifier. (at @0..11)
   {#@hello /}
   ^^^^^^^^^^^
+=== fixed ===
+Add space before attribute:
+  {# @hello /}
+
 === formatted ===
 (cannot format due to fatal errors)
 === ast ===

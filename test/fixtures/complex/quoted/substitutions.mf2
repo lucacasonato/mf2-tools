@@ -18,6 +18,8 @@ Text                                      ^^^                                   
 Message has additional invalid content after the body. (at @30..78)
   {{hi {$var} how are {|you|}}}↵=== output ===↵{{hi { $var } how are { |you| }}}↵
                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+=== fixed ===
+(no fixes)
 === formatted ===
 (cannot format due to fatal errors)
 === ast ===

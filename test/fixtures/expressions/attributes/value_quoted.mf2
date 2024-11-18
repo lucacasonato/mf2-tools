@@ -11,6 +11,8 @@ Quoted                        ^^^^^^^  0:10-0:17
 Text                           ^^^^^   0:11-0:16
 === diagnostics ===
 
+=== fixed ===
+(no fixes)
 === formatted ===
 {1 @hello=|world|}
 === ast ===

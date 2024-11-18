@@ -10,6 +10,8 @@ Quoted                       ^^^^^^^^   0:9-0:17
 Text                          ^^^^^^    0:10-0:16
 === diagnostics ===
 
+=== fixed ===
+(no fixes)
 === formatted ===
 {#el opt=|quoted|}
 === ast ===

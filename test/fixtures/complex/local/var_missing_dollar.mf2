@@ -15,6 +15,10 @@ Text                                              1:2-1:2
 Variable is not prefixed with a dollar sign ('$'). (at @7..10)
   .local var = { |hello| }↵{{}}
          ^^^
+=== fixed ===
+Add dollar sign:
+  .local $var = { |hello| }↵{{}}
+
 === formatted ===
 (cannot format due to fatal errors)
 === ast ===

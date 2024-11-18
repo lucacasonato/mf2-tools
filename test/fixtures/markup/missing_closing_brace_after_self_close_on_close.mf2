@@ -11,6 +11,10 @@ Markup tag can not be self-closing if it is a close tag. (at @6..7)
 Markup tag is not closed with a closing brace. (at @0..7)
   {/foo /
   ^^^^^^^
+=== fixed ===
+Remove self-closing slash:
+  {/foo 
+
 === formatted ===
 (cannot format due to fatal errors)
 === ast ===

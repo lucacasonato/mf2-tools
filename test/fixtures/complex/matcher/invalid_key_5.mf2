@@ -20,6 +20,10 @@ Text                                             ^^   2:7-2:9
 Found an invalid matcher key (not a valid literal). Did you mean to quote the key to make it a literal? (at @22..27)
   .match $a↵* {{Hello}}↵+yej%{{Hi}}
                         ^^^^^
+=== fixed ===
+Quote literal:
+  .match $a↵* {{Hello}}↵|+yej%|{{Hi}}
+
 === formatted ===
 .match $a
   *     {{Hello}}

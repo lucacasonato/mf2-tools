@@ -11,6 +11,8 @@ Text                         ^^^     0:9-0:12
 Text                               ^ 0:15-1:0
 === diagnostics ===
 
+=== fixed ===
+(no fixes)
 === formatted ===
 {#el opt=val /}
 

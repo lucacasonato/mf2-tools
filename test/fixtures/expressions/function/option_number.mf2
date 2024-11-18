@@ -12,6 +12,8 @@ Number                              ^^^  0:16-0:19
 Number.integral                     ^^^  0:16-0:19
 === diagnostics ===
 
+=== fixed ===
+(no fixes)
 === formatted ===
 {$var :number a=123}
 === ast ===

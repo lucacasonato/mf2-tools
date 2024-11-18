@@ -13,6 +13,8 @@ Number is missing an integral part. (at @3..4)
 Placeholder expression contains invalid content. (at @5..6)
   a{ - 1 }
        ^
+=== fixed ===
+(no fixes)
 === formatted ===
 (cannot format due to fatal errors)
 === ast ===

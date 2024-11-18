@@ -11,6 +11,8 @@ Identifier                        ^    0:14-0:15
 Text                                ^  0:16-0:17
 === diagnostics ===
 
+=== fixed ===
+(no fixes)
 === formatted ===
 {$var :number a=b}
 === ast ===

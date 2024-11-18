@@ -11,6 +11,8 @@ Text                               0:12-0:12
 Found an identifier followed by an equals sign, but not followed by a value. Did you forget to add a value to make this an option? (at @5..13)
   {#el option= }
        ^^^^^^^^
+=== fixed ===
+(no fixes)
 === formatted ===
 (cannot format due to fatal errors)
 === ast ===

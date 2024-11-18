@@ -18,6 +18,8 @@ Pattern                                                0:32-0:32
 Text                                                   0:32-0:32
 === diagnostics ===
 
+=== fixed ===
+(no fixes)
 === formatted ===
 .input {$foo :fn opt=1 @attr}
 {{}}

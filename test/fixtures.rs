@@ -44,6 +44,7 @@ fn run_test(test: &CollectedTest) {
 
   let spans_marker = "\n=== spans ===\n";
   let diagnostics_marker = "\n=== diagnostics ===\n";
+  let fixed_marker = "\n=== fixed ===\n";
   let formatted_marker = "\n=== formatted ===\n";
   let ast_marker = "\n=== ast ===\n";
 
@@ -54,8 +55,10 @@ fn run_test(test: &CollectedTest) {
     .unwrap_or((&*file_text, ""));
   let (expected_spans, rest_str) = rest_str
     .split_once(diagnostics_marker)
-    .unwrap_or((rest_str, ""));
-  let (expected_diagnostics, rest_str) = rest_str
+    .unwrap_or(("", rest_str));
+  let (expected_diagnostics, rest_str) =
+    rest_str.split_once(fixed_marker).unwrap_or((rest_str, ""));
+  let (expected_fixed, rest_str) = rest_str
     .split_once(formatted_marker)
     .unwrap_or((rest_str, ""));
   let (expected_formatted, rest_str) =
@@ -76,14 +79,7 @@ fn run_test(test: &CollectedTest) {
     return;
   }
 
-  let normalized_message = message
-    .chars()
-    .map(|c| match c {
-      '\n' => '↵',
-      '\t' => '⇥',
-      c => c,
-    })
-    .collect::<String>();
+  let normalized_message = normalize_message(message);
 
   let (actual_ast, diagnostics, info) = parse(message);
   let has_fatal_diag = diagnostics.iter().any(|d| d.fatal());
@@ -93,6 +89,7 @@ fn run_test(test: &CollectedTest) {
     generate_actual_spans(&actual_ast, message, &normalized_message, &info);
   let actual_diags =
     generate_actual_diagnostics(&diagnostics, message, &normalized_message);
+  let actual_fixed = generate_actual_fixed(&diagnostics, message, &info);
   let actual_formatted = if has_fatal_diag {
     cannot_format
   } else {
@@ -128,6 +125,15 @@ fn run_test(test: &CollectedTest) {
         "Spans match expected"
       );
     }
+    if expected_fixed.is_empty() {
+      need_update = true;
+    } else {
+      pretty_assertions::assert_eq!(
+        actual_fixed,
+        expected_fixed,
+        "Fixed code matches expected"
+      );
+    };
     if expected_formatted.is_empty() {
       need_update = true;
     } else {
@@ -143,7 +149,7 @@ fn run_test(test: &CollectedTest) {
     std::fs::write(
       &test.path,
       format!(
-        "{message}{spans_marker}{actual_spans}{diagnostics_marker}{actual_diags}{formatted_marker}{actual_formatted}{ast_marker}{actual_ast_dbg}"
+        "{message}{spans_marker}{actual_spans}{diagnostics_marker}{actual_diags}{fixed_marker}{actual_fixed}{formatted_marker}{actual_formatted}{ast_marker}{actual_ast_dbg}"
       ),
     )
     .unwrap();
@@ -188,6 +194,17 @@ fn run_test(test: &CollectedTest) {
   }
 }
 
+fn normalize_message(message: &str) -> String {
+  message
+    .chars()
+    .map(|c| match c {
+      '\n' => '↵',
+      '\t' => '⇥',
+      c => c,
+    })
+    .collect::<String>()
+}
+
 fn generated_actual_ast_dbg(actual_ast: &Message) -> String {
   format!("{actual_ast:#?}")
 }
@@ -220,6 +237,49 @@ fn generate_actual_diagnostics(
       .for_each(|c| formatted_diagnostics.push(c));
   }
   formatted_diagnostics
+}
+
+fn generate_actual_fixed(
+  diagnostics: &[Diagnostic],
+  input_message: &str,
+  info: &SourceTextInfo<'_>,
+) -> String {
+  let mut output = String::new();
+  for diag in diagnostics {
+    for mut fix in diag.fixes(info) {
+      output.push_str(fix.label);
+      output.push_str(":\n  ");
+
+      fix.edits.sort_by(|a, b| a.span.start.cmp(&b.span.start));
+
+      let mut fixed_message = input_message.to_string();
+      let mut last_end = 0;
+      let mut offset: i64 = 0;
+      for edit in &fix.edits {
+        let start = edit.span.start.inner_byte_index_for_test() as usize;
+        let end = edit.span.end.inner_byte_index_for_test() as usize;
+
+        assert!(start >= last_end, "edits overlap");
+        last_end = end;
+
+        fixed_message.replace_range(
+          (start as i64 + offset) as usize..(end as i64 + offset) as usize,
+          &edit.new_text,
+        );
+        let old_len = end - start;
+        let new_len = edit.new_text.len();
+        offset += new_len as i64 - old_len as i64;
+      }
+
+      let normalized_message = normalize_message(&fixed_message);
+      output.push_str(&normalized_message);
+      output.push('\n');
+    }
+  }
+  if output.is_empty() {
+    output.push_str("(no fixes)");
+  }
+  output
 }
 
 fn generate_actual_spans(

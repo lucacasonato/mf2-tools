@@ -10,6 +10,8 @@ Identifier              ^^^^^        0:4-0:9
 Text                          ^^^^^  0:10-0:15
 === diagnostics ===
 
+=== fixed ===
+(no fixes)
 === formatted ===
 {1 @hello=world}
 === ast ===

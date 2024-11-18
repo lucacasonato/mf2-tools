@@ -12,6 +12,8 @@ Pattern                                       0:23-0:23
 Text                                          0:23-0:23
 === diagnostics ===
 
+=== fixed ===
+(no fixes)
 === formatted ===
 .input {$var :number}
 {{}}

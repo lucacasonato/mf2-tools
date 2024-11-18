@@ -13,6 +13,8 @@ Number.integral            ^  0:7-0:8
 Function is missing an identifier. (at @1..8)
   {: foo=1}
    ^^^^^^^
+=== fixed ===
+(no fixes)
 === formatted ===
 {: foo=1}
 === ast ===

@@ -19,6 +19,8 @@ Pattern                                                       0:39-0:39
 Text                                                          0:39-0:39
 === diagnostics ===
 
+=== fixed ===
+(no fixes)
 === formatted ===
 .local $foo = {$bar :fn opt=1 @attr}
 {{}}

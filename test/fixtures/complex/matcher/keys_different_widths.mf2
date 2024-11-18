@@ -53,6 +53,8 @@ Pattern                                                                         
 Text                                                                                                                               ^^^   6:8-6:11
 === diagnostics ===
 
+=== fixed ===
+(no fixes)
 === formatted ===
 .input {$var}
 

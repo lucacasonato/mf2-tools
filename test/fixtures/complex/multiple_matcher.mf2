@@ -14,6 +14,8 @@ Text                                                  0:14-0:14
 Message has multiple bodies, but only one is allowed. (at @17..33)
   .match $a * {{}}↵.match $a * {{}}
                    ^^^^^^^^^^^^^^^^
+=== fixed ===
+(no fixes)
 === formatted ===
 (cannot format due to fatal errors)
 === ast ===

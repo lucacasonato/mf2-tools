@@ -33,6 +33,8 @@ Matcher variant has 1 keys, but there are 2 selectors. (at @19..21)
 Matcher variant has 3 keys, but there are 2 selectors. (at @41..45)
   .match $foo $bar↵  hi {{1}}↵  hello hola ciao {{2}}↵  * * {{3}}
                                            ^^^^
+=== fixed ===
+(no fixes)
 === formatted ===
 .match
   $foo  $bar 

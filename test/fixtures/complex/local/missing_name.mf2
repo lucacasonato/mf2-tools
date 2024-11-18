@@ -10,6 +10,8 @@ Text                         ^^^^^   1:2-1:7
 Found a local declaration that is missing or malformed name. (at @0..7)
   .local↵{{hello}}
   ^^^^^^^
+=== fixed ===
+(no fixes)
 === formatted ===
 (cannot format due to fatal errors)
 === ast ===

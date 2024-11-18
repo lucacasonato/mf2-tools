@@ -13,6 +13,12 @@ Placeholder expression contains a literal that is not valid when unquoted. Did y
 Attribute is missing a leading space. (at @3..7)
   {^a@foo}
      ^^^^
+=== fixed ===
+Quote literal:
+  {|^a|@foo}
+Add space before attribute:
+  {^a @foo}
+
 === formatted ===
 (cannot format due to fatal errors)
 === ast ===

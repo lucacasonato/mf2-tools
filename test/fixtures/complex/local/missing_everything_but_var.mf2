@@ -26,6 +26,14 @@ Quoted pattern is not allowed inside of a pattern. (at @21..23)
 Using an unquoted pattern as the body is invalid, because the message contains declarations. Did you mean to quote the pattern?. (at @12..25)
   .local $var #a {abc}↵{{}}
               ^^^^^^^^^^^^^
+=== fixed ===
+Add equals after variable:
+  .local $var = #a {abc}↵{{}}
+Remove quotes:
+  .local $var #a {abc}↵
+Surround with quotes:
+  .local $var {{#a {abc}↵{{}}}}
+
 === formatted ===
 (cannot format due to fatal errors)
 === ast ===

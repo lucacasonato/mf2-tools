@@ -25,6 +25,12 @@ Matcher selector is missing a leading space. (at @6..8)
 Matcher selector is missing a leading space. (at @8..10)
   .match$a$b↵a * {{}} * * {{Hello}}
           ^^
+=== fixed ===
+Add space before selector:
+  .match $a$b↵a * {{}} * * {{Hello}}
+Add space before selector:
+  .match$a $b↵a * {{}} * * {{Hello}}
+
 === formatted ===
 (cannot format due to fatal errors)
 === ast ===

@@ -224,10 +224,10 @@ impl<'text> Parser<'text> {
 
     let escaped_char = match self.next() {
       Some((_, c @ ('}' | '{' | '|' | '\\'))) => c,
-      Some((loc, c)) => {
+      Some((_, c)) => {
         self.report(Diagnostic::EscapeInvalidCharacter {
           char: c,
-          char_loc: loc,
+          slash_loc: start,
         });
         c
       }
@@ -1045,7 +1045,7 @@ impl<'text> Parser<'text> {
     let mut start = None;
     let mut end = self.current_location();
     let mut declarations = vec![];
-    let mut body = None;
+    let mut body: Option<ComplexMessageBody<'_>> = None;
 
     loop {
       match self.peek() {
@@ -1062,9 +1062,10 @@ impl<'text> Parser<'text> {
             "input" => {
               let input_decl = self.parse_input_declaration(loc);
               if let Some(declaration) = input_decl {
-                if body.is_some() {
+                if let Some(body) = &body {
                   self.report(Diagnostic::ComplexMessageDeclarationAfterBody {
                     span: declaration.span(),
+                    body_start: body.span().start,
                   });
                 }
                 declarations.push(Declaration::InputDeclaration(declaration));
@@ -1073,9 +1074,10 @@ impl<'text> Parser<'text> {
             "local" => {
               let local_decl = self.parse_local_declaration(loc);
               if let Some(declaration) = local_decl {
-                if body.is_some() {
+                if let Some(body) = &body {
                   self.report(Diagnostic::ComplexMessageDeclarationAfterBody {
                     span: declaration.span(),
+                    body_start: body.span().start,
                   });
                 }
                 declarations.push(Declaration::LocalDeclaration(declaration));

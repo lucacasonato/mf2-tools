@@ -10,6 +10,10 @@ Quoted pattern is not allowed inside of a pattern. (at @6..8)
 Quoted string is missing the closing quote. (at @6..8)
   Hello {{
         ^^
+=== fixed ===
+Remove quotes:
+  Hello 
+
 === formatted ===
 (cannot format due to fatal errors)
 === ast ===

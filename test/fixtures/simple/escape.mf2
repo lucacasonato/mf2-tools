@@ -21,6 +21,8 @@ Escape                                                                       ^^ 
 Escape                                                                         ^^ 4:3-4:5
 === diagnostics ===
 
+=== fixed ===
+(no fixes)
 === formatted ===
 \{\|\}\\
 Hello,\|World!

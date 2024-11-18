@@ -11,6 +11,8 @@ Attribute                   ^^^^  0:8-0:12
 Identifier                   ^^^  0:9-0:12
 === diagnostics ===
 
+=== fixed ===
+(no fixes)
 === formatted ===
 {1 :bar @foo}
 === ast ===

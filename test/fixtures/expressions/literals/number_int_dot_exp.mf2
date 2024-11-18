@@ -12,6 +12,12 @@ Number.exponent           ^   0:6-0:7
 Number is missing a fractional part, which it must have because it has a decimal point. (at @3..7)
   a{ 1.e3 }
      ^^^^
+=== fixed ===
+Add 0 after the decimal point:
+  a{ 1.0e3 }
+Remove decimal point:
+  a{ 1e3 }
+
 === formatted ===
 a{1.e3}
 === ast ===

@@ -12,6 +12,8 @@ Placeholder is missing the closing brace. (at @0..6)
 Placeholder expression contains invalid content. (at @3..6)
   {1 abc
      ^^^
+=== fixed ===
+(no fixes)
 === formatted ===
 (cannot format due to fatal errors)
 === ast ===

@@ -18,6 +18,8 @@ Pattern                                   ^   2:4-2:5
 Text                                      ^   2:4-2:5
 === diagnostics ===
 
+=== fixed ===
+(no fixes)
 === formatted ===
 .match $a
   c  {{d}}

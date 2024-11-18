@@ -6,12 +6,16 @@ LiteralExpression   ^^^^^^^^^ 0:0-0:9
 Number               ^        0:1-0:2
 Number.integral      ^        0:1-0:2
 === diagnostics ===
-The character 'a' can not be escaped as escape sequences can only escape '}', '{', '|', and '\'. (at @7..8)
+The character 'a' can not be escaped, as escape sequences can only escape '}', '{', '|', and '\'. (at @6..8)
   {1 abc\a}
-         ^
+        ^^
 Placeholder expression contains invalid content. (at @3..8)
   {1 abc\a}
      ^^^^^
+=== fixed ===
+Remove backslash:
+  {1 abca}
+
 === formatted ===
 (cannot format due to fatal errors)
 === ast ===

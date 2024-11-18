@@ -19,6 +19,8 @@ Pattern                                                               2:2-2:2
 Text                                                                  2:2-2:2
 === diagnostics ===
 
+=== fixed ===
+(no fixes)
 === formatted ===
 .input {$var :number}
 .input {$var2 :number}

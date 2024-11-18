@@ -26,6 +26,12 @@ Found an invalid matcher key (not a valid literal). Did you mean to quote the ke
 Matcher key is missing a leading space. (at @14..19)
   .match $a $b↵*+yej% {{Hi}}↵* * {{Hello}}
                 ^^^^^
+=== fixed ===
+Quote literal:
+  .match $a $b↵*|+yej%| {{Hi}}↵* * {{Hello}}
+Add space before key:
+  .match $a $b↵* +yej% {{Hi}}↵* * {{Hello}}
+
 === formatted ===
 (cannot format due to fatal errors)
 === ast ===

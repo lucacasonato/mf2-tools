@@ -9,6 +9,8 @@ Identifier                ^^^^       0:6-0:10
 Text                           ^^^   0:11-0:14
 === diagnostics ===
 
+=== fixed ===
+(no fixes)
 === formatted ===
 {#el @attr=val}
 === ast ===
