@@ -30,6 +30,10 @@ Pattern {
                     start: @2,
                     namespace: None,
                     name: "a",
+                    namespace_leading_bidi: None,
+                    namespace_trailing_bidi: None,
+                    name_leading_bidi: None,
+                    name_trailing_bidi: None,
                 },
                 options: [
                     FnOrMarkupOption {
@@ -39,6 +43,10 @@ Pattern {
                                 "",
                             ),
                             name: "b",
+                            namespace_leading_bidi: None,
+                            namespace_trailing_bidi: None,
+                            name_leading_bidi: None,
+                            name_trailing_bidi: None,
                         },
                         value: Text {
                             start: @6,

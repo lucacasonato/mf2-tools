@@ -1,15 +1,23 @@
+use std::borrow::Cow;
+
+use mf2_parser::ast::Literal;
 use mf2_parser::ast::*;
 use mf2_parser::LineColUtf8;
 use mf2_parser::Location;
 use mf2_parser::SourceTextInfo;
+use mf2_parser::Span;
 use mf2_parser::Spanned;
 use mf2_parser::Visit;
 use mf2_parser::Visitable;
+use unicode_bidi::format_chars::FSI;
+use unicode_bidi::format_chars::LRI;
+use unicode_bidi::format_chars::PDI;
 
 pub struct Printer<'ast, 'text> {
   ast: &'ast Message<'text>,
   info: Option<&'text SourceTextInfo<'text>>,
   out: String,
+  text_last_isolated: usize,
 }
 
 impl<'ast, 'text> Printer<'ast, 'text> {
@@ -21,6 +29,7 @@ impl<'ast, 'text> Printer<'ast, 'text> {
       ast,
       info,
       out: String::new(),
+      text_last_isolated: 0,
     }
   }
 
@@ -43,6 +52,17 @@ impl<'ast, 'text> Printer<'ast, 'text> {
     self.out.push_str(str);
   }
 
+  fn push_isolated_str(&mut self, str: &str) {
+    let has_rtl = has_rtl(str);
+    if has_rtl {
+      self.push(FSI);
+    }
+    self.push_str(str);
+    if has_rtl {
+      self.push(PDI);
+    }
+  }
+
   fn helper_visit_expression<T, F>(
     &mut self,
     body: T,
@@ -52,12 +72,17 @@ impl<'ast, 'text> Printer<'ast, 'text> {
   ) where
     F: FnOnce(&mut Self, T),
   {
+    let needs_isolation = has_rtl(&self.out[self.text_last_isolated..]);
+
     self.push('{');
+    if needs_isolation {
+      self.push(LRI);
+    }
 
     cb(self, body);
 
     if let Some(annotation) = annotation {
-      if !matches!(self.out.chars().last(), Some('{')) {
+      if !matches!(self.out.chars().last(), Some('{' | LRI)) {
         self.push(' ');
       }
 
@@ -68,7 +93,11 @@ impl<'ast, 'text> Printer<'ast, 'text> {
       attr.apply_visitor(self);
     }
 
+    if needs_isolation {
+      self.push(PDI);
+    }
     self.push('}');
+    self.text_last_isolated = self.out.len();
   }
 
   fn try_visit_match_key(&mut self, key: &'ast Key<'text>) -> String {
@@ -153,10 +182,10 @@ impl<'ast, 'text> Visit<'ast, 'text> for Printer<'ast, 'text> {
 
   fn visit_identifier(&mut self, id: &Identifier) {
     if let Some(namespace) = id.namespace {
-      self.push_str(namespace);
+      self.push_isolated_str(namespace);
       self.push(':');
     }
-    self.push_str(id.name);
+    self.push_isolated_str(id.name);
   }
 
   fn visit_fn_or_markup_option(
@@ -170,18 +199,32 @@ impl<'ast, 'text> Visit<'ast, 'text> for Printer<'ast, 'text> {
   }
 
   fn visit_quoted(&mut self, quoted: &'ast Quoted<'text>) {
+    let has_rtl = quoted_literal_has_rtl(quoted, self.info);
+    if has_rtl {
+      self.push(FSI);
+    }
     self.push('|');
     quoted.apply_visitor_to_children(self);
     self.push('|');
+    if has_rtl {
+      self.push(PDI);
+    }
   }
 
   fn visit_number(&mut self, num: &Number) {
     self.push_str(num.raw);
   }
 
+  fn visit_literal(&mut self, literal: &'ast Literal<'text>) {
+    match literal {
+      Literal::Text(text) => self.push_isolated_str(text.content),
+      _ => literal.apply_visitor_to_children(self),
+    }
+  }
+
   fn visit_variable(&mut self, var: &Variable) {
     self.push('$');
-    self.push_str(var.name);
+    self.push_isolated_str(var.name);
   }
 
   fn visit_attribute(&mut self, attr: &'ast Attribute<'text>) {
@@ -196,20 +239,29 @@ impl<'ast, 'text> Visit<'ast, 'text> for Printer<'ast, 'text> {
   }
 
   fn visit_markup(&mut self, markup: &'ast Markup<'text>) {
+    let needs_isolation = has_rtl(&self.out[self.text_last_isolated..]);
+
     self.push('{');
     if let MarkupKind::Close = markup.kind {
       self.push('/');
     } else {
       self.push('#');
     }
+    if needs_isolation {
+      self.push(LRI);
+    }
 
     markup.apply_visitor_to_children(self);
 
+    if needs_isolation {
+      self.push(PDI);
+    }
     if let MarkupKind::Standalone = markup.kind {
       self.push(' ');
       self.push('/');
     }
     self.push('}');
+    self.text_last_isolated = self.out.len();
   }
 
   fn visit_complex_message(&mut self, message: &'ast ComplexMessage<'text>) {
@@ -247,9 +299,16 @@ impl<'ast, 'text> Visit<'ast, 'text> for Printer<'ast, 'text> {
   }
 
   fn visit_quoted_pattern(&mut self, pattern: &'ast QuotedPattern<'text>) {
+    let has_rtl = pattern_has_rtl(&pattern.pattern, self.info);
+    if has_rtl {
+      self.push(FSI);
+    }
     self.push_str("{{");
     pattern.pattern.apply_visitor(self);
     self.push_str("}}");
+    if has_rtl {
+      self.push(PDI);
+    }
   }
 
   fn visit_matcher(&mut self, matcher: &'ast Matcher<'text>) {
@@ -312,4 +371,86 @@ impl<'ast, 'text> Visit<'ast, 'text> for Printer<'ast, 'text> {
       variant.pattern.apply_visitor(self);
     }
   }
+}
+
+fn quoted_literal_has_rtl(
+  quoted: &Quoted,
+  info: Option<&SourceTextInfo>,
+) -> bool {
+  let contigous_text = match info {
+    Some(info) => Cow::Borrowed(info.text(quoted.span())),
+    None => {
+      let mut str = String::new();
+      for child in &quoted.parts {
+        match child {
+          QuotedPart::Text(text) => str.push_str(text.content),
+          QuotedPart::Escape(escape) => {
+            str.push('\\');
+            str.push(escape.escaped_char);
+          }
+        }
+      }
+      Cow::Owned(str)
+    }
+  };
+  has_rtl(&contigous_text)
+}
+
+fn pattern_has_rtl(pattern: &Pattern, info: Option<&SourceTextInfo>) -> bool {
+  if let Some(info) = info {
+    let mut contigious_span: Option<Span> = None;
+    for part in &pattern.parts {
+      match part {
+        PatternPart::Text(text) => {
+          if let Some(span) = contigious_span {
+            contigious_span = Some(Span::new(span.start..text.span().end));
+          } else {
+            contigious_span = Some(text.span());
+          }
+        }
+        PatternPart::Escape(escape) => {
+          if let Some(span) = contigious_span {
+            contigious_span = Some(Span::new(span.start..escape.span().end));
+          } else {
+            contigious_span = Some(escape.span());
+          }
+        }
+        PatternPart::Expression(_) | PatternPart::Markup(_) => {
+          if let Some(span) = contigious_span {
+            if has_rtl(info.text(span)) {
+              return true;
+            }
+          }
+          contigious_span = None;
+        }
+      }
+    }
+    if let Some(span) = contigious_span {
+      has_rtl(info.text(span))
+    } else {
+      false
+    }
+  } else {
+    let mut contigous_text = String::new();
+    for part in &pattern.parts {
+      match part {
+        PatternPart::Text(text) => contigous_text.push_str(text.content),
+        PatternPart::Escape(escape) => {
+          contigous_text.push('\\');
+          contigous_text.push(escape.escaped_char);
+        }
+        PatternPart::Expression(_) | PatternPart::Markup(_) => {
+          if has_rtl(&contigous_text) {
+            return true;
+          }
+          contigous_text.clear();
+        }
+      }
+    }
+    has_rtl(&contigous_text)
+  }
+}
+
+fn has_rtl(text: &str) -> bool {
+  unicode_bidi::BidiInfo::new(text, None).has_rtl()
 }

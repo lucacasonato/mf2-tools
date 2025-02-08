@@ -63,8 +63,11 @@ ComplexMessage {
         LocalDeclaration {
             start: @0,
             variable: Variable {
-                span: @7..12,
+                start: @7,
+                has_dollar: true,
                 name: "var1",
+                leading_bidi: None,
+                trailing_bidi: None,
             },
             expression: LiteralExpression {
                 span: @15..18,
@@ -83,8 +86,11 @@ ComplexMessage {
         LocalDeclaration {
             start: @22,
             variable: Variable {
-                span: @29..34,
+                start: @29,
+                has_dollar: true,
                 name: "var2",
+                leading_bidi: None,
+                trailing_bidi: None,
             },
             expression: LiteralExpression {
                 span: @37..40,
@@ -105,8 +111,11 @@ ComplexMessage {
             expression: VariableExpression {
                 span: @48..55,
                 variable: Variable {
-                    span: @49..54,
+                    start: @49,
+                    has_dollar: true,
                     name: "var3",
+                    leading_bidi: None,
+                    trailing_bidi: None,
                 },
                 annotation: None,
                 attributes: [],
@@ -115,8 +124,11 @@ ComplexMessage {
         LocalDeclaration {
             start: @56,
             variable: Variable {
-                span: @63..68,
+                start: @63,
+                has_dollar: true,
                 name: "var4",
+                leading_bidi: None,
+                trailing_bidi: None,
             },
             expression: LiteralExpression {
                 span: @71..74,
@@ -137,8 +149,11 @@ ComplexMessage {
             expression: VariableExpression {
                 span: @82..89,
                 variable: Variable {
-                    span: @83..88,
+                    start: @83,
+                    has_dollar: true,
                     name: "var5",
+                    leading_bidi: None,
+                    trailing_bidi: None,
                 },
                 annotation: None,
                 attributes: [],
@@ -149,8 +164,11 @@ ComplexMessage {
             expression: VariableExpression {
                 span: @98..105,
                 variable: Variable {
-                    span: @99..104,
+                    start: @99,
+                    has_dollar: true,
                     name: "var6",
+                    leading_bidi: None,
+                    trailing_bidi: None,
                 },
                 annotation: None,
                 attributes: [],

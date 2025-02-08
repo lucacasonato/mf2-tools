@@ -1,0 +1,37 @@
+{:fn‎opt=1}
+=== spans ===
+                    {:fn‎opt=1}
+Pattern             ^^^^^^^^^^ 0:0-0:13
+AnnotationExpression^^^^^^^^^^ 0:0-0:13
+Annotation           ^^^       0:1-0:7
+Identifier            ^^       0:2-0:7
+=== diagnostics ===
+Placeholder expression contains invalid content. (at @7..12)
+  {:fn‎opt=1}
+      ^^^^^
+=== fixed ===
+(no fixes)
+=== formatted ===
+(cannot format due to fatal errors)
+=== ast ===
+Pattern {
+    parts: [
+        AnnotationExpression {
+            span: @0..13,
+            annotation: Annotation {
+                start: @1,
+                id: Identifier {
+                    start: @2,
+                    namespace: None,
+                    name: "fn",
+                    namespace_leading_bidi: None,
+                    namespace_trailing_bidi: None,
+                    name_leading_bidi: None,
+                    name_trailing_bidi: Long,
+                },
+                options: [],
+            },
+            attributes: [],
+        },
+    ],
+}

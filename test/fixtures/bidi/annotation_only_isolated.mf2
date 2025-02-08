@@ -1,0 +1,40 @@
+صر {:integer}
+=== spans ===
+                    صر {:integer}
+Pattern             ^^^^^^^^^^^^^ 0:0-0:15
+Text                ^^^           0:0-0:5
+AnnotationExpression   ^^^^^^^^^^ 0:5-0:15
+Annotation              ^^^^^^^^  0:6-0:14
+Identifier               ^^^^^^^  0:7-0:14
+=== diagnostics ===
+
+=== fixed ===
+(no fixes)
+=== formatted ===
+صر {⁦:integer⁩}
+=== ast ===
+Pattern {
+    parts: [
+        Text {
+            start: @0,
+            content: "صر ",
+        },
+        AnnotationExpression {
+            span: @5..15,
+            annotation: Annotation {
+                start: @6,
+                id: Identifier {
+                    start: @7,
+                    namespace: None,
+                    name: "integer",
+                    namespace_leading_bidi: None,
+                    namespace_trailing_bidi: None,
+                    name_leading_bidi: None,
+                    name_trailing_bidi: None,
+                },
+                options: [],
+            },
+            attributes: [],
+        },
+    ],
+}

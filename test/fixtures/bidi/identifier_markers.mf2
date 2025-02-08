@@ -1,0 +1,37 @@
+{:‎ns‎:؜fn؜}
+=== spans ===
+                    {:‎ns‎:؜fn؜}
+Pattern             ^^^^^^^^ 0:0-0:18
+AnnotationExpression^^^^^^^^ 0:0-0:18
+Annotation           ^^^^^^  0:1-0:17
+Identifier            ^^^^^  0:2-0:17
+=== diagnostics ===
+
+=== fixed ===
+(no fixes)
+=== formatted ===
+{:ns:fn}
+=== ast ===
+Pattern {
+    parts: [
+        AnnotationExpression {
+            span: @0..18,
+            annotation: Annotation {
+                start: @1,
+                id: Identifier {
+                    start: @2,
+                    namespace: Some(
+                        "ns",
+                    ),
+                    name: "fn",
+                    namespace_leading_bidi: Long,
+                    namespace_trailing_bidi: Long,
+                    name_leading_bidi: Short,
+                    name_trailing_bidi: Short,
+                },
+                options: [],
+            },
+            attributes: [],
+        },
+    ],
+}

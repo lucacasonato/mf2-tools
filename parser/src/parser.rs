@@ -3,6 +3,7 @@ use std::ops::Range;
 use crate::ast::Annotation;
 use crate::ast::AnnotationExpression;
 use crate::ast::Attribute;
+use crate::ast::BidiMarker;
 use crate::ast::ComplexMessage;
 use crate::ast::ComplexMessageBody;
 use crate::ast::Declaration;
@@ -65,7 +66,7 @@ impl<'text> Parser<'text> {
   ) {
     while let Some((_, c)) = self.peek() {
       match c {
-        chars::space!() => {
+        chars::optional_space!() => {
           self.next();
         }
 
@@ -169,7 +170,7 @@ impl<'text> Parser<'text> {
             start = self.current_location();
           }
         }
-        '.' | '@' | '|' | chars::content!() | chars::space!() => {
+        '.' | '@' | '|' | chars::content!() | chars::whitespace!() => {
           self.next();
         }
         '\0' => {
@@ -278,7 +279,7 @@ impl<'text> Parser<'text> {
       let mut had_space = false;
       while let Some((_, ch)) = self.peek() {
         match ch {
-          chars::space!() => {
+          chars::optional_space!() => {
             had_space = self.skip_spaces();
           }
           '\0' | '@' | ':' | '\\' | '{' | '}' | '|' => {
@@ -339,7 +340,7 @@ impl<'text> Parser<'text> {
           self.next();
           break;
         }
-        Some((_, chars::space!())) => {
+        Some((_, chars::optional_space!())) => {
           self.next();
         }
         Some((_, '\\')) => {
@@ -435,14 +436,22 @@ impl<'text> Parser<'text> {
     let (start, n) = self.next().unwrap(); // consume '$'
     debug_assert_eq!(n, '$');
 
-    let name = self.parse_name();
-    let span = Span::new(start..self.current_location());
+    let (name, leading_bidi, trailing_bidi) = self.parse_name();
+    let variable = Variable {
+      start,
+      has_dollar: true,
+      name,
+      leading_bidi,
+      trailing_bidi,
+    };
 
     if name.is_empty() {
-      self.report(Diagnostic::VariableMissingName { span });
+      self.report(Diagnostic::VariableMissingName {
+        span: variable.span(),
+      });
     }
 
-    Variable { span, name }
+    variable
   }
 
   fn parse_attribute(
@@ -511,20 +520,32 @@ impl<'text> Parser<'text> {
   // The caller should report an error if the identifier is empty.
   fn parse_identifier(&mut self) -> (Identifier<'text>, bool) {
     let start = self.current_location();
-    let name_or_namespace = self.parse_name();
+    let (
+      name_or_namespace,
+      name_or_namespace_leading_bidi,
+      name_or_namespace_trailing_bidi,
+    ) = self.parse_name();
 
     let id = if self.eat(':').is_some() {
-      let name = self.parse_name();
+      let (name, name_leading_bidi, name_trailing_bidi) = self.parse_name();
       Identifier {
         start,
         namespace: Some(name_or_namespace),
         name,
+        namespace_leading_bidi: name_or_namespace_leading_bidi,
+        namespace_trailing_bidi: name_or_namespace_trailing_bidi,
+        name_leading_bidi,
+        name_trailing_bidi,
       }
     } else {
       Identifier {
         start,
         namespace: None,
         name: name_or_namespace,
+        namespace_leading_bidi: BidiMarker::None,
+        namespace_trailing_bidi: BidiMarker::None,
+        name_leading_bidi: name_or_namespace_leading_bidi,
+        name_trailing_bidi: name_or_namespace_trailing_bidi,
       }
     };
 
@@ -545,7 +566,31 @@ impl<'text> Parser<'text> {
     (id, is_empty)
   }
 
-  fn skip_name(&mut self) {
+  fn skip_name(&mut self) -> (Location, Location, BidiMarker, BidiMarker) {
+    let mut leading_bidi = BidiMarker::None;
+    if matches!(self.peek(), Some((_, chars::bidi!())))
+      && matches!(self.peek2(), Some((_, chars::name_start!())))
+    {
+      let (_, char) = self.next().unwrap();
+      leading_bidi = BidiMarker::from(char);
+    };
+
+    let (start, end) = self.skip_name_no_bidi();
+
+    let mut trailing_bidi = BidiMarker::None;
+    if start != end {
+      if let Some((_, chars::bidi!())) = self.peek() {
+        let (_, char) = self.next().unwrap();
+        trailing_bidi = BidiMarker::from(char);
+      }
+    }
+
+    (start, end, leading_bidi, trailing_bidi)
+  }
+
+  fn skip_name_no_bidi(&mut self) -> (Location, Location) {
+    let start = self.current_location();
+
     if let Some((_, chars::name_start!())) = self.peek() {
       self.next();
 
@@ -553,22 +598,20 @@ impl<'text> Parser<'text> {
         self.next();
       }
     }
+
+    let end: Location = self.current_location();
+
+    (start, end)
   }
 
   // Caller must handle empty name
-  fn parse_name(&mut self) -> &'text str {
-    let start = self.current_location();
-    self.skip_name();
-    let end = self.current_location();
-
-    self.text.slice(start..end)
+  fn parse_name(&mut self) -> (&'text str, BidiMarker, BidiMarker) {
+    let (start, end, leading_bidi, trailing_bidi) = self.skip_name();
+    (self.text.slice(start..end), leading_bidi, trailing_bidi)
   }
 
   fn parse_literal_name(&mut self) -> Text<'text> {
-    let start = self.current_location();
-    self.skip_name();
-    let end = self.current_location();
-
+    let (start, end) = self.skip_name_no_bidi();
     self.slice_text(start..end)
   }
 
@@ -596,8 +639,14 @@ impl<'text> Parser<'text> {
 
   fn skip_spaces(&mut self) -> bool {
     let mut any_spaces = false;
-    while let Some((_, chars::space!())) = self.peek() {
-      any_spaces = true;
+    while let Some((_, c)) = self.peek() {
+      match c {
+        chars::whitespace!() => {
+          any_spaces = true;
+        }
+        chars::bidi!() => {}
+        _ => break,
+      }
       self.next();
     }
     any_spaces
@@ -719,7 +768,7 @@ impl<'text> Parser<'text> {
           last_space_start = None;
           had_name = matches!(c, chars::name!());
         }
-        chars::space!() => {
+        chars::whitespace!() => {
           self.next();
           had_name = false;
           if last_space_start.is_none() {
@@ -880,6 +929,10 @@ impl<'text> Parser<'text> {
         start: before_id,
         namespace: None,
         name: "",
+        namespace_leading_bidi: BidiMarker::None,
+        namespace_trailing_bidi: BidiMarker::None,
+        name_leading_bidi: BidiMarker::None,
+        name_trailing_bidi: BidiMarker::None,
       };
     } else if had_space {
       self.report(Diagnostic::MarkupInvalidSpaceBeforeIdentifier {
@@ -1010,7 +1063,7 @@ impl<'text> Parser<'text> {
         '/' | '@' => {
           break;
         }
-        chars::space!() => {
+        chars::optional_space!() => {
           if last_space_start.is_none() {
             last_space_start = Some(loc);
           }
@@ -1049,7 +1102,7 @@ impl<'text> Parser<'text> {
 
     loop {
       match self.peek() {
-        Some((_, chars::space!())) => {
+        Some((_, chars::optional_space!())) => {
           self.next();
         }
         Some((loc, '.')) => {
@@ -1057,7 +1110,8 @@ impl<'text> Parser<'text> {
             start = Some(loc);
           }
           self.next(); // consume '.'
-          let name = self.parse_name();
+          let (name_start, name_end) = self.skip_name_no_bidi();
+          let name = self.text.slice(name_start..name_end);
           match name {
             "input" => {
               let input_decl = self.parse_input_declaration(loc);
@@ -1133,12 +1187,15 @@ impl<'text> Parser<'text> {
       if start.is_none() {
         start = Some(self.current_location());
       }
-      debug_assert!(!matches!(self.peek(), Some((_, chars::space!()))));
+      debug_assert!(!matches!(
+        self.peek(),
+        Some((_, chars::optional_space!()))
+      ));
       if body.is_some() {
         let start = self.current_location();
         let mut first_space_char = None;
         while let Some((loc, c)) = self.next() {
-          if matches!(c, chars::space!()) {
+          if matches!(c, chars::whitespace!()) {
             if first_space_char.is_none() {
               first_space_char = Some(loc);
             }
@@ -1155,7 +1212,7 @@ impl<'text> Parser<'text> {
         if let Some(PatternPart::Text(text)) = pattern.parts.last_mut() {
           text.content = text
             .content
-            .trim_end_matches(|c| matches!(c, chars::space!()));
+            .trim_end_matches(|c| matches!(c, chars::whitespace!()));
         }
         self.report(Diagnostic::ComplexMessageBodyNotQuoted {
           span: pattern.span(),
@@ -1204,10 +1261,18 @@ impl<'text> Parser<'text> {
     let variable = match next {
       Some((_, '$')) => self.parse_variable(),
       Some((start, chars::name_start!())) => {
-        let name = self.parse_name();
-        let span = Span::new(start..self.current_location());
-        self.report(Diagnostic::LocalVariableMissingDollar { span });
-        Variable { span, name }
+        let (name, leading_bidi, trailing_bidi) = self.parse_name();
+        let variable = Variable {
+          start,
+          name,
+          has_dollar: false,
+          leading_bidi,
+          trailing_bidi,
+        };
+        self.report(Diagnostic::LocalVariableMissingDollar {
+          span: variable.span(),
+        });
+        variable
       }
       _ => {
         self.text.reset_to(before_spaces);
@@ -1228,7 +1293,7 @@ impl<'text> Parser<'text> {
       });
     }
 
-    let mut last_visible_char = variable.span.end;
+    let mut last_visible_char = variable.span().end;
 
     self.skip_spaces();
 
@@ -1237,7 +1302,7 @@ impl<'text> Parser<'text> {
       self.skip_spaces();
     } else {
       self.report(Diagnostic::LocalDeclarationVariableMissingTrailingEquals {
-        span: variable.span,
+        span: variable.span(),
       });
     }
 
@@ -1474,7 +1539,7 @@ impl<'text> Parser<'text> {
 
               if !matches!(
                 self.peek(),
-                None | Some((_, chars::space!() | '{' | '|' | '*'))
+                None | Some((_, chars::optional_space!() | '{' | '|' | '*'))
               ) {
                 return None;
               }
@@ -1484,7 +1549,7 @@ impl<'text> Parser<'text> {
                   let span = variable.span();
                   self.report(Diagnostic::MatcherKeyIsVariable { span });
                   Some(Key::Literal(Literal::Text(Text {
-                    start: variable.span.start,
+                    start: span.start,
                     content: self.text.slice(span.start..span.end),
                   })))
                 }
@@ -1498,7 +1563,7 @@ impl<'text> Parser<'text> {
 
               let end = loop {
                 match self.peek() {
-                  Some((end, chars::space!() | '{')) => {
+                  Some((end, chars::optional_space!() | '{')) => {
                     break end;
                   }
                   // starts the next key, with a missing space in between

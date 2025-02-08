@@ -7,20 +7,35 @@ macro_rules! content {
 }
 pub(crate) use content;
 
-macro_rules! space {
+macro_rules! whitespace {
   () => {
     ' ' | '\t' | '\r' | '\n' | '\u{3000}'
   };
 }
-pub(crate) use space;
+pub(crate) use whitespace;
+
+macro_rules! bidi {
+  () => {
+    '\u{061C}' | '\u{200E}' | '\u{200F}' | '\u{2066}'..='\u{2069}'
+  };
+}
+pub(crate) use bidi;
+
+macro_rules! optional_space {
+  () => {
+    crate::chars::whitespace!() | crate::chars::bidi!()
+  };
+}
+pub(crate) use optional_space;
 
 macro_rules! name_start {
   () => {
     'a'..='z' | 'A'..='Z' | '_' |
     '\u{C0}'..='\u{D6}' | '\u{D8}'..='\u{F6}' | '\u{F8}'..='\u{2FF}' |
-    '\u{370}'..='\u{37D}' | '\u{37F}'..='\u{1FFF}' | '\u{200C}'..='\u{200D}' |
-    '\u{2070}'..='\u{218F}' | '\u{2C00}'..='\u{2FEF}' | '\u{3001}'..='\u{D7FF}' |
-    '\u{F900}'..='\u{FDCF}' | '\u{FDF0}'..='\u{FFFC}' | '\u{10000}'..='\u{EFFFF}'
+    '\u{370}'..='\u{37D}' | '\u{37F}'..='\u{61B}' | '\u{61D}'..='\u{1FFF}' |
+    '\u{200C}'..='\u{200D}' | '\u{2070}'..='\u{218F}' |'\u{2C00}'..='\u{2FEF}' |
+    '\u{3001}'..='\u{D7FF}' | '\u{F900}'..='\u{FDCF}' |
+    '\u{FDF0}'..='\u{FFFC}' | '\u{10000}'..='\u{EFFFF}'
   };
 }
 pub(crate) use name_start;
@@ -36,7 +51,7 @@ pub(crate) use name;
 macro_rules! quoted {
   () => {
     crate::parser::chars::content!()
-      | crate::parser::chars::space!()
+      | crate::parser::chars::whitespace!()
       | '.'
       | '@'
       | '{'

@@ -165,6 +165,9 @@ fn run_test(test: &CollectedTest) {
     let re = regex::Regex::new(r"(span|start): @[\d\.]+").unwrap();
     let ast_before = re.replace_all(&actual_ast_dbg, "$1:@???");
     let ast_after = re.replace_all(&new_ast_dbg, "$1:@???");
+    let re = regex::Regex::new(r"(_bidi): (None|Long|Short)").unwrap();
+    let ast_before = re.replace_all(&ast_before, "$1: ???");
+    let ast_after = re.replace_all(&ast_after, "$1: ???");
 
     pretty_assertions::assert_str_eq!(
       ast_before,

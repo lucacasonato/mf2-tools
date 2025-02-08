@@ -74,8 +74,11 @@ ComplexMessage {
             expression: VariableExpression {
                 span: @7..13,
                 variable: Variable {
-                    span: @8..12,
+                    start: @8,
+                    has_dollar: true,
                     name: "var",
+                    leading_bidi: None,
+                    trailing_bidi: None,
                 },
                 annotation: None,
                 attributes: [],
@@ -86,16 +89,25 @@ ComplexMessage {
         start: @15,
         selectors: [
             Variable {
-                span: @22..26,
+                start: @22,
+                has_dollar: true,
                 name: "var",
+                leading_bidi: None,
+                trailing_bidi: None,
             },
             Variable {
-                span: @27..40,
+                start: @27,
+                has_dollar: true,
                 name: "var2longname",
+                leading_bidi: None,
+                trailing_bidi: None,
             },
             Variable {
-                span: @41..46,
+                start: @41,
+                has_dollar: true,
                 name: "var3",
+                leading_bidi: None,
+                trailing_bidi: None,
             },
         ],
         variants: [

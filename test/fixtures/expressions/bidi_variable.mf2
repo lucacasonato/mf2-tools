@@ -1,0 +1,163 @@
+{:_123}صر {:_123}
+
+Hello { $صر :⁨مصر⁩} { |صر123| :_123 } صر123{123}!
+=== spans ===
+                    {:_123}صر {:_123}↵↵Hello { $صر :⁨مصر⁩} { |صر123| :_123 } صر123{123}!
+Pattern             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ 0:0-2:62
+AnnotationExpression^^^^^^^                                                            0:0-0:7
+Annotation           ^^^^^                                                             0:1-0:6
+Identifier            ^^^^                                                             0:2-0:6
+Text                       ^^^                                                         0:7-0:12
+AnnotationExpression          ^^^^^^^                                                  0:12-0:19
+Annotation                     ^^^^^                                                   0:13-0:18
+Identifier                      ^^^^                                                   0:14-0:18
+Text                                 ^^^^^^^^                                          0:19-2:6
+VariableExpression                           ^^^^^^^^^^^                               2:6-2:28
+Variable                                       ^^^                                     2:8-2:13
+Annotation                                         ^^^^                                2:14-2:27
+Identifier                                          ^^^                                2:15-2:27
+Text                                                    ^                              2:28-2:29
+LiteralExpression                                        ^^^^^^^^^^^^^^^^^             2:29-2:48
+Quoted                                                     ^^^^^^^                     2:31-2:40
+Text                                                        ^^^^^                      2:32-2:39
+Annotation                                                         ^^^^^               2:41-2:46
+Identifier                                                          ^^^^               2:42-2:46
+Text                                                                      ^^^^^^       2:48-2:56
+LiteralExpression                                                               ^^^^^  2:56-2:61
+Number                                                                           ^^^   2:57-2:60
+Number.integral                                                                  ^^^   2:57-2:60
+Text                                                                                 ^ 2:61-2:62
+=== diagnostics ===
+
+=== fixed ===
+(no fixes)
+=== formatted ===
+{:_123}صر {⁦:_123⁩}
+
+Hello {$⁨صر⁩ :⁨مصر⁩} {⁨|صر123|⁩ :_123} صر123{⁦123⁩}!
+=== ast ===
+Pattern {
+    parts: [
+        AnnotationExpression {
+            span: @0..7,
+            annotation: Annotation {
+                start: @1,
+                id: Identifier {
+                    start: @2,
+                    namespace: None,
+                    name: "_123",
+                    namespace_leading_bidi: None,
+                    namespace_trailing_bidi: None,
+                    name_leading_bidi: None,
+                    name_trailing_bidi: None,
+                },
+                options: [],
+            },
+            attributes: [],
+        },
+        Text {
+            start: @7,
+            content: "صر ",
+        },
+        AnnotationExpression {
+            span: @12..19,
+            annotation: Annotation {
+                start: @13,
+                id: Identifier {
+                    start: @14,
+                    namespace: None,
+                    name: "_123",
+                    namespace_leading_bidi: None,
+                    namespace_trailing_bidi: None,
+                    name_leading_bidi: None,
+                    name_trailing_bidi: None,
+                },
+                options: [],
+            },
+            attributes: [],
+        },
+        Text {
+            start: @19,
+            content: "\n\nHello ",
+        },
+        VariableExpression {
+            span: @27..49,
+            variable: Variable {
+                start: @29,
+                has_dollar: true,
+                name: "صر",
+                leading_bidi: None,
+                trailing_bidi: None,
+            },
+            annotation: Some(
+                Annotation {
+                    start: @35,
+                    id: Identifier {
+                        start: @36,
+                        namespace: None,
+                        name: "مصر",
+                        namespace_leading_bidi: None,
+                        namespace_trailing_bidi: None,
+                        name_leading_bidi: Long,
+                        name_trailing_bidi: Long,
+                    },
+                    options: [],
+                },
+            ),
+            attributes: [],
+        },
+        Text {
+            start: @49,
+            content: " ",
+        },
+        LiteralExpression {
+            span: @50..69,
+            literal: Quoted {
+                span: @52..61,
+                parts: [
+                    Text {
+                        start: @53,
+                        content: "صر123",
+                    },
+                ],
+            },
+            annotation: Some(
+                Annotation {
+                    start: @62,
+                    id: Identifier {
+                        start: @63,
+                        namespace: None,
+                        name: "_123",
+                        namespace_leading_bidi: None,
+                        namespace_trailing_bidi: None,
+                        name_leading_bidi: None,
+                        name_trailing_bidi: None,
+                    },
+                    options: [],
+                },
+            ),
+            attributes: [],
+        },
+        Text {
+            start: @69,
+            content: " صر123",
+        },
+        LiteralExpression {
+            span: @77..82,
+            literal: Number {
+                start: @78,
+                raw: "123",
+                is_negative: false,
+                integral_len: 3,
+                fractional_len: None,
+                exponent_len: None,
+            },
+            annotation: None,
+            attributes: [],
+        },
+        Text {
+            start: @82,
+            content: "!",
+        },
+    ],
+}

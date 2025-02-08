@@ -36,8 +36,11 @@ ComplexMessage {
         LocalDeclaration {
             start: @0,
             variable: Variable {
-                span: @7..11,
+                start: @7,
+                has_dollar: true,
                 name: "var",
+                leading_bidi: None,
+                trailing_bidi: None,
             },
             expression: LiteralExpression {
                 span: @11..11,
@@ -52,8 +55,11 @@ ComplexMessage {
         LocalDeclaration {
             start: @12,
             variable: Variable {
-                span: @19..23,
+                start: @19,
+                has_dollar: true,
                 name: "bar",
+                leading_bidi: None,
+                trailing_bidi: None,
             },
             expression: LiteralExpression {
                 span: @26..31,
