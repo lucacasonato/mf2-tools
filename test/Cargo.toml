@@ -13,5 +13,6 @@ file_test_runner = "0.7.2"
 pretty_assertions = "1.4.0"
 mf2_parser = { path = "../parser" }
 mf2_printer = { path = "../printer" }
+mfr_parser = { path = "../mfr-parser" }
 unicode-width = "0.1.13"
 regex = "1.11.0"

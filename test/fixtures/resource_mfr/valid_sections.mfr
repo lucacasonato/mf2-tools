@@ -1,0 +1,10 @@
+---
+[app.header]
+title = Welcome
+subtitle = Nice to meet you
+
+=== mfr diagnostics ===
+
+=== mfr entries ===
+title @25..32
+subtitle @44..60

@@ -1,0 +1,26 @@
+[package]
+name = "mfrlsp"
+description = "Language server for MessageFormat Resource files"
+version = "0.1.0"
+edition.workspace = true
+authors.workspace = true
+license.workspace = true
+repository.workspace = true
+
+[[bin]]
+name = "mfrlsp"
+path = "src/main.rs"
+
+[lib]
+name = "mfrlsp"
+path = "src/lib.rs"
+
+[dependencies]
+anyhow = "1.0.86"
+lsp-server = "0.7.6"
+lsp-types = "0.97.0"
+serde = "1.0.210"
+serde_json = "1.0.119"
+yoke = { version = "0.7.4", features = ["derive"] }
+mf2_parser = { path = "../parser", version = "0.2.0" }
+mfr_parser = { path = "../mfr-parser", version = "0.1.0" }

@@ -73,17 +73,10 @@ impl Server<'_> {
       Entry::Vacant(entry) => entry.insert(document),
     };
 
-    let parsed = document.parsed.get();
-
-    let diagnostics = &parsed.diagnostics;
-
     self.client.publish_diagnostics(PublishDiagnosticsParams {
       uri,
       version: Some(document.version),
-      diagnostics: diagnostics
-        .iter()
-        .map(|diag| diagnostic_to_lsp(diag, document))
-        .collect(),
+      diagnostics: document.lsp_diagnostics().clone(),
     });
   }
 }
@@ -271,7 +264,7 @@ impl LanguageServer for Server<'_> {
       .get()
       .diagnostics
       .iter()
-      .filter(|diag| diag.span().contains(dbg!(&span)))
+      .filter(|diag| diag.span().contains(&span))
       .flat_map(|d| fixes_for_diagnostic(d, document))
       .collect::<Vec<_>>();
 
@@ -470,23 +463,6 @@ impl LanguageServer for Server<'_> {
   }
 }
 
-fn diagnostic_to_lsp(
-  diag: &mf2_parser::Diagnostic,
-  doc: &Document,
-) -> lsp_types::Diagnostic {
-  lsp_types::Diagnostic {
-    range: doc.span_to_range(diag.span()),
-    severity: Some(lsp_types::DiagnosticSeverity::ERROR),
-    code: None,
-    code_description: None,
-    source: Some("mf2".to_string()),
-    message: diag.message(),
-    related_information: None,
-    tags: None,
-    data: None,
-  }
-}
-
 fn fixes_for_diagnostic(
   diagnostic: &mf2_parser::Diagnostic,
   document: &Document,
@@ -518,7 +494,17 @@ fn fixes_for_diagnostic(
           document_changes: None,
         }),
         command: None,
-        diagnostics: Some(vec![diagnostic_to_lsp(diagnostic, document)]),
+        diagnostics: Some(vec![lsp_types::Diagnostic {
+          range: document.span_to_range(diagnostic.span()),
+          severity: Some(lsp_types::DiagnosticSeverity::ERROR),
+          code: None,
+          code_description: None,
+          source: Some("mf2".to_string()),
+          message: diagnostic.message(),
+          related_information: None,
+          tags: None,
+          data: None,
+        }]),
         is_preferred: Some(fix_count == 1),
         data: None,
         disabled: None,

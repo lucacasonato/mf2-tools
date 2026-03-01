@@ -279,6 +279,27 @@ dependencies = [
 ]
 
 [[package]]
+name = "mfr_parser"
+version = "0.1.0"
+dependencies = [
+ "mf2_parser",
+]
+
+[[package]]
+name = "mfrlsp"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "lsp-server",
+ "lsp-types",
+ "mf2_parser",
+ "mfr_parser",
+ "serde",
+ "serde_json",
+ "yoke",
+]
+
+[[package]]
 name = "once_cell"
 version = "1.19.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -495,6 +516,7 @@ dependencies = [
  "file_test_runner",
  "mf2_parser",
  "mf2_printer",
+ "mfr_parser",
  "pretty_assertions",
  "regex",
  "unicode-width",

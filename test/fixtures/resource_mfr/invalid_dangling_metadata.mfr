@@ -1,0 +1,8 @@
+@locale en-US
+
+key = value
+
+=== mfr diagnostics ===
+dangling-metadata @0..13: Metadata must attach to a subsequent frontmatter, section header, or entry without comments/empty lines in between.
+=== mfr entries ===
+key @21..26

@@ -1,30 +1,20 @@
-{ ^a }
-=== spans ===
-                    { ^a }
-Pattern             ^^^^^^ 0:0-0:6
-LiteralExpression   ^^^^^^ 0:0-0:6
-Text                  ^^   0:2-0:4
-=== diagnostics ===
-Placeholder expression contains a literal that is not valid when unquoted. Did you mean to quote it? (at @2..4)
-  { ^a }
-    ^^
-=== fixed ===
-Quote literal:
-  { |^a| }
 
+=== spans ===
+                    
+Pattern              0:0-0:0
+Text                 0:0-0:0
+=== diagnostics ===
+
+=== fixed ===
+(no fixes)
 === formatted ===
-{^a}
+
 === ast ===
 Pattern {
     parts: [
-        LiteralExpression {
-            span: @0..6,
-            literal: Text {
-                start: @2,
-                content: "^a",
-            },
-            annotation: None,
-            attributes: [],
+        Text {
+            start: @0,
+            content: "",
         },
     ],
 }

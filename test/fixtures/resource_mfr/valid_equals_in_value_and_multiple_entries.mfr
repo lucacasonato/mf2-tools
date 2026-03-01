@@ -1,0 +1,8 @@
+line = A = B = C
+other = Done
+
+=== mfr diagnostics ===
+
+=== mfr entries ===
+line @7..16
+other @25..29

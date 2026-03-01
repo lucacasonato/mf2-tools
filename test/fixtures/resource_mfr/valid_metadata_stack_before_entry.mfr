@@ -1,0 +1,8 @@
+@locale en-US
+@source app
+welcome = Hello {$name}
+
+=== mfr diagnostics ===
+
+=== mfr entries ===
+welcome @36..49

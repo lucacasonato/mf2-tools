@@ -1,0 +1,7 @@
+key = value
+---
+
+=== mfr diagnostics ===
+frontmatter-order @12..15: Frontmatter must appear before any section headers or entries.
+=== mfr entries ===
+key @6..11

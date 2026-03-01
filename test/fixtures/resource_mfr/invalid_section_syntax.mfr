@@ -1,0 +1,7 @@
+[unclosed
+key = value
+
+=== mfr diagnostics ===
+invalid-section-syntax @0..9: Section header must use [id] syntax.
+=== mfr entries ===
+key @16..21

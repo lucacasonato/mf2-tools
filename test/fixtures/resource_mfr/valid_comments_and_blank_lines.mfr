@@ -1,0 +1,15 @@
+# top comment
+@locale en-US
+---
+
+[main]
+# section comment
+title = Welcome
+
+subtitle = Nice to meet you
+
+=== mfr diagnostics ===
+
+=== mfr entries ===
+title @66..73
+subtitle @86..102

@@ -1,0 +1,7 @@
+broken line without equals
+key = value
+
+=== mfr diagnostics ===
+invalid-line @0..26: Line is not valid frontmatter, section, entry, metadata, comment, or empty line.
+=== mfr entries ===
+key @33..38

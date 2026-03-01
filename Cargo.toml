@@ -1,5 +1,13 @@
 [workspace]
-members = ["dprint-plugin", "parser", "printer", "lsp", "test"]
+members = [
+  "dprint-plugin",
+  "parser",
+  "printer",
+  "lsp",
+  "mfr-parser",
+  "mfr-lsp",
+  "test",
+]
 resolver = "2"
 
 [workspace.package]

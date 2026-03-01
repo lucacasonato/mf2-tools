@@ -1,5 +1,6 @@
 use lsp_types::Range;
 use lsp_types::Uri;
+use lsp_types::{Diagnostic as LspDiagnostic, DiagnosticSeverity};
 use mf2_parser::ast;
 use mf2_parser::ast::Message;
 use mf2_parser::Diagnostic;
@@ -23,6 +24,7 @@ pub struct Document {
 pub struct ParsedDocument<'text> {
   pub ast: Message<'text>,
   pub diagnostics: Vec<Diagnostic<'text>>,
+  pub lsp_diagnostics: Vec<LspDiagnostic>,
   pub info: SourceTextInfo<'text>,
   pub scope: Scope<'text>,
 }
@@ -32,12 +34,42 @@ impl Document {
     let parsed = Yoke::attach_to_cart(text, |text| {
       let (ast, mut diagnostics, info) = mf2_parser::parse(text);
       let scope = mf2_parser::analyze_semantics(&ast, &mut diagnostics);
+      let lsp_diagnostics = diagnostics
+        .iter()
+        .map(|diag| LspDiagnostic {
+          range: Range {
+            start: {
+              let lc = info.utf16_line_col(diag.span().start);
+              lsp_types::Position {
+                line: lc.line,
+                character: lc.col,
+              }
+            },
+            end: {
+              let lc = info.utf16_line_col(diag.span().end);
+              lsp_types::Position {
+                line: lc.line,
+                character: lc.col,
+              }
+            },
+          },
+          severity: Some(DiagnosticSeverity::ERROR),
+          code: None,
+          code_description: None,
+          source: Some("mf2".to_string()),
+          message: diag.message(),
+          related_information: None,
+          tags: None,
+          data: None,
+        })
+        .collect();
 
       ParsedDocument {
         ast,
+        diagnostics,
+        lsp_diagnostics,
         info,
         scope,
-        diagnostics,
       }
     });
     Document {
@@ -94,6 +126,10 @@ impl Document {
 
   pub fn diagnostics(&self) -> &Vec<Diagnostic> {
     &self.parsed.get().diagnostics
+  }
+
+  pub fn lsp_diagnostics(&self) -> &Vec<LspDiagnostic> {
+    &self.parsed.get().lsp_diagnostics
   }
 
   pub fn find_variable_at(&self, loc: Location) -> Option<&str> {

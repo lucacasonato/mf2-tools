@@ -1,0 +1,10 @@
+@locale en-US
+---
+title = Hello {$name}
+count = {$count}
+
+=== mfr diagnostics ===
+
+=== mfr entries ===
+title @28..41
+count @51..59

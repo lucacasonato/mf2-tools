@@ -1,0 +1,10 @@
+activities =
+  .input {$count :integer}
+  .match $count
+  one {{Activity}}
+  * {{Activities}}
+
+=== mfr diagnostics ===
+
+=== mfr entries ===
+activities @12..93

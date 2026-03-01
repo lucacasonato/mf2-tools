@@ -1,0 +1,11 @@
+[package]
+name = "mfr_parser"
+description = "Parser and diagnostics for MessageFormat Resource files"
+version = "0.1.0"
+edition.workspace = true
+authors.workspace = true
+license.workspace = true
+repository.workspace = true
+
+[dependencies]
+mf2_parser = { path = "../parser", version = "0.2.0" }

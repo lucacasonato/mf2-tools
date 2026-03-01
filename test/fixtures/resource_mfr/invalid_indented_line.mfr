@@ -1,0 +1,7 @@
+  orphan
+key = value
+
+=== mfr diagnostics ===
+invalid-line-indented @0..8: Indented line is only valid as a value continuation after entry or metadata.
+=== mfr entries ===
+key @15..20

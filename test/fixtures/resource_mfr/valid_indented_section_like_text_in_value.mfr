@@ -1,0 +1,8 @@
+message =
+  [not.a.section]
+  still value text
+
+=== mfr diagnostics ===
+
+=== mfr entries ===
+message @9..46

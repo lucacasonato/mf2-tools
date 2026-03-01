@@ -40,6 +40,11 @@ fn main() {
 }
 
 fn run_test(test: &CollectedTest) {
+  if is_resource_mfr_fixture(test) {
+    run_mfr_test(test);
+    return;
+  }
+
   let file_text = test.read_to_string().unwrap();
 
   let spans_marker = "\n=== spans ===\n";
@@ -191,6 +196,87 @@ fn run_test(test: &CollectedTest) {
       new_formatted,
       "Formatting is stable"
     );
+  }
+}
+
+fn is_resource_mfr_fixture(test: &CollectedTest) -> bool {
+  test
+    .path
+    .components()
+    .any(|c| c.as_os_str() == std::ffi::OsStr::new("resource_mfr"))
+}
+
+fn run_mfr_test(test: &CollectedTest) {
+  let file_text = test.read_to_string().unwrap();
+  let diagnostics_marker = "\n=== mfr diagnostics ===\n";
+  let entries_marker = "\n=== mfr entries ===\n";
+
+  let (message, rest) = file_text
+    .split_once(diagnostics_marker)
+    .unwrap_or((&*file_text, ""));
+  let (expected_diagnostics, expected_entries) = rest
+    .split_once(entries_marker)
+    .unwrap_or((rest, ""));
+
+  let (doc, diagnostics, _info) = mfr_parser::parse_resource(message);
+  let actual_diagnostics = diagnostics
+    .iter()
+    .map(|d| {
+      format!(
+        "{} @{}..{}: {}",
+        d.code,
+        d.span.start.inner_byte_index_for_test(),
+        d.span.end.inner_byte_index_for_test(),
+        d.message
+      )
+    })
+    .collect::<Vec<_>>()
+    .join("\n");
+  let actual_entries = doc
+    .entries
+    .iter()
+    .map(|e| {
+      format!(
+        "{} @{}..{}",
+        e.id,
+        e.value.span.start.inner_byte_index_for_test(),
+        e.value.span.end.inner_byte_index_for_test()
+      )
+    })
+    .collect::<Vec<_>>()
+    .join("\n");
+
+  let mut need_update = std::env::var("UPDATE").is_ok();
+  if !need_update {
+    if expected_diagnostics.is_empty() {
+      need_update = true;
+    } else {
+      pretty_assertions::assert_eq!(
+        actual_diagnostics,
+        expected_diagnostics,
+        "MFR diagnostics match expected"
+      );
+    }
+
+    if expected_entries.is_empty() {
+      need_update = true;
+    } else {
+      pretty_assertions::assert_eq!(
+        actual_entries,
+        expected_entries,
+        "MFR entry spans match expected"
+      );
+    }
+  }
+
+  if need_update {
+    std::fs::write(
+      &test.path,
+      format!(
+        "{message}{diagnostics_marker}{actual_diagnostics}{entries_marker}{actual_entries}"
+      ),
+    )
+    .unwrap();
   }
 }
 

@@ -73,38 +73,30 @@ impl<'text> Parser<'text> {
          | '\\' // escaped-char
          | '\0' | '}' // error recovery
         => {
-          return (
-            Message::Simple(self.parse_pattern(self.text.start_location(), false)),
-            self.diagnostics,
-            self.text.into_info(),
-          )
+          let message = Message::Simple(
+            self.parse_pattern(self.text.start_location(), false),
+          );
+          return self.finish(message);
         }
         '{' => {
           // This could now either be a quoted pattern (so a complex message),
           // or a placeholder (so a simple message).
           match self.peek2() {
             Some((_, '{')) => {
-              return (
-                Message::Complex(self.parse_complex_message()),
-                self.diagnostics,
-                self.text.into_info(),
-              )
+              let message = Message::Complex(self.parse_complex_message());
+              return self.finish(message);
             }
             _ => {
-              return (
-                Message::Simple(self.parse_pattern(self.text.start_location(), false)),
-                self.diagnostics,
-                self.text.into_info(),
-              )
+              let message = Message::Simple(
+                self.parse_pattern(self.text.start_location(), false),
+              );
+              return self.finish(message);
             }
           }
         }
         '.' => {
-          return (
-            Message::Complex(self.parse_complex_message()),
-            self.diagnostics,
-            self.text.into_info(),
-          )
+          let message = Message::Complex(self.parse_complex_message());
+          return self.finish(message);
         }
       }
     }
@@ -112,27 +104,23 @@ impl<'text> Parser<'text> {
     let start = self.text.start_location();
     let end = self.text.end_location();
 
-    (
-      Message::Simple(Pattern {
-        parts: vec![PatternPart::Text(self.slice_text(start..end))],
-      }),
-      self.diagnostics,
-      self.text.into_info(),
-    )
+    let pattern = Pattern {
+      parts: vec![PatternPart::Text(self.slice_text(start..end))],
+    };
+    let message = Message::Simple(pattern);
+    self.finish(message)
   }
 
-  fn current_location(&self) -> Location {
-    self.text.current_location()
-  }
-
-  fn slice_text(&self, range: Range<Location>) -> Text<'text> {
-    let start = range.start;
-    let content = self.text.slice(range);
-    Text { start, content }
-  }
-
-  fn report(&mut self, diagnostic: Diagnostic<'text>) {
-    self.diagnostics.push(diagnostic);
+  fn finish(
+    mut self,
+    message: Message<'text>,
+  ) -> (
+    Message<'text>,
+    Vec<Diagnostic<'text>>,
+    SourceTextInfo<'text>,
+  ) {
+    while self.next().is_some() {}
+    (message, self.diagnostics, self.text.into_info())
   }
 
   fn parse_pattern(
@@ -216,6 +204,20 @@ impl<'text> Parser<'text> {
     }
 
     Pattern { parts }
+  }
+
+  fn current_location(&self) -> Location {
+    self.text.current_location()
+  }
+
+  fn slice_text(&self, range: Range<Location>) -> Text<'text> {
+    let start = range.start;
+    let content = self.text.slice(range);
+    Text { start, content }
+  }
+
+  fn report(&mut self, diagnostic: Diagnostic<'text>) {
+    self.diagnostics.push(diagnostic);
   }
 
   fn parse_escape(&mut self) -> Option<Escape> {

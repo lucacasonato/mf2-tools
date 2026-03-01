@@ -1,0 +1,8 @@
+---
+---
+key = value
+
+=== mfr diagnostics ===
+multiple-frontmatter @4..7: A resource may contain at most one frontmatter line.
+=== mfr entries ===
+key @14..19

@@ -1,0 +1,6 @@
+hello = Hello, {$name}
+
+=== mfr diagnostics ===
+
+=== mfr entries ===
+hello @8..22

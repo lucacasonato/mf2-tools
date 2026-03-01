@@ -1,33 +1,20 @@
-{:a:b}
+
 === spans ===
-                    {:a:b}
-Pattern             ^^^^^^ 0:0-0:6
-AnnotationExpression^^^^^^ 0:0-0:6
-Annotation           ^^^^  0:1-0:5
-Identifier            ^^^  0:2-0:5
+                    
+Pattern              0:0-0:0
+Text                 0:0-0:0
 === diagnostics ===
 
 === fixed ===
 (no fixes)
 === formatted ===
-{:a:b}
+
 === ast ===
 Pattern {
     parts: [
-        AnnotationExpression {
-            span: @0..6,
-            annotation: Annotation {
-                start: @1,
-                id: Identifier {
-                    start: @2,
-                    namespace: Some(
-                        "a",
-                    ),
-                    name: "b",
-                },
-                options: [],
-            },
-            attributes: [],
+        Text {
+            start: @0,
+            content: "",
         },
     ],
 }

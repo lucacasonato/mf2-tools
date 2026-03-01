@@ -4,9 +4,11 @@ This repository contains various tools for working with the
 [Message Format 2](https://messageformat.dev) localization system from Unicode.
 
 - [mf2lsp](#mf2lsp): A language server for Message Format 2.
+- [mfrlsp](#mfrlsp): A language server for MessageFormat Resource (`.mfr`).
 - [vscode-mf2](#vscode-mf2): A VS Code extension for Message Format 2.
 - [mf2_parser](#rust-crates): A Rust parser for Message Format 2.
 - [mf2_printer](#rust-crates): A Rust pretty-printer for Message Format 2.
+- [mfr_parser](#rust-crates): A Rust parser for MessageFormat Resource files.
 - [Editor Syntaxes](#editor-syntaxes): TextMate, Tree-sitter, and Vim syntax files.
 
 ## mf2lsp
@@ -35,6 +37,14 @@ executable (including Classic Vim via `coc.nvim`; see `vim/README.md` for setup
 details). You can find the latest release on the
 [releases page](https://github.com/lucacasonato/mf2-tools/releases).
 
+## mfrlsp
+
+The `mfrlsp` language server provides diagnostics for MessageFormat Resource
+(`.mfr`) files. It validates resource structure and parses embedded message
+values with `mf2_parser`.
+
+For now, `mfrlsp` is diagnostics-first (no advanced editor actions yet).
+
 ## vscode-mf2
 
 The `vscode-mf2` extension provides support for Message Format 2 in Visual
@@ -50,7 +60,8 @@ To install, you can also press `Ctrl+P` and then run the
 
 ## Rust Crates
 
-This repository also contains two Rust crates for working with Message Format 2.
+This repository contains Rust crates for Message Format 2 and MessageFormat
+Resource parsing.
 
 The `mf2_parser` crate provides a parser for the Message Format 2 syntax. It can
 parse any sequence of Unicode scalar values (valid UTF-8) into an AST
@@ -62,6 +73,9 @@ The `mf2_printer` crate provides a pretty-printer for the Message Format 2 AST.
 It can take an AST and convert it back to a string, preserving some of the
 original formatting (like empty lines).
 
+The `mfr_parser` crate parses `.mfr` resource files with structural diagnostics
+and value extraction for MF2 parsing.
+
 ## Editor Syntaxes
 
 This repository includes multiple syntax-highlighting implementations:
@@ -71,7 +85,8 @@ This repository includes multiple syntax-highlighting implementations:
 - Neovim, Helix, Zed, Emacs `treesit`, and other Tree-sitter-based tooling:
   use the Tree-sitter grammar in `tree-sitter-mf2/`.
 - Classic Vim: use `vim/syntax/mf2.vim` with file detection in
-  `vim/ftdetect/mf2.vim` (full setup in `vim/README.md`).
+  `vim/ftdetect/mf2.vim`; for resources use `vim/syntax/mfr.vim` with
+  `vim/ftdetect/mfr.vim` (full setup in `vim/README.md`).
 
 The Tree-sitter and Vim definitions are intentionally aligned with the same
 constructs used by the TextMate grammar: declarations (`.input`, `.local`),
