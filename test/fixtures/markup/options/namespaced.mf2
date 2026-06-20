@@ -24,6 +24,10 @@ Pattern {
                 start: @2,
                 namespace: None,
                 name: "foo",
+                namespace_leading_bidi: None,
+                namespace_trailing_bidi: None,
+                name_leading_bidi: None,
+                name_trailing_bidi: None,
             },
             options: [
                 FnOrMarkupOption {
@@ -33,6 +37,10 @@ Pattern {
                             "name",
                         ),
                         name: "spaced",
+                        namespace_leading_bidi: None,
+                        namespace_trailing_bidi: None,
+                        name_leading_bidi: None,
+                        name_trailing_bidi: None,
                     },
                     value: Number {
                         start: @18,

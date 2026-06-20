@@ -9,3 +9,4 @@ repository.workspace = true
 
 [dependencies]
 mf2_parser = { path = "../parser", version = "0.2.0" }
+unicode-bidi = "0.3.18"

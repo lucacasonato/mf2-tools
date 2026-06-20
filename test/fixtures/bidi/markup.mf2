@@ -1,0 +1,59 @@
+صر {#b}نص{/b}
+=== spans ===
+                    صر {#b}نص{/b}
+Pattern             ^^^^^^^^^^^^^ 0:0-0:17
+Text                ^^^           0:0-0:5
+Markup                 ^^^^       0:5-0:9
+Identifier               ^        0:7-0:8
+Text                       ^^     0:9-0:13
+Markup                       ^^^^ 0:13-0:17
+Identifier                     ^  0:15-0:16
+=== diagnostics ===
+
+=== fixed ===
+(no fixes)
+=== formatted ===
+صر {#⁦b⁩}نص{/⁦b⁩}
+=== ast ===
+Pattern {
+    parts: [
+        Text {
+            start: @0,
+            content: "صر ",
+        },
+        Markup {
+            span: @5..9,
+            kind: Open,
+            id: Identifier {
+                start: @7,
+                namespace: None,
+                name: "b",
+                namespace_leading_bidi: None,
+                namespace_trailing_bidi: None,
+                name_leading_bidi: None,
+                name_trailing_bidi: None,
+            },
+            options: [],
+            attributes: [],
+        },
+        Text {
+            start: @9,
+            content: "نص",
+        },
+        Markup {
+            span: @13..17,
+            kind: Close,
+            id: Identifier {
+                start: @15,
+                namespace: None,
+                name: "b",
+                namespace_leading_bidi: None,
+                namespace_trailing_bidi: None,
+                name_leading_bidi: None,
+                name_trailing_bidi: None,
+            },
+            options: [],
+            attributes: [],
+        },
+    ],
+}

@@ -35,6 +35,10 @@ Pattern {
                 start: @2,
                 namespace: None,
                 name: "el",
+                namespace_leading_bidi: None,
+                namespace_trailing_bidi: None,
+                name_leading_bidi: None,
+                name_trailing_bidi: None,
             },
             options: [
                 FnOrMarkupOption {
@@ -42,6 +46,10 @@ Pattern {
                         start: @5,
                         namespace: None,
                         name: "opt",
+                        namespace_leading_bidi: None,
+                        namespace_trailing_bidi: None,
+                        name_leading_bidi: None,
+                        name_trailing_bidi: None,
                     },
                     value: Number {
                         start: @11,
@@ -68,6 +76,10 @@ Pattern {
                 start: @19,
                 namespace: None,
                 name: "el",
+                namespace_leading_bidi: None,
+                namespace_trailing_bidi: None,
+                name_leading_bidi: None,
+                name_trailing_bidi: None,
             },
             options: [
                 FnOrMarkupOption {
@@ -75,6 +87,10 @@ Pattern {
                         start: @22,
                         namespace: None,
                         name: "opt",
+                        namespace_leading_bidi: None,
+                        namespace_trailing_bidi: None,
+                        name_leading_bidi: None,
+                        name_trailing_bidi: None,
                     },
                     value: Number {
                         start: @28,

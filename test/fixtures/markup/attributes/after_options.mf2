@@ -25,6 +25,10 @@ Pattern {
                 start: @2,
                 namespace: None,
                 name: "el",
+                namespace_leading_bidi: None,
+                namespace_trailing_bidi: None,
+                name_leading_bidi: None,
+                name_trailing_bidi: None,
             },
             options: [
                 FnOrMarkupOption {
@@ -32,6 +36,10 @@ Pattern {
                         start: @5,
                         namespace: None,
                         name: "opt1",
+                        namespace_leading_bidi: None,
+                        namespace_trailing_bidi: None,
+                        name_leading_bidi: None,
+                        name_trailing_bidi: None,
                     },
                     value: Text {
                         start: @10,
@@ -46,6 +54,10 @@ Pattern {
                         start: @16,
                         namespace: None,
                         name: "attr",
+                        namespace_leading_bidi: None,
+                        namespace_trailing_bidi: None,
+                        name_leading_bidi: None,
+                        name_trailing_bidi: None,
                     },
                     value: None,
                 },

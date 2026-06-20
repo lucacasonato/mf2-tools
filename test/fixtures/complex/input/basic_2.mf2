@@ -28,8 +28,11 @@ ComplexMessage {
             expression: VariableExpression {
                 span: @6..20,
                 variable: Variable {
-                    span: @7..11,
+                    start: @7,
+                    has_dollar: true,
                     name: "var",
+                    leading_bidi: None,
+                    trailing_bidi: None,
                 },
                 annotation: Some(
                     Annotation {
@@ -38,6 +41,10 @@ ComplexMessage {
                             start: @13,
                             namespace: None,
                             name: "number",
+                            namespace_leading_bidi: None,
+                            namespace_trailing_bidi: None,
+                            name_leading_bidi: None,
+                            name_trailing_bidi: None,
                         },
                         options: [],
                     },

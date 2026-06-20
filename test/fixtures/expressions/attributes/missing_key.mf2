@@ -21,8 +21,11 @@ Pattern {
         VariableExpression {
             span: @0..12,
             variable: Variable {
-                span: @1..5,
+                start: @1,
+                has_dollar: true,
                 name: "var",
+                leading_bidi: None,
+                trailing_bidi: None,
             },
             annotation: None,
             attributes: [
@@ -32,6 +35,10 @@ Pattern {
                         start: @7,
                         namespace: None,
                         name: "",
+                        namespace_leading_bidi: None,
+                        namespace_trailing_bidi: None,
+                        name_leading_bidi: None,
+                        name_trailing_bidi: None,
                     },
                     value: Some(
                         Text {

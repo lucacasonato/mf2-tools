@@ -1,0 +1,29 @@
+{ ‎$x‎ }
+=== spans ===
+                    { ‎$x‎ }
+Pattern             ^^^^^^ 0:0-0:12
+VariableExpression  ^^^^^^ 0:0-0:12
+Variable              ^^   0:5-0:10
+=== diagnostics ===
+
+=== fixed ===
+(no fixes)
+=== formatted ===
+{$x}
+=== ast ===
+Pattern {
+    parts: [
+        VariableExpression {
+            span: @0..12,
+            variable: Variable {
+                start: @5,
+                has_dollar: true,
+                name: "x",
+                leading_bidi: None,
+                trailing_bidi: Long,
+            },
+            annotation: None,
+            attributes: [],
+        },
+    ],
+}

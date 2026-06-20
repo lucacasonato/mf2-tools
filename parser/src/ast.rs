@@ -275,19 +275,33 @@ impl<'text> Visitable<'text> for VariableExpression<'text> {
 
 #[derive(Debug, Clone)]
 pub struct Variable<'text> {
-  pub span: Span,
+  pub start: Location,
+  pub has_dollar: bool,
   pub name: &'text str,
+  pub leading_bidi: BidiMarker,
+  pub trailing_bidi: BidiMarker,
 }
 
 impl Spanned for Variable<'_> {
   fn span(&self) -> Span {
-    self.span
+    let start = self.start;
+    let mut end =
+      self.leading_bidi + (self.trailing_bidi + self.start) + self.name;
+    if self.has_dollar {
+      end = end + '$';
+    }
+    Span::new(start..end)
   }
 }
 
 impl Variable<'_> {
   pub fn name_span(&self) -> Span {
-    Span::new(self.span.start + '$'..self.span.end)
+    let mut start = self.leading_bidi + self.start;
+    if self.has_dollar {
+      start = start + '$';
+    }
+    let end = start + self.name;
+    Span::new(start..end)
   }
 }
 
@@ -338,21 +352,57 @@ impl<'text> Visitable<'text> for AnnotationExpression<'text> {
   }
 }
 
+#[derive(Debug, Clone, Copy)]
+pub enum BidiMarker {
+  Short,
+  Long,
+  None,
+}
+
+impl From<char> for BidiMarker {
+  fn from(c: char) -> Self {
+    match c {
+      '\u{061C}' => BidiMarker::Short,
+      '\u{200E}' | '\u{200F}' | '\u{2066}'..='\u{2069}' => BidiMarker::Long,
+      _ => unreachable!("Invalid bidi marker: {}", c),
+    }
+  }
+}
+
+impl std::ops::Add<Location> for BidiMarker {
+  type Output = Location;
+
+  fn add(self, rhs: Location) -> Location {
+    match self {
+      BidiMarker::Short => rhs + '\u{061C}',
+      BidiMarker::Long => rhs + "\u{200E}",
+      BidiMarker::None => rhs,
+    }
+  }
+}
+
 #[derive(Debug, Clone)]
 pub struct Identifier<'text> {
   pub start: Location,
   pub namespace: Option<&'text str>,
   pub name: &'text str,
+  pub namespace_leading_bidi: BidiMarker,
+  pub namespace_trailing_bidi: BidiMarker,
+  pub name_leading_bidi: BidiMarker,
+  pub name_trailing_bidi: BidiMarker,
 }
 
 impl Spanned for Identifier<'_> {
   fn span(&self) -> Span {
     let mut end = self.start;
+    end = self.name_leading_bidi + end;
     if let Some(namespace) = self.namespace {
       end = end + namespace + ':';
     }
+    end = self.name_trailing_bidi + end;
+    end = self.namespace_leading_bidi + end;
     end = end + self.name;
-
+    end = self.namespace_trailing_bidi + end;
     Span::new(self.start..end)
   }
 }

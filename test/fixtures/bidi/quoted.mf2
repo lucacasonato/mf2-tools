@@ -1,0 +1,37 @@
+a {⁧|صر123|⁩}
+=== spans ===
+                    a {⁧|صر123|⁩}
+Pattern             ^^^^^^^^^^^ 0:0-0:19
+Text                ^^          0:0-0:2
+LiteralExpression     ^^^^^^^^^ 0:2-0:19
+Quoted                 ^^^^^^^  0:6-0:15
+Text                    ^^^^^   0:7-0:14
+=== diagnostics ===
+
+=== fixed ===
+(no fixes)
+=== formatted ===
+a {⁨|صر123|⁩}
+=== ast ===
+Pattern {
+    parts: [
+        Text {
+            start: @0,
+            content: "a ",
+        },
+        LiteralExpression {
+            span: @2..19,
+            literal: Quoted {
+                span: @6..15,
+                parts: [
+                    Text {
+                        start: @7,
+                        content: "صر123",
+                    },
+                ],
+            },
+            annotation: None,
+            attributes: [],
+        },
+    ],
+}

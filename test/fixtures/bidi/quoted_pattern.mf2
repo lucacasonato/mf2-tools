@@ -1,0 +1,75 @@
+.local $x = {1}
+{{مرحبا {$x}}}
+=== spans ===
+                    .local $x = {1}↵{{مرحبا {$x}}}
+ComplexMessage      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ 0:0-1:19
+LocalDeclaration    ^^^^^^^^^^^^^^^                0:0-0:15
+Variable                   ^^                      0:7-0:9
+LiteralExpression               ^^^                0:12-0:15
+Number                           ^                 0:13-0:14
+Number.integral                  ^                 0:13-0:14
+QuotedPattern                       ^^^^^^^^^^^^^^ 1:0-1:19
+Pattern                               ^^^^^^^^^^   1:2-1:17
+Text                                  ^^^^^^       1:2-1:13
+VariableExpression                          ^^^^   1:13-1:17
+Variable                                     ^^    1:14-1:16
+=== diagnostics ===
+
+=== fixed ===
+(no fixes)
+=== formatted ===
+.local $x = {1}
+⁨{{مرحبا {⁦$x⁩}}}⁩
+
+=== ast ===
+ComplexMessage {
+    span: @0..35,
+    declarations: [
+        LocalDeclaration {
+            start: @0,
+            variable: Variable {
+                start: @7,
+                has_dollar: true,
+                name: "x",
+                leading_bidi: None,
+                trailing_bidi: None,
+            },
+            expression: LiteralExpression {
+                span: @12..15,
+                literal: Number {
+                    start: @13,
+                    raw: "1",
+                    is_negative: false,
+                    integral_len: 1,
+                    fractional_len: None,
+                    exponent_len: None,
+                },
+                annotation: None,
+                attributes: [],
+            },
+        },
+    ],
+    body: QuotedPattern {
+        span: @16..35,
+        pattern: Pattern {
+            parts: [
+                Text {
+                    start: @18,
+                    content: "مرحبا ",
+                },
+                VariableExpression {
+                    span: @29..33,
+                    variable: Variable {
+                        start: @30,
+                        has_dollar: true,
+                        name: "x",
+                        leading_bidi: None,
+                        trailing_bidi: None,
+                    },
+                    annotation: None,
+                    attributes: [],
+                },
+            ],
+        },
+    },
+}

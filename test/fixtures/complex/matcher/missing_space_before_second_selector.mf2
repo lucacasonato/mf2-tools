@@ -36,12 +36,18 @@ ComplexMessage {
         start: @0,
         selectors: [
             Variable {
-                span: @7..9,
+                start: @7,
+                has_dollar: true,
                 name: "a",
+                leading_bidi: None,
+                trailing_bidi: None,
             },
             Variable {
-                span: @9..11,
+                start: @9,
+                has_dollar: true,
                 name: "b",
+                leading_bidi: None,
+                trailing_bidi: None,
             },
         ],
         variants: [

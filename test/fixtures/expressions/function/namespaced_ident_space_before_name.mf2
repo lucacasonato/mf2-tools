@@ -26,8 +26,11 @@ Pattern {
         VariableExpression {
             span: @0..12,
             variable: Variable {
-                span: @1..5,
+                start: @1,
+                has_dollar: true,
                 name: "var",
+                leading_bidi: None,
+                trailing_bidi: None,
             },
             annotation: Some(
                 Annotation {
@@ -38,6 +41,10 @@ Pattern {
                             "a",
                         ),
                         name: "",
+                        namespace_leading_bidi: None,
+                        namespace_trailing_bidi: None,
+                        name_leading_bidi: None,
+                        name_trailing_bidi: None,
                     },
                     options: [
                         FnOrMarkupOption {
@@ -45,6 +52,10 @@ Pattern {
                                 start: @10,
                                 namespace: None,
                                 name: "b",
+                                namespace_leading_bidi: None,
+                                namespace_trailing_bidi: None,
+                                name_leading_bidi: None,
+                                name_trailing_bidi: None,
                             },
                             value: Text {
                                 start: @11,

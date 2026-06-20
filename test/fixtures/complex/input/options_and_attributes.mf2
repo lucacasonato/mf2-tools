@@ -33,8 +33,11 @@ ComplexMessage {
             expression: VariableExpression {
                 span: @7..29,
                 variable: Variable {
-                    span: @8..12,
+                    start: @8,
+                    has_dollar: true,
                     name: "foo",
+                    leading_bidi: None,
+                    trailing_bidi: None,
                 },
                 annotation: Some(
                     Annotation {
@@ -43,6 +46,10 @@ ComplexMessage {
                             start: @14,
                             namespace: None,
                             name: "fn",
+                            namespace_leading_bidi: None,
+                            namespace_trailing_bidi: None,
+                            name_leading_bidi: None,
+                            name_trailing_bidi: None,
                         },
                         options: [
                             FnOrMarkupOption {
@@ -50,6 +57,10 @@ ComplexMessage {
                                     start: @17,
                                     namespace: None,
                                     name: "opt",
+                                    namespace_leading_bidi: None,
+                                    namespace_trailing_bidi: None,
+                                    name_leading_bidi: None,
+                                    name_trailing_bidi: None,
                                 },
                                 value: Number {
                                     start: @21,
@@ -70,6 +81,10 @@ ComplexMessage {
                             start: @24,
                             namespace: None,
                             name: "attr",
+                            namespace_leading_bidi: None,
+                            namespace_trailing_bidi: None,
+                            name_leading_bidi: None,
+                            name_trailing_bidi: None,
                         },
                         value: None,
                     },
