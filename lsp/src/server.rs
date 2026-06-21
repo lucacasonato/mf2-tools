@@ -28,7 +28,9 @@ use std::collections::hash_map::Entry;
 use std::collections::HashMap;
 
 use crate::ast_utils::find_node;
+use crate::completions::Completion;
 use crate::completions::CompletionAction;
+use crate::completions::CompletionKind;
 use crate::completions::CompletionsProvider;
 use crate::document::Document;
 use crate::protocol::LanguageClient;
@@ -128,7 +130,7 @@ impl LanguageServer for Server<'_> {
         all_commit_characters: None,
         completion_item: None,
         resolve_provider: Some(false),
-        trigger_characters: Some(vec!["$".to_string()]),
+        trigger_characters: Some(vec!["$".to_string(), ".".to_string()]),
         work_done_progress_options: lsp_types::WorkDoneProgressOptions::default(
         ),
       }),
@@ -362,6 +364,7 @@ impl LanguageServer for Server<'_> {
       document.ast(),
       document.pos_to_loc(position),
       document.scope(),
+      document.diagnostics(),
     );
 
     if !provider.has_completions() {
@@ -372,24 +375,7 @@ impl LanguageServer for Server<'_> {
       provider
         .get_completions()
         .into_iter()
-        .map(|completion| match completion.action {
-          CompletionAction::Insert => lsp_types::CompletionItem {
-            label: completion.text,
-            kind: Some(lsp_types::CompletionItemKind::VARIABLE),
-            ..lsp_types::CompletionItem::default()
-          },
-          CompletionAction::Replace(span) => lsp_types::CompletionItem {
-            label: completion.text.clone(),
-            kind: Some(lsp_types::CompletionItemKind::VARIABLE),
-            text_edit: Some(lsp_types::CompletionTextEdit::Edit(
-              lsp_types::TextEdit {
-                range: document.span_to_range(span),
-                new_text: completion.text,
-              },
-            )),
-            ..lsp_types::CompletionItem::default()
-          },
-        })
+        .map(|completion| completion_to_lsp(completion, document))
         .collect(),
     )))
   }
@@ -467,6 +453,43 @@ impl LanguageServer for Server<'_> {
       range: document.span_to_range(document.ast().span()),
       new_text: formatted,
     }]))
+  }
+}
+
+fn completion_to_lsp(
+  completion: Completion,
+  document: &Document,
+) -> lsp_types::CompletionItem {
+  let (kind, insert_text_format) = match completion.kind {
+    CompletionKind::Variable => (lsp_types::CompletionItemKind::VARIABLE, None),
+    CompletionKind::Snippet => (
+      lsp_types::CompletionItemKind::SNIPPET,
+      Some(lsp_types::InsertTextFormat::SNIPPET),
+    ),
+  };
+
+  let (insert_text, text_edit) = match completion.action {
+    CompletionAction::Insert => {
+      let insert_text =
+        (completion.text != completion.label).then_some(completion.text);
+      (insert_text, None)
+    }
+    CompletionAction::Replace(span) => (
+      None,
+      Some(lsp_types::CompletionTextEdit::Edit(lsp_types::TextEdit {
+        range: document.span_to_range(span),
+        new_text: completion.text,
+      })),
+    ),
+  };
+
+  lsp_types::CompletionItem {
+    label: completion.label,
+    kind: Some(kind),
+    insert_text_format,
+    insert_text,
+    text_edit,
+    ..lsp_types::CompletionItem::default()
   }
 }
 
