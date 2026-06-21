@@ -551,6 +551,31 @@ Deno.test("formatting", async (t) => {
     ]);
   });
 
+  await t.step("is idempotent for already-formatted code", async () => {
+    const uri = "file:///src/test-1b.mf2";
+
+    const text = ".input {$var :string}\n{{ asd {$var} }}\n";
+
+    await lsp.notify("textDocument/didOpen", {
+      textDocument: { uri, languageId: "mf2", version: 1, text },
+    });
+
+    const res = await lsp.request("textDocument/formatting", {
+      textDocument: { uri },
+      options: { tabSize: 2, insertSpaces: true },
+    });
+
+    assertEquals(res, [
+      {
+        newText: text,
+        range: {
+          start: { line: 0, character: 0 },
+          end: { line: 2, character: 0 },
+        },
+      },
+    ]);
+  });
+
   await t.step("formats code with scope errors", async () => {
     const uri = "file:///src/test-2.mf2";
 

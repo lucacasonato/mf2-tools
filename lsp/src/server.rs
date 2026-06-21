@@ -464,7 +464,7 @@ impl LanguageServer for Server<'_> {
     let formatted = mf2_printer::print(document.ast(), Some(document.info()));
 
     Ok(Some(vec![lsp_types::TextEdit {
-      range: document.span_to_range(document.ast().span()),
+      range: document.span_to_range(document.info().span()),
       new_text: formatted,
     }]))
   }
