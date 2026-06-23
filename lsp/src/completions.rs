@@ -1,6 +1,7 @@
 use mf2_parser::ast;
 use mf2_parser::ast::AnyNode;
 use mf2_parser::ast::Message;
+use mf2_parser::Diagnostic;
 use mf2_parser::Location;
 use mf2_parser::Scope;
 use mf2_parser::Span;
@@ -15,15 +16,40 @@ pub enum CompletionAction {
 }
 
 #[derive(Debug)]
+pub enum CompletionKind {
+  Variable,
+  Snippet,
+}
+
+#[derive(Debug)]
 pub struct Completion {
+  /// The text shown in the completion list.
+  pub label: String,
+  /// The text inserted when the completion is accepted. For
+  /// [CompletionKind::Snippet] completions this is an LSP snippet (with `$1`
+  /// tab stops and `\$` for literal dollars).
   pub text: String,
   pub action: CompletionAction,
+  pub kind: CompletionKind,
 }
 
 #[derive(Debug)]
 enum AllowedCompletionType<'text> {
   None,
+  /// A variable reference is allowed here. `None` means there is no existing
+  /// variable token, so a name is inserted at the cursor. `Some((span, name))`
+  /// means a (possibly partial) variable `name` already occupies `span`, which
+  /// is replaced by the chosen name.
   Variable(Option<(Span, &'text str)>),
+  /// A declaration or matcher is allowed here (root of a complex or empty
+  /// message). `allow_match` is false when the message already has a body (a
+  /// matcher or a quoted pattern), since there can only be one. `replace` is the
+  /// span of a partially-typed declaration keyword at the cursor (e.g. `.` or
+  /// `.lo`) that the snippet should replace, if any.
+  Declaration {
+    allow_match: bool,
+    replace: Option<Span>,
+  },
 }
 
 pub struct CompletionsProvider<'scope: 'text, 'text> {
@@ -36,10 +62,11 @@ impl<'scope, 'text> CompletionsProvider<'scope, 'text> {
     ast: &'ast Message<'text>,
     loc: Location,
     scope: &'scope Scope<'text>,
+    diagnostics: &[Diagnostic<'text>],
   ) -> Self {
     Self {
       scope,
-      completion_type: get_completion_type(ast, loc),
+      completion_type: get_completion_type(ast, loc, diagnostics),
     }
   }
 
@@ -50,12 +77,21 @@ impl<'scope, 'text> CompletionsProvider<'scope, 'text> {
   pub fn get_completions(&self) -> Vec<Completion> {
     match self.completion_type {
       AllowedCompletionType::None => vec![],
+      AllowedCompletionType::Declaration {
+        allow_match,
+        replace,
+      } => declaration_completions(allow_match, replace),
       AllowedCompletionType::Variable(None) => self
         .scope
         .get_names()
-        .map(|n| Completion {
-          text: format!("${}", n),
-          action: CompletionAction::Insert,
+        .map(|n| {
+          let text = format!("${}", n);
+          Completion {
+            label: text.clone(),
+            text,
+            action: CompletionAction::Insert,
+            kind: CompletionKind::Variable,
+          }
         })
         .collect(),
       AllowedCompletionType::Variable(Some((span, name))) => {
@@ -66,15 +102,51 @@ impl<'scope, 'text> CompletionsProvider<'scope, 'text> {
           .scope
           .get_names()
           .filter(|n| include_self || *n != name)
-          .map(|n| Completion {
-            text: format!("${}", n),
-            action: CompletionAction::Replace(span),
+          .map(|n| {
+            let text = format!("${}", n);
+            Completion {
+              label: text.clone(),
+              text,
+              action: CompletionAction::Replace(span),
+              kind: CompletionKind::Variable,
+            }
           });
 
         all_names.collect()
       }
     }
   }
+}
+
+fn declaration_completions(
+  allow_match: bool,
+  replace: Option<Span>,
+) -> Vec<Completion> {
+  let mut snippets = vec![
+    (".input", ".input {\\$${1:var} :${2:string}$0"),
+    (".local", ".local \\$${1:var} = {${2:value}}$0"),
+  ];
+  if allow_match {
+    snippets.push((
+      ".match",
+      ".match \\$${1:var}\n${2:key} {{${3:value}}}\n* {{${4:other}}}$0",
+    ));
+  }
+
+  snippets
+    .into_iter()
+    .map(|(label, text)| Completion {
+      label: label.to_string(),
+      text: text.to_string(),
+      action: match replace {
+        // Replace a partially-typed keyword (e.g. `.lo`) so we don't end up
+        // with `..local`.
+        Some(span) => CompletionAction::Replace(span),
+        None => CompletionAction::Insert,
+      },
+      kind: CompletionKind::Snippet,
+    })
+    .collect()
 }
 
 struct CompletionLocationVisitor<'ast, 'text> {
@@ -106,6 +178,7 @@ impl<'ast, 'text> VisitAny<'ast, 'text>
 fn get_completion_type<'text>(
   ast: &Message<'text>,
   loc: Location,
+  diagnostics: &[Diagnostic<'text>],
 ) -> AllowedCompletionType<'text> {
   let mut visitor = CompletionLocationVisitor {
     loc,
@@ -125,7 +198,65 @@ fn get_completion_type<'text>(
   use ast::*;
   use AnyNode as X;
 
+  // An empty (or whitespace-only) message.
+  //
+  // |
+  if let Message::Simple(pattern) = ast {
+    if let [PatternPart::Text(text)] = &pattern.parts[..] {
+      if text.content.trim().is_empty() {
+        return AllowedCompletionType::Declaration {
+          allow_match: true,
+          replace: None,
+        };
+      }
+    }
+  }
+
+  let has_body = |message: &ComplexMessage| match &message.body {
+    ComplexMessageBody::Matcher(_) => true,
+    ComplexMessageBody::QuotedPattern(pattern) => !pattern.span().is_empty(),
+  };
+
+  // The cursor can be in whitespace just outside the complex message's span
+  // (e.g. on a fresh line after the last declaration).
+  //
+  // .local $x = {1}
+  // |
+  if let (X::Message(_), Message::Complex(message)) = (&current_node, ast) {
+    if !has_body(message) {
+      return AllowedCompletionType::Declaration {
+        allow_match: true,
+        replace: None,
+      };
+    }
+  }
+
   match (current_node, parent_node, previous_node) {
+    (X::ComplexMessage(message), _, _) => {
+      // At the root of a complex message, in between declarations or before the
+      // body:
+      //
+      // .local $x = {1}| {{hi}}
+      //
+      // .local $x = {1}  .lo|c  {{hi  }}
+      //
+      // A partially-typed keyword (e.g. `.lo`) shows up as an invalid statement
+      // spanning the cursor; the snippet replaces it.
+      let replace =
+        diagnostics.iter().find_map(|diagnostic| match diagnostic {
+          Diagnostic::InvalidStatement { span, keyword }
+            if span.start < loc && loc <= span.end =>
+          {
+            let keyword_end = span.start + '.' + *keyword;
+            Some(Span::new(span.start..keyword_end.max(loc)))
+          }
+          _ => None,
+        });
+      AllowedCompletionType::Declaration {
+        replace,
+        allow_match: !has_body(message),
+      }
+    }
     (X::Variable(var), _, _) => {
       // $f|
       AllowedCompletionType::Variable(Some((var.span(), var.name)))
@@ -190,8 +321,8 @@ mod tests {
         $source.find('┋').expect("Cursor not found") as u32,
       );
       let message = $source.replace('┋', "");
-      let (ast, ..) = parse(&message);
-      let result = get_completion_type(&ast, loc);
+      let (ast, diagnostics, _) = parse(&message);
+      let result = get_completion_type(&ast, loc, &diagnostics);
 
       assert!(
         matches!(result, $expected),
@@ -232,5 +363,24 @@ mod tests {
     assert_completion_type!("{ $x :fn param=┋}", AllowedCompletionType::Variable(None));
     assert_completion_type!("{ ┋ :fn }", AllowedCompletionType::Variable(None));
     assert_completion_type!("{ $x┋ :fn }", AllowedCompletionType::Variable(Some((_, "x"))));
+
+    // Declaration snippets at the root of an empty or complex message. A
+    // partially-typed keyword is reported as a replace span.
+    assert_completion_type!("┋", AllowedCompletionType::Declaration { allow_match: true, replace: None });
+    assert_completion_type!("  ┋  ", AllowedCompletionType::Declaration { allow_match: true, replace: None });
+    assert_completion_type!(".┋", AllowedCompletionType::Declaration { allow_match: true, replace: Some(_) });
+    assert_completion_type!(".in┋", AllowedCompletionType::Declaration { allow_match: true, replace: Some(_) });
+    assert_completion_type!(".input {$x}\n┋", AllowedCompletionType::Declaration { allow_match: true, replace: None });
+    // A partial keyword after an earlier declaration is still replaced.
+    assert_completion_type!(".local $x = {1}\n.ma┋", AllowedCompletionType::Declaration { allow_match: true, replace: Some(_) });
+    // A body already exists, so `.match` is not offered.
+    assert_completion_type!(".local $x = {1}\n┋\n{{hi}}", AllowedCompletionType::Declaration { allow_match: false, replace: None });
+    assert_completion_type!(".local $x = {1}\n┋\n.match $x\n* {{a}}", AllowedCompletionType::Declaration { allow_match: false, replace: None });
+    // Inside a matcher variant's pattern, declarations are not offered.
+    assert_completion_type!(".match $x\n* {{┋}}", AllowedCompletionType::None);
+    // Not at the root of a simple message with content.
+    assert_completion_type!("┋Hello", AllowedCompletionType::None);
+    assert_completion_type!("Hello┋", AllowedCompletionType::None);
+    assert_completion_type!("{{┋}}", AllowedCompletionType::None);
   }
 }

@@ -514,6 +514,127 @@ Deno.test("completions", async (t) => {
   });
 });
 
+Deno.test("declaration completions", async (t) => {
+  await using lsp = new AutoLSPTest();
+
+  await lsp.initialize();
+
+  const SNIPPETS = {
+    ".input": ".input {\\$${1:var} :${2:string}$0",
+    ".local": ".local \\$${1:var} = {${2:value}}$0",
+    ".match": ".match \\$${1:var}\n${2:key} {{${3:value}}}\n* {{${4:other}}}$0",
+  };
+  type Keyword = keyof typeof SNIPPETS;
+
+  const inserted = (label: Keyword): CompletionItem => ({
+    kind: 15,
+    label,
+    insertText: SNIPPETS[label],
+    insertTextFormat: 2,
+  });
+  const replaced = (
+    label: Keyword,
+    end: number,
+    line = 0,
+  ): CompletionItem => ({
+    kind: 15,
+    label,
+    insertTextFormat: 2,
+    textEdit: {
+      newText: SNIPPETS[label],
+      range: {
+        start: { line, character: 0 },
+        end: { line, character: end },
+      },
+    },
+  });
+
+  function sort(response: CompletionList | CompletionItem[] | null) {
+    if (Array.isArray(response)) {
+      response.sort((a: { label: string }, b: { label: string }) =>
+        a.label.localeCompare(b.label)
+      );
+    }
+  }
+
+  let version = 0;
+  async function completionsFor(text: string, line: number, character: number) {
+    const uri = `file:///src/decl${version}.mf2`;
+    await lsp.notify("textDocument/didOpen", {
+      textDocument: { uri, languageId: "mf2", version: ++version, text },
+    });
+    const response = await lsp.request("textDocument/completion", {
+      textDocument: { uri },
+      position: { line, character },
+    });
+    sort(response);
+    return response;
+  }
+
+  await t.step("in an empty document", async () => {
+    assertEquals(await completionsFor("", 0, 0), [
+      inserted(".input"),
+      inserted(".local"),
+      inserted(".match"),
+    ]);
+  });
+
+  await t.step("at the root of a complex message", async () => {
+    assertEquals(await completionsFor(".local $x = {1}\n\n", 2, 0), [
+      inserted(".input"),
+      inserted(".local"),
+      inserted(".match"),
+    ]);
+  });
+
+  await t.step("replaces a partially-typed keyword", async () => {
+    assertEquals(await completionsFor(".l", 0, 2), [
+      replaced(".input", 2),
+      replaced(".local", 2),
+      replaced(".match", 2),
+    ]);
+
+    assertEquals(await completionsFor(".loc", 0, 2), [
+      replaced(".input", 4),
+      replaced(".local", 4),
+      replaced(".match", 4),
+    ]);
+  });
+
+  await t.step("omits .match once a body exists", async () => {
+    assertEquals(await completionsFor(".input {$x}\n\n{{hi}}", 1, 0), [
+      inserted(".input"),
+      inserted(".local"),
+    ]);
+  });
+
+  await t.step(
+    "replaces a keyword between declarations without eating the newline",
+    async () => {
+      // The cursor is inside `.loc`, which sits between a declaration and a
+      // `.match` body. The replacement must cover only `.loc` (not the
+      // following newline), and `.match` is omitted since a body already exists.
+      // The unrelated error on the first line (`= 1` is missing braces) must not
+      // be mistaken for the keyword being replaced.
+      assertEquals(
+        await completionsFor(
+          ".local $foo = 1\n.loc\n.match $foo\n* {{}}",
+          1,
+          3,
+        ),
+        [
+          replaced(".input", 4, 1),
+          replaced(".local", 4, 1),
+        ],
+      );
+    },
+  );
+
+  await t.step("not inside a pattern", async () => {
+    assertEquals(await completionsFor("{{hi}}", 0, 3), null);
+  });
+});
+
 Deno.test("formatting", async (t) => {
   await using lsp = new AutoLSPTest();
 
