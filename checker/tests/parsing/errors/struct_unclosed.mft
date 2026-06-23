@@ -1,0 +1,6 @@
+type T {
+  f: Base { a, b ;
+}
+=== error ===
+Unrecognized token `;` found at 26:27
+Expected one of ",", ":", "@" or "}"

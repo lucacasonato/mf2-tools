@@ -1,0 +1,10 @@
+trait Several {
+  first: A;
+  second: B;
+  third: C;
+}
+=== ast ===
+trait Several @0..54
+  first: A @18..27
+  second: B @30..40
+  third: C @43..52

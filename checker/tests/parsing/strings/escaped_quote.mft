@@ -1,0 +1,6 @@
+type T {
+  f: "say \"hi\"";
+}
+=== ast ===
+type T @0..29
+  f: "say \"hi\"" @11..27

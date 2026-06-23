@@ -1,0 +1,6 @@
+type T {
+  f: "line\nbreak";
+}
+=== ast ===
+type T @0..30
+  f: "line\\nbreak" @11..28

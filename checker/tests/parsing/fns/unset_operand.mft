@@ -1,0 +1,8 @@
+fn now {
+  operand Unset;
+  returns Timestamp;
+}
+=== ast ===
+fn now @0..48
+  operand Unset @19..24
+  returns Timestamp @36..45

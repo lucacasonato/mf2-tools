@@ -1,0 +1,8 @@
+trait ToNumber {
+  value: NumberLike;
+  needs ToString { value: .value };
+}
+=== ast ===
+trait ToNumber @0..75
+  value: NumberLike @19..37
+  needs ToString { value: .value } @40..73

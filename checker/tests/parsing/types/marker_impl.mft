@@ -1,0 +1,6 @@
+type Thing {
+  impl Marker;
+}
+=== ast ===
+type Thing @0..29
+  impl Marker @15..27

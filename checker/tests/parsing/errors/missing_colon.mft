@@ -1,0 +1,6 @@
+type T {
+  f Bar;
+}
+=== error ===
+Unrecognized token `Bar` found at 13:16
+Expected one of ":"

@@ -1,0 +1,8 @@
+type T {
+  value: V;
+  impl Tr { member: .value };
+}
+=== ast ===
+type T @0..52
+  value: V @11..20
+  impl Tr { member: .value } @23..50

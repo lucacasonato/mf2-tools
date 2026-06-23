@@ -1,0 +1,4 @@
+foo {}
+=== error ===
+Unrecognized token `foo` found at 0:3
+Expected one of "fn", "trait" or "type"

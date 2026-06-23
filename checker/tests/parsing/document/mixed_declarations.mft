@@ -1,0 +1,21 @@
+trait Marker {}
+
+type Thing {
+  value: Marker;
+  impl Marker;
+}
+
+fn thing {
+  operand Thing { value @ $v, .. };
+  returns Thing { value: $v };
+}
+=== ast ===
+trait Marker @0..15
+
+type Thing @17..63
+  value: Marker @32..46
+  impl Marker @49..61
+
+fn thing @65..144
+  operand Thing { value @ $v, .. } @86..110
+  returns Thing { value: $v } @122..141

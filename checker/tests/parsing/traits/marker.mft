@@ -1,0 +1,3 @@
+trait PrimitiveString {}
+=== ast ===
+trait PrimitiveString @0..24

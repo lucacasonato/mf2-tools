@@ -1,0 +1,6 @@
+trait ToString {
+  value: PrimitiveString;
+}
+=== ast ===
+trait ToString @0..44
+  value: PrimitiveString @19..42

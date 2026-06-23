@@ -1,0 +1,6 @@
+type T {
+  f: Base { a, };
+}
+=== error ===
+Unrecognized token `}` found at 24:25
+Expected one of ".." or "identifier"

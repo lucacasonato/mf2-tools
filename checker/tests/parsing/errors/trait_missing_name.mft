@@ -1,0 +1,4 @@
+trait {}
+=== error ===
+Unrecognized token `{` found at 6:7
+Expected one of "identifier"

@@ -1,0 +1,12 @@
+trait Mixed {
+  a: A;
+  needs First;
+  b: B;
+  needs Second;
+}
+=== ast ===
+trait Mixed @0..62
+  a: A @16..21
+  b: B @39..44
+  needs First @24..36
+  needs Second @47..60

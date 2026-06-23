@@ -1,0 +1,8 @@
+trait Guarded {
+  disc: D;
+  when Guarded { disc: "x", .. } needs Other;
+}
+=== ast ===
+trait Guarded @0..74
+  disc: D @18..26
+  when Guarded { disc: "x", .. } needs Other @29..72

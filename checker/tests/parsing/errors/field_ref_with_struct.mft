@@ -1,0 +1,7 @@
+type T {
+  value: V;
+  impl Tr { m: .value {} };
+}
+=== error ===
+Unrecognized token `{` found at 43:44
+Expected one of ",", "|" or "}"

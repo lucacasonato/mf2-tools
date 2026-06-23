@@ -1,0 +1,6 @@
+type T {
+  when A { .. } when B { .. } impl C;
+}
+=== error ===
+Unrecognized token `when` found at 25:29
+Expected one of "impl" or "|"

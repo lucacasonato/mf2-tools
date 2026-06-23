@@ -1,0 +1,8 @@
+fn f {
+  operand X { v @ $x };
+  returns Y { out: $x };
+}
+=== ast ===
+fn f @0..57
+  operand X { v @ $x } @17..29
+  returns Y { out: $x } @41..54

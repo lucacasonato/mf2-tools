@@ -1,0 +1,4 @@
+trait Marker # comment {}
+=== error ===
+Unrecognized EOF found at 12
+Expected one of "{"

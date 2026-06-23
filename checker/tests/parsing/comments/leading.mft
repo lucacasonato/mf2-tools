@@ -1,0 +1,4 @@
+# This trait is a marker.
+trait Marker {}
+=== ast ===
+trait Marker @26..41

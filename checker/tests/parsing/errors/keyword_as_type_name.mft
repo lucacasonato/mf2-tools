@@ -1,0 +1,4 @@
+trait type {}
+=== error ===
+Unrecognized token `type` found at 6:10
+Expected one of "identifier"

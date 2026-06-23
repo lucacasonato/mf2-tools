@@ -1,0 +1,6 @@
+fn f {
+  returns Y;
+}
+=== error ===
+Unrecognized token `returns` found at 9:16
+Expected one of "operand"

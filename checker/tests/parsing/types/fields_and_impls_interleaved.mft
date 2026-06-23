@@ -1,0 +1,12 @@
+type Inter {
+  a: A;
+  impl First;
+  b: B;
+  impl Second { x: .b };
+}
+=== ast ===
+type Inter @0..69
+  a: A @15..20
+  b: B @37..42
+  impl First @23..34
+  impl Second { x: .b } @45..67

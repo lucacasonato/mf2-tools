@@ -1,0 +1,8 @@
+fn demo {
+  operand Foo { a @ $x, b: Bar, .. };
+  returns Baz { a: $x };
+}
+=== ast ===
+fn demo @0..74
+  operand Foo { a @ $x, b: Bar, .. } @20..46
+  returns Baz { a: $x } @58..71
