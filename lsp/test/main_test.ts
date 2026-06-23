@@ -532,15 +532,19 @@ Deno.test("declaration completions", async (t) => {
     insertText: SNIPPETS[label],
     insertTextFormat: 2,
   });
-  const replaced = (label: Keyword, end: number): CompletionItem => ({
+  const replaced = (
+    label: Keyword,
+    end: number,
+    line = 0,
+  ): CompletionItem => ({
     kind: 15,
     label,
     insertTextFormat: 2,
     textEdit: {
       newText: SNIPPETS[label],
       range: {
-        start: { line: 0, character: 0 },
-        end: { line: 0, character: end },
+        start: { line, character: 0 },
+        end: { line, character: end },
       },
     },
   });
@@ -589,6 +593,12 @@ Deno.test("declaration completions", async (t) => {
       replaced(".local", 2),
       replaced(".match", 2),
     ]);
+
+    assertEquals(await completionsFor(".loc", 0, 2), [
+      replaced(".input", 4),
+      replaced(".local", 4),
+      replaced(".match", 4),
+    ]);
   });
 
   await t.step("omits .match once a body exists", async () => {
@@ -597,6 +607,28 @@ Deno.test("declaration completions", async (t) => {
       inserted(".local"),
     ]);
   });
+
+  await t.step(
+    "replaces a keyword between declarations without eating the newline",
+    async () => {
+      // The cursor is inside `.loc`, which sits between a declaration and a
+      // `.match` body. The replacement must cover only `.loc` (not the
+      // following newline), and `.match` is omitted since a body already exists.
+      // The unrelated error on the first line (`= 1` is missing braces) must not
+      // be mistaken for the keyword being replaced.
+      assertEquals(
+        await completionsFor(
+          ".local $foo = 1\n.loc\n.match $foo\n* {{}}",
+          1,
+          3,
+        ),
+        [
+          replaced(".input", 4, 1),
+          replaced(".local", 4, 1),
+        ],
+      );
+    },
+  );
 
   await t.step("not inside a pattern", async () => {
     assertEquals(await completionsFor("{{hi}}", 0, 3), null);

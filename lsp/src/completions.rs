@@ -198,25 +198,15 @@ fn get_completion_type<'text>(
   use ast::*;
   use AnyNode as X;
 
-  let get_invalid_statement_span = || {
-    diagnostics.iter().find_map(|diagnostic| match diagnostic {
-      Diagnostic::InvalidStatement { span, .. }
-        if span.start < loc && loc <= span.end =>
-      {
-        Some(*span)
-      }
-      _ => None,
-    })
-  };
-
-  // An empty (or whitespace-only) message is parsed as a simple message with a
-  // single empty text part. Offer declaration snippets at its root.
+  // An empty (or whitespace-only) message.
+  //
+  // |
   if let Message::Simple(pattern) = ast {
     if let [PatternPart::Text(text)] = &pattern.parts[..] {
       if text.content.trim().is_empty() {
         return AllowedCompletionType::Declaration {
           allow_match: true,
-          replace: get_invalid_statement_span(),
+          replace: None,
         };
       }
     }
@@ -228,13 +218,15 @@ fn get_completion_type<'text>(
   };
 
   // The cursor can be in whitespace just outside the complex message's span
-  // (e.g. on a fresh line after the last declaration). As long as there is no
-  // body yet, that is still a valid spot for another declaration.
+  // (e.g. on a fresh line after the last declaration).
+  //
+  // .local $x = {1}
+  // |
   if let (X::Message(_), Message::Complex(message)) = (&current_node, ast) {
     if !has_body(message) {
       return AllowedCompletionType::Declaration {
         allow_match: true,
-        replace: get_invalid_statement_span(),
+        replace: None,
       };
     }
   }
@@ -242,9 +234,26 @@ fn get_completion_type<'text>(
   match (current_node, parent_node, previous_node) {
     (X::ComplexMessage(message), _, _) => {
       // At the root of a complex message, in between declarations or before the
-      // body: `.local ...` <here> `{{...}}`.
+      // body:
+      //
+      // .local $x = {1}| {{hi}}
+      //
+      // .local $x = {1}  .lo|c  {{hi  }}
+      //
+      // A partially-typed keyword (e.g. `.lo`) shows up as an invalid statement
+      // spanning the cursor; the snippet replaces it.
+      let replace =
+        diagnostics.iter().find_map(|diagnostic| match diagnostic {
+          Diagnostic::InvalidStatement { span, keyword }
+            if span.start < loc && loc <= span.end =>
+          {
+            let keyword_end = span.start + '.' + *keyword;
+            Some(Span::new(span.start..keyword_end.max(loc)))
+          }
+          _ => None,
+        });
       AllowedCompletionType::Declaration {
-        replace: get_invalid_statement_span(),
+        replace,
         allow_match: !has_body(message),
       }
     }
