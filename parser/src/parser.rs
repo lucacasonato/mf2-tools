@@ -321,7 +321,7 @@ impl<'text> Parser<'text> {
     let contents_end = self.current_location();
     let mut after_invalid = None;
 
-    loop {
+    let has_closing_brace = loop {
       match self.peek() {
         Some((_, '|')) => {
           self.parse_quoted();
@@ -329,7 +329,7 @@ impl<'text> Parser<'text> {
         }
         Some((_, '}')) => {
           self.next();
-          break;
+          break true;
         }
         Some((_, chars::space!())) => {
           self.next();
@@ -346,10 +346,10 @@ impl<'text> Parser<'text> {
           self.report(Diagnostic::PlaceholderMissingClosingBrace {
             span: Span::new(start..self.current_location()),
           });
-          break;
+          break false;
         }
       }
-    }
+    };
 
     if let Some(invalid_end) = after_invalid {
       self.report(Diagnostic::PlaceholderInvalidContents {
@@ -364,6 +364,7 @@ impl<'text> Parser<'text> {
       Some(LiteralOrVariable::Variable(variable)) => {
         Expression::VariableExpression(VariableExpression {
           span,
+          has_closing_brace,
           variable,
           annotation,
           attributes,
@@ -372,6 +373,7 @@ impl<'text> Parser<'text> {
       Some(LiteralOrVariable::Literal(literal)) => {
         Expression::LiteralExpression(LiteralExpression {
           span,
+          has_closing_brace,
           literal,
           annotation,
           attributes,
@@ -381,6 +383,7 @@ impl<'text> Parser<'text> {
         if let Some(annotation) = annotation {
           Expression::AnnotationExpression(AnnotationExpression {
             span,
+            has_closing_brace,
             annotation,
             attributes,
           })
@@ -391,6 +394,7 @@ impl<'text> Parser<'text> {
           // empty text as its literal.
           Expression::LiteralExpression(LiteralExpression {
             span,
+            has_closing_brace,
             literal: Literal::Text(Text {
               start: span.start,
               content: "",
@@ -1215,6 +1219,7 @@ impl<'text> Parser<'text> {
       });
       Expression::LiteralExpression(LiteralExpression {
         span: Span::new(last_visible_char..last_visible_char),
+        has_closing_brace: false,
         literal: Literal::Text(Text {
           start: last_visible_char,
           content: "",
@@ -1243,6 +1248,7 @@ impl<'text> Parser<'text> {
       match var {
         LiteralOrVariable::Literal(literal) => Expression::LiteralExpression(LiteralExpression {
           span,
+          has_closing_brace: false,
           literal,
           annotation: None,
           attributes: vec![],
@@ -1250,6 +1256,7 @@ impl<'text> Parser<'text> {
         LiteralOrVariable::Variable(variable) => {
           Expression::VariableExpression(VariableExpression {
             span,
+            has_closing_brace: false,
             variable,
             annotation: None,
             attributes: vec![],

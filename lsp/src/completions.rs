@@ -2,11 +2,12 @@ use mf2_parser::Location;
 use mf2_parser::Scope;
 use mf2_parser::Span;
 use mf2_parser::Spanned;
-use mf2_parser::Visit as _;
-use mf2_parser::VisitAny;
 use mf2_parser::ast;
 use mf2_parser::ast::AnyNode;
 use mf2_parser::ast::Message;
+
+use crate::ast_utils::ContainingNodesAndGreatestPreviousNodes;
+use crate::ast_utils::find_node_at_cursor_with_context;
 
 #[derive(Debug)]
 pub enum CompletionAction {
@@ -72,94 +73,85 @@ impl<'scope, 'text> CompletionsProvider<'scope, 'text> {
   }
 }
 
-struct CompletionLocationVisitor<'ast, 'text> {
-  loc: Location,
-  parent_node: AnyNode<'ast, 'text>,
-  current_node: AnyNode<'ast, 'text>,
-  previous_node: Option<AnyNode<'ast, 'text>>,
-}
-
-impl<'ast, 'text> VisitAny<'ast, 'text> for CompletionLocationVisitor<'ast, 'text> {
-  fn before(&mut self, node: AnyNode<'ast, 'text>) {
-    let span = node.span();
-    if span.start < self.loc && self.loc <= span.end {
-      self.parent_node = std::mem::replace(&mut self.current_node, node);
-      assert!(!self.parent_node.same(&self.current_node));
-      self.previous_node = None;
-    }
-  }
-
-  fn after(&mut self, node: AnyNode<'ast, 'text>) {
-    if node.span().end < self.loc && !node.span().is_empty() {
-      self.previous_node = Some(node);
-    }
-  }
-}
-
 fn get_completion_type<'text>(ast: &Message<'text>, loc: Location) -> AllowedCompletionType<'text> {
-  let mut visitor = CompletionLocationVisitor {
-    loc,
-    current_node: AnyNode::Message(ast),
-    parent_node: AnyNode::Message(ast),
-    previous_node: None,
-  };
-  visitor.visit_message(ast);
-
-  let CompletionLocationVisitor {
-    current_node,
-    parent_node,
-    previous_node,
-    ..
-  } = visitor;
+  let ContainingNodesAndGreatestPreviousNodes {
+    containing_nodes,
+    greatest_previous_nodes,
+  } = find_node_at_cursor_with_context(ast, loc);
 
   use AnyNode as X;
   use ast::*;
 
-  match (current_node, parent_node, previous_node) {
-    (X::Variable(var), _, _) => {
+  println!("===");
+
+  macro_rules! match_containing_and_previous {
+    ($(($current:pat, $previous:pat) $(if $if:expr)? => $body:block )*
+    _ => $default:block) => {
+      $(
+        if let $current = match_containing_and_previous!(rhs $current, containing_nodes) && let $previous = match_containing_and_previous!(rhs $previous, greatest_previous_nodes) $(&& $if)? $body
+      )else*
+      else $default
+    };
+    (rhs $pat:pat, $nodes:expr) => { $nodes.iter().rev().find(#[allow(unused_variables)] |x| matches!(Some(x), $pat)) };
+  }
+
+  macro_rules! not_containing {
+    ($pat:pat) => {
+      containing_nodes.iter().rev().all(|x| !matches!(x, $pat))
+    };
+  }
+
+  match_containing_and_previous! {
+    (Some(X::Variable(var)), _) => {
       // $f|
+      // $|
       AllowedCompletionType::Variable(Some((var.span(), var.name)))
     }
-    (X::LiteralExpression(literal_expression), _, None)
+    (Some(X::LiteralExpression(literal_expression)), _)
       if literal_expression.literal.span().is_empty() =>
     {
-      // { | }
+      // { | }  (the empty literal is the only thing in `previous_nodes`)
       AllowedCompletionType::Variable(None)
 
       // if excludes:
       //  { | 1 }
       //  { 1 | }
     }
-    (X::FnOrMarkupOption(FnOrMarkupOption { value, .. }), _, Some(X::Identifier(_)))
-      if value.span().is_empty() && value.span().start == loc =>
-    {
-      // :fn param=|
+    (Some(X::FnOrMarkupOption(FnOrMarkupOption { value: LiteralOrVariable::Literal(Literal::Text(text)), .. })), Some(X::Identifier(_)))
+      if text.span().is_empty() && text.span().start <= loc => {
+        // :fn param=|
+        AllowedCompletionType::Variable(None)
+
+        // if excludes:
+        //  :fn param=f| (by empty check)
+        //  :fn param |= (by span start check)
+      }
+    (
+      Some(X::VariableExpression(_) | X::AnnotationExpression(_) | X::LiteralExpression(_)),
+      Some(X::FnOrMarkupOption(FnOrMarkupOption { key, value: LiteralOrVariable::Literal(Literal::Text(text)), .. }))
+    )
+      if text.span().is_empty() && key.span().end != text.span().start => {
+        // { $a :fn param= | }
+        AllowedCompletionType::Variable(None)
+
+        // if excludes:
+        //  { $a :fn asd=asd | } (by empty check)
+        //  { $a :fn asd | } (by span start check)
+      }
+    (Some(X::AnnotationExpression(_)), _) if greatest_previous_nodes.is_empty() && not_containing!(X::Annotation(_)) => {
+      // { | :fn }
+      // { |:fn }
+      // {| :fn }
+      // { :fn asd=| }
       AllowedCompletionType::Variable(None)
 
       // if excludes:
-      //  :fn param=f|
-      //  :fn param |=
+      //  { :fn | } (by no previous nodes check)
+      //  { :fn asd|=asd } (by not containing annotation check)
     }
-    (
-      X::VariableExpression(_) | X::AnnotationExpression(_) | X::LiteralExpression(_),
-      _,
-      Some(X::FnOrMarkupOption(opt)),
-    ) => {
-      #[allow(clippy::collapsible_match)]
-      if let LiteralOrVariable::Literal(Literal::Text(text)) = &opt.value
-        && text.span().is_empty()
-        && text.span().start != opt.key.span().end
-      {
-        // { $a :fn param= | }
-        return AllowedCompletionType::Variable(None);
-      }
+    _ => {
       AllowedCompletionType::None
     }
-    (X::AnnotationExpression(_), _, None) => {
-      // { | :fn }
-      AllowedCompletionType::Variable(None)
-    }
-    _ => AllowedCompletionType::None,
   }
 }
 
@@ -178,12 +170,7 @@ mod tests {
       let (ast, ..) = parse(&message);
       let result = get_completion_type(&ast, loc);
 
-      assert!(
-        matches!(result, $expected),
-        "expected: {}\nactual: {:?}",
-        stringify!($expected),
-        result
-      );
+      std::assert_matches!(result, $expected);
     };
   }
 
@@ -216,6 +203,8 @@ mod tests {
     assert_completion_type!("{ 1 :fn param=┋}", AllowedCompletionType::Variable(None));
     assert_completion_type!("{ $x :fn param=┋}", AllowedCompletionType::Variable(None));
     assert_completion_type!("{ ┋ :fn }", AllowedCompletionType::Variable(None));
+    assert_completion_type!("{ ┋:fn }", AllowedCompletionType::Variable(None));
+    assert_completion_type!("{┋ :fn }", AllowedCompletionType::Variable(None));
     assert_completion_type!("{ $x┋ :fn }", AllowedCompletionType::Variable(Some((_, "x"))));
   }
 }

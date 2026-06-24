@@ -178,6 +178,7 @@ ast_enum! {
 #[derive(Debug, Clone)]
 pub struct LiteralExpression<'text> {
   pub span: Span,
+  pub has_closing_brace: bool,
   pub literal: Literal<'text>,
   pub annotation: Option<Annotation<'text>>,
   pub attributes: Vec<Attribute<'text>>,
@@ -208,6 +209,7 @@ impl<'text> Visitable<'text> for LiteralExpression<'text> {
 #[derive(Debug, Clone)]
 pub struct VariableExpression<'text> {
   pub span: Span,
+  pub has_closing_brace: bool,
   pub variable: Variable<'text>,
   pub annotation: Option<Annotation<'text>>,
   pub attributes: Vec<Attribute<'text>>,
@@ -265,6 +267,7 @@ impl<'text> Visitable<'text> for Variable<'text> {
 #[derive(Debug, Clone)]
 pub struct AnnotationExpression<'text> {
   pub span: Span,
+  pub has_closing_brace: bool,
   pub annotation: Annotation<'text>,
   pub attributes: Vec<Attribute<'text>>,
 }
@@ -826,7 +829,7 @@ macro_rules! any_node {
         $( $item:ident $(<$item_lifetime:lifetime>)? ),* $(,)?
       }
     ) => {
-      #[derive(Clone)]
+      #[derive(Clone, Copy)]
       pub enum $name<$ast_lifetime, $text_lifetime> {
         $( $item ( &'ast $item$(<$item_lifetime>)? ), )*
       }
