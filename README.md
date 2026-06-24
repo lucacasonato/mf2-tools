@@ -7,6 +7,7 @@ This repository contains various tools for working with the
 - [vscode-mf2](#vscode-mf2): A VS Code extension for Message Format 2.
 - [mf2_parser](#rust-crates): A Rust parser for Message Format 2.
 - [mf2_printer](#rust-crates): A Rust pretty-printer for Message Format 2.
+- [Editor Syntaxes](#editor-syntaxes): TextMate, Tree-sitter, and Vim syntax files.
 
 ## mf2lsp
 
@@ -30,7 +31,8 @@ To use `mf2lsp` in VS Code, you can install the [vscode-mf2](#vscode-mf2)
 extension.
 
 For use in other editors with LSP support, you can run `mf2lsp` as a standalone
-executable. You can find the latest release on the
+executable (including Classic Vim via `coc.nvim`; see `vim/README.md` for setup
+details). You can find the latest release on the
 [releases page](https://github.com/lucacasonato/mf2-tools/releases).
 
 ## vscode-mf2
@@ -59,6 +61,22 @@ in editors).
 The `mf2_printer` crate provides a pretty-printer for the Message Format 2 AST.
 It can take an AST and convert it back to a string, preserving some of the
 original formatting (like empty lines).
+
+## Editor Syntaxes
+
+This repository includes multiple syntax-highlighting implementations:
+
+- VS Code/TextMate grammar in `tools/vscode/grammar.ts` (generated into
+  `vscode/syntaxes/`).
+- Neovim, Helix, Zed, Emacs `treesit`, and other Tree-sitter-based tooling:
+  use the Tree-sitter grammar in `tree-sitter-mf2/`.
+- Classic Vim: use `vim/syntax/mf2.vim` with file detection in
+  `vim/ftdetect/mf2.vim` (full setup in `vim/README.md`).
+
+The Tree-sitter and Vim definitions are intentionally aligned with the same
+constructs used by the TextMate grammar: declarations (`.input`, `.local`),
+matcher (`.match`), placeholders/expressions, options, attributes, literals,
+markup, escapes, and quoted patterns.
 
 ## Development
 
