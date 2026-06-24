@@ -182,18 +182,10 @@ impl<'a, LS: LanguageServer> ConnectionManager<'a, LS> {
     message: lsp_server::Message,
   ) -> Result<ControlFlow<(), ()>, anyhow::Error> {
     match self.state {
-      LanguageServerState::Uninitialized => {
-        self.handle_message_uninitialized(message)
-      }
-      LanguageServerState::Initializing => {
-        self.handle_message_initializing(message)
-      }
-      LanguageServerState::Initialized => {
-        self.handle_message_initialized(message)
-      }
-      LanguageServerState::ShuttingDown => {
-        self.handle_message_shutting_down(message)
-      }
+      LanguageServerState::Uninitialized => self.handle_message_uninitialized(message),
+      LanguageServerState::Initializing => self.handle_message_initializing(message),
+      LanguageServerState::Initialized => self.handle_message_initialized(message),
+      LanguageServerState::ShuttingDown => self.handle_message_shutting_down(message),
     }
   }
 
@@ -217,9 +209,7 @@ impl<'a, LS: LanguageServer> ConnectionManager<'a, LS> {
       }
       Message::Notification(n) if n.method == "exit" => {}
       msg => {
-        return Err(anyhow::anyhow!(
-          "expected initialize request, got {msg:?}"
-        ));
+        return Err(anyhow::anyhow!("expected initialize request, got {msg:?}"));
       }
     }
     Ok(ControlFlow::Continue(()))
@@ -270,9 +260,7 @@ impl<'a, LS: LanguageServer> ConnectionManager<'a, LS> {
     message: Message,
   ) -> Result<ControlFlow<()>, anyhow::Error> {
     match message {
-      Message::Notification(n) if n.method == "exit" => {
-        Ok(ControlFlow::Break(()))
-      }
+      Message::Notification(n) if n.method == "exit" => Ok(ControlFlow::Break(())),
       msg => Err(anyhow::anyhow!("expected exit notification, got {msg:?}")),
     }
   }

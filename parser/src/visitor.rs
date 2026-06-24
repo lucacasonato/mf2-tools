@@ -85,17 +85,11 @@ pub trait Visit<'ast, 'text> {
 /// The [Visitable] trait is used to apply a [Visit]or to an AST node.
 pub trait Visitable<'text> {
   /// Call the visitor method for this node on the visitor.
-  fn apply_visitor<'ast, V: Visit<'ast, 'text> + ?Sized>(
-    &'ast self,
-    visitor: &mut V,
-  );
+  fn apply_visitor<'ast, V: Visit<'ast, 'text> + ?Sized>(&'ast self, visitor: &mut V);
 
   /// Call the visitor method for each child node on the visitor. This does not
   /// call the visitor method for this node itself.
-  fn apply_visitor_to_children<'ast, V: Visit<'ast, 'text> + ?Sized>(
-    &'ast self,
-    visitor: &mut V,
-  );
+  fn apply_visitor_to_children<'ast, V: Visit<'ast, 'text> + ?Sized>(&'ast self, visitor: &mut V);
 }
 
 /// The [VisitAny] trait is used to visit the AST without having to know the

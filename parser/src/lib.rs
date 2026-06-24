@@ -13,9 +13,7 @@ mod visitor;
 
 pub use diagnostic::Diagnostic;
 pub use scope::Scope;
-pub use text::{
-  LineColUtf16, LineColUtf8, Location, SourceTextInfo, Span, Spanned,
-};
+pub use text::{LineColUtf8, LineColUtf16, Location, SourceTextInfo, Span, Spanned};
 pub use visitor::{Visit, VisitAny, Visitable};
 
 /// Parse a message and return the AST, diagnostics, and source text info.
@@ -60,6 +58,5 @@ pub fn analyze_semantics<'text>(
 pub fn is_valid_name(name: &str) -> bool {
   let mut ch_it = name.chars();
 
-  matches!(ch_it.next(), Some(chars::name_start!()))
-    && ch_it.all(|c| matches!(c, chars::name!()))
+  matches!(ch_it.next(), Some(chars::name_start!())) && ch_it.all(|c| matches!(c, chars::name!()))
 }

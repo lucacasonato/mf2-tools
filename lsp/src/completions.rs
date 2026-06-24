@@ -32,11 +32,7 @@ pub struct CompletionsProvider<'scope: 'text, 'text> {
 }
 
 impl<'scope, 'text> CompletionsProvider<'scope, 'text> {
-  pub fn new<'ast>(
-    ast: &'ast Message<'text>,
-    loc: Location,
-    scope: &'scope Scope<'text>,
-  ) -> Self {
+  pub fn new<'ast>(ast: &'ast Message<'text>, loc: Location, scope: &'scope Scope<'text>) -> Self {
     Self {
       scope,
       completion_type: get_completion_type(ast, loc),
@@ -59,8 +55,7 @@ impl<'scope, 'text> CompletionsProvider<'scope, 'text> {
         })
         .collect(),
       AllowedCompletionType::Variable(Some((span, name))) => {
-        let include_self =
-          name.len() > 1 && self.scope.get_spans(name).unwrap().len() > 1;
+        let include_self = name.len() > 1 && self.scope.get_spans(name).unwrap().len() > 1;
 
         let all_names = self
           .scope
@@ -84,9 +79,7 @@ struct CompletionLocationVisitor<'ast, 'text> {
   previous_node: Option<AnyNode<'ast, 'text>>,
 }
 
-impl<'ast, 'text> VisitAny<'ast, 'text>
-  for CompletionLocationVisitor<'ast, 'text>
-{
+impl<'ast, 'text> VisitAny<'ast, 'text> for CompletionLocationVisitor<'ast, 'text> {
   fn before(&mut self, node: AnyNode<'ast, 'text>) {
     let span = node.span();
     if span.start < self.loc && self.loc <= span.end {
@@ -103,10 +96,7 @@ impl<'ast, 'text> VisitAny<'ast, 'text>
   }
 }
 
-fn get_completion_type<'text>(
-  ast: &Message<'text>,
-  loc: Location,
-) -> AllowedCompletionType<'text> {
+fn get_completion_type<'text>(ast: &Message<'text>, loc: Location) -> AllowedCompletionType<'text> {
   let mut visitor = CompletionLocationVisitor {
     loc,
     current_node: AnyNode::Message(ast),
@@ -140,11 +130,9 @@ fn get_completion_type<'text>(
       //  { | 1 }
       //  { 1 | }
     }
-    (
-      X::FnOrMarkupOption(FnOrMarkupOption { value, .. }),
-      _,
-      Some(X::Identifier(_)),
-    ) if value.span().is_empty() && value.span().start == loc => {
+    (X::FnOrMarkupOption(FnOrMarkupOption { value, .. }), _, Some(X::Identifier(_)))
+      if value.span().is_empty() && value.span().start == loc =>
+    {
       // :fn param=|
       AllowedCompletionType::Variable(None)
 
@@ -153,9 +141,7 @@ fn get_completion_type<'text>(
       //  :fn param |=
     }
     (
-      X::VariableExpression(_)
-      | X::AnnotationExpression(_)
-      | X::LiteralExpression(_),
+      X::VariableExpression(_) | X::AnnotationExpression(_) | X::LiteralExpression(_),
       _,
       Some(X::FnOrMarkupOption(opt)),
     ) => {
@@ -187,9 +173,7 @@ mod tests {
 
   macro_rules! assert_completion_type {
     ($source:expr, $expected:pat) => {
-      let loc = Location::new_for_test(
-        $source.find('┋').expect("Cursor not found") as u32,
-      );
+      let loc = Location::new_for_test($source.find('┋').expect("Cursor not found") as u32);
       let message = $source.replace('┋', "");
       let (ast, ..) = parse(&message);
       let result = get_completion_type(&ast, loc);

@@ -1,12 +1,12 @@
-use std::collections::hash_map::Entry;
 use std::collections::HashMap;
+use std::collections::hash_map::Entry;
 
-use crate::ast;
 use crate::Diagnostic;
 use crate::Span;
 use crate::Spanned as _;
 use crate::Visit;
 use crate::Visitable as _;
+use crate::ast;
 
 pub struct VariableUsage {
   pub declaration: Option<Span>,
@@ -51,10 +51,7 @@ struct ScopeVisitor<'diag, 'text> {
 }
 
 impl<'text> ScopeVisitor<'_, 'text> {
-  fn push_variable_declaration<'ast>(
-    &mut self,
-    var: &'ast ast::Variable<'text>,
-  ) {
+  fn push_variable_declaration<'ast>(&mut self, var: &'ast ast::Variable<'text>) {
     match self.scope.variables.entry(var.name) {
       Entry::Occupied(existing) => {
         let existing = existing.into_mut();
@@ -103,19 +100,13 @@ impl<'text> ScopeVisitor<'_, 'text> {
 }
 
 impl<'ast, 'text> Visit<'ast, 'text> for ScopeVisitor<'_, 'text> {
-  fn visit_local_declaration(
-    &mut self,
-    decl: &'ast ast::LocalDeclaration<'text>,
-  ) {
+  fn visit_local_declaration(&mut self, decl: &'ast ast::LocalDeclaration<'text>) {
     decl.expression.apply_visitor(self);
 
     self.push_variable_declaration(&decl.variable);
   }
 
-  fn visit_input_declaration(
-    &mut self,
-    decl: &'ast ast::InputDeclaration<'text>,
-  ) {
+  fn visit_input_declaration(&mut self, decl: &'ast ast::InputDeclaration<'text>) {
     if let Some(annotation) = &decl.expression.annotation {
       annotation.apply_visitor(self);
     }
