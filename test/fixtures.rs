@@ -231,9 +231,8 @@ fn generate_actual_diagnostics(
     formatted_diagnostics.push(' ');
     formatted_diagnostics.push_str(normalized_message);
     formatted_diagnostics.push('\n');
-    iter::repeat(' ')
-      .take(prefix.width_cjk() + 2)
-      .chain(iter::repeat('^').take(contents.width_cjk()))
+    iter::repeat_n(' ', prefix.width_cjk() + 2)
+      .chain(iter::repeat_n('^', contents.width_cjk()))
       .for_each(|c| formatted_diagnostics.push(c));
   }
   formatted_diagnostics
@@ -250,7 +249,7 @@ fn generate_actual_fixed(
       output.push_str(fix.label);
       output.push_str(":\n  ");
 
-      fix.edits.sort_by(|a, b| a.span.start.cmp(&b.span.start));
+      fix.edits.sort_by_key(|edit| edit.span.start);
 
       let mut fixed_message = input_message.to_string();
       let mut last_end = 0;

@@ -1,13 +1,13 @@
 use lsp_types::Range;
 use lsp_types::Uri;
-use mf2_parser::ast;
-use mf2_parser::ast::Message;
 use mf2_parser::Diagnostic;
 use mf2_parser::LineColUtf16;
 use mf2_parser::Location;
 use mf2_parser::Scope;
 use mf2_parser::SourceTextInfo;
 use mf2_parser::Span;
+use mf2_parser::ast;
+use mf2_parser::ast::Message;
 use yoke::Yoke;
 use yoke::Yokeable;
 
@@ -80,19 +80,19 @@ impl Document {
     self.parsed.get().info.utf16_len(span)
   }
 
-  pub fn ast(&self) -> &Message {
+  pub fn ast(&self) -> &Message<'_> {
     &self.parsed.get().ast
   }
 
-  pub fn scope(&self) -> &Scope {
+  pub fn scope(&self) -> &Scope<'_> {
     &self.parsed.get().scope
   }
 
-  pub fn info(&self) -> &SourceTextInfo {
+  pub fn info(&self) -> &SourceTextInfo<'_> {
     &self.parsed.get().info
   }
 
-  pub fn diagnostics(&self) -> &Vec<Diagnostic> {
+  pub fn diagnostics(&self) -> &Vec<Diagnostic<'_>> {
     &self.parsed.get().diagnostics
   }
 

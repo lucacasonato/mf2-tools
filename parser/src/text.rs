@@ -66,7 +66,7 @@ impl<'text> SourceTextIterator<'text> {
   }
 
   fn iter_next(&mut self) -> Option<char> {
-    self.iter.next().map(|ch| {
+    self.iter.next().inspect(|ch| {
       match ch {
         '\n' => {
           if *self.utf8_line_starts.last().unwrap() < self.str_index + 1 {
@@ -80,11 +80,10 @@ impl<'text> SourceTextIterator<'text> {
           {
             self.utf8_line_starts.push(self.str_index);
           }
-          self.prev_char_was_cr = ch == '\r';
+          self.prev_char_was_cr = *ch == '\r';
         }
       }
       self.str_index += ch.len_utf8() as u32;
-      ch
     })
   }
 

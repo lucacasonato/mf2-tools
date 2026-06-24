@@ -1,12 +1,12 @@
-use mf2_parser::ast;
-use mf2_parser::ast::AnyNode;
-use mf2_parser::ast::Message;
 use mf2_parser::Location;
 use mf2_parser::Scope;
 use mf2_parser::Span;
 use mf2_parser::Spanned;
 use mf2_parser::Visit as _;
 use mf2_parser::VisitAny;
+use mf2_parser::ast;
+use mf2_parser::ast::AnyNode;
+use mf2_parser::ast::Message;
 
 #[derive(Debug)]
 pub enum CompletionAction {
@@ -122,8 +122,8 @@ fn get_completion_type<'text>(
     ..
   } = visitor;
 
-  use ast::*;
   use AnyNode as X;
+  use ast::*;
 
   match (current_node, parent_node, previous_node) {
     (X::Variable(var), _, _) => {
@@ -160,11 +160,12 @@ fn get_completion_type<'text>(
       Some(X::FnOrMarkupOption(opt)),
     ) => {
       #[allow(clippy::collapsible_match)]
-      if let LiteralOrVariable::Literal(Literal::Text(text)) = &opt.value {
-        if text.span().is_empty() && text.span().start != opt.key.span().end {
-          // { $a :fn param= | }
-          return AllowedCompletionType::Variable(None);
-        }
+      if let LiteralOrVariable::Literal(Literal::Text(text)) = &opt.value
+        && text.span().is_empty()
+        && text.span().start != opt.key.span().end
+      {
+        // { $a :fn param= | }
+        return AllowedCompletionType::Variable(None);
       }
       AllowedCompletionType::None
     }
@@ -178,11 +179,11 @@ fn get_completion_type<'text>(
 
 #[cfg(test)]
 mod tests {
-  use mf2_parser::parse;
   use mf2_parser::Location;
+  use mf2_parser::parse;
 
-  use super::get_completion_type;
   use super::AllowedCompletionType;
+  use super::get_completion_type;
 
   macro_rules! assert_completion_type {
     ($source:expr, $expected:pat) => {

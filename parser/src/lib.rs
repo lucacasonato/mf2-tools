@@ -45,7 +45,7 @@ pub use visitor::{Visit, VisitAny, Visitable};
 ///
 /// println!("AST: {:?}", ast);
 /// ```
-pub fn parse(message: &str) -> (Message, Vec<Diagnostic>, SourceTextInfo) {
+pub fn parse(message: &str) -> (Message<'_>, Vec<Diagnostic<'_>>, SourceTextInfo<'_>) {
   Parser::new(message).parse()
 }
 

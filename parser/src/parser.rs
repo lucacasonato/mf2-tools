@@ -253,12 +253,12 @@ impl<'text> Parser<'text> {
       Some((_, '#')) => {
         return PatternPart::Markup(
           self.parse_markup(start, MarkupStartKind::OpenOrStandalone),
-        )
+        );
       }
       Some((_, '/')) => {
         return PatternPart::Markup(
           self.parse_markup(start, MarkupStartKind::Close),
-        )
+        );
       }
       _ => {}
     }
@@ -585,11 +585,11 @@ impl<'text> Parser<'text> {
   }
 
   fn eat(&mut self, c: char) -> Option<Location> {
-    if let Some((loc, ch)) = self.text.peek() {
-      if ch == c {
-        self.text.next();
-        return Some(loc);
-      }
+    if let Some((loc, ch)) = self.text.peek()
+      && ch == c
+    {
+      self.text.next();
+      return Some(loc);
     }
     None
   }
@@ -1152,6 +1152,7 @@ impl<'text> Parser<'text> {
         });
       } else {
         let mut pattern = self.parse_pattern(self.current_location(), false);
+        #[allow(clippy::manual_pattern_char_comparison)]
         if let Some(PatternPart::Text(text)) = pattern.parts.last_mut() {
           text.content = text
             .content

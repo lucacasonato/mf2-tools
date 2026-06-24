@@ -43,7 +43,7 @@ pub struct Server<'a> {
 }
 
 impl Server<'_> {
-  pub fn start(connection: &Connection) -> Server {
+  pub fn start(connection: &Connection) -> Server<'_> {
     eprintln!(
       "Starting server... mflsp {}{}",
       env!("CARGO_PKG_VERSION"),
