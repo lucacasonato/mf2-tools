@@ -82,8 +82,6 @@ fn get_completion_type<'text>(ast: &Message<'text>, loc: Location) -> AllowedCom
   use AnyNode as X;
   use ast::*;
 
-  println!("===");
-
   macro_rules! match_containing_and_previous {
     ($(($current:pat, $previous:pat) $(if $if:expr)? => $body:block )*
     _ => $default:block) => {
