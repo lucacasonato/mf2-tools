@@ -1,13 +1,13 @@
 use std::fmt;
 
+use crate::Location;
+use crate::Span;
+use crate::Spanned as _;
 use crate::ast::Attribute;
 use crate::ast::Expression;
 use crate::ast::FnOrMarkupOption;
 use crate::ast::Identifier;
 use crate::ast::Number;
-use crate::Location;
-use crate::Span;
-use crate::Spanned as _;
 
 macro_rules! diagnostics {
   (

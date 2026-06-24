@@ -2,11 +2,11 @@ use lsp_types::Position;
 use lsp_types::SemanticToken;
 use lsp_types::SemanticTokenType;
 use lsp_types::SemanticTokensLegend;
-use mf2_parser::ast;
 use mf2_parser::Span;
 use mf2_parser::Spanned;
 use mf2_parser::Visit;
 use mf2_parser::Visitable as _;
+use mf2_parser::ast;
 
 use crate::document::Document;
 
@@ -100,10 +100,7 @@ impl<'ast, 'text> Visit<'ast, 'text> for SemanticTokenVisitor<'ast> {
     matcher.apply_visitor_to_children(self);
   }
 
-  fn visit_fn_or_markup_option(
-    &mut self,
-    opt: &'ast ast::FnOrMarkupOption<'text>,
-  ) {
+  fn visit_fn_or_markup_option(&mut self, opt: &'ast ast::FnOrMarkupOption<'text>) {
     self.report_token(opt.key.span(), 1 /* parameter */);
     opt.apply_visitor_to_children(self);
   }

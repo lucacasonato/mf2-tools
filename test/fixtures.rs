@@ -61,8 +61,7 @@ fn run_test(test: &CollectedTest) {
   let (expected_fixed, rest_str) = rest_str
     .split_once(formatted_marker)
     .unwrap_or((rest_str, ""));
-  let (expected_formatted, rest_str) =
-    rest_str.split_once(ast_marker).unwrap_or((rest_str, ""));
+  let (expected_formatted, rest_str) = rest_str.split_once(ast_marker).unwrap_or((rest_str, ""));
   let expected_ast_dbg = rest_str;
 
   if test
@@ -85,10 +84,8 @@ fn run_test(test: &CollectedTest) {
   let has_fatal_diag = diagnostics.iter().any(|d| d.fatal());
 
   let actual_ast_dbg = generated_actual_ast_dbg(&actual_ast);
-  let actual_spans =
-    generate_actual_spans(&actual_ast, message, &normalized_message, &info);
-  let actual_diags =
-    generate_actual_diagnostics(&diagnostics, message, &normalized_message);
+  let actual_spans = generate_actual_spans(&actual_ast, message, &normalized_message, &info);
+  let actual_diags = generate_actual_diagnostics(&diagnostics, message, &normalized_message);
   let actual_fixed = generate_actual_fixed(&diagnostics, message, &info);
   let actual_formatted = if has_fatal_diag {
     cannot_format
@@ -110,29 +107,17 @@ fn run_test(test: &CollectedTest) {
     if expected_ast_dbg.is_empty() {
       need_update = true;
     } else {
-      pretty_assertions::assert_eq!(
-        actual_ast_dbg,
-        expected_ast_dbg,
-        "AST matches expected"
-      );
+      pretty_assertions::assert_eq!(actual_ast_dbg, expected_ast_dbg, "AST matches expected");
     }
     if expected_spans.is_empty() {
       need_update = true;
     } else {
-      pretty_assertions::assert_eq!(
-        actual_spans,
-        expected_spans,
-        "Spans match expected"
-      );
+      pretty_assertions::assert_eq!(actual_spans, expected_spans, "Spans match expected");
     }
     if expected_fixed.is_empty() {
       need_update = true;
     } else {
-      pretty_assertions::assert_eq!(
-        actual_fixed,
-        expected_fixed,
-        "Fixed code matches expected"
-      );
+      pretty_assertions::assert_eq!(actual_fixed, expected_fixed, "Fixed code matches expected");
     };
     if expected_formatted.is_empty() {
       need_update = true;
@@ -166,11 +151,7 @@ fn run_test(test: &CollectedTest) {
     let ast_before = re.replace_all(&actual_ast_dbg, "$1:@???");
     let ast_after = re.replace_all(&new_ast_dbg, "$1:@???");
 
-    pretty_assertions::assert_str_eq!(
-      ast_before,
-      ast_after,
-      "Formatting preserved the AST"
-    );
+    pretty_assertions::assert_str_eq!(ast_before, ast_after, "Formatting preserved the AST");
 
     pretty_assertions::assert_eq!(
       diagnostics.len(),
@@ -186,11 +167,7 @@ fn run_test(test: &CollectedTest) {
     }
 
     let new_formatted = print(&new_ast, Some(&new_info));
-    pretty_assertions::assert_eq!(
-      actual_formatted,
-      new_formatted,
-      "Formatting is stable"
-    );
+    pretty_assertions::assert_eq!(actual_formatted, new_formatted, "Formatting is stable");
   }
 }
 
@@ -231,9 +208,8 @@ fn generate_actual_diagnostics(
     formatted_diagnostics.push(' ');
     formatted_diagnostics.push_str(normalized_message);
     formatted_diagnostics.push('\n');
-    iter::repeat(' ')
-      .take(prefix.width_cjk() + 2)
-      .chain(iter::repeat('^').take(contents.width_cjk()))
+    iter::repeat_n(' ', prefix.width_cjk() + 2)
+      .chain(iter::repeat_n('^', contents.width_cjk()))
       .for_each(|c| formatted_diagnostics.push(c));
   }
   formatted_diagnostics
@@ -250,7 +226,7 @@ fn generate_actual_fixed(
       output.push_str(fix.label);
       output.push_str(":\n  ");
 
-      fix.edits.sort_by(|a, b| a.span.start.cmp(&b.span.start));
+      fix.edits.sort_by_key(|edit| edit.span.start);
 
       let mut fixed_message = input_message.to_string();
       let mut last_end = 0;

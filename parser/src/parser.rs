@@ -135,11 +135,7 @@ impl<'text> Parser<'text> {
     self.diagnostics.push(diagnostic);
   }
 
-  fn parse_pattern(
-    &mut self,
-    mut start: Location,
-    inside_quoted: bool,
-  ) -> Pattern<'text> {
+  fn parse_pattern(&mut self, mut start: Location, inside_quoted: bool) -> Pattern<'text> {
     let mut parts = vec![];
 
     let mut open_quoted_patterns = vec![];
@@ -251,14 +247,10 @@ impl<'text> Parser<'text> {
 
     match self.peek() {
       Some((_, '#')) => {
-        return PatternPart::Markup(
-          self.parse_markup(start, MarkupStartKind::OpenOrStandalone),
-        )
+        return PatternPart::Markup(self.parse_markup(start, MarkupStartKind::OpenOrStandalone));
       }
       Some((_, '/')) => {
-        return PatternPart::Markup(
-          self.parse_markup(start, MarkupStartKind::Close),
-        )
+        return PatternPart::Markup(self.parse_markup(start, MarkupStartKind::Close));
       }
       _ => {}
     }
@@ -414,9 +406,7 @@ impl<'text> Parser<'text> {
   fn parse_literal_or_variable(&mut self) -> Option<LiteralOrVariable<'text>> {
     let value = match self.peek() {
       Some((_, '$')) => LiteralOrVariable::Variable(self.parse_variable()),
-      Some((_, '|')) => {
-        LiteralOrVariable::Literal(Literal::Quoted(self.parse_quoted()))
-      }
+      Some((_, '|')) => LiteralOrVariable::Literal(Literal::Quoted(self.parse_quoted())),
       Some((_, chars::name_start!())) => {
         LiteralOrVariable::Literal(Literal::Text(self.parse_literal_name()))
       }
@@ -445,11 +435,7 @@ impl<'text> Parser<'text> {
     Variable { span, name }
   }
 
-  fn parse_attribute(
-    &mut self,
-    start: Location,
-    had_space: &mut bool,
-  ) -> Attribute<'text> {
+  fn parse_attribute(&mut self, start: Location, had_space: &mut bool) -> Attribute<'text> {
     let c = self.next();
     debug_assert!(matches!(c, Some((_, '@'))));
 
@@ -585,11 +571,11 @@ impl<'text> Parser<'text> {
   }
 
   fn eat(&mut self, c: char) -> Option<Location> {
-    if let Some((loc, ch)) = self.text.peek() {
-      if ch == c {
-        self.text.next();
-        return Some(loc);
-      }
+    if let Some((loc, ch)) = self.text.peek()
+      && ch == c
+    {
+      self.text.next();
+      return Some(loc);
     }
     None
   }
@@ -603,10 +589,7 @@ impl<'text> Parser<'text> {
     any_spaces
   }
 
-  fn maybe_parse_annotation(
-    &mut self,
-    had_space: &mut bool,
-  ) -> Option<Annotation<'text>> {
+  fn maybe_parse_annotation(&mut self, had_space: &mut bool) -> Option<Annotation<'text>> {
     match self.peek() {
       Some((start, ':')) => {
         // function
@@ -826,8 +809,7 @@ impl<'text> Parser<'text> {
       is_negative,
       integral_len: LengthShort::new_from_str(integral_part),
       fractional_len: fractional_part.map(LengthShort::new_from_str),
-      exponent_len: exponent_part
-        .map(|c| (c.0, LengthShort::new_from_str(c.1))),
+      exponent_len: exponent_part.map(|c| (c.0, LengthShort::new_from_str(c.1))),
     };
 
     if integral_part.len() > 1 && integral_part.starts_with('0') {
@@ -864,11 +846,7 @@ impl<'text> Parser<'text> {
     self.text.slice(start..end)
   }
 
-  fn parse_markup(
-    &mut self,
-    open: Location,
-    kind: MarkupStartKind,
-  ) -> Markup<'text> {
+  fn parse_markup(&mut self, open: Location, kind: MarkupStartKind) -> Markup<'text> {
     let c = self.next();
     debug_assert!(matches!(c, Some((_, '#' | '/'))));
 
@@ -911,13 +889,9 @@ impl<'text> Parser<'text> {
           let report_missing_close = match self.peek() {
             Some((_, '}')) => {
               if had_space {
-                self.report(
-                  Diagnostic::MarkupInvalidSpaceBetweenSelfCloseAndBrace {
-                    space: Span::new(
-                      (self_close + '/')..self.current_location(),
-                    ),
-                  },
-                );
+                self.report(Diagnostic::MarkupInvalidSpaceBetweenSelfCloseAndBrace {
+                  space: Span::new((self_close + '/')..self.current_location()),
+                });
               }
 
               self.next(); // consume '}'
@@ -987,11 +961,7 @@ impl<'text> Parser<'text> {
     markup
   }
 
-  fn skip_invalid_markup_contents(
-    &mut self,
-    start: Location,
-    had_space: &mut bool,
-  ) {
+  fn skip_invalid_markup_contents(&mut self, start: Location, had_space: &mut bool) {
     let mut last_space_start = None;
 
     while let Some((loc, c)) = self.peek() {
@@ -1152,6 +1122,7 @@ impl<'text> Parser<'text> {
         });
       } else {
         let mut pattern = self.parse_pattern(self.current_location(), false);
+        #[allow(clippy::manual_pattern_char_comparison)]
         if let Some(PatternPart::Text(text)) = pattern.parts.last_mut() {
           text.content = text
             .content
@@ -1192,10 +1163,7 @@ impl<'text> Parser<'text> {
     }
   }
 
-  fn parse_local_declaration(
-    &mut self,
-    start: Location,
-  ) -> Option<LocalDeclaration<'text>> {
+  fn parse_local_declaration(&mut self, start: Location) -> Option<LocalDeclaration<'text>> {
     // At this point, `.local` has already been consumed. `start` is the location of the `.`.
     let before_spaces = self.current_location();
     let has_space = self.skip_spaces();
@@ -1273,14 +1241,12 @@ impl<'text> Parser<'text> {
       let span = var.span();
       self.report(Diagnostic::LocalDeclarationValueNotWrappedInBraces { span });
       match var {
-        LiteralOrVariable::Literal(literal) => {
-          Expression::LiteralExpression(LiteralExpression {
-            span,
-            literal,
-            annotation: None,
-            attributes: vec![],
-          })
-        }
+        LiteralOrVariable::Literal(literal) => Expression::LiteralExpression(LiteralExpression {
+          span,
+          literal,
+          annotation: None,
+          attributes: vec![],
+        }),
         LiteralOrVariable::Variable(variable) => {
           Expression::VariableExpression(VariableExpression {
             span,
@@ -1301,26 +1267,22 @@ impl<'text> Parser<'text> {
     })
   }
 
-  fn parse_input_declaration(
-    &mut self,
-    start: Location,
-  ) -> Option<InputDeclaration<'text>> {
+  fn parse_input_declaration(&mut self, start: Location) -> Option<InputDeclaration<'text>> {
     // At this point, `.input` has already been consumed. `start` is the location of the `.`.
 
     let before_spaces = self.current_location();
     self.skip_spaces();
 
-    let (open, _) = if matches!(self.peek(), Some((_, '{')))
-      && !matches!(self.peek2(), Some((_, '{')))
-    {
-      self.next().unwrap() // consume '{'
-    } else {
-      self.text.reset_to(before_spaces);
-      self.report(Diagnostic::InputDeclarationMissingExpression {
-        span: Span::new(start..self.current_location()),
-      });
-      return None;
-    };
+    let (open, _) =
+      if matches!(self.peek(), Some((_, '{'))) && !matches!(self.peek2(), Some((_, '{'))) {
+        self.next().unwrap() // consume '{'
+      } else {
+        self.text.reset_to(before_spaces);
+        self.report(Diagnostic::InputDeclarationMissingExpression {
+          span: Span::new(start..self.current_location()),
+        });
+        return None;
+      };
 
     self.skip_spaces();
 
@@ -1403,9 +1365,7 @@ impl<'text> Parser<'text> {
           self.next();
           let key = Key::Star(Star { start: loc });
           if !had_space {
-            self.report(Diagnostic::MissingSpaceBeforeMatcherKey {
-              span: key.span(),
-            })
+            self.report(Diagnostic::MissingSpaceBeforeMatcherKey { span: key.span() })
           }
           current_variant_keys.push(key);
           had_space = self.skip_spaces();
@@ -1436,9 +1396,7 @@ impl<'text> Parser<'text> {
             self.report(Diagnostic::MatcherVariantMissingKeys {
               span: variant.span(),
             });
-          } else if !selectors.is_empty()
-            && selectors.len() != variant.keys.len()
-          {
+          } else if !selectors.is_empty() && selectors.len() != variant.keys.len() {
             self.report(Diagnostic::MatcherVariantKeysMismatch {
               span: {
                 let first = variant
@@ -1466,8 +1424,7 @@ impl<'text> Parser<'text> {
           let key = self
             .parse_literal_or_variable()
             .and_then(|literal_or_variable| {
-              if let LiteralOrVariable::Literal(literal @ Literal::Quoted(_)) =
-                literal_or_variable
+              if let LiteralOrVariable::Literal(literal @ Literal::Quoted(_)) = literal_or_variable
               {
                 return Some(Key::Literal(literal));
               };
@@ -1488,9 +1445,7 @@ impl<'text> Parser<'text> {
                     content: self.text.slice(span.start..span.end),
                   })))
                 }
-                LiteralOrVariable::Literal(literal) => {
-                  Some(Key::Literal(literal))
-                }
+                LiteralOrVariable::Literal(literal) => Some(Key::Literal(literal)),
               }
             })
             .unwrap_or_else(|| {
@@ -1523,9 +1478,7 @@ impl<'text> Parser<'text> {
             });
 
           if !had_space {
-            self.report(Diagnostic::MissingSpaceBeforeMatcherKey {
-              span: key.span(),
-            })
+            self.report(Diagnostic::MissingSpaceBeforeMatcherKey { span: key.span() })
           }
           current_variant_keys.push(key);
           had_space = self.skip_spaces();

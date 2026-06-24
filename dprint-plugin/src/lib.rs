@@ -2,9 +2,9 @@ use anyhow::anyhow;
 use serde::Serialize;
 
 use anyhow::Result;
-use dprint_core::configuration::get_unknown_property_diagnostics;
 use dprint_core::configuration::ConfigKeyMap;
 use dprint_core::configuration::GlobalConfiguration;
+use dprint_core::configuration::get_unknown_property_diagnostics;
 use dprint_core::plugins::FileMatchingInfo;
 use dprint_core::plugins::PluginInfo;
 use dprint_core::plugins::PluginResolveConfigurationResult;
@@ -25,8 +25,14 @@ impl SyncPluginHandler<Configuration> for Mf2PluginHandler {
       name: env!("CARGO_PKG_NAME").to_string(),
       version: env!("CARGO_PKG_VERSION").to_string(),
       config_key: "mf2".to_string(),
-      help_url: format!("https://github.com/lucacasonato/mf2-tools/blob/{}/dprint-plugin/README.md", env!("CARGO_PKG_VERSION")),
-      config_schema_url: format!("https://plugins.dprint.dev/lucacasonato/mf2-tools/{}/schema.json", env!("CARGO_PKG_VERSION")),
+      help_url: format!(
+        "https://github.com/lucacasonato/mf2-tools/blob/{}/dprint-plugin/README.md",
+        env!("CARGO_PKG_VERSION")
+      ),
+      config_schema_url: format!(
+        "https://plugins.dprint.dev/lucacasonato/mf2-tools/{}/schema.json",
+        env!("CARGO_PKG_VERSION")
+      ),
       update_url: Some("https://plugins.dprint.dev/lucacasonato/mf2-tools/latest.json".to_string()),
     }
   }

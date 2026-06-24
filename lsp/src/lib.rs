@@ -28,8 +28,7 @@ mod wasm {
   #[wasm_bindgen]
   pub struct WasmServer {
     connection: Connection,
-    connection_manager:
-      Yoke<WasmServerConnectionManager<'static>, Box<Connection>>,
+    connection_manager: Yoke<WasmServerConnectionManager<'static>, Box<Connection>>,
   }
 
   #[derive(Yokeable)]
@@ -43,31 +42,25 @@ mod wasm {
 
       Ok(WasmServer {
         connection: connection2,
-        connection_manager: Yoke::attach_to_cart(
-          Box::new(connection),
-          |connection| {
-            let server = Server::start(connection);
-            WasmServerConnectionManager(ConnectionManager::new(
-              connection, server,
-            ))
-          },
-        ),
+        connection_manager: Yoke::attach_to_cart(Box::new(connection), |connection| {
+          let server = Server::start(connection);
+          WasmServerConnectionManager(ConnectionManager::new(connection, server))
+        }),
       })
     }
 
     #[wasm_bindgen]
     pub fn write(&mut self, value: JsValue) -> Result<bool, JsError> {
-      let message = serde_wasm_bindgen::from_value(value).map_err(|err| {
-        JsError::new(&format!("Error deserializing message: {:?}", err))
-      })?;
+      let message = serde_wasm_bindgen::from_value(value)
+        .map_err(|err| JsError::new(&format!("Error deserializing message: {:?}", err)))?;
       let rv = Rc::new(RefCell::new(None));
       let rv_ = rv.clone();
       self.connection_manager.with_mut(move |c| {
-        rv_
-          .borrow_mut()
-          .replace(c.0.handle_message(message).map_err(|err| {
-            JsError::new(&format!("Error handling message: {:?}", err))
-          }));
+        rv_.borrow_mut().replace(
+          c.0
+            .handle_message(message)
+            .map_err(|err| JsError::new(&format!("Error handling message: {:?}", err))),
+        );
       });
       let cf = rv.borrow_mut().take().unwrap()?;
       match cf {

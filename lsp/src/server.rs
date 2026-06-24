@@ -19,13 +19,13 @@ use lsp_types::TextDocumentSyncCapability;
 use lsp_types::TextDocumentSyncKind;
 use lsp_types::TextEdit;
 use lsp_types::Uri;
-use mf2_parser::ast::AnyNode;
-use mf2_parser::is_valid_name;
 use mf2_parser::Spanned as _;
 use mf2_parser::Visitable;
+use mf2_parser::ast::AnyNode;
+use mf2_parser::is_valid_name;
 
-use std::collections::hash_map::Entry;
 use std::collections::HashMap;
+use std::collections::hash_map::Entry;
 
 use crate::ast_utils::find_node;
 use crate::completions::CompletionAction;
@@ -43,7 +43,7 @@ pub struct Server<'a> {
 }
 
 impl Server<'_> {
-  pub fn start(connection: &Connection) -> Server {
+  pub fn start(connection: &Connection) -> Server<'_> {
     eprintln!(
       "Starting server... mflsp {}{}",
       env!("CARGO_PKG_VERSION"),
@@ -89,58 +89,40 @@ impl Server<'_> {
 }
 
 impl LanguageServer for Server<'_> {
-  fn initialize(
-    &mut self,
-    params: InitializeParams,
-  ) -> Result<InitializeResult, anyhow::Error> {
+  fn initialize(&mut self, params: InitializeParams) -> Result<InitializeResult, anyhow::Error> {
     self.initialize_params = Some(params);
 
     let capabilities = ServerCapabilities {
-      text_document_sync: Some(TextDocumentSyncCapability::Kind(
-        TextDocumentSyncKind::FULL,
-      )),
+      text_document_sync: Some(TextDocumentSyncCapability::Kind(TextDocumentSyncKind::FULL)),
       hover_provider: Some(lsp_types::HoverProviderCapability::Simple(true)),
-      code_action_provider: Some(
-        lsp_types::CodeActionProviderCapability::Options(
-          lsp_types::CodeActionOptions {
-            code_action_kinds: Some(vec![lsp_types::CodeActionKind::QUICKFIX]),
-            ..lsp_types::CodeActionOptions::default()
-          },
-        ),
-      ),
-      rename_provider: Some(lsp_types::OneOf::Right(
-        lsp_types::RenameOptions {
-          prepare_provider: Some(true),
-          work_done_progress_options:
-            lsp_types::WorkDoneProgressOptions::default(),
+      code_action_provider: Some(lsp_types::CodeActionProviderCapability::Options(
+        lsp_types::CodeActionOptions {
+          code_action_kinds: Some(vec![lsp_types::CodeActionKind::QUICKFIX]),
+          ..lsp_types::CodeActionOptions::default()
         },
       )),
-      declaration_provider: Some(lsp_types::DeclarationCapability::Simple(
-        true,
-      )),
-      definition_provider: Some(lsp_types::OneOf::Right(
-        lsp_types::DefinitionOptions {
-          work_done_progress_options:
-            lsp_types::WorkDoneProgressOptions::default(),
-        },
-      )),
+      rename_provider: Some(lsp_types::OneOf::Right(lsp_types::RenameOptions {
+        prepare_provider: Some(true),
+        work_done_progress_options: lsp_types::WorkDoneProgressOptions::default(),
+      })),
+      declaration_provider: Some(lsp_types::DeclarationCapability::Simple(true)),
+      definition_provider: Some(lsp_types::OneOf::Right(lsp_types::DefinitionOptions {
+        work_done_progress_options: lsp_types::WorkDoneProgressOptions::default(),
+      })),
       completion_provider: Some(lsp_types::CompletionOptions {
         all_commit_characters: None,
         completion_item: None,
         resolve_provider: Some(false),
         trigger_characters: Some(vec!["$".to_string()]),
-        work_done_progress_options: lsp_types::WorkDoneProgressOptions::default(
-        ),
+        work_done_progress_options: lsp_types::WorkDoneProgressOptions::default(),
       }),
       semantic_tokens_provider: Some(
-        lsp_types::SemanticTokensServerCapabilities::SemanticTokensOptions(
-          SemanticTokensOptions {
-            legend: semantic_tokens::legend(),
-            full: Some(lsp_types::SemanticTokensFullOptions::Bool(true)),
-            range: Some(true),
-            ..Default::default()
-          },
-        ),
+        lsp_types::SemanticTokensServerCapabilities::SemanticTokensOptions(SemanticTokensOptions {
+          legend: semantic_tokens::legend(),
+          full: Some(lsp_types::SemanticTokensFullOptions::Bool(true)),
+          range: Some(true),
+          ..Default::default()
+        }),
       ),
       document_formatting_provider: Some(lsp_types::OneOf::Left(true)),
       ..ServerCapabilities::default()
@@ -178,10 +160,7 @@ impl LanguageServer for Server<'_> {
     );
   }
 
-  fn on_change_text_document(
-    &mut self,
-    mut params: DidChangeTextDocumentParams,
-  ) {
+  fn on_change_text_document(&mut self, mut params: DidChangeTextDocumentParams) {
     assert_eq!(params.content_changes.len(), 1);
     self.on_document_change(
       params.text_document.uri.clone(),
@@ -381,12 +360,10 @@ impl LanguageServer for Server<'_> {
           CompletionAction::Replace(span) => lsp_types::CompletionItem {
             label: completion.text.clone(),
             kind: Some(lsp_types::CompletionItemKind::VARIABLE),
-            text_edit: Some(lsp_types::CompletionTextEdit::Edit(
-              lsp_types::TextEdit {
-                range: document.span_to_range(span),
-                new_text: completion.text,
-              },
-            )),
+            text_edit: Some(lsp_types::CompletionTextEdit::Edit(lsp_types::TextEdit {
+              range: document.span_to_range(span),
+              new_text: completion.text,
+            })),
             ..lsp_types::CompletionItem::default()
           },
         })
@@ -455,8 +432,7 @@ impl LanguageServer for Server<'_> {
       return Ok(None);
     };
 
-    let abort_formatting =
-      document.diagnostics().iter().any(|diag| diag.fatal());
+    let abort_formatting = document.diagnostics().iter().any(|diag| diag.fatal());
     if abort_formatting {
       return Ok(None);
     }
@@ -470,10 +446,7 @@ impl LanguageServer for Server<'_> {
   }
 }
 
-fn diagnostic_to_lsp(
-  diag: &mf2_parser::Diagnostic,
-  doc: &Document,
-) -> lsp_types::Diagnostic {
+fn diagnostic_to_lsp(diag: &mf2_parser::Diagnostic, doc: &Document) -> lsp_types::Diagnostic {
   lsp_types::Diagnostic {
     range: doc.span_to_range(diag.span()),
     severity: Some(lsp_types::DiagnosticSeverity::ERROR),

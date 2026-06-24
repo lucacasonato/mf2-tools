@@ -1,10 +1,10 @@
-use mf2_parser::ast::*;
 use mf2_parser::LineColUtf8;
 use mf2_parser::Location;
 use mf2_parser::SourceTextInfo;
 use mf2_parser::Spanned;
 use mf2_parser::Visit;
 use mf2_parser::Visitable;
+use mf2_parser::ast::*;
 
 pub struct Printer<'ast, 'text> {
   ast: &'ast Message<'text>,
@@ -13,10 +13,7 @@ pub struct Printer<'ast, 'text> {
 }
 
 impl<'ast, 'text> Printer<'ast, 'text> {
-  pub fn new(
-    ast: &'ast Message<'text>,
-    info: Option<&'text SourceTextInfo<'text>>,
-  ) -> Self {
+  pub fn new(ast: &'ast Message<'text>, info: Option<&'text SourceTextInfo<'text>>) -> Self {
     Self {
       ast,
       info,
@@ -84,12 +81,7 @@ impl<'ast, 'text> Printer<'ast, 'text> {
     std::mem::replace(&mut self.out, backup)
   }
 
-  fn had_empty_line(
-    &self,
-    start: Location,
-    end: Location,
-    default: bool,
-  ) -> bool {
+  fn had_empty_line(&self, start: Location, end: Location, default: bool) -> bool {
     let Some(info) = self.info else {
       return default;
     };
@@ -113,10 +105,7 @@ impl<'ast, 'text> Visit<'ast, 'text> for Printer<'ast, 'text> {
     self.push(escape.escaped_char);
   }
 
-  fn visit_annotation_expression(
-    &mut self,
-    expr: &'ast AnnotationExpression<'text>,
-  ) {
+  fn visit_annotation_expression(&mut self, expr: &'ast AnnotationExpression<'text>) {
     self.helper_visit_expression(
       None::<()>,
       Some(&expr.annotation),
@@ -134,10 +123,7 @@ impl<'ast, 'text> Visit<'ast, 'text> for Printer<'ast, 'text> {
     );
   }
 
-  fn visit_variable_expression(
-    &mut self,
-    expr: &'ast VariableExpression<'text>,
-  ) {
+  fn visit_variable_expression(&mut self, expr: &'ast VariableExpression<'text>) {
     self.helper_visit_expression(
       &expr.variable,
       expr.annotation.as_ref(),
@@ -159,10 +145,7 @@ impl<'ast, 'text> Visit<'ast, 'text> for Printer<'ast, 'text> {
     self.push_str(id.name);
   }
 
-  fn visit_fn_or_markup_option(
-    &mut self,
-    option: &'ast FnOrMarkupOption<'text>,
-  ) {
+  fn visit_fn_or_markup_option(&mut self, option: &'ast FnOrMarkupOption<'text>) {
     self.push(' ');
     option.key.apply_visitor(self);
     self.push('=');
@@ -217,8 +200,7 @@ impl<'ast, 'text> Visit<'ast, 'text> for Printer<'ast, 'text> {
       decl.apply_visitor(self);
       self.push('\n');
 
-      let next_decl =
-        message.declarations.get(i + 1).map(|x| x as &dyn Spanned);
+      let next_decl = message.declarations.get(i + 1).map(|x| x as &dyn Spanned);
       let next_start = next_decl
         .unwrap_or(&message.body as &dyn Spanned)
         .span()
@@ -275,8 +257,7 @@ impl<'ast, 'text> Visit<'ast, 'text> for Printer<'ast, 'text> {
       self.push(' ');
     }
 
-    let mut printed_keys =
-      Vec::with_capacity(selectors_count * matcher.variants.len());
+    let mut printed_keys = Vec::with_capacity(selectors_count * matcher.variants.len());
 
     for variant in &matcher.variants {
       assert!(variant.keys.len() <= selectors_count);

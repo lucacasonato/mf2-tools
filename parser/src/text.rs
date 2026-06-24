@@ -61,12 +61,11 @@ impl<'text> SourceTextIterator<'text> {
     self.str_index = loc.0;
     self.peeked = Peeked::None;
     self.iter = self.original[self.str_index as usize..].chars();
-    self.prev_char_was_cr =
-      self.original[..self.str_index as usize].ends_with('\r');
+    self.prev_char_was_cr = self.original[..self.str_index as usize].ends_with('\r');
   }
 
   fn iter_next(&mut self) -> Option<char> {
-    self.iter.next().map(|ch| {
+    self.iter.next().inspect(|ch| {
       match ch {
         '\n' => {
           if *self.utf8_line_starts.last().unwrap() < self.str_index + 1 {
@@ -75,16 +74,13 @@ impl<'text> SourceTextIterator<'text> {
           self.prev_char_was_cr = false;
         }
         _ => {
-          if self.prev_char_was_cr
-            && *self.utf8_line_starts.last().unwrap() < self.str_index
-          {
+          if self.prev_char_was_cr && *self.utf8_line_starts.last().unwrap() < self.str_index {
             self.utf8_line_starts.push(self.str_index);
           }
-          self.prev_char_was_cr = ch == '\r';
+          self.prev_char_was_cr = *ch == '\r';
         }
       }
       self.str_index += ch.len_utf8() as u32;
-      ch
     })
   }
 
@@ -154,9 +150,7 @@ impl<'text> SourceTextIterator<'text> {
 
   pub fn into_info(mut self) -> SourceTextInfo<'text> {
     assert_eq!(self.str_index, self.original.len() as u32);
-    if self.prev_char_was_cr
-      && *self.utf8_line_starts.last().unwrap() < self.str_index
-    {
+    if self.prev_char_was_cr && *self.utf8_line_starts.last().unwrap() < self.str_index {
       self.utf8_line_starts.push(self.str_index);
     }
     SourceTextInfo {
@@ -229,8 +223,7 @@ impl SourceTextInfo<'_> {
       },
       Err(line) => {
         let line = line - 1;
-        let line_text =
-          &self.text[self.utf8_line_starts[line] as usize..loc.0 as usize];
+        let line_text = &self.text[self.utf8_line_starts[line] as usize..loc.0 as usize];
         let col = line_text
           .chars()
           .fold(0, |acc, c| acc + c.len_utf16() as u32);

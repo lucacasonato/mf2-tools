@@ -1,9 +1,9 @@
-use mf2_parser::ast::AnyNode;
-use mf2_parser::ast::Message;
 use mf2_parser::Location;
 use mf2_parser::Spanned as _;
 use mf2_parser::Visit as _;
 use mf2_parser::VisitAny;
+use mf2_parser::ast::AnyNode;
+use mf2_parser::ast::Message;
 
 struct FindNodeVisitor<'ast, 'text> {
   loc: Location,
