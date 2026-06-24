@@ -160,6 +160,7 @@ impl<'ast, 'text: 'ast, T: VisitAny<'ast, 'text>> Visit<'ast, 'text> for T {
   visit_any!(visit_literal_expression, expr, LiteralExpression);
   visit_any!(visit_quoted, quoted, Quoted);
   visit_any!(visit_number, num, Number);
+  visit_any!(visit_annotation, ann, Annotation);
   visit_any!(visit_identifier, ident, Identifier);
   visit_any!(visit_fn_or_markup_option, opt, FnOrMarkupOption);
   visit_any!(visit_variable, var, Variable);
