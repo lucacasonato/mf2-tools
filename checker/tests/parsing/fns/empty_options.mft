@@ -1,0 +1,9 @@
+fn f {
+  operand X;
+  options {}
+  returns Y;
+}
+=== ast ===
+fn f @0..47
+  operand X @17..18
+  returns Y @43..44

@@ -1,0 +1,10 @@
+trait A {}
+trait B {}
+trait C { value: A; }
+=== ast ===
+trait A @0..10
+
+trait B @11..21
+
+trait C @22..43
+  value: A @32..41

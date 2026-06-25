@@ -1,0 +1,6 @@
+type T {
+  operand: Bar;
+}
+=== error ===
+Unrecognized token `operand` found at 11:18
+Expected one of "identifier", "impl", "when" or "}"

@@ -1,0 +1,7 @@
+trait Marker # a comment between name and brace
+{
+  value: A; # trailing comment after a member
+}
+=== ast ===
+trait Marker @0..97
+  value: A @52..61

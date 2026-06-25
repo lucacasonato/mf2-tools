@@ -1,0 +1,6 @@
+type T {
+  f: Outer { inner: Inner { deep: D, .. }, .. };
+}
+=== ast ===
+type T @0..59
+  f: Outer { inner: Inner { deep: D, .. }, .. } @11..57

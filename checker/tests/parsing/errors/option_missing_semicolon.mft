@@ -1,0 +1,10 @@
+fn f {
+  operand X;
+  options {
+    a: A
+  }
+  returns Y;
+}
+=== error ===
+Unrecognized token `}` found at 43:44
+Expected one of ";" or "="

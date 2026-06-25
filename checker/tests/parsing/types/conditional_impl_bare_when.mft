@@ -1,0 +1,8 @@
+type T {
+  disc: D;
+  when D impl Marker;
+}
+=== ast ===
+type T @0..43
+  disc: D @11..19
+  when D impl Marker @22..41

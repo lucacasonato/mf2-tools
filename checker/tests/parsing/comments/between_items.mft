@@ -1,0 +1,10 @@
+type Box {
+  # the wrapped value
+  value: AnyString;
+  # an implementation
+  impl ToString { value: .value };
+}
+=== ast ===
+type Box @0..111
+  value: AnyString @35..52
+  impl ToString { value: .value } @77..109

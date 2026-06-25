@@ -1,0 +1,6 @@
+type T {
+  f: "x" {};
+}
+=== error ===
+Unrecognized token `{` found at 18:19
+Expected one of ";" or "|"

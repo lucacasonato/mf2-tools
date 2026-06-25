@@ -1,0 +1,6 @@
+trait Foo {
+  value: Bar
+}
+=== error ===
+Unrecognized token `}` found at 25:26
+Expected one of ";"

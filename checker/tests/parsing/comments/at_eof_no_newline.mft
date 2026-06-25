@@ -1,0 +1,4 @@
+trait Marker {}
+# trailing comment with no newline at EOF
+=== ast ===
+trait Marker @0..15

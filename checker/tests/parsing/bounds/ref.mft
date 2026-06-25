@@ -1,0 +1,6 @@
+type T {
+  f: SomeType;
+}
+=== ast ===
+type T @0..25
+  f: SomeType @11..23

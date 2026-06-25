@@ -1,0 +1,12 @@
+fn f {
+  operand X;
+  options {
+    a: "x" | "y" = "x";
+  }
+  returns Y;
+}
+=== ast ===
+fn f @0..74
+  operand X @17..18
+  option a: "x" | "y" = "x" @36..55
+  returns Y @70..71

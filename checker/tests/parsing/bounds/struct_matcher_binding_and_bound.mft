@@ -1,0 +1,6 @@
+type T {
+  f: Base { a @ $x: X };
+}
+=== ast ===
+type T @0..35
+  f: Base { a @ $x: X } @11..33

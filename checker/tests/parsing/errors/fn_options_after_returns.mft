@@ -1,0 +1,8 @@
+fn f {
+  operand X;
+  returns Y;
+  options {}
+}
+=== error ===
+Unrecognized token `options` found at 35:42
+Expected one of "}"

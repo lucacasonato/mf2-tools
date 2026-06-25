@@ -1,0 +1,8 @@
+type Box {
+  value: V;
+  impl Pair { first: .value, second: Other };
+}
+=== ast ===
+type Box @0..70
+  value: V @13..22
+  impl Pair { first: .value, second: Other } @25..68

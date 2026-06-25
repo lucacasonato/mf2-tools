@@ -1,0 +1,6 @@
+type T {
+  f: | A;
+}
+=== error ===
+Unrecognized token `|` found at 14:15
+Expected one of "field reference", "identifier", "string literal" or "variable"

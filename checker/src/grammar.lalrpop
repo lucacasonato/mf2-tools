@@ -1,0 +1,181 @@
+use crate::ast::*;
+use crate::parse_helpers::*;
+
+grammar;
+
+// Skip whitespace and `#` line comments; everything else is a real token.
+//
+// The four regex terminals are aliased to friendly names here so parse errors
+// read `Expected one of "identifier", "string literal", …` instead of dumping
+// the raw regex source. They live in the `else` tier next to the `_` catch-all
+// (which admits the keyword/punctuation string literals); within a tier a string
+// literal outranks a regex, so keywords like `trait` stay reserved.
+match {
+    r"\s+" => {},
+    r"#[^\n]*" => {},
+} else {
+    r"[A-Za-z_][A-Za-z0-9_]*" => "identifier",
+    r#""(\\.|[^"\\])*""# => "string literal",
+    r"\$[A-Za-z_][A-Za-z0-9_]*" => "variable",
+    r"\.[A-Za-z_][A-Za-z0-9_]*" => "field reference",
+    _
+}
+
+pub Document: Document = {
+    <ds:Decl*> => Document { declarations: ds },
+};
+
+Decl: Declaration = {
+    <t:Trait> => Declaration::Trait(t),
+    <t:Type>  => Declaration::Type(t),
+    <f:Func>  => Declaration::Fn(f),
+};
+
+// ---------- traits ----------
+
+Trait: TraitDecl = {
+    <l:@L> "trait" <name:Ident> "{" <items:TraitItem*> "}" <r:@R> => {
+        let (members, needs) = split_trait_items(items);
+        TraitDecl { span: Span::new(l, r), name, members, needs }
+    },
+};
+
+TraitItem: TraitItem = {
+    <m:MemberDecl> => TraitItem::Member(m),
+    <n:Needs>      => TraitItem::Needs(n),
+};
+
+MemberDecl: MemberDecl = {
+    <l:@L> <name:Ident> ":" <b:Bound> ";" <r:@R>
+        => MemberDecl { span: Span::new(l, r), name, bound: b },
+};
+
+Needs: Needs = {
+    <l:@L> <w:When?> "needs" <tr:Ident> <body:ImplBody?> ";" <r:@R>
+        => Needs { span: Span::new(l, r), when: w, trait_: tr, members: body.unwrap_or_default() },
+};
+
+// ---------- types ----------
+
+Type: TypeDecl = {
+    <l:@L> "type" <name:Ident> "{" <items:TypeItem*> "}" <r:@R> => {
+        let (fields, impls) = split_type_items(items);
+        TypeDecl { span: Span::new(l, r), name, fields, impls }
+    },
+};
+
+TypeItem: TypeItem = {
+    <f:FieldDecl> => TypeItem::Field(f),
+    <i:Impl>      => TypeItem::Impl(i),
+};
+
+FieldDecl: FieldDecl = {
+    <l:@L> <name:Ident> ":" <b:Bound> ";" <r:@R>
+        => FieldDecl { span: Span::new(l, r), name, bound: b },
+};
+
+Impl: Impl = {
+    <l:@L> <w:When?> "impl" <tr:Ident> <body:ImplBody?> ";" <r:@R>
+        => Impl { span: Span::new(l, r), when: w, trait_: tr, members: body.unwrap_or_default() },
+};
+
+When: WhenClause = {
+    <l:@L> "when" <b:Bound> <r:@R>
+        => WhenClause { span: Span::new(l, r), bound: b },
+};
+
+// impl / needs bodies are comma-separated `name: bound` (no trailing `;`).
+ImplBody: Vec<MemberBinding> = {
+    "{" <ms:Comma1<MemberBinding>> "}" => ms,
+};
+
+MemberBinding: MemberBinding = {
+    <l:@L> <name:Ident> ":" <v:Bound> <r:@R>
+        => MemberBinding { span: Span::new(l, r), name, value: v },
+};
+
+// ---------- functions ----------
+
+Func: FnDecl = {
+    <l:@L> "fn" <name:Ident> "{"
+        "operand" <op:Bound> ";"
+        <opts:Options?>
+        "returns" <ret:Bound> ";"
+    "}" <r:@R> => FnDecl {
+        span: Span::new(l, r),
+        name,
+        operand: op,
+        options: opts.unwrap_or_default(),
+        returns: ret,
+    },
+};
+
+Options: Vec<OptionDecl> = {
+    "options" "{" <os:OptionDecl*> "}" => os,
+};
+
+OptionDecl: OptionDecl = {
+    <l:@L> <name:Ident> <bind:("@" <VarName>)?> ":" <b:Bound> <def:("=" <Bound>)?> ";" <r:@R>
+        => OptionDecl { span: Span::new(l, r), name, binding: bind, bound: b, default: def },
+};
+
+// ---------- bounds ----------
+
+Bound: Bound = {
+    <e:BoundTerm> <es:("|" <BoundTerm>)*> => make_bound(e, es),
+};
+
+BoundTerm: Bound = {
+    <l:@L> <base:Ident> <st:Struct?> <r:@R> => match st {
+        None => Bound::Ref(RefBound { span: base.span, name: base.name }),
+        Some((fields, rest)) => Bound::Structural(StructuralBound {
+            span: Span::new(l, r), base, fields, rest,
+        }),
+    },
+    <s:Str> => Bound::Literal(LiteralBound { span: s.0, value: s.1 }),
+    <l:@L> <f:"field reference"> <r:@R>
+        => Bound::FieldRef(FieldRefBound { span: Span::new(l, r), field: f[1..].to_string() }),
+    <l:@L> <v:"variable"> <r:@R>
+        => Bound::VarRef(VarRefBound { span: Span::new(l, r), name: v[1..].to_string() }),
+};
+
+Struct: (Vec<FieldMatcher>, bool) = {
+    "{" <ml:MatcherList> "}" => ml,
+};
+
+MatcherList: (Vec<FieldMatcher>, bool) = {
+    => (Vec::new(), false),
+    ".." => (Vec::new(), true),
+    <ms:Matchers> => (ms, false),
+    <ms:Matchers> "," ".." => (ms, true),
+};
+
+Matchers: Vec<FieldMatcher> = {
+    <m:Matcher> => vec![m],
+    <mut ms:Matchers> "," <m:Matcher> => { ms.push(m); ms },
+};
+
+Matcher: FieldMatcher = {
+    <l:@L> <name:Ident> <bind:("@" <VarName>)?> <bnd:(":" <Bound>)?> <r:@R>
+        => FieldMatcher { span: Span::new(l, r), name, binding: bind, bound: bnd },
+};
+
+// ---------- lexical / helpers ----------
+
+Ident: Ident = {
+    <l:@L> <s:"identifier"> <r:@R>
+        => Ident { span: Span::new(l, r), name: s.to_string() },
+};
+
+VarName: Ident = {
+    <l:@L> <v:"variable"> <r:@R>
+        => Ident { span: Span::new(l, r), name: v[1..].to_string() },
+};
+
+Str: (Span, String) = {
+    <l:@L> <s:"string literal"> <r:@R> => (Span::new(l, r), unescape(s)),
+};
+
+Comma1<T>: Vec<T> = {
+    <e:T> <es:("," <T>)*> => { let mut v = vec![e]; v.extend(es); v },
+};

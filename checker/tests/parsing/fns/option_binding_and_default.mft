@@ -1,0 +1,12 @@
+fn f {
+  operand X;
+  options {
+    a @ $a: A = "d";
+  }
+  returns Y { out: $a };
+}
+=== ast ===
+fn f @0..83
+  operand X @17..18
+  option a @ $a: A = "d" @36..52
+  returns Y { out: $a } @67..80

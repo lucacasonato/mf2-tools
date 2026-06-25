@@ -1,0 +1,7 @@
+fn f {
+  operand X { v @ $x };
+  returns Y { out: $x {} };
+}
+=== error ===
+Unrecognized token `{` found at 53:54
+Expected one of ",", "|" or "}"

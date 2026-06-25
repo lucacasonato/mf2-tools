@@ -1,0 +1,6 @@
+trait T {
+  when Cond { .. } needs Other { a: .x };
+}
+=== ast ===
+trait T @0..53
+  when Cond { .. } needs Other { a: .x } @12..51

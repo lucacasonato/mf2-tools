@@ -1,0 +1,16 @@
+type BoxNumber {
+  value: NumberLike;
+  select: "exact" | "plural" | "ordinal";
+
+  impl ToString { value: .value };
+
+  when BoxNumber { select: "exact", .. } impl Select { key: NumberLike };
+  when BoxNumber { select: "plural", .. } impl Select { key: NumberLike | "zero" | "one" };
+}
+=== ast ===
+type BoxNumber @0..284
+  value: NumberLike @19..37
+  select: "exact" | "plural" | "ordinal" @40..79
+  impl ToString { value: .value } @83..115
+  when BoxNumber { select: "exact", .. } impl Select { key: NumberLike } @119..190
+  when BoxNumber { select: "plural", .. } impl Select { key: NumberLike | "zero" | "one" } @193..282

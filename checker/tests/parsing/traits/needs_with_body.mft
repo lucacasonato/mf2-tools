@@ -1,0 +1,8 @@
+trait Constrained {
+  value: AnyString;
+  needs ToNumber { value: .value, scale: Small };
+}
+=== ast ===
+trait Constrained @0..91
+  value: AnyString @22..39
+  needs ToNumber { value: .value, scale: Small } @42..89

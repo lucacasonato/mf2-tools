@@ -1,0 +1,4 @@
+trait NumberLike { needs PrimitiveString; }
+=== ast ===
+trait NumberLike @0..43
+  needs PrimitiveString @19..41

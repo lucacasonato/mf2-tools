@@ -1,0 +1,6 @@
+type T {
+  when impl C;
+}
+=== error ===
+Unrecognized token `impl` found at 16:20
+Expected one of "field reference", "identifier", "string literal" or "variable"

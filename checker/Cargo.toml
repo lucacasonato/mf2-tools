@@ -1,0 +1,23 @@
+[package]
+name = "mf2_checker"
+description = "Type system and checker for MessageFormat 2 functions"
+version = "0.2.0"
+edition.workspace = true
+authors.workspace = true
+license.workspace = true
+repository.workspace = true
+
+[dependencies]
+lalrpop-util = { version = "0.20", features = ["lexer"] }
+
+[build-dependencies]
+lalrpop = "0.20"
+
+[dev-dependencies]
+file_test_runner = "0.7.2"
+pretty_assertions = "1.4.0"
+
+[[test]]
+name = "parsing"
+path = "tests/parsing.rs"
+harness = false

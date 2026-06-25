@@ -1,0 +1,10 @@
+type Data {
+  a: A;
+  b: B | C;
+  c: "literal";
+}
+=== ast ===
+type Data @0..49
+  a: A @14..19
+  b: B | C @22..31
+  c: "literal" @34..47

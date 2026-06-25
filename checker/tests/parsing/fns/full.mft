@@ -1,0 +1,16 @@
+fn number {
+  operand ToNumber { value @ $num };
+  options {
+    select @ $select: "exact" | "plural" | "ordinal" = "plural";
+    minimumFractionDigits: ToNumber { .. } | Unset;
+    numberingSystem: ToString { .. };
+  }
+  returns BoxNumber { value: $num, select: $select };
+}
+=== ast ===
+fn number @0..275
+  operand ToNumber { value @ $num } @22..47
+  option select @ $select: "exact" | "plural" | "ordinal" = "plural" @65..125
+  option minimumFractionDigits: ToNumber { .. } | Unset @130..177
+  option numberingSystem: ToString { .. } @182..215
+  returns BoxNumber { value: $num, select: $select } @230..272

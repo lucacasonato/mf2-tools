@@ -1,0 +1,6 @@
+type T {
+  value: "a # b not a comment";
+}
+=== ast ===
+type T @0..42
+  value: "a # b not a comment" @11..40

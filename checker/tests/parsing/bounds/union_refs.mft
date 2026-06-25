@@ -1,0 +1,6 @@
+type T {
+  f: A | B | C;
+}
+=== ast ===
+type T @0..26
+  f: A | B | C @11..24

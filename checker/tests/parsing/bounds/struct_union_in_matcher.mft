@@ -1,0 +1,6 @@
+type T {
+  f: Base { a: X | Y | "z" };
+}
+=== ast ===
+type T @0..40
+  f: Base { a: X | Y | "z" } @11..38

@@ -1,0 +1,5 @@
+type Foo {
+  value: Bar;
+=== error ===
+Unrecognized EOF found at 24
+Expected one of "identifier", "impl", "when" or "}"

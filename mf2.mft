@@ -1,0 +1,107 @@
+# Anything that is a primitive string value
+trait PrimitiveString {}
+
+# Types that can be converted to a string like
+trait ToString {
+  value: PrimitiveString;
+}
+
+# Any primitive string that looks like a number, according to MessageFormat 2 rules
+trait NumberLike { needs PrimitiveString; }
+
+# Types that can be converted to a number like
+trait ToNumber {
+  value: NumberLike;
+}
+
+# Selectable types
+trait Select {
+  # The keys that can be selected with
+  key: PrimitiveString;
+}
+
+# NOTE: literal types (e.g. the singleton type of `"foo"` or `"1"`) are *synthesized* by the
+# checker from message text — `"foo"` always implements PrimitiveString + ToString, and a
+# token matching the MF2 number grammar additionally implements NumberLike + ToNumber. They
+# are never declared here.
+
+# This is the type of any non literal primitive string
+type AnyString {
+  impl PrimitiveString;
+  impl ToString { value: AnyString };
+}
+
+# This is the type of any non literal primitive string that looks like a number, according to MessageFormat 2 rules
+type AnyNumber {
+  impl PrimitiveString;
+  impl NumberLike;
+  impl ToString { value: AnyNumber };
+  impl ToNumber { value: AnyNumber };
+}
+
+# The input type of values coming into messages (e.g. the type of the operator in `.input` statements)
+type Unknown {
+  impl ToString { value: AnyString };
+  impl ToNumber { value: AnyNumber };
+}
+
+# The type of omitted values in options bags (`undefined` in JS)
+type Unset {}
+
+# A boxed string value that can be used in select statements
+type BoxString {
+  value: PrimitiveString;
+
+  impl ToString { value: .value };
+  impl Select { key: .value };
+}
+
+# A boxed number value that can be used in select statements
+type BoxNumber {
+  value: NumberLike;
+  select: "exact" | "plural" | "ordinal";
+
+  impl ToString { value: .value };
+  impl ToNumber { value: .value };
+
+  when .select is "exact" impl Select { key: NumberLike };
+  when .select is "plural" impl Select { key: NumberLike | "zero" | "one" | "two" | "few" | "many" | "other" };
+  when .select is "ordinal" impl Select { key: NumberLike | "zero" | "one" | "two" | "few" | "many" | "other" };
+}
+
+fn string {
+  operand ToString { value @ $str };
+  returns BoxString { value: $str };
+}
+
+fn number {
+  operand ToNumber { value @ $num };
+  options {
+    select @ $select: "exact" | "plural" | "ordinal" = "plural";
+    notation: "standard" | "scientific" | "engineering" | "compact" = "standard";
+    compactDisplay: "short" | "long" = "short";
+    numberingSystem: ToString { ..};
+    signDisplay: "auto" | "always" | "never" | "exceptZero" | "negative" = "auto";
+    style: "decimal" | "percent" = "decimal";
+    useGrouping: "auto" | "always" | "never" | "min2" = "auto";
+    minimumIntegerDigits: ToNumber { .. } = "1";
+    minimumFractionDigits: ToNumber { .. } | Unset;
+    maximumFractionDigits: ToNumber { .. } | Unset;
+    minimumSignificantDigits: ToNumber { .. } | Unset;
+    maximumSignificantDigits: ToNumber { .. } | Unset;
+  }
+  returns BoxNumber { value: $num, select: $select };
+}
+
+fn integer {
+  operand ToNumber { value @ $num };
+  options {
+    select @ $select: "exact" | "plural" | "ordinal" = "plural";
+    numberingSystem: ToString { .. };
+    signDisplay: "auto" | "always" | "never" | "exceptZero" | "negative" = "auto";
+    style: "decimal" | "percent" = "decimal";
+    useGrouping: "auto" | "always" | "never" | "min2" = "auto";
+    minimumIntegerDigits: ToNumber { .. } = "1";
+  }
+  returns BoxNumber { value: $num, select: $select };
+}

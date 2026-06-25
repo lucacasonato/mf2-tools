@@ -1,0 +1,8 @@
+fn upper {
+  operand ToString { value @ $str } | Unset;
+  returns BoxString { value: $str };
+}
+=== ast ===
+fn upper @0..94
+  operand ToString { value @ $str } | Unset @21..54
+  returns BoxString { value: $str } @66..91

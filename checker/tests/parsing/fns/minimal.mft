@@ -1,0 +1,8 @@
+fn string {
+  operand ToString { value @ $str };
+  returns BoxString { value: $str };
+}
+=== ast ===
+fn string @0..87
+  operand ToString { value @ $str } @22..47
+  returns BoxString { value: $str } @59..84

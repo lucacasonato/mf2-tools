@@ -1,0 +1,5 @@
+type T {
+  f: "abc;
+}
+=== error ===
+Invalid token at 14

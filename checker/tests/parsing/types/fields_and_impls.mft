@@ -1,0 +1,11 @@
+type BoxString {
+  value: PrimitiveString;
+
+  impl ToString { value: .value };
+  impl Select { key: .value };
+}
+=== ast ===
+type BoxString @0..111
+  value: PrimitiveString @19..42
+  impl ToString { value: .value } @46..78
+  impl Select { key: .value } @81..109
