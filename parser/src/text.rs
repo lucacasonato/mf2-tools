@@ -5,12 +5,11 @@ use std::ops::Add;
 use std::ops::Range;
 use std::str::Chars;
 
-type Peek = Option<(Location, char)>;
-
 enum Peeked {
   None,
-  Single(Peek),
-  Double((Location, char), Peek),
+  Single((Location, char)),
+  Double((Location, char), (Location, char)),
+  Triple((Location, char), (Location, char), (Location, char)),
 }
 
 /// The source text, represented as a series of `char`s.
@@ -91,44 +90,69 @@ impl<'text> SourceTextIterator<'text> {
         self.front_loc = Location(self.str_index);
         (loc, ch)
       }),
-      Peeked::Single(None) => None,
-      Peeked::Single(Some(peek)) | Peeked::Double(peek, None) => {
+      Peeked::Single(peek) => {
         self.front_loc = Location(self.str_index);
         self.peeked = Peeked::None;
         Some(peek)
       }
-      Peeked::Double(peek1, peek2 @ Some((loc, _))) => {
+      Peeked::Double(peek1, peek2 @ (loc, _)) => {
         self.front_loc = loc;
         self.peeked = Peeked::Single(peek2);
+        Some(peek1)
+      }
+      Peeked::Triple(peek1, peek2 @ (loc, _), peek3) => {
+        self.front_loc = loc;
+        self.peeked = Peeked::Double(peek2, peek3);
         Some(peek1)
       }
     }
   }
 
-  pub fn peek(&mut self) -> Peek {
+  pub fn peek(&mut self) -> Option<(Location, char)> {
     match &self.peeked {
-      Peeked::Single(peek) => *peek,
+      Peeked::Single(peek) => Some(*peek),
       Peeked::Double(peek, _) => Some(*peek),
+      Peeked::Triple(peek, _, _) => Some(*peek),
       Peeked::None => {
-        let peeked = self.iter_next().map(|ch| (self.front_loc, ch));
-        self.peeked = Peeked::Single(peeked);
-        peeked
+        let peek = self.iter_next().map(|ch| (self.front_loc, ch))?;
+        self.peeked = Peeked::Single(peek);
+        Some(peek)
       }
     }
   }
 
-  pub fn peek2(&mut self) -> Peek {
-    if let Peeked::Double(_, peek) = self.peeked {
-      return peek;
+  pub fn peek2(&mut self) -> Option<(Location, char)> {
+    if let Peeked::None = self.peeked {
+      self.peek()?;
+      debug_assert!(matches!(self.peeked, Peeked::Single(_)));
     }
-    match self.peek() {
-      None => None,
-      Some(peek1) => {
+    match self.peeked {
+      Peeked::Single(peek1) => {
         let loc = Location(self.str_index);
-        let peek2 = self.iter_next().map(|ch2| (loc, ch2));
+        let peek2 = self.iter_next().map(|ch2| (loc, ch2))?;
         self.peeked = Peeked::Double(peek1, peek2);
-        peek2
+        Some(peek2)
       }
+      Peeked::Double(_, peek2) => Some(peek2),
+      Peeked::Triple(_, peek2, _) => Some(peek2),
+      Peeked::None => unreachable!(),
+    }
+  }
+
+  pub fn peek3(&mut self) -> Option<(Location, char)> {
+    if let Peeked::None | Peeked::Single(_) = self.peeked {
+      self.peek2()?;
+      debug_assert!(matches!(self.peeked, Peeked::Double(_, _)));
+    }
+    match self.peeked {
+      Peeked::Double(peek1, peek2) => {
+        let loc = Location(self.str_index);
+        let peek3 = self.iter_next().map(|ch3| (loc, ch3))?;
+        self.peeked = Peeked::Triple(peek1, peek2, peek3);
+        Some(peek3)
+      }
+      Peeked::Triple(_, _, peek3) => Some(peek3),
+      _ => None,
     }
   }
 
@@ -721,5 +745,208 @@ mod tests {
       info.utf16_len(super::Span::new(super::Location(8)..super::Location(12))),
       2
     );
+  }
+
+  #[test]
+  fn peek_and_next_empty() {
+    let mut iter = super::SourceTextIterator::new("");
+    assert_eq!(iter.peek(), None);
+    assert_eq!(iter.peek2(), None);
+    assert_eq!(iter.peek3(), None);
+    assert_eq!(iter.next(), None);
+    // Repeated calls at EOF must remain None.
+    assert_eq!(iter.peek(), None);
+    assert_eq!(iter.next(), None);
+  }
+
+  #[test]
+  fn peek_is_idempotent() {
+    let mut iter= super::SourceTextIterator::new("abc");
+    let expected = Some((super::Location(0), 'a'));
+    assert_eq!(iter.peek(), expected);
+    assert_eq!(iter.peek(), expected);
+    assert_eq!(iter.peek(), expected);
+    // Peeking must not advance the front location.
+    assert_eq!(iter.current_location(), super::Location(0));
+  }
+
+  #[test]
+  fn peek2_and_peek3_are_idempotent() {
+    let mut iter = super::SourceTextIterator::new("abcd");
+    let p2 = Some((super::Location(1), 'b'));
+    let p3 = Some((super::Location(2), 'c'));
+    assert_eq!(iter.peek2(), p2);
+    assert_eq!(iter.peek2(), p2);
+    assert_eq!(iter.peek3(), p3);
+    assert_eq!(iter.peek3(), p3);
+    assert_eq!(iter.peek3(), p3);
+    assert_eq!(iter.peek2(), p2);
+    assert_eq!(iter.peek(), Some((super::Location(0), 'a')));
+    assert_eq!(iter.current_location(), super::Location(0));
+  }
+
+  #[test]
+  fn peek2_without_prior_peek() {
+    let mut iter = super::SourceTextIterator::new("abc");
+    assert_eq!(iter.peek2(), Some((super::Location(1), 'b')));
+    // The first character must still be reachable via peek.
+    assert_eq!(iter.peek(), Some((super::Location(0), 'a')));
+    assert_eq!(iter.next(), Some((super::Location(0), 'a')));
+    assert_eq!(iter.next(), Some((super::Location(1), 'b')));
+  }
+
+  #[test]
+  fn peek3_without_prior_peeks() {
+    let mut iter = super::SourceTextIterator::new("abcd");
+    assert_eq!(iter.peek3(), Some((super::Location(2), 'c')));
+    // The first two characters must still be reachable via peek/peek2.
+    assert_eq!(iter.peek(), Some((super::Location(0), 'a')));
+    assert_eq!(iter.peek2(), Some((super::Location(1), 'b')));
+    assert_eq!(iter.next(), Some((super::Location(0), 'a')));
+    assert_eq!(iter.next(), Some((super::Location(1), 'b')));
+    assert_eq!(iter.next(), Some((super::Location(2), 'c')));
+    assert_eq!(iter.next(), Some((super::Location(3), 'd')));
+  }
+
+  #[test]
+  fn peek3_after_peek_fills_middle() {
+    let mut iter = super::SourceTextIterator::new("abcd");
+    assert_eq!(iter.peek(), Some((super::Location(0), 'a')));
+    assert_eq!(iter.peek3(), Some((super::Location(2), 'c')));
+    // peek2 must return the second char even though it was populated by peek3.
+    assert_eq!(iter.peek2(), Some((super::Location(1), 'b')));
+    assert_eq!(iter.peek(), Some((super::Location(0), 'a')));
+  }
+
+  #[test]
+  fn peek2_with_only_one_char_remaining() {
+    let mut iter = super::SourceTextIterator::new("a");
+    assert_eq!(iter.peek(), Some((super::Location(0), 'a')));
+    assert_eq!(iter.peek2(), None);
+    // Failing peek2 must not consume the first peek.
+    assert_eq!(iter.peek(), Some((super::Location(0), 'a')));
+    // Retrying peek2 must still return None.
+    assert_eq!(iter.peek2(), None);
+    assert_eq!(iter.next(), Some((super::Location(0), 'a')));
+    assert_eq!(iter.next(), None);
+  }
+
+  #[test]
+  fn peek3_with_only_two_chars_remaining() {
+    let mut iter = super::SourceTextIterator::new("ab");
+    assert_eq!(iter.peek3(), None);
+    // Failing peek3 must not affect peek/peek2 results.
+    assert_eq!(iter.peek(), Some((super::Location(0), 'a')));
+    assert_eq!(iter.peek2(), Some((super::Location(1), 'b')));
+    // Retrying peek3 must still return None.
+    assert_eq!(iter.peek3(), None);
+    assert_eq!(iter.next(), Some((super::Location(0), 'a')));
+    assert_eq!(iter.next(), Some((super::Location(1), 'b')));
+    assert_eq!(iter.next(), None);
+  }
+
+  #[test]
+  fn next_consumes_peeked_in_order() {
+    let mut iter = super::SourceTextIterator::new("abcd");
+    assert_eq!(iter.peek3(), Some((super::Location(2), 'c')));
+    assert_eq!(iter.next(), Some((super::Location(0), 'a')));
+    assert_eq!(iter.current_location(), super::Location(1));
+    assert_eq!(iter.next(), Some((super::Location(1), 'b')));
+    assert_eq!(iter.current_location(), super::Location(2));
+    assert_eq!(iter.next(), Some((super::Location(2), 'c')));
+    assert_eq!(iter.current_location(), super::Location(3));
+    // Nothing was pre-peeked at position 3; f all back to iterator.
+    assert_eq!(iter.next(), Some((super::Location(3), 'd')));
+    assert_eq!(iter.next(), None);
+  }
+
+  #[test]
+  fn next_after_peek_and_peek2_shifts_peek_state() {
+    let mut iter = super::SourceTextIterator::new("abcd");
+    assert_eq!(iter.peek2(), Some((super::Location(1), 'b')));
+    assert_eq!(iter.next(), Some((super::Location(0), 'a')));
+    // After consuming the first peeked value, peek must return the second one.
+    assert_eq!(iter.peek(), Some((super::Location(1), 'b')));
+    assert_eq!(iter.peek2(), Some((super::Location(2), 'c')));
+    assert_eq!(iter.next(), Some((super::Location(1), 'b')));
+    assert_eq!(iter.next(), Some((super::Location(2), 'c')));
+  }
+
+  #[test]
+  fn next_after_peek3_shifts_peek_state() {
+    let mut iter = super::SourceTextIterator::new("abcde");
+    assert_eq!(iter.peek3(), Some((super::Location(2), 'c')));
+    assert_eq!(iter.next(), Some((super::Location(0), 'a')));
+    // Triple must shift down into Double.
+    assert_eq!(iter.peek(), Some((super::Location(1), 'b')));
+    assert_eq!(iter.peek2(), Some((super::Location(2), 'c')));
+    assert_eq!(iter.peek3(), Some((super::Location(3), 'd')));
+    assert_eq!(iter.next(), Some((super::Location(1), 'b')));
+    assert_eq!(iter.next(), Some((super::Location(2), 'c')));
+    assert_eq!(iter.next(), Some((super::Location(3), 'd')));
+    assert_eq!(iter.next(), Some((super::Location(4), 'e')));
+    assert_eq!(iter.next(), None);
+  }
+
+  #[test]
+  fn peek_at_end_after_exhausting() {
+    let mut iter = super::SourceTextIterator::new("ab");
+    assert_eq!(iter.next(), Some((super::Location(0), 'a')));
+    assert_eq!(iter.next(), Some((super::Location(1), 'b')));
+    assert_eq!(iter.peek(), None);
+    assert_eq!(iter.peek2(), None);
+    assert_eq!(iter.peek3(), None);
+    assert_eq!(iter.next(), None);
+    assert_eq!(iter.current_location(), super::Location(2));
+  }
+
+  #[test]
+  fn peek_multibyte_chars_report_correct_locations() {
+    let mut iter = super::SourceTextIterator::new("🍊😅🎃x");
+    assert_eq!(iter.peek(), Some((super::Location(0), '🍊')));
+    assert_eq!(iter.peek2(), Some((super::Location(4), '😅')));
+    assert_eq!(iter.peek3(), Some((super::Location(8), '🎃')));
+    assert_eq!(iter.next(), Some((super::Location(0), '🍊')));
+    assert_eq!(iter.current_location(), super::Location(4));
+    assert_eq!(iter.next(), Some((super::Location(4), '😅')));
+    assert_eq!(iter.current_location(), super::Location(8));
+    assert_eq!(iter.next(), Some((super::Location(8), '🎃')));
+    assert_eq!(iter.current_location(), super::Location(12));
+    assert_eq!(iter.peek(), Some((super::Location(12), 'x')));
+    assert_eq!(iter.next(), Some((super::Location(12), 'x')));
+    assert_eq!(iter.next(), None);
+  }
+
+  #[test]
+  fn interleaved_peek_and_next() {
+    let mut iter = super::SourceTextIterator::new("abcdef");
+    assert_eq!(iter.peek(), Some((super::Location(0), 'a')));
+    assert_eq!(iter.next(), Some((super::Location(0), 'a')));
+    assert_eq!(iter.peek2(), Some((super::Location(2), 'c')));
+    assert_eq!(iter.peek(), Some((super::Location(1), 'b')));
+    assert_eq!(iter.next(), Some((super::Location(1), 'b')));
+    assert_eq!(iter.next(), Some((super::Location(2), 'c')));
+    assert_eq!(iter.peek3(), Some((super::Location(5), 'f')));
+    assert_eq!(iter.next(), Some((super::Location(3), 'd')));
+    assert_eq!(iter.next(), Some((super::Location(4), 'e')));
+    assert_eq!(iter.next(), Some((super::Location(5), 'f')));
+    assert_eq!(iter.next(), None);
+  }
+
+  #[test]
+  fn peek_across_newlines_tracks_line_starts() {
+    let mut iter = super::SourceTextIterator::new("a\nb\r\nc");
+    // Peeking must not affect line tracking, since peeked chars are actually
+    // consumed from the underlying `Chars` iterator.
+    assert_eq!(iter.peek3(), Some((super::Location(2), 'b')));
+    assert_eq!(iter.next(), Some((super::Location(0), 'a')));
+    assert_eq!(iter.next(), Some((super::Location(1), '\n')));
+    assert_eq!(iter.next(), Some((super::Location(2), 'b')));
+    assert_eq!(iter.next(), Some((super::Location(3), '\r')));
+    assert_eq!(iter.next(), Some((super::Location(4), '\n')));
+    assert_eq!(iter.next(), Some((super::Location(5), 'c')));
+    assert_eq!(iter.next(), None);
+    let info = iter.into_info();
+    assert_eq!(info.utf8_line_starts, vec![0, 2, 5]);
   }
 }
