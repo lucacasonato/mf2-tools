@@ -10,6 +10,7 @@ mod parser;
 mod scope;
 mod text;
 mod visitor;
+pub mod resources;
 
 pub use diagnostic::Diagnostic;
 pub use scope::Scope;
