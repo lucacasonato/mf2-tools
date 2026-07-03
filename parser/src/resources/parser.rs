@@ -29,7 +29,6 @@ impl<'text> Parser<'text> {
     let mut resource = Resource {
       comments: vec![],
       meta: vec![],
-      frontmatter: None,
       sections: vec![],
     };
 
@@ -61,8 +60,6 @@ impl<'text> Parser<'text> {
         _ => break,
       }
     }
-
-    
   }
 
   fn report(&mut self, diagnostic: Diagnostic<'text>) {
