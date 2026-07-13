@@ -41,7 +41,7 @@ pub(crate) use value_start;
 
 macro_rules! content {
   () => {
-    ' ' | '\t' | value_start!()
+    ' ' | '\t' | crate::resources::chars::value_start!()
   };
 }
 pub(crate) use content;

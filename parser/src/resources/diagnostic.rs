@@ -86,12 +86,35 @@ macro_rules! diagnostics {
 diagnostics! {
   pub enum Diagnostic<'text> {
     // Syntax Errors
-    NumberMissingIntegralPart { number: Number<'text> } => {
-      message: ("Number is missing an integral part."),
-      span: number.span(),
+    CommentHasLeadingWhitespace { span: Span } => {
+      message: ("Comment has leading whitespace, which is not allowed."),
+      span: *span,
       fatal: false,
-      fixes: [
-      ],
+      fixes: [],
+    },
+    InvalidCommentContent { span: Span } => {
+      message: ("Found invalid content in comment, which is not allowed."),
+      span: *span,
+      fatal: false,
+      fixes: [],
+    },
+    CommentAfterMetadata { span: Span } => {
+      message: ("Found a comment after a metadata annotation, which is not allowed."),
+      span: *span,
+      fatal: false,
+      fixes: [],
+    },
+    NonWhitespaceAfterFrontmatterSeperator { span: Span } => {
+      message: ("Found non-whitespace characters after frontmatter separator, on the same line, which is not allowed."),
+      span: *span,
+      fatal: false,
+      fixes: [],
+    },
+    DuplicateFrontmatterSeparator { duplicate: Span } => {
+      message: ("Found multiple frontmatter separator after having already encountered a frontmatter separator earlier, which is not allowed."),
+      span: *duplicate,
+      fatal: false,
+      fixes: [],
     },
   }
 }
